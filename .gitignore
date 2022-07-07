@@ -204,4 +204,5 @@ webpack-stats.json
 backend/filepond-temp-uploads
 backend/media
 backend/*.sqlite3*
+backend/tmp.txt
 frontend/assets/fonts
