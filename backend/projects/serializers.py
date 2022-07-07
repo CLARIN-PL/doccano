@@ -108,6 +108,7 @@ class Seq2seqProjectSerializer(ProjectSerializer):
 class IntentDetectionAndSlotFillingProjectSerializer(ProjectSerializer):
     class Meta(ProjectSerializer.Meta):
         model = IntentDetectionAndSlotFillingProject
+        fields = ProjectSerializer.Meta.fields + ["allow_overlapping"]
 
 
 class Speech2textProjectSerializer(ProjectSerializer):

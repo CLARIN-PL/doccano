@@ -30,6 +30,8 @@
             :dark="$vuetify.theme.dark"
             :rtl="isRTL"
             :text="doc.text"
+            :allow-overlapping="project.allowOverlapping"
+            :selected-label="selectedLabel"
             :entities="spans"
             :entity-labels="spanTypes"
             @addEntity="addSpan"
@@ -41,6 +43,33 @@
     </template>
     <template #sidebar>
       <annotation-progress :progress="progress" />
+
+      <v-card class="mt-4">
+        <v-card-title>Label Types</v-card-title>
+        <v-card-text>
+          <v-chip-group v-model="selectedLabelIndex" column>
+            <v-chip
+              v-for="(item, index) in spanTypes"
+              :key="item.id"
+              v-shortkey="[item.suffixKey]"
+              :color="item.backgroundColor"
+              filter
+              :text-color="$contrastColor(item.backgroundColor)"
+              @shortkey="selectedLabelIndex = index"
+            >
+              {{ item.text }}
+              <v-avatar
+                v-if="item.suffixKey"
+                right
+                color="white"
+                class="black--text font-weight-bold"
+              >
+                {{ item.suffixKey }}
+              </v-avatar>
+            </v-chip>
+          </v-chip-group>
+        </v-card-text>
+      </v-card>
       <list-metadata :metadata="doc.meta" class="mt-4" />
     </template>
   </layout-text>
@@ -80,6 +109,7 @@ export default {
       spanTypes: [],
       categoryTypes: [],
       project: {},
+      selectedLabelIndex: null,
       exclusive: false,
       enableAutoLabeling: false,
       progress: {}
@@ -111,6 +141,14 @@ export default {
         return {}
       } else {
         return this.docs.items[0]
+      }
+    },
+
+    selectedLabel() {
+      if (Number.isInteger(this.selectedLabelIndex)) {
+        return this.spanTypes[this.selectedLabelIndex]
+      } else {
+        return null
       }
     }
   },

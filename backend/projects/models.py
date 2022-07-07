@@ -117,6 +117,7 @@ class Seq2seqProject(Project):
 
 
 class IntentDetectionAndSlotFillingProject(Project):
+    allow_overlapping = models.BooleanField(default=False)
     @property
     def is_text_project(self) -> bool:
         return True

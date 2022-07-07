@@ -66,7 +66,7 @@
           @change="updateValue('singleClassClassification', $event === true)"
         />
         <v-checkbox
-          v-if="isSequenceLabelingProject"
+          v-if="isSequenceLabelingProject || isIntentDetectionAndSlotFillingProject"
           :value="allowOverlapping"
           label="Allow overlapping entity"
           @change="updateValue('allowOverlapping', $event === true)"
@@ -222,6 +222,9 @@ export default Vue.extend({
     },
     isSequenceLabelingProject() {
       return this.projectType === 'SequenceLabeling'
+    },
+    isIntentDetectionAndSlotFillingProject() {
+      return this.projectType === 'IntentDetectionAndSlotFilling' 
     }
   },
 

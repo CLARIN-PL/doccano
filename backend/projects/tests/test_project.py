@@ -88,6 +88,28 @@ class TestSequenceLabelingProjectCreation(CRUDMixin):
         self.assertEqual(response.data["grapheme_mode"], self.data["grapheme_mode"])
 
 
+class TestIntentDetectionAndSlotFillingProjectCreation(CRUDMixin):
+    @classmethod
+    def setUpTestData(cls):
+        create_default_roles()
+        cls.user = make_user()
+        cls.url = reverse(viewname="project_list")
+        cls.data = {
+            "name": "example",
+            "project_type": "IntentDetectionAndSlotFilling",
+            "description": "example",
+            "guideline": "example",
+            "allow_overlapping": True,
+            "resourcetype": "IntentDetectionAndSlotFillingProject",
+        }
+
+    def test_allows_staff_user_to_create_project(self):
+        self.user.is_staff = True
+        self.user.save()
+        response = self.assert_create(self.user, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['allow_overlapping'], self.data["allow_overlapping"])
+
+
 class TestProjectDetailAPI(CRUDMixin):
     @classmethod
     def setUpTestData(cls):
