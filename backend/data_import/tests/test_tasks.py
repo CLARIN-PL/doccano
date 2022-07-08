@@ -18,6 +18,7 @@ from projects.models import (
     INTENT_DETECTION_AND_SLOT_FILLING,
     SEQ2SEQ,
     SEQUENCE_LABELING,
+    CUSTOM_CLASSIFICATION_AND_SPAN_LABELING,
 )
 from projects.tests.utils import prepare_project
 
@@ -335,3 +336,74 @@ class TestFileTypeChecking(TestImportData):
         response = self.import_dataset(filename, file_format, self.task)
         self.assertEqual(len(response["error"]), 1)
         self.assertIn("unexpected", response["error"][0]["message"])
+
+
+class TestImportCustomClassificationAndSpanLabelingData(TestImportData):
+    task = CUSTOM_CLASSIFICATION_AND_SPAN_LABELING
+
+    def setUp(self):
+        self.project = prepare_project(self.task, allow_overlapping=True)
+        self.user = self.project.admin
+        self.data_path = pathlib.Path(__file__).parent / "data"
+        self.upload_id = _get_file_id()
+
+    def assert_examples(self, dataset):
+        self.assertEqual(Example.objects.count(), len(dataset))
+        for text, expected_labels in dataset:
+            example = Example.objects.get(text=text)
+            cats = set(cat.label.text for cat in example.categories.all())
+            entities = set([(span.start_offset, span.end_offset, span.label.text) for span in example.spans.all()])
+            self.assertEqual(cats, set(expected_labels["cats"]))
+            self.assertEqual(entities, set(expected_labels["entities"]))
+
+    def test_entities_and_cats(self):
+        filename = "custom_task/example.jsonl"
+        file_format = "JSONL"
+        dataset = [
+            ("exampleA", {"cats": ["sadness", "surprise"], "entities": [(0, 1, "LOC")]}),
+            ("exampleB", {"cats": ["joy", "trust"], "entities": []}),
+            ("exampleC", {"cats": ["neutral"], "entities": [(0, 1, "LOC")]}),
+            ("exampleD", {"cats": ["neutral"], "entities": []}),
+            ("exampleE", {"cats": [], "entities": [(0, 1, "LOC")]}),
+            ("exampleF", {"cats": [], "entities": []}),
+            ("exampleG", {"cats": ["anger", "disgust"], "entities": [(0, 1, "verb"), (0, 3, "adverb"), (0, 5, "subject")]}),
+            ("exampleH", {"cats": [], "entities": [(0, 2, "subject"), (1, 5, "verb"), (3, 6, "adverb")]}),
+        ]
+        self.import_dataset(filename, file_format, self.task)
+        self.assert_examples(dataset)
+
+
+class TestImportCustomWithRelationExtractionData(TestImportData):
+    task = CUSTOM_CLASSIFICATION_AND_SPAN_LABELING
+
+    def setUp(self):
+        self.project = prepare_project(self.task, use_relation=True)
+        self.user = self.project.admin
+        self.data_path = pathlib.Path(__file__).parent / "data"
+        self.upload_id = _get_file_id()
+
+    def assert_examples(self, dataset):
+        self.assertEqual(Example.objects.count(), len(dataset))
+        for text, expected_spans in dataset:
+            example = Example.objects.get(text=text)
+            spans = [[span.start_offset, span.end_offset, span.label.text] for span in example.spans.all()]
+            self.assertEqual(spans, expected_spans)
+            self.assertEqual(example.relations.count(), 3)
+
+    def assert_parse_error(self, response):
+        self.assertGreaterEqual(len(response["error"]), 1)
+        self.assertEqual(Example.objects.count(), 0)
+        self.assertEqual(SpanType.objects.count(), 0)
+        self.assertEqual(Span.objects.count(), 0)
+
+    def test_jsonl(self):
+        filename = "relation_extraction/example.jsonl"
+        file_format = "JSONL"
+        dataset = [
+            (
+                "Google was founded on September 4, 1998, by Larry Page and Sergey Brin.",
+                [[0, 6, "ORG"], [22, 39, "DATE"], [44, 54, "PERSON"], [59, 70, "PERSON"]],
+            ),
+        ]
+        self.import_dataset(filename, file_format, RELATION_EXTRACTION)
+        self.assert_examples(dataset)
