@@ -11,6 +11,7 @@ from .models import (
     Speech2textProject,
     Tag,
     TextClassificationProject,
+    CustomDocumentClassificationProject,
 )
 
 
@@ -118,6 +119,12 @@ class Speech2textProjectSerializer(ProjectSerializer):
 class ImageClassificationProjectSerializer(ProjectSerializer):
     class Meta(ProjectSerializer.Meta):
         model = ImageClassificationProject
+
+
+class CustomDocumentClassificationProjectSerializer(ProjectSerializer):
+    class Meta(ProjectSerializer.Meta):
+        model = CustomDocumentClassificationProject
+        fields = ProjectSerializer.Meta.fields + ["allow_overlapping", "grapheme_mode", "use_relation"]
 
 
 class ProjectPolymorphicSerializer(PolymorphicSerializer):
