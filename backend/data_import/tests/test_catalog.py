@@ -8,6 +8,7 @@ from projects.models import (
     SEQ2SEQ,
     SEQUENCE_LABELING,
     SPEECH2TEXT,
+    CUSTOM_CLASSIFICATION_AND_SPAN_LABELING,
 )
 
 
@@ -20,6 +21,7 @@ class TestOptions(unittest.TestCase):
             SEQ2SEQ,
             SEQUENCE_LABELING,
             SPEECH2TEXT,
+            CUSTOM_CLASSIFICATION_AND_SPAN_LABELING,
         ]
         for task in tasks:
             with self.subTest(task=task):

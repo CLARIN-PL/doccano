@@ -15,6 +15,7 @@ SEQ2SEQ = "Seq2seq"
 SPEECH2TEXT = "Speech2text"
 IMAGE_CLASSIFICATION = "ImageClassification"
 INTENT_DETECTION_AND_SLOT_FILLING = "IntentDetectionAndSlotFilling"
+CUSTOM_CLASSIFICATION_AND_SPAN_LABELING = "Custom"
 PROJECT_CHOICES = (
     (DOCUMENT_CLASSIFICATION, "document classification"),
     (SEQUENCE_LABELING, "sequence labeling"),
@@ -22,6 +23,7 @@ PROJECT_CHOICES = (
     (INTENT_DETECTION_AND_SLOT_FILLING, "intent detection and slot filling"),
     (SPEECH2TEXT, "speech to text"),
     (IMAGE_CLASSIFICATION, "image classification"),
+    (CUSTOM_CLASSIFICATION_AND_SPAN_LABELING, "custom document classification with span labeling"),
 )
 
 
@@ -151,6 +153,28 @@ class ImageClassificationProject(Project):
 
     @property
     def can_define_category(self) -> bool:
+        return True
+
+
+class CustomProject(Project):
+    allow_overlapping = models.BooleanField(default=False)
+    grapheme_mode = models.BooleanField(default=False)
+    use_relation = models.BooleanField(default=False)
+
+    @property
+    def is_text_project(self) -> bool:
+        return True
+
+    @property
+    def can_define_label(self) -> bool:
+        return True
+
+    @property
+    def can_define_category(self) -> bool:
+        return True
+
+    @property
+    def can_define_span(self) -> bool:
         return True
 
 
