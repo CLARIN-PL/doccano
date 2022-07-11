@@ -23,6 +23,7 @@ from projects.models import (
     SEQUENCE_LABELING,
     SPEECH2TEXT,
     Project,
+    CUSTOM_DOCUMENT_CLASSIFICATION,
 )
 
 
@@ -47,6 +48,7 @@ def create_formatter(project: Project, file_format: str) -> List[Formatter]:
     mapper_speech2text = {DATA: "filename", Texts.column: "label"}
     mapper_intent_detection = {DATA: "text", Categories.column: "cats"}
     mapper_relation_extraction = {DATA: "text"}
+    mapper_custom_document_classification = {DATA: "text", Categories.column: "cats"}
     mapping: Dict[str, Dict[str, List[Formatter]]] = {
         DOCUMENT_CLASSIFICATION: {
             CSV.name: [
@@ -93,6 +95,19 @@ def create_formatter(project: Project, file_format: str) -> List[Formatter]:
                 RenameFormatter(**mapper_intent_detection),
             ]
         },
+        CUSTOM_DOCUMENT_CLASSIFICATION: {
+            JSONL.name: [
+                DictFormatter(Spans.column),
+                DictFormatter(Relations.column),
+                RenameFormatter(**mapper_relation_extraction),
+            ]
+            if use_relation
+            else [
+                ListedCategoryFormatter(Categories.column),
+                TupledSpanFormatter(Spans.column),
+                RenameFormatter(**mapper_custom_document_classification)
+            ]
+        },
     }
     return mapping[project.project_type][file_format]
 
@@ -106,6 +121,7 @@ def select_label_collection(project: Project) -> List[Type[Labels]]:
         IMAGE_CLASSIFICATION: [Categories],
         SPEECH2TEXT: [Texts],
         INTENT_DETECTION_AND_SLOT_FILLING: [Categories, Spans],
+        CUSTOM_DOCUMENT_CLASSIFICATION: [Spans, Relations] if use_relation else [Categories, Spans],
     }
     return mapping[project.project_type]
 
