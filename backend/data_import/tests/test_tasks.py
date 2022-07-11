@@ -396,7 +396,7 @@ class TestImportCustomDocumentClassificationWithOverlapData(TestImportData):
             ("exampleE", {"cats": [], "entities": [(0, 1, "subject")]}),
             ("exampleF", {"cats": [], "entities": []}),
             ("exampleG", {"cats": ["anger", "disgust"], "entities": [(0, 1, "verb"), (0, 3, "adverb"), (0, 5, "subject")]}),
-            ("exampleH", {"cats": [], "entities": [(0, 2, "subject"), (1, 5, "verb"), (3, 6, "adverb")]}),
+            ("exampleH", {"cats": [], "entities": [(0, 2, "subject"), (1, 4, "verb"), (1, 6, "adverb")]}),
         ]
         self.import_dataset(filename, file_format, self.task)
         self.assert_examples(dataset)
