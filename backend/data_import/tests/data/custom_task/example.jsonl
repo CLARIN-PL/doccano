@@ -5,4 +5,4 @@
 {"text": "exampleE", "entities": [[0, 1, "subject"]], "cats": []}
 {"text": "exampleF", "entities": [], "cats": []}
 {"text": "exampleG", "entities": [[0, 1, "verb"], [0, 3, "adverb"], [0, 5, "subject"]], "cats": ["anger", "disgust"]}
-{"text": "exampleH", "entities": [[0, 2, "subject"], [1, 5, "verb"], [3, 6, "adverb"]], "cats": []}
+{"text": "exampleH", "entities": [[0, 2, "subject"], [1, 4, "verb"], [1, 6, "adverb"]], "cats": []}
