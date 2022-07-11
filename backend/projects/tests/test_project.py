@@ -96,7 +96,7 @@ class TestCustomDocumentClassificationProjectCreation(CRUDMixin):
         cls.url = reverse(viewname="project_list")
         cls.data = {
             "name": "example",
-            "project_type": "CustomDocumentClassification",
+            "project_type": "Custom",
             "description": "example",
             "guideline": "example",
             "allow_overlapping": True,
