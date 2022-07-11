@@ -464,6 +464,6 @@ Options.register(
         task_id=CUSTOM_DOCUMENT_CLASSIFICATION,
         file_format=JSONL,
         arg=ArgNone,
-        file=CUSTOM_DOCUMENT_CLASSIFICATION / "example.jsonl",
+        file=CUSTOM_DOCUMENT_CLASSIFICATION_DIR / "example.jsonl",
     )
 )
