@@ -27,8 +27,8 @@ from projects.models import (
     SEQ2SEQ,
     SEQUENCE_LABELING,
     SPEECH2TEXT,
-    CUSTOM_CLASSIFICATION_AND_SPAN_LABELING,
     Project,
+    CUSTOM_DOCUMENT_CLASSIFICATION,
 )
 
 
@@ -220,7 +220,7 @@ def select_dataset(project: Project, task: str, file_format: Format) -> Type[Dat
         INTENT_DETECTION_AND_SLOT_FILLING: CategoryAndSpanDataset,
         IMAGE_CLASSIFICATION: BinaryDataset,
         SPEECH2TEXT: BinaryDataset,
-        CUSTOM_CLASSIFICATION_AND_SPAN_LABELING: CategoryAndSpanDataset,
+        CUSTOM_DOCUMENT_CLASSIFICATION: CategoryAndSpanDataset,
     }
     if task not in mapping:
         task = project.project_type

@@ -1,5 +1,4 @@
 import abc
-
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -15,7 +14,7 @@ SEQ2SEQ = "Seq2seq"
 SPEECH2TEXT = "Speech2text"
 IMAGE_CLASSIFICATION = "ImageClassification"
 INTENT_DETECTION_AND_SLOT_FILLING = "IntentDetectionAndSlotFilling"
-CUSTOM_CLASSIFICATION_AND_SPAN_LABELING = "Custom"
+CUSTOM_DOCUMENT_CLASSIFICATION = "Custom"
 PROJECT_CHOICES = (
     (DOCUMENT_CLASSIFICATION, "document classification"),
     (SEQUENCE_LABELING, "sequence labeling"),
@@ -23,7 +22,7 @@ PROJECT_CHOICES = (
     (INTENT_DETECTION_AND_SLOT_FILLING, "intent detection and slot filling"),
     (SPEECH2TEXT, "speech to text"),
     (IMAGE_CLASSIFICATION, "image classification"),
-    (CUSTOM_CLASSIFICATION_AND_SPAN_LABELING, "custom document classification with span labeling"),
+    (CUSTOM_DOCUMENT_CLASSIFICATION, "custom document classification"),
 )
 
 
@@ -156,7 +155,7 @@ class ImageClassificationProject(Project):
         return True
 
 
-class CustomProject(Project):
+class CustomDocumentClassificationProject(Project):
     allow_overlapping = models.BooleanField(default=False)
     grapheme_mode = models.BooleanField(default=False)
     use_relation = models.BooleanField(default=False)

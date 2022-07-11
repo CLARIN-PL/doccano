@@ -10,7 +10,7 @@ from projects.models import (
     SEQ2SEQ,
     SEQUENCE_LABELING,
     SPEECH2TEXT,
-    CUSTOM_CLASSIFICATION_AND_SPAN_LABELING,
+    CUSTOM_DOCUMENT_CLASSIFICATION,
     Member,
     Role,
 )
@@ -69,7 +69,7 @@ def make_project(task: str, users: List[str], roles: List[str], collaborative_an
         SPEECH2TEXT: "Speech2TextProject",
         IMAGE_CLASSIFICATION: "ImageClassificationProject",
         INTENT_DETECTION_AND_SLOT_FILLING: "IntentDetectionAndSlotFillingProject",
-        CUSTOM_CLASSIFICATION_AND_SPAN_LABELING: "CustomProject",
+        CUSTOM_DOCUMENT_CLASSIFICATION: "CustomDocumentClassificationProject",
     }.get(task, "Project")
     project = mommy.make(
         _model=project_model,

@@ -88,7 +88,7 @@ class TestSequenceLabelingProjectCreation(CRUDMixin):
         self.assertEqual(response.data["grapheme_mode"], self.data["grapheme_mode"])
 
 
-class TestCustomProjectCreation(CRUDMixin):
+class TestCustomDocumentClassificationProjectCreation(CRUDMixin):
     @classmethod
     def setUpTestData(cls):
         create_default_roles()
@@ -96,12 +96,12 @@ class TestCustomProjectCreation(CRUDMixin):
         cls.url = reverse(viewname="project_list")
         cls.data = {
             "name": "example",
-            "project_type": "CustomProject",
+            "project_type": "CustomDocumentClassification",
             "description": "example",
             "guideline": "example",
             "allow_overlapping": True,
             "grapheme_mode": True,
-            "resourcetype": "CustomProject",
+            "resourcetype": "CustomDocumentClassificationProject",
         }
 
     def test_allows_staff_user_to_create_project(self):
