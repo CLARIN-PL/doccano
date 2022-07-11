@@ -162,7 +162,7 @@ class CustomDocumentClassificationProject(Project):
 
     @property
     def is_text_project(self) -> bool:
-        return False
+        return True
 
     @property
     def can_define_label(self) -> bool:
