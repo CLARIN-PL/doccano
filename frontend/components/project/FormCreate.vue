@@ -60,32 +60,32 @@
           @input="updateValue('tags', $event)"
         />
         <v-checkbox
-          v-if="hasSingleLabelOption"
+          v-if="hasSingleLabelOption || isCustomProject"
           :value="singleClassClassification"
           label="Allow single label"
           @change="updateValue('singleClassClassification', $event === true)"
         />
         <v-checkbox
-          v-if="isSequenceLabelingProject"
+          v-if="isSequenceLabelingProject || isCustomProject"
           :value="allowOverlapping"
           label="Allow overlapping entity"
           @change="updateValue('allowOverlapping', $event === true)"
         />
         <v-img
-          v-if="isSequenceLabelingProject"
+          v-if="isSequenceLabelingProject || isCustomProject"
           :src="require('~/assets/project/creation.gif')"
           height="200"
           position="left"
           contain
         />
         <v-checkbox
-          v-if="isSequenceLabelingProject"
+          v-if="isSequenceLabelingProject || isCustomProject"
           :value="useRelation"
           label="Use relation labeling"
           @change="updateValue('useRelation', $event === true)"
         />
         <v-checkbox
-          v-if="isSequenceLabelingProject"
+          v-if="isSequenceLabelingProject || isCustomProject"
           :value="graphemeMode"
           @change="updateValue('graphemeMode', $event === true)"
         >
@@ -204,7 +204,8 @@ export default Vue.extend({
         'Seq2seq',
         'IntentDetectionAndSlotFilling',
         'ImageClassification',
-        'Speech2text'
+        'Speech2text',
+        'Custom'
       ]
     },
     images() {
@@ -214,7 +215,8 @@ export default Vue.extend({
         'seq2seq.png',
         'intent_detection.png',
         'image_classification.png',
-        'speech_to_text.png'
+        'speech_to_text.png',
+        'custom.png'
       ]
     },
     hasSingleLabelOption() {
@@ -222,6 +224,9 @@ export default Vue.extend({
     },
     isSequenceLabelingProject() {
       return this.projectType === 'SequenceLabeling'
+    },
+    isCustomProject() {
+      return this.projectType === 'Custom'
     }
   },
 

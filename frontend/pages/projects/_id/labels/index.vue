@@ -5,6 +5,11 @@
         <v-tab class="text-capitalize">Category</v-tab>
         <v-tab class="text-capitalize">Span</v-tab>
       </template>
+      <template v-else-if="isCustom">
+        <v-tab class="text-capitalize">Category</v-tab>
+        <v-tab class="text-capitalize">Span</v-tab>
+        <v-tab class="text-capitalize">Relation</v-tab>
+      </template>
       <template v-else>
         <v-tab class="text-capitalize">Span</v-tab>
         <v-tab class="text-capitalize">Relation</v-tab>
@@ -79,7 +84,7 @@ export default Vue.extend({
 
     hasMultiType(): boolean {
       if ('projectType' in this.project) {
-        return this.isIntentDetectionAndSlotFilling || !!this.project.useRelation
+        return this.isIntentDetectionAndSlotFilling || this.isCustom || !!this.project.useRelation
       } else {
         return false
       }
@@ -88,11 +93,16 @@ export default Vue.extend({
     isIntentDetectionAndSlotFilling(): boolean {
       return this.project.projectType === 'IntentDetectionAndSlotFilling'
     },
+    isCustom(): boolean {
+      return this.project.projectType === 'Custom'
+    },
 
     labelType(): string {
       if (this.hasMultiType) {
         if (this.isIntentDetectionAndSlotFilling) {
           return ['category', 'span'][this.tab!]
+        } else if (this.isCustom) {
+          return ['category', 'span', 'relation'][this.tab!]
         } else {
           return ['span', 'relation'][this.tab!]
         }
@@ -110,6 +120,12 @@ export default Vue.extend({
       if (this.hasMultiType) {
         if (this.isIntentDetectionAndSlotFilling) {
           return [this.$services.categoryType, this.$services.spanType][this.tab!]
+        } else if (this.isCustom) {
+          return [
+            this.$services.categoryType,
+            this.$services.spanType,
+            this.$services.relationType
+          ][this.tab!]
         } else {
           return [this.$services.spanType, this.$services.relationType][this.tab!]
         }
