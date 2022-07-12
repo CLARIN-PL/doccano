@@ -9,6 +9,7 @@ from projects.models import (
     SEQ2SEQ,
     SEQUENCE_LABELING,
     SPEECH2TEXT,
+    CUSTOM_DOCUMENT_CLASSIFICATION,
 )
 
 EXAMPLE_DIR = Path(__file__).parent.resolve() / "examples"
@@ -93,3 +94,9 @@ Options.register(IMAGE_CLASSIFICATION, JSONL, IMAGE_CLASSIFICATION_DIR / "exampl
 # Speech to Text
 SPEECH2TEXT_DIR = EXAMPLE_DIR / "speech_to_text"
 Options.register(SPEECH2TEXT, JSONL, SPEECH2TEXT_DIR / "example.jsonl")
+
+# Custom Document Classification
+CUSTOM_DOCUMENT_CLASSIFICATION_DIR = EXAMPLE_DIR / "custom_document_classification"
+CUSTOM_DOCUMENT_CLASSIFICATION_RELATION_EXTRACTION_DIR = EXAMPLE_DIR / "relation_extraction"
+Options.register(CUSTOM_DOCUMENT_CLASSIFICATION, JSONL, CUSTOM_DOCUMENT_CLASSIFICATION_DIR / "example.jsonl")
+Options.register(CUSTOM_DOCUMENT_CLASSIFICATION, JSONL, CUSTOM_DOCUMENT_CLASSIFICATION_RELATION_EXTRACTION_DIR / "example.jsonl", True)
