@@ -60,7 +60,7 @@
           @input="updateValue('tags', $event)"
         />
         <v-checkbox
-          v-if="hasSingleLabelOption"
+          v-if="hasSingleLabelOption || isCustomProject"
           :value="singleClassClassification"
           label="Allow single label"
           @change="updateValue('singleClassClassification', $event === true)"
