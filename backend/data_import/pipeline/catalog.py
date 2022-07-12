@@ -14,6 +14,7 @@ from projects.models import (
     SEQ2SEQ,
     SEQUENCE_LABELING,
     SPEECH2TEXT,
+    CUSTOM_DOCUMENT_CLASSIFICATION,
 )
 
 # Define the example directories
@@ -26,6 +27,7 @@ SEQ2SEQ_DIR = EXAMPLE_DIR / "sequence_to_sequence"
 INTENT_DETECTION_DIR = EXAMPLE_DIR / "intent_detection"
 IMAGE_CLASSIFICATION_DIR = EXAMPLE_DIR / "image_classification"
 SPEECH_TO_TEXT_DIR = EXAMPLE_DIR / "speech_to_text"
+CUSTOM_DOCUMENT_CLASSIFICATION_DIR = EXAMPLE_DIR / "custom_document_classification"
 
 # Define the task identifiers
 RELATION_EXTRACTION = "RelationExtraction"
@@ -284,7 +286,8 @@ class Options:
 
 
 # Text tasks
-text_tasks = [DOCUMENT_CLASSIFICATION, SEQUENCE_LABELING, SEQ2SEQ, INTENT_DETECTION_AND_SLOT_FILLING]
+text_tasks = [DOCUMENT_CLASSIFICATION, SEQUENCE_LABELING, SEQ2SEQ, INTENT_DETECTION_AND_SLOT_FILLING,
+              CUSTOM_DOCUMENT_CLASSIFICATION]
 for task_id in text_tasks:
     Options.register(
         Option(
@@ -451,5 +454,16 @@ Options.register(
         file_format=AudioFile,
         arg=ArgNone,
         file=SPEECH_TO_TEXT_DIR / "audio_files.txt",
+    )
+)
+
+# Custom document classification
+Options.register(
+    Option(
+        display_name=JSONL.name,
+        task_id=CUSTOM_DOCUMENT_CLASSIFICATION,
+        file_format=JSONL,
+        arg=ArgColumn,
+        file=CUSTOM_DOCUMENT_CLASSIFICATION_DIR / "example.jsonl",
     )
 )
