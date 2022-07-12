@@ -19,7 +19,7 @@
           <label-group
             :labels="categoryTypes"
             :annotations="categories"
-            :single-label="exclusive"
+            :single-label="project.singleClassClassification"
             @add="addCategory"
             @remove="removeCategory"
           />
