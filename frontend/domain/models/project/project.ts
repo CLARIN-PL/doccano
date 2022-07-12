@@ -8,6 +8,7 @@ export type ProjectType =
   | 'IntentDetectionAndSlotFilling'
   | 'ImageClassification'
   | 'Speech2text'
+  | 'Custom'
 
 export class ProjectReadItem {
   id: number
@@ -66,7 +67,8 @@ export class ProjectReadItem {
       Seq2seq: 'sequence-to-sequence',
       IntentDetectionAndSlotFilling: 'intent-detection-and-slot-filling',
       ImageClassification: 'image-classification',
-      Speech2text: 'speech-to-text'
+      Speech2text: 'speech-to-text',
+      Custom: 'custom'
     }
     const url = `/projects/${this.id}/${mapping[this.projectType]}`
     return url
@@ -113,7 +115,8 @@ export class ProjectWriteItem {
       Seq2seq: 'Seq2seqProject',
       IntentDetectionAndSlotFilling: 'IntentDetectionAndSlotFillingProject',
       ImageClassification: 'ImageClassificationProject',
-      Speech2text: 'Speech2textProject'
+      Speech2text: 'Speech2textProject',
+      Custom: 'CustomDocumentClassificationProject'
     }
     return mapping[this.project_type]
   }
