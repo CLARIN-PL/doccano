@@ -130,8 +130,7 @@ export default {
       rtl: false,
       selectedLabelIndex: null,
       progress: {},
-      relationMode: true,
-      exclusive: false
+      relationMode: false
     }
   },
 
