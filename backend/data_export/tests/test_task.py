@@ -663,6 +663,8 @@ class TestCustomDocumentClassificationExportRelation(TestExport):
         self.project = prepare_project(CUSTOM_DOCUMENT_CLASSIFICATION, use_relation=True, collaborative_annotation=collaborative)
         self.example1 = mommy.make("ExportedExample", project=self.project.item, text="example")
         self.example2 = mommy.make("ExportedExample", project=self.project.item, text="unconfirmed")
+        self.category1 = mommy.make("ExportedCategory", example=self.example1, user=self.project.admin)
+        self.category2 = mommy.make("ExportedCategory", example=self.example1, user=self.project.annotator)
         self.span1 = mommy.make(
             "ExportedSpan", example=self.example1, user=self.project.admin, start_offset=0, end_offset=1
         )
@@ -688,20 +690,22 @@ class TestCustomDocumentClassificationExportRelation(TestExport):
                     **self.data1,
                     "entities": [self.span1.to_dict(), self.span2.to_dict()],
                     "relations": [self.relation.to_dict()],
+                    "cats": [self.category1.to_string()],
                 },
-                {**self.data2, "entities": [], "relations": []},
+                {**self.data2, "entities": [], "relations": [], "cats": []},
             ],
             self.project.annotator.username: [
                 {
                     **self.data1,
                     "entities": [self.span3.to_dict()],
                     "relations": [],
+                    "cats": [self.category2.to_string()],
                 },
-                {**self.data2, "entities": [], "relations": []},
+                {**self.data2, "entities": [], "relations": [], "cats" : []},
             ],
             self.project.approver.username: [
-                {**self.data1, "entities": [], "relations": []},
-                {**self.data2, "entities": [], "relations": []},
+                {**self.data1, "entities": [], "relations": [], "cats": []},
+                {**self.data2, "entities": [], "relations": [], "cats": []},
             ],
         }
         for username, dataset in expected_datasets.items():
@@ -715,8 +719,9 @@ class TestCustomDocumentClassificationExportRelation(TestExport):
                 **self.data1,
                 "entities": [self.span1.to_dict(), self.span2.to_dict(), self.span3.to_dict()],
                 "relations": [self.relation.to_dict()],
+                "cats": sorted([self.category1.to_string(), self.category2.to_string()]),
             },
-            {**self.data2, "entities": [], "relations": []},
+            {**self.data2, "entities": [], "relations": [], "cats": []},
         ]
         self.assertEqual(dataset, expected_dataset)
 
@@ -729,6 +734,7 @@ class TestCustomDocumentClassificationExportRelation(TestExport):
                     **self.data1,
                     "entities": [self.span1.to_dict(), self.span2.to_dict()],
                     "relations": [self.relation.to_dict()],
+                    "cats": [self.category1.to_string()],
                 },
             ],
             self.project.annotator.username: [],
@@ -745,6 +751,7 @@ class TestCustomDocumentClassificationExportRelation(TestExport):
                 **self.data1,
                 "entities": [self.span1.to_dict(), self.span2.to_dict(), self.span3.to_dict()],
                 "relations": [self.relation.to_dict()],
+                "cats": sorted([self.category1.to_string(), self.category2.to_string()]),
             }
         ]
         self.assertEqual(dataset, expected_dataset)
