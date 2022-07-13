@@ -97,9 +97,10 @@ def create_formatter(project: Project, file_format: str) -> List[Formatter]:
         },
         CUSTOM_DOCUMENT_CLASSIFICATION: {
             JSONL.name: [
+                ListedCategoryFormatter(Categories.column),
                 DictFormatter(Spans.column),
                 DictFormatter(Relations.column),
-                RenameFormatter(**mapper_relation_extraction),
+                RenameFormatter(**mapper_custom_document_classification),
             ]
             if use_relation
             else [
@@ -121,7 +122,7 @@ def select_label_collection(project: Project) -> List[Type[Labels]]:
         IMAGE_CLASSIFICATION: [Categories],
         SPEECH2TEXT: [Texts],
         INTENT_DETECTION_AND_SLOT_FILLING: [Categories, Spans],
-        CUSTOM_DOCUMENT_CLASSIFICATION: [Spans, Relations] if use_relation else [Categories, Spans],
+        CUSTOM_DOCUMENT_CLASSIFICATION: [Categories, Spans, Relations] if use_relation else [Categories, Spans],
     }
     return mapping[project.project_type]
 
