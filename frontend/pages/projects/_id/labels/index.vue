@@ -8,7 +8,7 @@
       <template v-else-if="isCustom">
         <v-tab class="text-capitalize">Category</v-tab>
         <v-tab class="text-capitalize">Span</v-tab>
-        <v-tab class="text-capitalize">Relation</v-tab>
+        <v-tab v-if="project.useRelation" class="text-capitalize">Relation</v-tab>
       </template>
       <template v-else>
         <v-tab class="text-capitalize">Span</v-tab>
