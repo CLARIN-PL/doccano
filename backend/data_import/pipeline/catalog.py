@@ -23,6 +23,7 @@ TASK_AGNOSTIC_DIR = EXAMPLE_DIR / "task_agnostic"
 TEXT_CLASSIFICATION_DIR = EXAMPLE_DIR / "text_classification"
 SEQUENCE_LABELING_DIR = EXAMPLE_DIR / "sequence_labeling"
 RELATION_EXTRACTION_DIR = EXAMPLE_DIR / "relation_extraction"
+CUSTOM_RELATION_EXTRACTION_DIR = EXAMPLE_DIR / "custom_relation_extraction"
 SEQ2SEQ_DIR = EXAMPLE_DIR / "sequence_to_sequence"
 INTENT_DETECTION_DIR = EXAMPLE_DIR / "intent_detection"
 IMAGE_CLASSIFICATION_DIR = EXAMPLE_DIR / "image_classification"
@@ -31,6 +32,7 @@ CUSTOM_DOCUMENT_CLASSIFICATION_DIR = EXAMPLE_DIR / "custom_document_classificati
 
 # Define the task identifiers
 RELATION_EXTRACTION = "RelationExtraction"
+CUSTOM_RELATION_EXTRACTION = "CustomRelationExtraction"
 
 encodings = Literal[
     "Auto",
@@ -276,8 +278,10 @@ class Options:
     @classmethod
     def filter_by_task(cls, task_name: str, use_relation: bool = False):
         options = cls.options[task_name]
-        if use_relation:
+        if use_relation and task_name != "Custom":
             options = cls.options[task_name] + cls.options[RELATION_EXTRACTION]
+        elif task_name == "Custom" and use_relation:
+            options = cls.options[task_name] + cls.options[CUSTOM_RELATION_EXTRACTION]
         return [option.dict() for option in options]
 
     @classmethod
@@ -465,5 +469,16 @@ Options.register(
         file_format=JSONL,
         arg=ArgColumn,
         file=CUSTOM_DOCUMENT_CLASSIFICATION_DIR / "example.jsonl",
+    )
+)
+
+# Custom Relation Extraction
+Options.register(
+    Option(
+        display_name="JSONL(Relation)",
+        task_id=CUSTOM_RELATION_EXTRACTION,
+        file_format=JSONL,
+        arg=ArgNone,
+        file=CUSTOM_RELATION_EXTRACTION_DIR / "example.jsonl",
     )
 )
