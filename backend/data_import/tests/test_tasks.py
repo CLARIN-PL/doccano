@@ -8,7 +8,7 @@ from django_drf_filepond.models import StoredUpload, TemporaryUpload
 from django_drf_filepond.utils import _get_file_id
 
 from data_import.celery_tasks import import_dataset
-from data_import.pipeline.catalog import RELATION_EXTRACTION
+from data_import.pipeline.catalog import RELATION_EXTRACTION, CUSTOM_RELATION_EXTRACTION
 from examples.models import Example
 from label_types.models import SpanType
 from labels.models import Category, Span
@@ -413,9 +413,11 @@ class TestImportCustomDocumentClassificationWithRelationExtractionData(TestImpor
 
     def assert_examples(self, dataset):
         self.assertEqual(Example.objects.count(), len(dataset))
-        for text, expected_spans in dataset:
+        for text, expected_label, expected_spans in dataset:
             example = Example.objects.get(text=text)
+            cats = [cat.label.text for cat in example.categories.all()]
             spans = [[span.start_offset, span.end_offset, span.label.text] for span in example.spans.all()]
+            self.assertEqual(cats, expected_label)
             self.assertEqual(spans, expected_spans)
             self.assertEqual(example.relations.count(), 3)
 
@@ -430,9 +432,9 @@ class TestImportCustomDocumentClassificationWithRelationExtractionData(TestImpor
         file_format = "JSONL"
         dataset = [
             (
-                "Google was founded on September 4, 1998, by Larry Page and Sergey Brin.",
+                "Google was founded on September 4, 1998, by Larry Page and Sergey Brin.", ["Neutral"],
                 [[0, 6, "ORG"], [22, 39, "DATE"], [44, 54, "PERSON"], [59, 70, "PERSON"]],
             ),
         ]
-        self.import_dataset(filename, file_format, RELATION_EXTRACTION)
+        self.import_dataset(filename, file_format, CUSTOM_RELATION_EXTRACTION)
         self.assert_examples(dataset)
