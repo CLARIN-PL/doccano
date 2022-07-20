@@ -3,6 +3,7 @@ export class MemberItem {
   user: number
   role: number
   username: string
+  email: string
   rolename: string
 
   get isProjectAdmin(): boolean {
@@ -15,6 +16,7 @@ export class MemberItem {
       user: this.user,
       role: this.role,
       username: this.username,
+      email: this.email,
       rolename: this.rolename
     }
   }

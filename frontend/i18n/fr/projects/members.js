@@ -4,7 +4,7 @@ export default {
   updateRole: 'Mettre à jour le rôle',
   addMember: 'Ajouter un membre',
   userSearchAPIs: "Rechercher des utilisateurs (avec l'IPA)",
-  userSearchPrompt: 'Commencez à taper pour rechercher',
+  userSearchPrompt: "Tapez l'e-mail de l'utilisateur pour rechercher",
   removeMember: 'Supprimer un membre',
   removePrompt: 'Êtes-vous sûr de vouloir supprimer ces membres ?',
   roles: {

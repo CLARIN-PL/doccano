@@ -5,6 +5,7 @@ export class MemberDTO {
   user: number
   role: number
   username: string
+  email: string
   rolename: string
 
   constructor(item: MemberItem) {
@@ -12,6 +13,7 @@ export class MemberDTO {
     this.user = item.user
     this.role = item.role
     this.username = item.username
+    this.email = item.email
     this.rolename = item.rolename
   }
 }
