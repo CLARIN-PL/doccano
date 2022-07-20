@@ -26,7 +26,7 @@ export default Vue.extend({
   computed: {
     ssoLoginUrl() {
       const baseUrl = window.location.origin
-      const apiUrl = process.env.API_URL || 'http://127.0.0.1:8000'
+      const apiUrl = process.env.API_URL || 'http://localhost:8000'
 
       return `${apiUrl}/keycloak/login?next=${baseUrl}/projects?limit=10&offset=0`
     }
