@@ -15,13 +15,21 @@
           :loading="isLoading"
           :search-input.sync="username"
           hide-no-data
-          item-text="username"
+          item-text="email"
+          item-value="username"
           :label="$t('members.userSearchAPIs')"
           :placeholder="$t('members.userSearchPrompt')"
           :prepend-icon="mdiAccount"
           :rules="[rules.userRequired]"
           return-object
-        />
+        >
+          <template slot="item" slot-scope="{ item }">
+            <v-list-item-content>
+              <p class="font-weight-bold">{{item.username}}</p>
+              <p>{{item.email}}</p>
+            </v-list-item-content>
+          </template>
+        </v-autocomplete>
         <v-select
           v-model="role"
           :items="roles"
@@ -103,6 +111,7 @@ export default Vue.extend({
         return {
           id: this.value.user,
           username: this.value.username,
+          email: this.value.email,
           isStaff: false
         }
       },

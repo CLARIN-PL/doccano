@@ -4,7 +4,7 @@ export default {
   updateRole: 'Update Role',
   addMember: 'Add Member',
   userSearchAPIs: 'User Search APIs',
-  userSearchPrompt: 'Start typing to search',
+  userSearchPrompt: 'Type user\'s email to search',
   removeMember: 'Remove Member',
   removePrompt: 'Are you sure you want to remove these members?',
   roles: {
