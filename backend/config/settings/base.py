@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "health_check.contrib.migrations",
     "health_check.contrib.celery",
     "django_cleanup",
+    "django_keycloak.apps.KeycloakAppConfig",
 ]
 
 
@@ -78,6 +79,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django_keycloak.middleware.BaseKeycloakMiddleware",
 ]
 
 
@@ -114,6 +116,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 # Auth settings
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
+    "django_keycloak.auth.backends.KeycloakAuthorizationCodeBackend",
 ]
 HEADER_AUTH_USER_NAME = env("HEADER_AUTH_USER_NAME", "")
 HEADER_AUTH_USER_GROUPS = env("HEADER_AUTH_USER_GROUPS", "")
@@ -179,8 +182,8 @@ USE_TZ = True
 TEST_RUNNER = "xmlrunner.extra.djangotestrunner.XMLTestRunner"
 TEST_OUTPUT_DIR = path.join(BASE_DIR, "junitxml")
 
-LOGIN_URL = "/login/"
-LOGIN_REDIRECT_URL = "/projects/"
+LOGIN_URL = "/auth"
+LOGIN_REDIRECT_URL = "/projects"
 LOGOUT_REDIRECT_URL = "/"
 
 # Database

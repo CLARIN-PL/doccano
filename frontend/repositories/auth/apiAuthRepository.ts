@@ -10,7 +10,7 @@ export class APIAuthRepository implements AuthRepository {
   }
 
   async logout(): Promise<void> {
-    const url = '/auth/logout/'
+    const url = '/keycloak_logout'
     await this.request.post(url)
   }
 }

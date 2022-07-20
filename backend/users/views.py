@@ -1,3 +1,8 @@
+from django.conf import settings
+from django.urls import reverse
+from django.shortcuts import resolve_url
+from django.views.generic.base import RedirectView
+from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics
@@ -24,3 +29,25 @@ class Users(generics.ListAPIView):
     pagination_class = None
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     search_fields = ("username",)
+
+
+class KeycloakLogout(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        if hasattr(self.request.user, "oidc_profile"):
+            self.request.realm.client.openid_api_client.logout(
+                self.request.user.oidc_profile.refresh_token
+            )
+            self.request.user.oidc_profile.access_token = None
+            self.request.user.oidc_profile.expires_before = None
+            self.request.user.oidc_profile.refresh_token = None
+            self.request.user.oidc_profile.refresh_expires_before = None
+            self.request.user.oidc_profile.save(update_fields=[
+                "access_token",
+                "expires_before",
+                "refresh_token",
+                "refresh_expires_before"
+            ])
+        logout(self.request)
+        if settings.LOGOUT_REDIRECT_URL:
+            return resolve_url(settings.LOGOUT_REDIRECT_URL)
+        return reverse("login")
