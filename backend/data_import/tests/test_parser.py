@@ -17,7 +17,7 @@ class TestParser(unittest.TestCase):
         shutil.rmtree(self.test_dir)
 
     def create_file(self, content):
-        with open(self.test_file, "w") as f:
+        with open(self.test_file, "w", encoding="utf-8") as f:
             f.write(content)
 
     def assert_record(self, content, parser, expected):
