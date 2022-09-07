@@ -14,6 +14,7 @@ from projects.models import (
     SEQ2SEQ,
     SEQUENCE_LABELING,
     SPEECH2TEXT,
+    ARTICLE_ANNOTATION,
 )
 
 # Define the example directories
@@ -22,13 +23,16 @@ TASK_AGNOSTIC_DIR = EXAMPLE_DIR / "task_agnostic"
 TEXT_CLASSIFICATION_DIR = EXAMPLE_DIR / "text_classification"
 SEQUENCE_LABELING_DIR = EXAMPLE_DIR / "sequence_labeling"
 RELATION_EXTRACTION_DIR = EXAMPLE_DIR / "relation_extraction"
+CUSTOM_RELATION_EXTRACTION_DIR = EXAMPLE_DIR / "custom_relation_extraction"
 SEQ2SEQ_DIR = EXAMPLE_DIR / "sequence_to_sequence"
 INTENT_DETECTION_DIR = EXAMPLE_DIR / "intent_detection"
 IMAGE_CLASSIFICATION_DIR = EXAMPLE_DIR / "image_classification"
 SPEECH_TO_TEXT_DIR = EXAMPLE_DIR / "speech_to_text"
+ARTICLE_ANNOTATION_DIR = EXAMPLE_DIR / "article_annotation"
 
 # Define the task identifiers
 RELATION_EXTRACTION = "RelationExtraction"
+CUSTOM_RELATION_EXTRACTION = "CustomRelationExtraction"
 
 encodings = Literal[
     "Auto",
@@ -274,8 +278,10 @@ class Options:
     @classmethod
     def filter_by_task(cls, task_name: str, use_relation: bool = False):
         options = cls.options[task_name]
-        if use_relation:
+        if use_relation and task_name != "ArticleAnnotation":
             options = cls.options[task_name] + cls.options[RELATION_EXTRACTION]
+        elif task_name == "ArticleAnnotation" and use_relation:
+            options = cls.options[task_name] + cls.options[CUSTOM_RELATION_EXTRACTION]
         return [option.dict() for option in options]
 
     @classmethod
@@ -284,7 +290,7 @@ class Options:
 
 
 # Text tasks
-text_tasks = [DOCUMENT_CLASSIFICATION, SEQUENCE_LABELING, SEQ2SEQ, INTENT_DETECTION_AND_SLOT_FILLING]
+text_tasks = [DOCUMENT_CLASSIFICATION, SEQUENCE_LABELING, SEQ2SEQ, INTENT_DETECTION_AND_SLOT_FILLING, ARTICLE_ANNOTATION]
 for task_id in text_tasks:
     Options.register(
         Option(
@@ -451,5 +457,27 @@ Options.register(
         file_format=AudioFile,
         arg=ArgNone,
         file=SPEECH_TO_TEXT_DIR / "audio_files.txt",
+    )
+)
+
+# Article Annotation
+Options.register(
+    Option(
+        display_name=JSON.name,
+        task_id=ARTICLE_ANNOTATION,
+        file_format=JSON,
+        arg=ArgColumn,
+        file=ARTICLE_ANNOTATION_DIR / "example.json"
+    )
+)
+
+# Custom Relation Extraction
+Options.register(
+    Option(
+        display_name="JSONL(Relation)",
+        task_id=CUSTOM_RELATION_EXTRACTION,
+        file_format=JSONL,
+        arg=ArgNone,
+        file=CUSTOM_RELATION_EXTRACTION_DIR / "example.jsonl",
     )
 )
