@@ -1,0 +1,46 @@
+[
+    {
+        "text": "W Szczebrzeszynie chrząszcz brzmi w trzcinie.",
+        "cats": ["joy", "positive"],
+        "entities": [
+            {
+                "id": 0,
+                "start_offset": 2,
+                "end_offset": 16,
+                "label": "miejscownik"
+            },
+            {
+                "id": 1,
+                "start_offset": 18,
+                "end_offset": 26,
+                "label": "rzeczownik"
+            },
+            {
+                "id": 2,
+                "start_offset": 28,
+                "end_offset": 32,
+                "label": "czasownik"
+            }
+        ],
+        "relations": [
+            {
+                "from_id": 1,
+                "to_id": 2,
+                "type": "isDoing"
+            },
+            {
+                "from_id": 0,
+                "to_id": 1,
+                "type": "explainsWhere"
+            }
+        ],
+        "meta": {
+            "article_id": "8eabas8s5pveszg917vm1357",
+            "article_title": "10 Craziest Polish Tongue Twisters",
+            "publish_datetime": "2022-08-01 13:59:59",
+            "crawled_datetime": "2022-09-05 08:12:45",
+            "type": "subheader",
+            "order": 10
+        }
+    }
+]
