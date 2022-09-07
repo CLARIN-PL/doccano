@@ -48,7 +48,7 @@ class TextData(BaseData):
             text=self.text,
             meta=self.meta,
             article_id=self.article_id,
-            order=int(self.order),
+            order=int(self.order) if self.order else None,
         )
 
 
@@ -62,5 +62,5 @@ class BinaryData(BaseData):
             text=None,
             meta=self.meta,
             article_id=self.article_id,
-            order=int(self.order),
+            order=int(self.order) if self.order else None,
         )
