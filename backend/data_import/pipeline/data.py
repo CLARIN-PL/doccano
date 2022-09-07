@@ -12,13 +12,15 @@ class BaseData(BaseModel, abc.ABC):
     upload_name: str
     uuid: UUID4
     meta: Dict[Any, Any] = {}
+    article_id: str
+    order: str
 
     def __init__(self, **data):
         super().__init__(**data)
 
     @classmethod
-    def parse(cls, example_uuid: UUID4, filename: str, upload_name: str, text: str = "", **kwargs):
-        return cls(uuid=example_uuid, filename=filename, upload_name=upload_name, text=text, meta=kwargs)
+    def parse(cls, example_uuid: UUID4, filename: str, upload_name: str, text: str = "", article_id: str = "",  order: str = "", **kwargs):
+        return cls(uuid=example_uuid, filename=filename, upload_name=upload_name, text=text, article_id=article_id, order=order, meta=kwargs)
 
     def __hash__(self):
         return hash(tuple(self.dict()))
@@ -26,7 +28,6 @@ class BaseData(BaseModel, abc.ABC):
     @abc.abstractmethod
     def create(self, project: Project) -> Example:
         raise NotImplementedError("Please implement this method in the subclass.")
-
 
 class TextData(BaseData):
     text: str
@@ -46,6 +47,8 @@ class TextData(BaseData):
             upload_name=self.upload_name,
             text=self.text,
             meta=self.meta,
+            article_id=self.article_id,
+            order=int(self.order),
         )
 
 
@@ -58,4 +61,6 @@ class BinaryData(BaseData):
             upload_name=self.upload_name,
             text=None,
             meta=self.meta,
+            article_id=self.article_id,
+            order=int(self.order),
         )
