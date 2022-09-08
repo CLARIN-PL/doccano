@@ -420,7 +420,19 @@ class TestImportArticleAnnotationWithRelationExtractionData(TestImportData):
         file_format = "JSON"
         dataset = [
             (
-                "W Szczebrzeszynie chrząszcz brzmi w trzcinie.", ["joy", "positive"],
+                "Example", ["joy", "positive"],
+                [[2, 16, "miejscownik"], [18, 26, "rzeczownik"], [28, 32, "czasownik"]],
+            ),
+        ]
+        self.import_dataset(filename, file_format, CUSTOM_RELATION_EXTRACTION)
+        self.assert_examples(dataset)
+
+    def test_jsonl(self):
+        filename = "custom_relation_extraction/example.jsonl"
+        file_format = "JSONL"
+        dataset = [
+            (
+                "Example", ["joy", "positive"],
                 [[2, 16, "miejscownik"], [18, 26, "rzeczownik"], [28, 32, "czasownik"]],
             ),
         ]
