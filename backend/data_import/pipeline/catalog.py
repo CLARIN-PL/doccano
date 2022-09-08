@@ -481,3 +481,14 @@ Options.register(
         file=CUSTOM_RELATION_EXTRACTION_DIR / "example.jsonl",
     )
 )
+
+# Custom Relation Extraction
+Options.register(
+    Option(
+        display_name="JSON(Relation)",
+        task_id=CUSTOM_RELATION_EXTRACTION,
+        file_format=JSON,
+        arg=ArgNone,
+        file=CUSTOM_RELATION_EXTRACTION_DIR / "example.json",
+    )
+)
