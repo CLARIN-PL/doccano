@@ -3,7 +3,7 @@
     <p>
       {{ header }}
       {{ question }}
-      <span v-if="required">*</span>
+      <span v-if="required" class="red--text">*</span>
     </p>
     {{ input }}
     <v-select

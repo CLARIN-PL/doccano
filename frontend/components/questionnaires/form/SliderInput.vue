@@ -3,7 +3,7 @@
     <span>
       {{ question }}
     </span>
-    <span class="red--text" v-if="required">*</span>
+    <span v-if="required" class="red--text">*</span>
     <v-row align="center">
       <v-col>
         <v-slider
