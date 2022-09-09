@@ -15,6 +15,7 @@ export default {
     'Séquence à séquence',
     "Détection d'intention et remplissage d'emplacements",
     "Classification d'images",
-    'De la parole au texte'
+    'De la parole au texte',
+    "Annotations d'articles"
   ]
 }

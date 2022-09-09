@@ -204,7 +204,8 @@ export default Vue.extend({
         'Seq2seq',
         'IntentDetectionAndSlotFilling',
         'ImageClassification',
-        'Speech2text'
+        'Speech2text',
+        'ArticleAnnotation'
       ]
     },
     images() {
@@ -214,14 +215,15 @@ export default Vue.extend({
         'seq2seq.png',
         'intent_detection.png',
         'image_classification.png',
-        'speech_to_text.png'
+        'speech_to_text.png',
+        'article_annotation.png'
       ]
     },
     hasSingleLabelOption() {
-      return ['DocumentClassification', 'ImageClassification'].includes(this.projectType)
+      return ['DocumentClassification', 'ImageClassification', 'ArticleAnnotation'].includes(this.projectType)
     },
     isSequenceLabelingProject() {
-      return this.projectType === 'SequenceLabeling'
+      return this.projectType === 'SequenceLabeling' || this.projectType === 'ArticleAnnotation'
     }
   },
 

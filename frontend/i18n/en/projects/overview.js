@@ -17,6 +17,7 @@ export default {
     'Sequence to sequence',
     'Intent Detection and Slot Filling',
     'Image Classification',
-    'Speech to Text'
+    'Speech to Text',
+    'Article Annotation'
   ]
 }

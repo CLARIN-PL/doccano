@@ -5,6 +5,11 @@
         <v-tab class="text-capitalize">Category</v-tab>
         <v-tab class="text-capitalize">Span</v-tab>
       </template>
+      <template v-else-if="isArticleAnnotation">
+        <v-tab class="text-capitalize">Category</v-tab>
+        <v-tab class="text-capitalize">Span</v-tab>
+        <v-tab v-if="project.useRelation" class="text-capitalize">Relation</v-tab>
+      </template>
       <template v-else>
         <v-tab class="text-capitalize">Span</v-tab>
         <v-tab class="text-capitalize">Relation</v-tab>
@@ -79,7 +84,9 @@ export default Vue.extend({
 
     hasMultiType(): boolean {
       if ('projectType' in this.project) {
-        return this.isIntentDetectionAndSlotFilling || !!this.project.useRelation
+        return (this.isIntentDetectionAndSlotFilling ||
+          this.isArticleAnnotation || !!this.project.useRelation
+        )
       } else {
         return false
       }
@@ -89,10 +96,16 @@ export default Vue.extend({
       return this.project.projectType === 'IntentDetectionAndSlotFilling'
     },
 
+    isArticleAnnotation(): boolean {
+      return this.project.projectType === 'ArticleAnnotation'
+    },
+
     labelType(): string {
       if (this.hasMultiType) {
         if (this.isIntentDetectionAndSlotFilling) {
           return ['category', 'span'][this.tab!]
+        } else if (this.isArticleAnnotation) {
+          return ['category', 'span', 'relation'][this.tab!]
         } else {
           return ['span', 'relation'][this.tab!]
         }
@@ -110,6 +123,12 @@ export default Vue.extend({
       if (this.hasMultiType) {
         if (this.isIntentDetectionAndSlotFilling) {
           return [this.$services.categoryType, this.$services.spanType][this.tab!]
+        } else if (this.isArticleAnnotation) {
+          return [
+            this.$services.categoryType,
+            this.$services.spanType,
+            this.$services.relationType
+          ][this.tab!]
         } else {
           return [this.$services.spanType, this.$services.relationType][this.tab!]
         }
