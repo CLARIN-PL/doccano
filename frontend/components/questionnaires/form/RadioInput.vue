@@ -7,7 +7,7 @@
       <span>
         {{ question }}
       </span>
-      <span class="red--text" v-if="required">*</span>
+      <span v-if="required" class="red--text">*</span>
     </p>
     <v-radio-group v-model="input">
       <v-radio

@@ -242,6 +242,22 @@ export function getQuestionnaireTypes() {
     return qTypes
 }
 
+export function hasValidLoginTime(givenTime) {
+    let getters = null
+    let hasValidLoginTime = false
+    if(hasStore()) {
+        getters = window.$nuxt.$store.getters
+    }
+    if(getters) {
+        const { lastLoginTime } = getters['user/getLogin']
+        const diffTime = moment(givenTime).diff(
+            moment(lastLoginTime, DATE_FORMAT), 'days'
+        )
+        hasValidLoginTime = diffTime >= 0
+    }
+    return hasValidLoginTime
+}
+
 export function getQuestionnairesToShow() {
     const qTypes = getQuestionnaireTypes()
     const todayTime = new Date()
@@ -292,7 +308,7 @@ export function getQuestionnairesToShow() {
                 }  else if(questionnaireType.id === "4.2") {
                     const currentHour = todayTime.getHours()
                     const isEvening = currentHour >= 17 && currentHour < 23
-                    isShowing = !isFilled && isEvening
+                    isShowing = !isFilled && isEvening && hasAnnotatedToday
                 } else if(questionnaireType.id === "4.3") {
                     isFilled = !!filled.find((fill)=> fill === `4.3_${textCountToday}`)
                     const hasAnnotatedBatch = hasAnnotatedToday 

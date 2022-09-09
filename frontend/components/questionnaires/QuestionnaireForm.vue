@@ -46,13 +46,19 @@
                           class="hide-list-style"
                         >
                           <div v-if="segment.scales" class="segment-description-container text-caption">
-                            <p>
+                            <p >
                               {{ segment.scales.description }}
+                            </p>
+                            <p class="mt-5">
+                              <v-spacer />
                               <ul class="hide-list-style">
-                                <li v-for="(segmentScaleValue, segScalIdx) in segment.scales.values" :key="`segmentScaleValue-${segScalIdx}`">
+                                <li 
+                                  v-for="(segmentScaleValue, segScalIdx) in segment.scales.values" 
+                                  :key="`segmentScaleValue-${segScalIdx}`">
                                   {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
                                 </li>
                               </ul>
+                              <v-spacer />
                             </p>
                           </div>
 
@@ -92,6 +98,8 @@
                                 </li>
                             </ol>
                           </div>
+                          
+                          <v-divider v-if="segIdx < questionnaire.segments.length-1" class="mt-10 mb-10" />
                         </li>
                       </ul>
                       <!-- eslint-disable-next-line vue/no-v-html -->
@@ -115,17 +123,25 @@
           </v-window>
         </v-col>
       </div>
+      <div v-else-if="formData.questionnaires && !formData.questionnaires.length && isLoaded" class="align-right">
+        <v-card>
+          <v-card-text>
+          {{ $t('questionnaires_main.errorNotFound') }}
+          </v-card-text>
+          <v-divider/>
+          <v-card-actions>
+            <v-spacer/>
+            <v-btn color="primary" @click="onClickFinishButton">
+              {{ $t('questionnaires_main.buttonFinish') }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </div>
       <div v-else-if="!isLoaded">
         <v-progress-circular
           indeterminate
           color="primary"
         ></v-progress-circular>
-      </div>
-      <div v-else class="align-right">
-        {{ $t('questionnaires_main.errorNotFound') }}
-        <v-btn color="primary" @click="onClickFinishButton">
-          {{ $t('questionnaires_main.buttonFinish') }}
-        </v-btn>
       </div>
     </v-col>
   </v-row>
@@ -278,8 +294,9 @@ export default {
     scrollToFaultyQuestion(id, questions = []) {
       const firstErrorIndex = questions.findIndex((question) => !question.isClicked)
       this.showWarning = true
-      if (this.$refs[`question_${id}_${firstErrorIndex}`][0]) {
-        this.$refs[`question_${id}_${firstErrorIndex}`][0].scrollIntoView({ behavior: 'smooth' })
+      const component = this.$refs[`question_${id}_${firstErrorIndex}`]
+      if (component && component[0]) {
+        component[0].scrollIntoView({ behavior: 'smooth' })
       } else {
         this.$refs.header.scrollIntoView({ behavior: 'smooth' })
       }

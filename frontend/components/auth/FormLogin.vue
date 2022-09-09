@@ -43,6 +43,7 @@ import { mapGetters, mapActions } from 'vuex'
 import { userNameRules, passwordRules } from '@/rules/index'
 import BaseCard from '@/components/utils/BaseCard.vue'
 import { history } from '~/store/user'
+import { hasValidLoginTime } from '~/utils/questionnaires'
 
 export default Vue.extend({
   components: {
@@ -82,14 +83,15 @@ export default Vue.extend({
     async setUserData() {
       const user = await this.$services.user.getMyProfile()
       const userHistory = this.getHistories.find((hist: any) => hist.id === user.id)
+
       if (user.id && !userHistory) {
         this.setUserId(user.id)
         this.addHistory({ ...history, id: user.id })
       }
+
       try {
         const dateFormat = 'DD-MM-YYYY HH:mm:ss'
         const loginTime = moment().format(dateFormat)
-        const { filled } = this.getQuestionnaire
         const lastLoginTime = this.getLogin.lastLoginTime
         const lastLoginDay = parseInt(moment(lastLoginTime, dateFormat).format('DD'))
         const todayDay = parseInt(moment().format('DD'))
@@ -97,7 +99,18 @@ export default Vue.extend({
           ? moment(new Date()).diff(moment(lastLoginTime, dateFormat), 'days')
           : 0
         currentDiffDay = currentDiffDay === 0 ? todayDay - lastLoginDay : currentDiffDay
-        const dailyQuestionnaireId = '4'
+
+        if (!hasValidLoginTime(new Date())) {
+          this.setAnnotation({
+            textCountToday: 0,
+            hasAnnotatedToday: false
+          })
+          this.setQuestionnaire({
+            toShow: [],
+            inProgress: [],
+            filled: []
+          })
+        }
 
         if (!this.getLogin.firstLoginTime) {
           this.setLogin({
@@ -108,7 +121,10 @@ export default Vue.extend({
         } else {
           this.setLogin({ isFirstLogin: false, lastLoginTime: loginTime })
         }
+
         if (currentDiffDay > 0) {
+          const { filled } = this.getQuestionnaire
+          const dailyQuestionnaireId = '4'
           this.setAnnotation({
             textCountToday: 0,
             hasAnnotatedToday: false
