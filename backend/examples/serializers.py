@@ -47,7 +47,7 @@ class ExampleSerializer(serializers.ModelSerializer):
             "upload_name",
             "article_id",
             "order",
-            "type",
+            "type"
         ]
         read_only_fields = ["filename", "is_confirmed", "upload_name"]
 
