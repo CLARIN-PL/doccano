@@ -1,16 +1,15 @@
 [
     {
-        "text": "Stół z powyłamywanymi nogami",
-        "cats": ["sadness", "negative"],
-        "entities": [[0, 3, "rzeczownik"], [7, 27, "narzędnik"]],
-        "relations": [],
+        "text": "Firma Biometryks LLC planuje zrewolucjonizować nieinwazyjną diagnostykę oraz monitorowanie pacjentów z chorobami przewlekłymi poprzez wykorzystanie w swoim sensorze matrycy grafenowej, która jest kluczowym elementem tego urządzenia - poinformował Uniwersytecki Ośrodek Transferu Technologii UW w przesłanym PAP komunikacie.",
+        "cats": [],
+        "entities": [],
         "meta": {
-            "article_title": "10 Craziest Polish Tongue Twisters",
-            "publish_datetime": "2022-08-01 13:59:59",
-            "crawled_datetime": "2022-09-05 08:12:45",
-            "type": "subheader"
+            "article_title": "Grafenowa matryca opracowana na UW ma pomóc w monitorowaniu stanu zdrowia pacjentów",
+            "publish_datetime": "09.09.2022 00:00:00",
+            "crawled_datetime": "12.09.2022 14:11:03"
         },
-        "article_id": "8eabas8s5pveszg917vm1357",
-        "order": 5
+        "article_id": "631f3df79f92a9921be659a3",
+        "order": 2,
+        "type": "paragraph"
     }
 ]
