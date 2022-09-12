@@ -14,13 +14,14 @@ class BaseData(BaseModel, abc.ABC):
     meta: Dict[Any, Any] = {}
     article_id: str
     order: str
+    type: str
 
     def __init__(self, **data):
         super().__init__(**data)
 
     @classmethod
-    def parse(cls, example_uuid: UUID4, filename: str, upload_name: str, text: str = "", article_id: str = "",  order: str = "", **kwargs):
-        return cls(uuid=example_uuid, filename=filename, upload_name=upload_name, text=text, article_id=article_id, order=order, meta=kwargs)
+    def parse(cls, example_uuid: UUID4, filename: str, upload_name: str, text: str = "", article_id: str = "",  order: str = "", type: str = "", **kwargs):
+        return cls(uuid=example_uuid, filename=filename, upload_name=upload_name, text=text, article_id=article_id, order=order, type=type, meta=kwargs)
 
     def __hash__(self):
         return hash(tuple(self.dict()))
@@ -49,6 +50,7 @@ class TextData(BaseData):
             meta=self.meta,
             article_id=self.article_id,
             order=int(self.order) if self.order else None,
+            type=self.type,
         )
 
 
@@ -63,4 +65,5 @@ class BinaryData(BaseData):
             meta=self.meta,
             article_id=self.article_id,
             order=int(self.order) if self.order else None,
+            type=self.type,
         )
