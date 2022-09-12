@@ -1,10 +1,20 @@
 import 'reflect-metadata'
 import { Expose, Type } from 'class-transformer'
 
+export class ExampleArticleItem {
+  id: string
+  title: string 
+  publish_datetime: string 
+  data: object
+}
+
 export class ExampleItem {
   id: number
   text: string
   meta: object
+
+  @Expose({ name: 'type' })
+  type: string
 
   @Expose({ name: 'annotation_approver' })
   annotationApprover: boolean | null

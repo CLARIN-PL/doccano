@@ -3,6 +3,7 @@ import { ExampleItem, ExampleItemList } from '~/domain/models/example/example'
 export class ExampleDTO {
   id: number
   text: string
+  type: string | null
   meta: object
   annotationApprover: boolean | null
   commentCount: number
