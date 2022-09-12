@@ -22,6 +22,7 @@ class Example(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     article_id = models.CharField(max_length=512, blank=True)
     order = models.IntegerField(null=True, blank=True)
+    type = models.CharField(max_length=512, blank=True)
 
     @property
     def comment_count(self):
