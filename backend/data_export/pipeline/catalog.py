@@ -9,6 +9,7 @@ from projects.models import (
     SEQ2SEQ,
     SEQUENCE_LABELING,
     SPEECH2TEXT,
+    ARTICLE_ANNOTATION,
 )
 
 EXAMPLE_DIR = Path(__file__).parent.resolve() / "examples"
@@ -93,3 +94,10 @@ Options.register(IMAGE_CLASSIFICATION, JSONL, IMAGE_CLASSIFICATION_DIR / "exampl
 # Speech to Text
 SPEECH2TEXT_DIR = EXAMPLE_DIR / "speech_to_text"
 Options.register(SPEECH2TEXT, JSONL, SPEECH2TEXT_DIR / "example.jsonl")
+
+# Article Annotation
+ARTICLE_ANNOTATION_DIR = EXAMPLE_DIR / "article_annotation"
+Options.register(ARTICLE_ANNOTATION, JSON, ARTICLE_ANNOTATION_DIR / "example.json")
+Options.register(ARTICLE_ANNOTATION, JSON, ARTICLE_ANNOTATION_DIR / "relation_extraction.json", True)
+Options.register(ARTICLE_ANNOTATION, JSONL, ARTICLE_ANNOTATION_DIR / "example.jsonl")
+Options.register(ARTICLE_ANNOTATION, JSONL, ARTICLE_ANNOTATION_DIR / "relation_extraction.jsonl", True)
