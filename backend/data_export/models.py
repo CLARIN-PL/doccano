@@ -21,8 +21,18 @@ class ExportedExampleManager(models.Manager):
 class ExportedExample(Example):
     objects = ExportedExampleManager()
 
-    def to_dict(self, is_text_project=True) -> Dict[str, Any]:
-        return {"id": self.id, DATA: self.text if is_text_project else self.upload_name, **self.meta}
+    def to_dict(self, is_text_project=True, is_article_project=False) -> Dict[str, Any]:
+        if is_article_project:
+            return {
+                "id": self.id,
+                DATA: self.text if is_text_project else self.upload_name,
+                "article_id": self.article_id,
+                "order": self.order,
+                "type": self.type,
+                **self.meta
+            }
+        else:
+            return {"id": self.id, DATA: self.text if is_text_project else self.upload_name, **self.meta}
 
     class Meta:
         proxy = True

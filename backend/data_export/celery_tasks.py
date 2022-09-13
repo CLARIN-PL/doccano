@@ -18,12 +18,13 @@ logger = get_task_logger(__name__)
 
 def create_collaborative_dataset(project: Project, dirpath: str, confirmed_only: bool, formatters, writer):
     is_text_project = project.is_text_project
+    is_article_project = project.is_article_project
     if confirmed_only:
         examples = ExportedExample.objects.confirmed(project)
     else:
         examples = ExportedExample.objects.filter(project=project)
     labels = create_labels(project, examples)
-    dataset = Dataset(examples, labels, is_text_project)
+    dataset = Dataset(examples, labels, is_text_project, is_article_project)
 
     service = ExportApplicationService(dataset, formatters, writer)
 
@@ -33,6 +34,7 @@ def create_collaborative_dataset(project: Project, dirpath: str, confirmed_only:
 
 def create_individual_dataset(project: Project, dirpath: str, confirmed_only: bool, formatters, writer):
     is_text_project = project.is_text_project
+    is_article_project = project.is_article_project
     members = Member.objects.filter(project=project)
     for member in members:
         if confirmed_only:
@@ -40,7 +42,7 @@ def create_individual_dataset(project: Project, dirpath: str, confirmed_only: bo
         else:
             examples = ExportedExample.objects.filter(project=project)
         labels = create_labels(project, examples, member.user)
-        dataset = Dataset(examples, labels, is_text_project)
+        dataset = Dataset(examples, labels, is_text_project, is_article_project)
 
         service = ExportApplicationService(dataset, formatters, writer)
 
