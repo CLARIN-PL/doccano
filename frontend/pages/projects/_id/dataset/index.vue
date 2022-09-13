@@ -111,7 +111,7 @@ export default Vue.extend({
       dialogDelete: false,
       dialogDeleteAll: false,
       project: {} as ProjectDTO,
-      item: { items: [] } as ExampleListDTO,
+      item: { items: [] as ExampleDTO[] } as ExampleListDTO,
       selected: [] as ExampleDTO[],
       isLoading: false,
       isProjectAdmin: false
@@ -133,7 +133,6 @@ export default Vue.extend({
     },
     items(): Array<ExampleDTO> {
       return this.item.items.map((item) => {
-        item.type = item.meta.type || 'text'
         return item
       })
     },

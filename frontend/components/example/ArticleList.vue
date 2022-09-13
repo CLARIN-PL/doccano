@@ -112,13 +112,16 @@ export default Vue.extend({
 
   computed: {
     groupedItems() {
-        const groupsByArticleIdDict = _.groupBy(this.items, 'meta.meta.article_title')
+        console.log(this.items)
+        const groupsByArticleIdDict = _.groupBy(this.items, 'article_id')
         let groupsByArticleIdList = []
         Object.keys(groupsByArticleIdDict).forEach((key, index)=> {
             const firstItem = groupsByArticleIdDict[key][0]
+            firstItem.meta.meta = firstItem.meta.meta || {}
             groupsByArticleIdList.push({
                 id: index,
-                title: key,
+                article_id: key,
+                title: firstItem.meta.meta.article_title,
                 publishDatetime: firstItem.meta.meta.publish_datetime,
                 data: groupsByArticleIdDict[key]
             })
@@ -137,22 +140,22 @@ export default Vue.extend({
             {
                 text: this.$t('dataset.text'),
                 value: 'text',
-                sortable: true
+                sortable: false
             },
             {
                 text: this.$t('dataset.type'),
                 value: 'type',
-                sortable: true
+                sortable: false
             },
             {
                 text: this.$t('dataset.order'),
                 value: 'order',
-                sortable: true
+                sortable: false
             },
             {
                 text: this.$t('dataset.action'),
                 value: 'action',
-                sortable: true
+                sortable: false
             },
         ]
     },
@@ -161,7 +164,7 @@ export default Vue.extend({
         {
           text: this.$t('dataset.title'),
           value: 'title',
-          sortable: true
+          sortable: false
         },
         {
           text: this.$t('dataset.publishDatetime'),

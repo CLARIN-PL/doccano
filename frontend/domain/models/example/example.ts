@@ -16,6 +16,9 @@ export class ExampleItem {
   @Expose({ name: 'type' })
   type: string
 
+  @Expose({ name: 'article_id' })
+  articleId: string
+
   @Expose({ name: 'annotation_approver' })
   annotationApprover: boolean | null
 

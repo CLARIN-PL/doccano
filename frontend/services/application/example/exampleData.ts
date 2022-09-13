@@ -1,9 +1,9 @@
+import { Expose } from 'class-transformer'
 import { ExampleItem, ExampleItemList } from '~/domain/models/example/example'
 
 export class ExampleDTO {
   id: number
   text: string
-  type: string | null
   meta: object
   annotationApprover: boolean | null
   commentCount: number
@@ -12,6 +12,12 @@ export class ExampleDTO {
   filename: string
   url: string
   isConfirmed: boolean
+  
+  @Expose({name: 'type'})
+  type: string
+
+  @Expose({name: 'article_id'})
+  articleId: string
 
   constructor(item: ExampleItem) {
     this.id = item.id
