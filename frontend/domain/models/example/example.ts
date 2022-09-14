@@ -4,8 +4,10 @@ import { Expose, Type } from 'class-transformer'
 export class ExampleArticleItem {
   id: string
   title: string 
-  publish_datetime: string 
   data: object
+  
+  @Expose({ name: 'publish_datetime' })
+  publishDatetime: string | null
 }
 
 export class ExampleItem {
@@ -13,11 +15,14 @@ export class ExampleItem {
   text: string
   meta: object
 
-  @Expose({ name: 'type' })
-  type: string
-
   @Expose({ name: 'article_id' })
-  articleId: string
+  articleId: string | null
+
+  @Expose({ name: 'type' })
+  type: string | null
+
+  @Expose({ name: 'order' })
+  order: string | null
 
   @Expose({ name: 'annotation_approver' })
   annotationApprover: boolean | null

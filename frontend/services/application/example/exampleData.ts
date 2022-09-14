@@ -1,4 +1,3 @@
-import { Expose } from 'class-transformer'
 import { ExampleItem, ExampleItemList } from '~/domain/models/example/example'
 
 export class ExampleDTO {
@@ -12,12 +11,9 @@ export class ExampleDTO {
   filename: string
   url: string
   isConfirmed: boolean
-  
-  @Expose({name: 'type'})
-  type: string
-
-  @Expose({name: 'article_id'})
-  articleId: string
+  articleId: string | null
+  type: string | null
+  order: string | null
 
   constructor(item: ExampleItem) {
     this.id = item.id
@@ -30,6 +26,9 @@ export class ExampleDTO {
     this.filename = item.filename
     this.url = item.url
     this.isConfirmed = item.isConfirmed
+    this.articleId = item.articleId
+    this.type = item.type
+    this.order = item.order
   }
 }
 
