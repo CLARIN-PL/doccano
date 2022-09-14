@@ -1,26 +1,15 @@
 import { Expose } from 'class-transformer'
-import { ExampleArticleItem, ExampleItem, ExampleItemList } from '~/domain/models/example/example'
+import { ExampleItem, ExampleMetaItem, ExampleItemList } from '~/domain/models/example/example'
 
 export class ExampleMetadataDTO {
   key: string
   value: string
 }
 
-export class ExampleMetaContentDTO {
-  article_title: string
-  publish_datetime: string
-  crawled_datetime: string
-  type: string
-}
-
-export class ExampleMetaDTO {
-  meta:  ExampleMetaContentDTO
-}
-
-export class ExampleChildArticleDTO {
+export class ExampleDTO {
   id: number
   text: string
-  meta: ExampleMetaDTO 
+  meta: ExampleMetaItem
   annotationApprover: boolean | null
   commentCount: number
   isApproved: boolean
@@ -33,7 +22,7 @@ export class ExampleChildArticleDTO {
   order: number
   itemId: string 
 
-  constructor(item: ExampleArticleItem) {
+  constructor(item: ExampleItem) {
     this.id = item.id
     this.text = item.text
     this.meta = item.meta
@@ -51,33 +40,6 @@ export class ExampleChildArticleDTO {
   }
 }
 
-
-export class ExampleDTO {
-  id: number
-  text: string
-  meta: object
-  annotationApprover: boolean | null
-  commentCount: number
-  isApproved: boolean
-  fileUrl: string
-  filename: string
-  url: string
-  isConfirmed: boolean
-
-  constructor(item: ExampleItem) {
-    this.id = item.id
-    this.text = item.text
-    this.meta = item.meta
-    this.annotationApprover = item.annotationApprover
-    this.commentCount = item.commentCount
-    this.isApproved = !!item.annotationApprover
-    this.fileUrl = item.fileUrl
-    this.filename = item.filename
-    this.url = item.url
-    this.isConfirmed = item.isConfirmed
-  }
-}
-
 export interface ExampleGroupedDTO {
   [key: string]: ExampleDTO[]
 }
@@ -85,7 +47,7 @@ export interface ExampleGroupedDTO {
 export class ExampleArticleDTO {
   id: number
   title: string 
-  data: ExampleChildArticleDTO[]
+  data: ExampleDTO[]
   itemId: string 
   articleId: string
   

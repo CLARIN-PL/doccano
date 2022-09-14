@@ -80,7 +80,8 @@ import Vue, { PropType } from 'vue'
 import _ from 'lodash'
 import { mdiMagnify } from '@mdi/js'
 import { DataOptions } from 'vuetify/types'
-import { ExampleArticleDTO, ExampleChildArticleDTO, ExampleGroupedDTO } from '~/services/application/example/exampleData'
+import { ExampleMetaContent } from '~/domain/models/example/example'
+import { ExampleArticleDTO, ExampleDTO, ExampleGroupedDTO } from '~/services/application/example/exampleData'
 import { DatatableSelectArticleEventData, DatatableSelectChildArticleEventData } from '~/services/application/example/exampleVuetify'
 
 export default Vue.extend({
@@ -91,12 +92,12 @@ export default Vue.extend({
       required: true
     },
     items: {
-      type: Array as PropType<ExampleChildArticleDTO[]>,
+      type: Array as PropType<ExampleDTO[]>,
       default: () => [],
       required: true
     },
     value: {
-      type: Array as PropType<ExampleChildArticleDTO[]>,
+      type: Array as PropType<ExampleDTO[]>,
       default: () => [],
       required: true
     },
@@ -111,7 +112,7 @@ export default Vue.extend({
       search: this.$route.query.q,
       options: {} as DataOptions,
       selectedArticleItems: [] as ExampleArticleDTO[],
-      selectedChildArticleItems: [] as ExampleChildArticleDTO[],
+      selectedChildArticleItems: [] as ExampleDTO[],
       expandedItems: [] as ExampleArticleDTO[],
       isExpanded: false,
       mdiMagnify
@@ -123,20 +124,20 @@ export default Vue.extend({
         const groupsByArticleIdDict = _.groupBy(this.items, 'articleId') as ExampleGroupedDTO
         const groupsByArticleIdList = [] as ExampleArticleDTO[]
         Object.keys(groupsByArticleIdDict).forEach((key: string, index: number)=> {
-            const firstItem = groupsByArticleIdDict[key][0] as ExampleChildArticleDTO
-            firstItem.meta.meta = firstItem.meta.meta || {}
+            const firstItem = groupsByArticleIdDict[key][0] as ExampleDTO
+            firstItem.meta.meta = firstItem.meta.meta || {} as ExampleMetaContent
             groupsByArticleIdList.push({
                 itemId: `${key}_article_${index}`,
                 id: index,
                 articleId: key,
                 title: firstItem.meta.meta.article_title,
                 publishDatetime: firstItem.meta.meta.publish_datetime,
-                data: groupsByArticleIdDict[key] as ExampleChildArticleDTO[]
+                data: groupsByArticleIdDict[key] as ExampleDTO[]
             })
         })
         const articleList : ExampleArticleDTO[] = groupsByArticleIdList
           .map((group: ExampleArticleDTO)=> {
-            group.data = group.data.map((data: ExampleChildArticleDTO, index: number)=> {
+            group.data = group.data.map((data: ExampleDTO, index: number)=> {
                 data.itemId = `${data.articleId}_articleItem_${index}`
                 return data
             })
@@ -154,7 +155,7 @@ export default Vue.extend({
             {
                 text: this.$t('dataset.type'),
                 value: 'type',
-                sortable: true
+                sortable: false
             },
             {
                 text: this.$t('dataset.order'),
@@ -200,7 +201,7 @@ export default Vue.extend({
         const childIds = _.flatMap(this.items, 'itemId') as string[]
         const articleIds = _.flatMap(this.items, 'articleId') as string[]
         this.selectedChildArticleItems = this.selectedChildArticleItems
-          .filter((selItem)=> childIds.includes(selItem.itemId)) as ExampleChildArticleDTO[]
+          .filter((selItem)=> childIds.includes(selItem.itemId)) as ExampleDTO[]
         this.selectedArticleItems = this.selectedArticleItems
           .filter((selItem)=> articleIds.includes(selItem.itemId)) as ExampleArticleDTO[]
       },
@@ -242,7 +243,7 @@ export default Vue.extend({
           .filter((selItem)=> selItem.itemId !== item.itemId)
       }
       this.selectedChildArticleItems = _.flatMap(this.selectedArticleItems, 
-        ({ data }) => data ) as ExampleChildArticleDTO[]
+        ({ data }) => data ) as ExampleDTO[]
       this.$nextTick(()=> {
         this.$emit('input', this.selectedChildArticleItems) 
       })
@@ -250,7 +251,7 @@ export default Vue.extend({
     onSelectAllArticleItems({ items, value } : DatatableSelectArticleEventData) {
       this.selectedArticleItems = value ? items : [] as ExampleArticleDTO[]; 
       this.selectedChildArticleItems = _.flatMap(this.selectedArticleItems, 
-        ({ data }) => data ) as ExampleChildArticleDTO[]
+        ({ data }) => data ) as ExampleDTO[]
       this.$nextTick(()=> {
         this.$emit('input', this.selectedChildArticleItems) 
       })
@@ -267,7 +268,7 @@ export default Vue.extend({
         if(parent) {
           const hasParentExist : boolean = this.selectedArticleItems
             .some((selItem) => selItem.itemId === parent.itemId) 
-          hasParentExist && this.selectedArticleItems.push(parent)
+          !hasParentExist && this.selectedArticleItems.push(parent)
         }
       } else {
         this.selectedChildArticleItems = this.selectedChildArticleItems
@@ -283,7 +284,7 @@ export default Vue.extend({
         this.$emit('input', this.selectedChildArticleItems) 
       })
     },
-    toLabeling(item: ExampleChildArticleDTO) {
+    toLabeling(item: ExampleDTO) {
       const index = this.items.indexOf(item)
       const offset = (this.options.page - 1) * this.options.itemsPerPage
       const page = (offset + index + 1).toString()

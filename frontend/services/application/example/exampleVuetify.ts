@@ -1,4 +1,4 @@
-import { ExampleDTO, ExampleArticleDTO, ExampleChildArticleDTO } from '~/services/application/example/exampleData'
+import { ExampleDTO, ExampleArticleDTO } from '~/services/application/example/exampleData'
 
 export class DatatableSelectArticleEventData {
     item: ExampleArticleDTO 
@@ -7,7 +7,7 @@ export class DatatableSelectArticleEventData {
 }
 
 export class DatatableSelectChildArticleEventData {
-    item: ExampleChildArticleDTO 
-    items: ExampleChildArticleDTO[]
+    item: ExampleDTO 
+    items: ExampleDTO[]
     value: boolean
 }
