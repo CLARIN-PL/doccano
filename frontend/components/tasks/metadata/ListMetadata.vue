@@ -11,7 +11,8 @@
     <template #[`item.value`]="{ item }">
       <template v-if="isObject(item.value)">
         <ul class="metadata-list" >
-          <li  v-for="(pair, index) in keyValuePairs(item.value)" :key="index"  class="metadata-list__item"  >
+          <li v-for="(pair, index) in keyValuePairs(item.value)" :key="index"  
+            class="metadata-list__item"  >
             <span class="key">{{ pair.key }}</span>
             <span class="value"> {{ pair.value}}</span>
           </li>
@@ -35,6 +36,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import _ from 'lodash' 
+import { ExampleMetadataDTO } from '~/services/application/example/exampleData'
 
 export default Vue.extend({
   props: {
@@ -78,8 +80,8 @@ export default Vue.extend({
   },
 
   methods: {
-    keyValuePairs(jsonObj: object) {
-      const pairs = []
+    keyValuePairs(jsonObj: any) {
+      const pairs = [] as ExampleMetadataDTO[]
       Object.keys(jsonObj).forEach((objKey)=> {
         pairs.push({key: objKey, value: jsonObj[objKey]})
       })

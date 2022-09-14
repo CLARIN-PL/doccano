@@ -59,7 +59,8 @@
                   <span class="d-none d-sm-flex">{{ articleItem.item.text | truncate(200) }}</span>
                 </template>
                 <template #[`item.action`]="articleItem">
-                    <v-btn small color="primary text-capitalize mr-5" @click="toLabeling(articleItem.item)">
+                    <v-btn small color="primary text-capitalize mr-5" 
+                      @click="toLabeling(articleItem.item)">
                         {{ $t('dataset.annotate') }}
                     </v-btn>
                 </template>
@@ -76,9 +77,11 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
+import _ from 'lodash'
 import { mdiMagnify } from '@mdi/js'
 import { DataOptions } from 'vuetify/types'
-import { ExampleDTO } from '~/services/application/example/exampleData'
+import { ExampleArticleDTO, ExampleChildArticleDTO, ExampleGroupedDTO } from '~/services/application/example/exampleData'
+import { DatatableSelectArticleEventData, DatatableSelectChildArticleEventData } from '~/services/application/example/exampleVuetify'
 
 export default Vue.extend({
   props: {
@@ -88,12 +91,12 @@ export default Vue.extend({
       required: true
     },
     items: {
-      type: Array as PropType<ExampleDTO[]>,
+      type: Array as PropType<ExampleChildArticleDTO[]>,
       default: () => [],
       required: true
     },
     value: {
-      type: Array as PropType<ExampleDTO[]>,
+      type: Array as PropType<ExampleChildArticleDTO[]>,
       default: () => [],
       required: true
     },
@@ -103,14 +106,13 @@ export default Vue.extend({
       required: true
     }
   },
-
   data() {
     return {
       search: this.$route.query.q,
       options: {} as DataOptions,
-      selectedArticleItems: [],
-      selectedChildArticleItems: [],
-      expandedItems: [],
+      selectedArticleItems: [] as ExampleArticleDTO[],
+      selectedChildArticleItems: [] as ExampleChildArticleDTO[],
+      expandedItems: [] as ExampleArticleDTO[],
       isExpanded: false,
       mdiMagnify
     }
@@ -118,10 +120,10 @@ export default Vue.extend({
 
   computed: {
     groupedItems() {
-        const groupsByArticleIdDict = _.groupBy(this.items, 'articleId')
-        let groupsByArticleIdList = []
-        Object.keys(groupsByArticleIdDict).forEach((key, index)=> {
-            const firstItem = groupsByArticleIdDict[key][0]
+        const groupsByArticleIdDict = _.groupBy(this.items, 'articleId') as ExampleGroupedDTO
+        const groupsByArticleIdList = [] as ExampleArticleDTO[]
+        Object.keys(groupsByArticleIdDict).forEach((key: string, index: number)=> {
+            const firstItem = groupsByArticleIdDict[key][0] as ExampleChildArticleDTO
             firstItem.meta.meta = firstItem.meta.meta || {}
             groupsByArticleIdList.push({
                 itemId: `${key}_article_${index}`,
@@ -129,18 +131,18 @@ export default Vue.extend({
                 articleId: key,
                 title: firstItem.meta.meta.article_title,
                 publishDatetime: firstItem.meta.meta.publish_datetime,
-                data: groupsByArticleIdDict[key]
+                data: groupsByArticleIdDict[key] as ExampleChildArticleDTO[]
             })
         })
-        groupsByArticleIdList = groupsByArticleIdList.map((group)=> {
-            group.data = group.data.map((data, index)=> {
+        const articleList : ExampleArticleDTO[] = groupsByArticleIdList
+          .map((group: ExampleArticleDTO)=> {
+            group.data = group.data.map((data: ExampleChildArticleDTO, index: number)=> {
                 data.itemId = `${data.articleId}_articleItem_${index}`
-                data.order = data.order || index
                 return data
             })
             return group
         })
-        return groupsByArticleIdList
+        return articleList
     },
     childHeaders() {
         return [
@@ -195,10 +197,12 @@ export default Vue.extend({
   watch: {
     items: {
       handler() {
-        const childIds = _.flatMap(this.items, 'itemId')
-        const articleIds = _.flatMap(this.items, 'articleId')
-        this.selectedChildArticleItems = this.selectedChildArticleItems.filter((selItem)=> childIds.includes(selItem.itemId))
-        this.selectedArticleItems = this.selectedArticleItems.filter((selItem)=> articleIds.includes(selItem.itemId))
+        const childIds = _.flatMap(this.items, 'itemId') as string[]
+        const articleIds = _.flatMap(this.items, 'articleId') as string[]
+        this.selectedChildArticleItems = this.selectedChildArticleItems
+          .filter((selItem)=> childIds.includes(selItem.itemId)) as ExampleChildArticleDTO[]
+        this.selectedArticleItems = this.selectedArticleItems
+          .filter((selItem)=> articleIds.includes(selItem.itemId)) as ExampleArticleDTO[]
       },
       deep: true,
     },
@@ -225,52 +229,61 @@ export default Vue.extend({
       this.options.page = 1
     }
   },
-
   methods: {
-    onSelectArticleItems({item, value}) {
+    onSelectArticleItems({item, value} : DatatableSelectArticleEventData) {
       if(value) {
-        const hasExist = this.selectedArticleItems.some((selItem) => selItem.itemId === item.itemId )
+        const hasExist : boolean = this.selectedArticleItems
+          .some((selItem) => selItem.itemId === item.itemId )
         if(!hasExist && item) {
           this.selectedArticleItems.push(item)
         }
       } else {
-        this.selectedArticleItems = this.selectedArticleItems.filter((selItem)=> selItem.itemId !== item.itemId)
+        this.selectedArticleItems = this.selectedArticleItems
+          .filter((selItem)=> selItem.itemId !== item.itemId)
       }
-      this.selectedChildArticleItems = _.flatMap(this.selectedArticleItems, ({ data }) => data )
+      this.selectedChildArticleItems = _.flatMap(this.selectedArticleItems, 
+        ({ data }) => data ) as ExampleChildArticleDTO[]
       this.$nextTick(()=> {
         this.$emit('input', this.selectedChildArticleItems) 
       })
     },
-    onSelectAllArticleItems({ items, value }) {
-      this.selectedArticleItems = value ? items : []; 
-      this.selectedChildArticleItems = _.flatMap(this.selectedArticleItems, ({ data }) => data )
+    onSelectAllArticleItems({ items, value } : DatatableSelectArticleEventData) {
+      this.selectedArticleItems = value ? items : [] as ExampleArticleDTO[]; 
+      this.selectedChildArticleItems = _.flatMap(this.selectedArticleItems, 
+        ({ data }) => data ) as ExampleChildArticleDTO[]
       this.$nextTick(()=> {
         this.$emit('input', this.selectedChildArticleItems) 
       })
     },
-    onSelectChildArticleItems({item, value}) {
+    onSelectChildArticleItems({item, value} : DatatableSelectChildArticleEventData) {
       if(value) {
-        const hasExist = this.selectedChildArticleItems.some((selItem) => selItem.itemId === item.itemId )
+        const hasExist : boolean = this.selectedChildArticleItems
+          .some((selItem) => selItem.itemId === item.itemId )
         if(!hasExist && item) {
           this.selectedChildArticleItems.push(item)
         }
-        const parent = this.groupedItems.find((selItem) =>  selItem.articleId === item.articleId)
-        const hasParentExist = this.selectedArticleItems.some((selItem) => selItem.itemId === parent.itemId) 
-        if(parent && !hasParentExist) {
-          this.selectedArticleItems.push(parent)
+        const parent : undefined | ExampleArticleDTO = this.groupedItems
+          .find((selItem) =>  selItem.articleId === item.articleId)
+        if(parent) {
+          const hasParentExist : boolean = this.selectedArticleItems
+            .some((selItem) => selItem.itemId === parent.itemId) 
+          hasParentExist && this.selectedArticleItems.push(parent)
         }
       } else {
-        this.selectedChildArticleItems = this.selectedChildArticleItems.filter((selItem) => selItem.itemId !== item.itemId )
-        const hasAnotherChild = this.selectedChildArticleItems.some((selItem) => selItem.articleId === item.articleId )
+        this.selectedChildArticleItems = this.selectedChildArticleItems
+          .filter((selItem) => selItem.itemId !== item.itemId )
+        const hasAnotherChild = this.selectedChildArticleItems
+          .some((selItem) => selItem.articleId === item.articleId )
         if(!hasAnotherChild) {
-          this.selectedArticleItems = this.selectedArticleItems.filter((selItem) => selItem.articleId !== item.articleId )
+          this.selectedArticleItems = this.selectedArticleItems
+            .filter((selItem) => selItem.articleId !== item.articleId )
         }
       }
       this.$nextTick(()=> {
         this.$emit('input', this.selectedChildArticleItems) 
       })
     },
-    toLabeling(item: ExampleDTO) {
+    toLabeling(item: ExampleChildArticleDTO) {
       const index = this.items.indexOf(item)
       const offset = (this.options.page - 1) * this.options.itemsPerPage
       const page = (offset + index + 1).toString()

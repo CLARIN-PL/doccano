@@ -12,7 +12,7 @@ module.exports = {
     camelcase: 'off',
     'max-len': [
       'error',
-      150,
+      100,
       2,
       {
         ignoreUrls: true,

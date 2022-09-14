@@ -56,7 +56,7 @@
       v-else-if="isArticleTask"
       v-model="selected"
       :project="project"
-      :items="items"
+      :items="item.items"
       :is-loading="isLoading"
       :total="item.count"
       @update:query="updateQuery"
@@ -66,7 +66,7 @@
       v-else
       v-model="selected"
       :project="project"
-      :items="items"
+      :items="item.items"
       :is-loading="isLoading"
       :total="item.count"
       @update:query="updateQuery"
@@ -130,11 +130,6 @@ export default Vue.extend({
     },
     projectId(): string {
       return this.$route.params.id
-    },
-    items(): Array<ExampleDTO> {
-      return this.item.items.map((item) => {
-        return item
-      })
     },
     isArticleTask(): boolean {
       return this.project.projectType === 'ArticleAnnotation'
