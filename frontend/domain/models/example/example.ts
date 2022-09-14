@@ -22,7 +22,7 @@ export class ExampleItem {
   type: string | null
 
   @Expose({ name: 'order' })
-  order: string | null
+  order: number | null
 
   @Expose({ name: 'annotation_approver' })
   annotationApprover: boolean | null

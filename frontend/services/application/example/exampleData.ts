@@ -13,7 +13,7 @@ export class ExampleDTO {
   isConfirmed: boolean
   articleId: string | null
   type: string | null
-  order: string | null
+  order: number | null
 
   constructor(item: ExampleItem) {
     this.id = item.id
