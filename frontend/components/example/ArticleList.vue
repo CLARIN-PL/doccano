@@ -141,6 +141,7 @@ export default Vue.extend({
                 data.itemId = `${data.articleId}_articleItem_${index}`
                 return data
             })
+            group.data = _.sortBy(group.data, 'order')
             return group
         })
         return articleList

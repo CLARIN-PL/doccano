@@ -10,10 +10,39 @@
         class="d-none d-sm-block"
         @click:clear-label="clear"
         @click:review="confirm"
-      />
+      >
+
+        <v-btn-toggle v-model="labelOption" mandatory class="ms-2">
+          <v-btn icon>
+            <v-icon>{{ mdiFormatListBulleted }}</v-icon>
+          </v-btn>
+          <v-btn icon>
+            <v-icon>{{ mdiText }}</v-icon>
+          </v-btn>
+        </v-btn-toggle>
+      </toolbar-laptop>
       <toolbar-mobile :total="docs.count" class="d-flex d-sm-none" />
     </template>
     <template #content>
+      <v-card v-shortkey="shortKeys" @shortkey="addOrRemoveCategory"
+        class="mt-2 mb-2">
+          <label-group
+            v-if="labelOption === 0"
+            :labels="categoryTypes"
+            :annotations="annotations"
+            :single-label="project.singleClassClassification"
+            @add="addCategory"
+            @remove="removeCategory"
+          />
+          <label-select
+            v-else
+            :labels="categoryTypes"
+            :annotations="annotations"
+            :single-label="project.singleClassClassification"
+            @add="addCategory"
+            @remove="removeCategory"
+          />
+      </v-card>
       <v-card>
         <div class="annotation-text pa-4">
           <entity-editor
@@ -80,6 +109,9 @@
 <script>
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
+import { mdiText, mdiFormatListBulleted } from '@mdi/js'
+import LabelGroup from '@/components/tasks/textClassification/LabelGroup'
+import LabelSelect from '@/components/tasks/textClassification/LabelSelect'
 import LayoutText from '@/components/tasks/layout/LayoutText'
 import ListMetadata from '@/components/tasks/metadata/ListMetadata'
 import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
@@ -94,7 +126,9 @@ export default {
     LayoutText,
     ListMetadata,
     ToolbarLaptop,
-    ToolbarMobile
+    ToolbarMobile,
+    LabelGroup,
+    LabelSelect
   },
 
   layout: 'workspace',
@@ -105,11 +139,14 @@ export default {
 
   data() {
     return {
+      mdiText,
+      mdiFormatListBulleted,
       annotations: [],
       docs: [],
       spanTypes: [],
       relations: [],
       relationTypes: [],
+      labelOption: 0,
       project: {},
       enableAutoLabeling: false,
       rtl: false,
@@ -188,6 +225,7 @@ export default {
   },
 
   async created() {
+    this.categoryTypes = await this.$services.categoryType.list(this.projectId)
     this.spanTypes = await this.$services.spanType.list(this.projectId)
     this.relationTypes = await this.$services.relationType.list(this.projectId)
     this.project = await this.$services.project.findById(this.projectId)
@@ -265,29 +303,64 @@ export default {
       await this.list(this.doc.id)
     },
 
-    async clear() {
-      await this.$services.sequenceLabeling.clear(this.projectId, this.doc.id)
+
+    async removeCategory(id) {
+      await this.$services.textClassification.delete(this.projectId, this.doc.id, id)
       await this.list(this.doc.id)
     },
 
+    async addCategory(labelId) {
+      await this.$services.textClassification.create(this.projectId, this.doc.id, labelId)
+      await this.list(this.doc.id)
+    },
+
+    async addOrRemoveCategory(event) {
+      const labelId = parseInt(event.srcKey, 10)
+      const annotation = this.annotations.find((item) => item.label === labelId)
+      if (annotation) {
+        await this.remove(annotation.id)
+      } else {
+        await this.add(labelId)
+      }
+    },
+    async clear() {
+      await this.clearSequenceLabels()
+      await this.clearCategory()
+    },
+    async clearSequenceLabels() {
+      await this.$services.sequenceLabeling.clear(this.projectId, this.doc.id)
+      await this.list(this.doc.id)
+    },
+    async clearCategory() {
+      await this.$services.textClassification.clear(this.projectId, this.doc.id)
+      await this.list(this.doc.id)
+    },
     async autoLabel(docId) {
+      await this.autoLabelCategory(docId)
+      await this.autoLabelSequences(docId)
+    },
+    async autoLabelCategory(docId) {
+      try {
+        await this.$services.textClassification.autoLabel(this.projectId, docId)
+      } catch (e) {
+        console.log(e.response.data.detail)
+      }
+    },
+    async autoLabelSequences(docId) {
       try {
         await this.$services.sequenceLabeling.autoLabel(this.projectId, docId)
       } catch (e) {
         console.log(e.response.data.detail)
       }
     },
-
     async updateProgress() {
       this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
     },
-
     async confirm() {
       await this.$services.example.confirm(this.projectId, this.doc.id)
       await this.$fetch()
       this.updateProgress()
     },
-
     changeSelectedLabel(event) {
       this.selectedLabelIndex = this.spanTypes.findIndex((item) => item.suffixKey === event.srcKey)
     }
