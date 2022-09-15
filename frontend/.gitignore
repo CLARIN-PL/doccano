@@ -86,6 +86,3 @@ sw.*
 
 # Mac OSX
 .DS_Store
-
-# fonts
-assets/css/*
