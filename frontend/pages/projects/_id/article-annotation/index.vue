@@ -1,5 +1,5 @@
 <template>
-  <layout-text v-if="doc.id" v-shortkey="shortKeys" @shortkey="changeSelectedLabel">
+  <layout-text v-if="doc.id" v-shortkey="shortKeysSpans" @shortkey="changeSelectedLabel">
     <template #header>
       <toolbar-laptop
         :doc-id="doc.id"
@@ -11,7 +11,6 @@
         @click:clear-label="clear"
         @click:review="confirm"
       >
-
         <v-btn-toggle v-model="labelOption" mandatory class="ms-2">
           <v-btn icon>
             <v-icon>{{ mdiFormatListBulleted }}</v-icon>
@@ -24,32 +23,31 @@
       <toolbar-mobile :total="docs.count" class="d-flex d-sm-none" />
     </template>
     <template #content>
-      <v-card v-shortkey="shortKeys" @shortkey="addOrRemoveCategory"
-        class="mt-2 mb-2">
-          <label-group
-            v-if="labelOption === 0"
-            :labels="categoryTypes"
-            :annotations="annotations"
-            :single-label="project.singleClassClassification"
-            @add="addCategory"
-            @remove="removeCategory"
-          />
-          <label-select
-            v-else
-            :labels="categoryTypes"
-            :annotations="annotations"
-            :single-label="project.singleClassClassification"
-            @add="addCategory"
-            @remove="removeCategory"
-          />
-      </v-card>
-      <v-card>
+      <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
+        <v-card-title>
+            <label-group
+              v-if="labelOption === 0"
+              :labels="categoryTypes"
+              :annotations="categories"
+              :single-label="project.singleClassClassification"
+              @add="addCategory"
+              @remove="removeCategory"
+            />
+            <label-select
+              v-else
+              :labels="categoryTypes"
+              :annotations="categories"
+              :single-label="project.singleClassClassification"
+              @add="addCategory"
+              @remove="removeCategory"
+            />
+        </v-card-title>
         <div class="annotation-text pa-4">
           <entity-editor
             :dark="$vuetify.theme.dark"
             :rtl="isRTL"
             :text="doc.text"
-            :entities="annotations"
+            :entities="spans"
             :entity-labels="spanTypes"
             :relations="relations"
             :relation-labels="relationTypes"
@@ -141,11 +139,13 @@ export default {
     return {
       mdiText,
       mdiFormatListBulleted,
-      annotations: [],
       docs: [],
+      spans: [],
       spanTypes: [],
       relations: [],
       relationTypes: [],
+      categories: [],
+      categoryTypes: [],
       labelOption: 0,
       project: {},
       enableAutoLabeling: false,
@@ -174,8 +174,12 @@ export default {
     ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId']),
     ...mapGetters('config', ['isRTL']),
 
-    shortKeys() {
+    shortKeysSpans() {
       return Object.fromEntries(this.spanTypes.map((item) => [item.id, [item.suffixKey]]))
+    },
+
+    shortKeysCategory() {
+      return Object.fromEntries(this.categoryTypes.map((item) => [item.id, [item.suffixKey]]))
     },
 
     projectId() {
@@ -233,22 +237,22 @@ export default {
   },
 
   methods: {
-    async maybeFetchSpanTypes(annotations) {
+    async maybeFetchSpanTypes(spans) {
       const labelIds = new Set(this.spanTypes.map((label) => label.id))
-      if (annotations.some((item) => !labelIds.has(item.label))) {
+      if (spans.some((item) => !labelIds.has(item.label))) {
         this.spanTypes = await this.$services.spanType.list(this.projectId)
       }
     },
-
     async list(docId) {
-      const annotations = await this.$services.sequenceLabeling.list(this.projectId, docId)
+      const spans = await this.$services.sequenceLabeling.list(this.projectId, docId)
       const relations = await this.$services.sequenceLabeling.listRelations(this.projectId, docId)
       // In colab mode, if someone add a new label and annotate data
       // with the label during your work, it occurs exception
       // because there is no corresponding label.
-      await this.maybeFetchSpanTypes(annotations)
-      this.annotations = annotations
+      await this.maybeFetchSpanTypes(spans)
+      this.spans = spans
       this.relations = relations
+      this.categories = await this.$services.textClassification.list(this.projectId, docId)
     },
 
     async deleteSpan(id) {
@@ -297,26 +301,21 @@ export default {
       )
       await this.list(this.doc.id)
     },
-
     async deleteRelation(relationId) {
       await this.$services.sequenceLabeling.deleteRelation(this.projectId, this.doc.id, relationId)
       await this.list(this.doc.id)
     },
-
-
     async removeCategory(id) {
       await this.$services.textClassification.delete(this.projectId, this.doc.id, id)
       await this.list(this.doc.id)
     },
-
     async addCategory(labelId) {
       await this.$services.textClassification.create(this.projectId, this.doc.id, labelId)
       await this.list(this.doc.id)
     },
-
     async addOrRemoveCategory(event) {
       const labelId = parseInt(event.srcKey, 10)
-      const annotation = this.annotations.find((item) => item.label === labelId)
+      const annotation = this.spans.find((item) => item.label === labelId)
       if (annotation) {
         await this.remove(annotation.id)
       } else {
