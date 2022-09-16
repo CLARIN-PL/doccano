@@ -35,7 +35,10 @@ class ExampleList(generics.ListCreateAPIView):
             value = random.randrange(2, 20)
             queryset = queryset.annotate(sort_id=F("id") % value).order_by("sort_id", "id")
         else:
-            queryset = queryset.order_by("created_at")
+            if self.project.is_article_project:
+                queryset = queryset.order_by("article_id", "order")
+            else:
+                queryset = queryset.order_by("created_at")
         return queryset
 
     def perform_create(self, serializer):
