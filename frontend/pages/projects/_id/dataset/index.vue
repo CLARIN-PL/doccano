@@ -52,9 +52,20 @@
       @update:query="updateQuery"
       @click:labeling="movePage"
     />
+    <article-list
+      v-else-if="isArticleTask"
+      v-model="selected"
+      :project="project"
+      :items="item.items"
+      :is-loading="isLoading"
+      :total="item.count"
+      @update:query="updateQuery"
+      @click:labeling="movePage"
+    />
     <document-list
       v-else
       v-model="selected"
+      :project="project"
       :items="item.items"
       :is-loading="isLoading"
       :total="item.count"
@@ -67,6 +78,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import _ from 'lodash'
+import ArticleList from '@/components/example/ArticleList.vue'
 import DocumentList from '@/components/example/DocumentList.vue'
 import FormDelete from '@/components/example/FormDelete.vue'
 import FormDeleteBulk from '@/components/example/FormDeleteBulk.vue'
@@ -80,6 +92,7 @@ export default Vue.extend({
   components: {
     ActionMenu,
     AudioList,
+    ArticleList,
     DocumentList,
     ImageList,
     FormDelete,
@@ -98,7 +111,7 @@ export default Vue.extend({
       dialogDelete: false,
       dialogDeleteAll: false,
       project: {} as ProjectDTO,
-      item: {} as ExampleListDTO,
+      item: { items: [] as ExampleDTO[] } as ExampleListDTO,
       selected: [] as ExampleDTO[],
       isLoading: false,
       isProjectAdmin: false
@@ -117,6 +130,9 @@ export default Vue.extend({
     },
     projectId(): string {
       return this.$route.params.id
+    },
+    isArticleTask(): boolean {
+      return this.project.projectType === 'ArticleAnnotation'
     },
     isImageTask(): boolean {
       return this.project.projectType === 'ImageClassification'
@@ -166,7 +182,7 @@ export default Vue.extend({
         path: this.localePath(this.project.pageLink),
         query
       })
-    }
+    },
   }
 })
 </script>
