@@ -21,6 +21,7 @@
         </v-btn-toggle>
       </toolbar-laptop>
       <toolbar-mobile :total="docs.count" class="d-flex d-sm-none" />
+      <h3 class="mt-3">Article Title: {{ doc.meta.meta.article_title }}</h3>
     </template>
     <template #content>
       <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
