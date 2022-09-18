@@ -30,10 +30,14 @@
         <v-row class="mt-3" no-gutters>
           <v-col cols="6">
             <div id="viewer_component_placeholder" style="overflow-wrap: break-word;">
-              <h3 class="mt-3">Whole Article Viewer Component Here</h3>
               <h3 class="mt-3">Article Title: {{ doc.meta.meta.article_title }}</h3>
               <p class="mt-3">Article ID: {{ currentArticleId }}</p>
               <p class="mt-3">{{ currentWholeArticleView }}</p>
+              <toolbar-article 
+                :project="project"
+                :article-items="articleItems"
+                :current-article-item="doc"
+              />
             </div>
           </v-col>
           <v-col cols="6">
@@ -131,6 +135,7 @@ import LayoutText from '@/components/tasks/layout/LayoutText'
 import ListMetadata from '@/components/tasks/metadata/ListMetadata'
 import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
+import ToolbarArticle from '@/components/tasks/toolbar/ToolbarArticle'
 import EntityEditor from '@/components/tasks/sequenceLabeling/EntityEditor.vue'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
 
@@ -142,6 +147,7 @@ export default {
     ListMetadata,
     ToolbarLaptop,
     ToolbarMobile,
+    ToolbarArticle,
     LabelGroup,
     LabelSelect
   },
@@ -163,6 +169,7 @@ export default {
       relationTypes: [],
       categories: [],
       categoryTypes: [],
+      articleItems: [],
       labelOption: 0,
       project: {},
       enableAutoLabeling: false,
@@ -203,6 +210,7 @@ export default {
     )
     this.articleTotal = allArticleIds.length
     this.articleIndex = allArticleIds.indexOf(this.currentArticleId) + 1
+    this.articleItems = this.currentWholeArticle.items.filter((item)=> item.articleId === this.doc.articleId)
   },
 
   computed: {
@@ -293,7 +301,6 @@ export default {
       this.relations = relations
       this.categories = await this.$services.textClassification.list(this.projectId, docId)
     },
-
     async deleteSpan(id) {
       await this.$services.sequenceLabeling.delete(this.projectId, this.doc.id, id)
       await this.list(this.doc.id)
