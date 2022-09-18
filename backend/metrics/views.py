@@ -37,6 +37,22 @@ class MemberProgressAPI(APIView):
         data = ExampleState.objects.measure_member_progress(examples, members)
         return Response(data=data, status=status.HTTP_200_OK)
 
+class ArticleProgressAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
+
+    def get(self, request, *args, **kwargs):
+        articles = Example.objects.filter(project=self.kwargs["project_id"]).values("article_id")
+        total_article = articles.count()
+        texts = articles.filter(project=self.kwargs["project_id"]).values("id")
+        total = texts.count()
+        project = get_object_or_404(Project, pk=self.kwargs["project_id"])
+        if project.collaborative_annotation:
+            complete = ExampleState.objects.count_done(texts)
+        else:
+            complete = ExampleState.objects.count_done(texts, user=self.request.user)
+        data = {"total": total, "totalArticle": total_article, "remaining": total - complete, "complete": complete}
+        return Response(data=data, status=status.HTTP_200_OK)
+
 
 class LabelDistribution(abc.ABC, APIView):
     permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]

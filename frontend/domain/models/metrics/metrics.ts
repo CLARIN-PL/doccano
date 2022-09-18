@@ -12,3 +12,10 @@ export interface MyProgress {
   complete: number
   remaining: number
 }
+
+export interface MyArticleProgress {
+  total: number
+  totalArticle: number
+  complete: number
+  remaining: number
+}

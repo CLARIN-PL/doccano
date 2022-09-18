@@ -87,7 +87,7 @@
       </div>
     </template>
     <template #sidebar>
-      <annotation-progress :progress="progress" />
+      <article-annotation-progress :progress="progress" />
       <v-card class="mt-4">
         <v-card-title>Label Types</v-card-title>
         <v-card-text>
@@ -137,11 +137,11 @@ import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
 import ToolbarArticle from '@/components/tasks/toolbar/ToolbarArticle'
 import EntityEditor from '@/components/tasks/sequenceLabeling/EntityEditor.vue'
-import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
+import ArticleAnnotationProgress from '@/components/tasks/sidebar/ArticleAnnotationProgress.vue'
 
 export default {
   components: {
-    AnnotationProgress,
+    ArticleAnnotationProgress,
     EntityEditor,
     LayoutText,
     ListMetadata,
@@ -204,13 +204,15 @@ export default {
       this.currentArticleId,
       this.$route.query.isChecked
     )
+
     const allArticleIds = await this.$services.example.fetchArticleIds(
       this.projectId,
       this.docs.count.toString()
     )
     this.articleTotal = allArticleIds.length
     this.articleIndex = allArticleIds.indexOf(this.currentArticleId) + 1
-    this.articleItems = this.currentWholeArticle.items.filter((item)=> item.articleId === this.doc.articleId)
+    this.articleItems = _.orderBy(this.currentWholeArticle.items.filter((item)=> item.articleId === this.doc.articleId), 
+      'order')
   },
 
   computed: {
