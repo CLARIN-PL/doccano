@@ -21,50 +21,61 @@
         </v-btn-toggle>
       </toolbar-laptop>
       <toolbar-mobile :total="docs.count" class="d-flex d-sm-none" />
-      <h3 class="mt-3">Article Title: {{ doc.meta.meta.article_title }}</h3>
     </template>
     <template #content>
-      <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
-        <v-card-title>
-            <label-group
-              v-if="labelOption === 0"
-              :labels="categoryTypes"
-              :annotations="categories"
-              :single-label="project.singleClassClassification"
-              @add="addCategory"
-              @remove="removeCategory"
-            />
-            <label-select
-              v-else
-              :labels="categoryTypes"
-              :annotations="categories"
-              :single-label="project.singleClassClassification"
-              @add="addCategory"
-              @remove="removeCategory"
-            />
-        </v-card-title>
-        <div class="annotation-text pa-4">
-          <entity-editor
-            :dark="$vuetify.theme.dark"
-            :rtl="isRTL"
-            :text="doc.text"
-            :entities="spans"
-            :entity-labels="spanTypes"
-            :relations="relations"
-            :relation-labels="relationTypes"
-            :allow-overlapping="project.allowOverlapping"
-            :grapheme-mode="project.graphemeMode"
-            :selected-label="selectedLabel"
-            :relation-mode="relationMode"
-            @addEntity="addSpan"
-            @addRelation="addRelation"
-            @click:entity="updateSpan"
-            @click:relation="updateRelation"
-            @contextmenu:entity="deleteSpan"
-            @contextmenu:relation="deleteRelation"
-          />
-        </div>
-      </v-card>
+      <div>
+        <v-row class="mt-3" no-gutters>
+          <v-col cols="6">
+            <div>Whole Article View Here</div>
+            <h3 class="mt-3">Article Title: {{ doc.meta.meta.article_title }}</h3>
+            <p class="my-0">Article ID: {{ currentArticleId }}</p>
+            <div>{{ currentWholeArticleView }}</div>
+          </v-col>
+          <v-col cols="6">
+            <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
+              <v-card-title>
+                  <label-group
+                    v-if="labelOption === 0"
+                    :labels="categoryTypes"
+                    :annotations="categories"
+                    :single-label="project.singleClassClassification"
+                    @add="addCategory"
+                    @remove="removeCategory"
+                  />
+                  <label-select
+                    v-else
+                    :labels="categoryTypes"
+                    :annotations="categories"
+                    :single-label="project.singleClassClassification"
+                    @add="addCategory"
+                    @remove="removeCategory"
+                  />
+              </v-card-title>
+              <div class="annotation-text pa-4">
+                <entity-editor
+                  :dark="$vuetify.theme.dark"
+                  :rtl="isRTL"
+                  :text="doc.text"
+                  :entities="spans"
+                  :entity-labels="spanTypes"
+                  :relations="relations"
+                  :relation-labels="relationTypes"
+                  :allow-overlapping="project.allowOverlapping"
+                  :grapheme-mode="project.graphemeMode"
+                  :selected-label="selectedLabel"
+                  :relation-mode="relationMode"
+                  @addEntity="addSpan"
+                  @addRelation="addRelation"
+                  @click:entity="updateSpan"
+                  @click:relation="updateRelation"
+                  @contextmenu:entity="deleteSpan"
+                  @contextmenu:relation="deleteRelation"
+                />
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+      </div>
     </template>
     <template #sidebar>
       <annotation-progress :progress="progress" />
@@ -153,7 +164,9 @@ export default {
       rtl: false,
       selectedLabelIndex: null,
       progress: {},
-      relationMode: false
+      relationMode: false,
+      currentArticleId: "",
+      currentWholeArticle: []
     }
   },
 
@@ -169,6 +182,18 @@ export default {
       await this.autoLabel(doc.id)
     }
     await this.list(doc.id)
+
+    this.currentArticleId = doc.articleId
+    const allTexts = await this.$services.example.fetchAll(
+      this.projectId,
+      this.$route.query.q,
+      this.$route.query.isChecked
+    )
+    for(let i = 0; i < allTexts.items.length; i++) {
+      if(allTexts.items[i].articleId === this.currentArticleId) {
+        this.currentWholeArticle.push(allTexts.items[i])
+      }
+    }
   },
 
   computed: {
@@ -217,6 +242,11 @@ export default {
       } else {
         return this.spanTypes
       }
+    },
+
+    currentWholeArticleView() {
+      console.log(JSON.stringify(this.currentWholeArticle))
+      return JSON.stringify(this.currentWholeArticle)
     }
   },
 
@@ -370,7 +400,7 @@ export default {
 
 <style scoped>
 .annotation-text {
-  font-size: 1.25rem !important;
+  font-size: 1.1rem !important;
   font-weight: 500;
   line-height: 2rem;
   font-family: 'Roboto', sans-serif !important;

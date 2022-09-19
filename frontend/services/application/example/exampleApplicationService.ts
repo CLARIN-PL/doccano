@@ -31,6 +31,18 @@ export class ExampleApplicationService {
     return await this.list(projectId, options)
   }
 
+  public async fetchAll(
+    projectId: string,
+    q: string,
+    isChecked: string
+  ): Promise<ExampleListDTO> {
+    const options: SearchOption = {
+      q,
+      isChecked
+    }
+    return await this.list(projectId, options)
+  }
+
   public async create(projectId: string, item: ExampleDTO): Promise<ExampleDTO> {
     try {
       const doc = this.toModel(item)
