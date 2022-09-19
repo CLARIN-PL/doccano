@@ -7,6 +7,9 @@
         :guideline-text="project.guideline"
         :is-reviewd="doc.isConfirmed"
         :total="docs.count"
+        :is-article-project="true"
+        :article-index="articleIndex"
+        :article-total="articleTotal"
         class="d-none d-sm-block"
         @click:clear-label="clear"
         @click:review="confirm"
@@ -26,10 +29,12 @@
       <div>
         <v-row class="mt-3" no-gutters>
           <v-col cols="6">
-            <div>Whole Article View Here</div>
-            <h3 class="mt-3">Article Title: {{ doc.meta.meta.article_title }}</h3>
-            <p class="my-0">Article ID: {{ currentArticleId }}</p>
-            <div>{{ currentWholeArticleView }}</div>
+            <div id="viewer_component_placeholder" style="overflow-wrap: break-word;">
+              <h3 class="mt-3">Whole Article Viewer Component Here</h3>
+              <h3 class="mt-3">Article Title: {{ doc.meta.meta.article_title }}</h3>
+              <p class="mt-3">Article ID: {{ currentArticleId }}</p>
+              <p class="mt-3">{{ currentWholeArticleView }}</p>
+            </div>
           </v-col>
           <v-col cols="6">
             <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
@@ -165,6 +170,8 @@ export default {
       selectedLabelIndex: null,
       progress: {},
       relationMode: false,
+      articleTotal: 1,
+      articleIndex: 1,
       currentArticleId: "",
       currentWholeArticle: []
     }
@@ -189,11 +196,17 @@ export default {
       this.$route.query.q,
       this.$route.query.isChecked
     )
+    const allArticleIds = []
     for(let i = 0; i < allTexts.items.length; i++) {
       if(allTexts.items[i].articleId === this.currentArticleId) {
         this.currentWholeArticle.push(allTexts.items[i])
       }
+      if(!allArticleIds.includes(allTexts.items[i].articleId)) {
+        allArticleIds.push(allTexts.items[i].articleId)
+      }
     }
+    this.articleTotal = allArticleIds.length
+    this.articleIndex = allArticleIds.indexOf(this.currentArticleId) + 1
   },
 
   computed: {
@@ -245,7 +258,6 @@ export default {
     },
 
     currentWholeArticleView() {
-      console.log(JSON.stringify(this.currentWholeArticle))
       return JSON.stringify(this.currentWholeArticle)
     }
   },
