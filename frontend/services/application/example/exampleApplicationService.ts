@@ -37,10 +37,21 @@ export class ExampleApplicationService {
     isChecked: string
   ): Promise<ExampleListDTO> {
     const options: SearchOption = {
+      limit: '10000',
+      offset: '0',
       q,
       isChecked
     }
     return await this.list(projectId, options)
+  }
+
+  public async fetchArticleIds(projectId: string): Promise<Array<string>> {
+    try {
+      const item = await this.repository.articleIds(projectId)
+      return item
+    } catch (e: any) {
+      throw new Error(e.response.data.detail)
+    }
   }
 
   public async create(projectId: string, item: ExampleDTO): Promise<ExampleDTO> {

@@ -191,20 +191,14 @@ export default {
     await this.list(doc.id)
 
     this.currentArticleId = doc.articleId
-    const allTexts = await this.$services.example.fetchAll(
+    this.currentWholeArticle = await this.$services.example.fetchAll(
       this.projectId,
-      this.$route.query.q,
+      this.currentArticleId,
       this.$route.query.isChecked
     )
-    const allArticleIds = []
-    for(let i = 0; i < allTexts.items.length; i++) {
-      if(allTexts.items[i].articleId === this.currentArticleId) {
-        this.currentWholeArticle.push(allTexts.items[i])
-      }
-      if(!allArticleIds.includes(allTexts.items[i].articleId)) {
-        allArticleIds.push(allTexts.items[i].articleId)
-      }
-    }
+    const allArticleIds = await this.$services.example.fetchArticleIds(
+      this.projectId
+    )
     this.articleTotal = allArticleIds.length
     this.articleIndex = allArticleIds.indexOf(this.currentArticleId) + 1
   },
