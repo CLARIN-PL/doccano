@@ -31,13 +31,14 @@ export class ExampleApplicationService {
     return await this.list(projectId, options)
   }
 
-  public async fetchAll(
+  public async fetchByLimit(
     projectId: string,
+    count: string,
     q: string,
     isChecked: string
   ): Promise<ExampleListDTO> {
     const options: SearchOption = {
-      limit: '10000',
+      limit: count,
       offset: '0',
       q,
       isChecked
@@ -45,9 +46,9 @@ export class ExampleApplicationService {
     return await this.list(projectId, options)
   }
 
-  public async fetchArticleIds(projectId: string): Promise<Array<string>> {
+  public async fetchArticleIds(projectId: string, count: string): Promise<Array<string>> {
     try {
-      const item = await this.repository.articleIds(projectId)
+      const item = await this.repository.articleIds(projectId, count)
       return item
     } catch (e: any) {
       throw new Error(e.response.data.detail)

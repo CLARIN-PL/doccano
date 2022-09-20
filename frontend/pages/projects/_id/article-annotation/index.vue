@@ -191,13 +191,15 @@ export default {
     await this.list(doc.id)
 
     this.currentArticleId = doc.articleId
-    this.currentWholeArticle = await this.$services.example.fetchAll(
+    this.currentWholeArticle = await this.$services.example.fetchByLimit(
       this.projectId,
+      this.docs.count.toString(),
       this.currentArticleId,
       this.$route.query.isChecked
     )
     const allArticleIds = await this.$services.example.fetchArticleIds(
-      this.projectId
+      this.projectId,
+      this.docs.count.toString()
     )
     this.articleTotal = allArticleIds.length
     this.articleIndex = allArticleIds.indexOf(this.currentArticleId) + 1
