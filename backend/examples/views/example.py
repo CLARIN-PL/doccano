@@ -1,6 +1,6 @@
 import random
 
-from django.db.models import F
+from django.db.models import F, Count
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, status
@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 from examples.filters import ExampleFilter
 from examples.models import Example
-from examples.serializers import ExampleSerializer
+from examples.serializers import ExampleSerializer, ExampleArticleIdSerializer
 from projects.models import Project
 from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly
 
@@ -19,7 +19,7 @@ class ExampleList(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
     filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     ordering_fields = ("created_at", "updated_at")
-    search_fields = ("text", "filename")
+    search_fields = ("text", "filename", "article_id")
     model = Example
     filter_class = ExampleFilter
 
@@ -52,6 +52,24 @@ class ExampleList(generics.ListCreateAPIView):
         else:
             queryset.all().delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ExampleArticleIdList(generics.ListCreateAPIView):
+    serializer_class = ExampleArticleIdSerializer
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
+    ordering_fields = ("article_id", "order")
+    model = Example
+
+    @property
+    def project(self):
+        return get_object_or_404(Project, pk=self.kwargs["project_id"])
+
+    def get_queryset(self):
+        queryset = self.model.objects.filter(project=self.project).order_by()
+        queryset = queryset.values_list("id", "article_id")
+        queryset = queryset.values("article_id").distinct().order_by("article_id")
+        return queryset
 
 
 class ExampleDetail(generics.RetrieveUpdateDestroyAPIView):

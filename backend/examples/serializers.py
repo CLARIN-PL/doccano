@@ -52,6 +52,16 @@ class ExampleSerializer(serializers.ModelSerializer):
         read_only_fields = ["filename", "is_confirmed", "upload_name"]
 
 
+class ExampleArticleIdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Example
+        fields = [
+            "id",
+            "article_id"
+        ]
+        read_only_fields = ["article_id"]
+
+
 class ExampleStateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExampleState
