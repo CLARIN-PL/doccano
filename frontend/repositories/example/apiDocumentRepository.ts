@@ -15,6 +15,12 @@ export class APIExampleRepository implements ExampleRepository {
     return plainToInstance(ExampleItemList, response.data)
   }
 
+  async articleIds(projectId: string, limit = '999999'): Promise<Array<string>> {
+    const url = `/projects/${projectId}/article_ids?limit=${limit}=&offset=0`
+    const response = await this.request.get(url)
+    return response.data.results.map((i: any) => i.article_id)
+  }
+
   async create(projectId: string, item: ExampleItem): Promise<ExampleItem> {
     const url = `/projects/${projectId}/examples`
     const response = await this.request.post(url, item.toObject())

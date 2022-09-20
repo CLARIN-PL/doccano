@@ -7,6 +7,9 @@
         :guideline-text="project.guideline"
         :is-reviewd="doc.isConfirmed"
         :total="docs.count"
+        :is-article-project="true"
+        :article-index="articleIndex"
+        :article-total="articleTotal"
         class="d-none d-sm-block"
         @click:clear-label="clear"
         @click:review="confirm"
@@ -21,50 +24,63 @@
         </v-btn-toggle>
       </toolbar-laptop>
       <toolbar-mobile :total="docs.count" class="d-flex d-sm-none" />
-      <h3 class="mt-3">Article Title: {{ doc.meta.meta.article_title }}</h3>
     </template>
     <template #content>
-      <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
-        <v-card-title>
-            <label-group
-              v-if="labelOption === 0"
-              :labels="categoryTypes"
-              :annotations="categories"
-              :single-label="project.singleClassClassification"
-              @add="addCategory"
-              @remove="removeCategory"
-            />
-            <label-select
-              v-else
-              :labels="categoryTypes"
-              :annotations="categories"
-              :single-label="project.singleClassClassification"
-              @add="addCategory"
-              @remove="removeCategory"
-            />
-        </v-card-title>
-        <div class="annotation-text pa-4">
-          <entity-editor
-            :dark="$vuetify.theme.dark"
-            :rtl="isRTL"
-            :text="doc.text"
-            :entities="spans"
-            :entity-labels="spanTypes"
-            :relations="relations"
-            :relation-labels="relationTypes"
-            :allow-overlapping="project.allowOverlapping"
-            :grapheme-mode="project.graphemeMode"
-            :selected-label="selectedLabel"
-            :relation-mode="relationMode"
-            @addEntity="addSpan"
-            @addRelation="addRelation"
-            @click:entity="updateSpan"
-            @click:relation="updateRelation"
-            @contextmenu:entity="deleteSpan"
-            @contextmenu:relation="deleteRelation"
-          />
-        </div>
-      </v-card>
+      <div>
+        <v-row class="mt-3" no-gutters>
+          <v-col cols="6">
+            <div id="viewer_component_placeholder" style="overflow-wrap: break-word;">
+              <h3 class="mt-3">Whole Article Viewer Component Here</h3>
+              <h3 class="mt-3">Article Title: {{ doc.meta.meta.article_title }}</h3>
+              <p class="mt-3">Article ID: {{ currentArticleId }}</p>
+              <p class="mt-3">{{ currentWholeArticleView }}</p>
+            </div>
+          </v-col>
+          <v-col cols="6">
+            <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
+              <v-card-title>
+                  <label-group
+                    v-if="labelOption === 0"
+                    :labels="categoryTypes"
+                    :annotations="categories"
+                    :single-label="project.singleClassClassification"
+                    @add="addCategory"
+                    @remove="removeCategory"
+                  />
+                  <label-select
+                    v-else
+                    :labels="categoryTypes"
+                    :annotations="categories"
+                    :single-label="project.singleClassClassification"
+                    @add="addCategory"
+                    @remove="removeCategory"
+                  />
+              </v-card-title>
+              <div class="annotation-text pa-4">
+                <entity-editor
+                  :dark="$vuetify.theme.dark"
+                  :rtl="isRTL"
+                  :text="doc.text"
+                  :entities="spans"
+                  :entity-labels="spanTypes"
+                  :relations="relations"
+                  :relation-labels="relationTypes"
+                  :allow-overlapping="project.allowOverlapping"
+                  :grapheme-mode="project.graphemeMode"
+                  :selected-label="selectedLabel"
+                  :relation-mode="relationMode"
+                  @addEntity="addSpan"
+                  @addRelation="addRelation"
+                  @click:entity="updateSpan"
+                  @click:relation="updateRelation"
+                  @contextmenu:entity="deleteSpan"
+                  @contextmenu:relation="deleteRelation"
+                />
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+      </div>
     </template>
     <template #sidebar>
       <annotation-progress :progress="progress" />
@@ -153,7 +169,11 @@ export default {
       rtl: false,
       selectedLabelIndex: null,
       progress: {},
-      relationMode: false
+      relationMode: false,
+      articleTotal: 1,
+      articleIndex: 1,
+      currentArticleId: "",
+      currentWholeArticle: []
     }
   },
 
@@ -169,6 +189,20 @@ export default {
       await this.autoLabel(doc.id)
     }
     await this.list(doc.id)
+
+    this.currentArticleId = doc.articleId
+    this.currentWholeArticle = await this.$services.example.fetchByLimit(
+      this.projectId,
+      this.docs.count.toString(),
+      this.currentArticleId,
+      this.$route.query.isChecked
+    )
+    const allArticleIds = await this.$services.example.fetchArticleIds(
+      this.projectId,
+      this.docs.count.toString()
+    )
+    this.articleTotal = allArticleIds.length
+    this.articleIndex = allArticleIds.indexOf(this.currentArticleId) + 1
   },
 
   computed: {
@@ -217,6 +251,10 @@ export default {
       } else {
         return this.spanTypes
       }
+    },
+
+    currentWholeArticleView() {
+      return JSON.stringify(this.currentWholeArticle)
     }
   },
 
@@ -370,7 +408,7 @@ export default {
 
 <style scoped>
 .annotation-text {
-  font-size: 1.25rem !important;
+  font-size: 1.1rem !important;
   font-weight: 500;
   line-height: 2rem;
   font-family: 'Roboto', sans-serif !important;

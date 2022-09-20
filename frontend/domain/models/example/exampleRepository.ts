@@ -5,6 +5,8 @@ export type SearchOption = { [key: string]: string | (string | null)[] }
 export interface ExampleRepository {
   list(projectId: string, { limit, offset, q, isChecked }: SearchOption): Promise<ExampleItemList>
 
+  articleIds(projectId: string, limit: string): Promise<Array<string>>
+
   create(projectId: string, item: ExampleItem): Promise<ExampleItem>
 
   update(projectId: string, item: ExampleItem): Promise<ExampleItem>

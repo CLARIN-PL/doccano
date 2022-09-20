@@ -1,7 +1,11 @@
 <template>
   <div class="v-data-footer">
     <v-edit-dialog large persistent @save="changePageNumber">
-      <span>{{ value }} of {{ total }}</span>
+      <span v-if="isArticleProject">
+        {{ value }} of {{ total }} texts,
+        {{ articleIndex }} of {{ articleTotal }} articles
+      </span>
+      <span v-else>{{ value }} of {{ total }}</span>
       <template #input>
         <div class="mt-4 title">Move Page</div>
         <v-text-field
@@ -76,6 +80,21 @@ export default Vue.extend({
       type: Number,
       default: 1,
       required: true
+    },
+    isArticleProject: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
+    articleIndex: {
+      type: Number,
+      default: 1,
+      required: false
+    },
+    articleTotal: {
+      type: Number,
+      default: 1,
+      required: false
     }
   },
 

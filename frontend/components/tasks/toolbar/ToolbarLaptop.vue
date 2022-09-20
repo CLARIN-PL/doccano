@@ -42,6 +42,9 @@
       <button-pagination
         :value="page"
         :total="total"
+        :is-article-project="isArticleProject"
+        :article-index="articleIndex"
+        :article-total="articleTotal"
         @click:prev="updatePage(page - 1)"
         @click:next="updatePage(page + 1)"
         @click:first="updatePage(1)"
@@ -103,6 +106,21 @@ export default Vue.extend({
     total: {
       type: Number,
       default: 1
+    },
+    isArticleProject: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
+    articleIndex: {
+      type: Number,
+      default: 1,
+      required: false
+    },
+    articleTotal: {
+      type: Number,
+      default: 1,
+      required: false
     }
   },
 
