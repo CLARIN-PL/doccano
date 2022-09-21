@@ -27,20 +27,24 @@
     </template>
     <template #content>
       <div>
-        <v-row class="mt-3" no-gutters>
-          <v-col cols="6">
-            <div id="viewer_component_placeholder" style="overflow-wrap: break-word;">
+        <v-row>
+          <v-col cols="12">
               <h3 class="mt-3">Article Title: {{ doc.meta.meta.article_title }}</h3>
               <p class="mt-3">Article ID: {{ currentArticleId }}</p>
-              <p class="mt-3">{{ currentWholeArticleView }}</p>
+              <v-divider />
+          </v-col>
+        </v-row>
+        <v-row class="mt-3">
+          <v-col cols="5">
+            <div>
               <toolbar-article 
                 :project="project"
-                :article-items="articleItems"
+                :article-items="currentWholeArticle.items"
                 :current-article-item="doc"
               />
             </div>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="7">
             <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
               <v-card-title>
                   <label-group
@@ -60,6 +64,7 @@
                     @remove="removeCategory"
                   />
               </v-card-title>
+              <v-divider />
               <div class="annotation-text pa-4">
                 <entity-editor
                   :dark="$vuetify.theme.dark"
@@ -87,7 +92,7 @@
       </div>
     </template>
     <template #sidebar>
-      <article-annotation-progress :progress="progress" />
+      <annotation-progress :progress="progress" />
       <v-card class="mt-4">
         <v-card-title>Label Types</v-card-title>
         <v-card-text>
@@ -137,11 +142,11 @@ import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
 import ToolbarArticle from '@/components/tasks/toolbar/ToolbarArticle'
 import EntityEditor from '@/components/tasks/sequenceLabeling/EntityEditor.vue'
-import ArticleAnnotationProgress from '@/components/tasks/sidebar/ArticleAnnotationProgress.vue'
+import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
 
 export default {
   components: {
-    ArticleAnnotationProgress,
+    AnnotationProgress,
     EntityEditor,
     LayoutText,
     ListMetadata,
@@ -169,7 +174,6 @@ export default {
       relationTypes: [],
       categories: [],
       categoryTypes: [],
-      articleItems: [],
       labelOption: 0,
       project: {},
       enableAutoLabeling: false,
@@ -204,6 +208,7 @@ export default {
       this.currentArticleId,
       this.$route.query.isChecked
     )
+    this.currentWholeArticle.items = _.orderBy(this.currentWholeArticle.items, 'order')
 
     const allArticleIds = await this.$services.example.fetchArticleIds(
       this.projectId,
@@ -211,8 +216,6 @@ export default {
     )
     this.articleTotal = allArticleIds.length
     this.articleIndex = allArticleIds.indexOf(this.currentArticleId) + 1
-    this.articleItems = _.orderBy(this.currentWholeArticle.items.filter((item)=> item.articleId === this.doc.articleId), 
-      'order')
   },
 
   computed: {
@@ -262,10 +265,6 @@ export default {
         return this.spanTypes
       }
     },
-
-    currentWholeArticleView() {
-      return JSON.stringify(this.currentWholeArticle)
-    }
   },
 
   watch: {

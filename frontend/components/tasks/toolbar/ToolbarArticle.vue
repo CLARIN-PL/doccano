@@ -2,9 +2,11 @@
     <v-card class="toolbar-article">
         <v-card-text ref="articleBody" class="toolbar-article__body" >
           <ul class="article-list">
-            <li v-for="(item, index) in articleItems" :key="'articleItem_'+index"
-              :class="{'--active': item.id === currentArticleItem.id }"
+            <li v-for="(item, index) in articleItems" 
               :id="'article-item_'+index"
+              :key="'articleItem_'+index"
+              :class="[item.id === currentArticleItem.id ? '--active' : '--inactive', 
+                      `--${item.type}`]"
               class="article-list__item" >
               <p class="item__text">
                 {{ item.text }} 
@@ -13,20 +15,21 @@
           </ul>
         </v-card-text>
         <v-progress-linear
+          class="mt-5"
           :value="(itemPosition)/articleItems.length*100"
         ></v-progress-linear>
         <v-card-actions class="toolbar-article__footer">
-          Annotating: {{ itemPosition }} of {{ articleItems.length }}
+          Annotating {{ itemPosition }} / {{ articleItems.length }} texts
         </v-card-actions>
     </v-card>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import { ExampleDTO } from '~/services/application/example/exampleData'
+
 
 export default Vue.extend({
-  components: {
-  },
   props: {
     project: {
         type: Object,
@@ -36,17 +39,18 @@ export default Vue.extend({
     articleItems: {
       type: Array,
       required: true,
-      default: () => []
-    },
+      default: () => [] as ExampleDTO[]
+    }, 
     currentArticleItem: {
         type: Object,
         required: true,
-        default: () => {}
+        default: () => ExampleDTO,
     }
   },
   computed: {
     itemPosition() {
-      return this.articleItems.findIndex((item) => item.id === this.currentArticleItem.id ) + 1
+      return this.articleItems.findIndex((item : object) => item.id 
+        === this.currentArticleItem.id ) + 1
     }
   },
   watch: {
@@ -57,9 +61,10 @@ export default Vue.extend({
   methods: {
     setScrollPosition() {
       const index = this.itemPosition - 1
-      if(index >= 0) {
+      const articleItem = document.getElementById('article-item_' + index)
+      if(index >= 0 && articleItem) {
         setTimeout(function() {
-            document.getElementById('article-item_' + index).scrollIntoView({
+            articleItem.scrollIntoView({
               behavior: 'smooth',
               block: 'nearest',
             });
@@ -92,18 +97,35 @@ export default Vue.extend({
   margin: 0; 
 
   &__item {
-    font-size: .75rem; 
+    font-size: .625rem; 
     padding: 0; 
     margin: 0; 
     opacity: .5;
+    text-indent: 1em;
+    text-align: justify;
 
     > p {
-      margin: 0; 
+      margin: .25rem 0; 
     }
     
     &.--active {
       opacity: 1;
+      border: 1px solid #5097DD; 
+      padding: 5px;
+      text-indent: calc(1em - 6px); 
     }
+
+    &.--title {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: .5rem;
+    }
+
+    &.--title, 
+    &.--subheader {
+      text-indent: 0;
+    }
+
   }
 }
 </style>

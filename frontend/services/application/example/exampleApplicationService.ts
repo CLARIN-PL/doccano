@@ -15,16 +15,6 @@ export class ExampleApplicationService {
     }
   }
 
-  public async fetchByLimit(
-    projectId: string,
-    limit: string,
-  ): Promise<ExampleListDTO> {
-    const options: SearchOption = {
-      limit,
-    }
-    return await this.list(projectId, options)
-  }
-
   public async fetchOne(
     projectId: string,
     page: string,
