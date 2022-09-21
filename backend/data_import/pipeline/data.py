@@ -21,7 +21,7 @@ class BaseData(BaseModel, abc.ABC):
 
     @classmethod
     def parse(cls, example_uuid: UUID4, filename: str, upload_name: str, text: str = "", article_id: str = "",  order: str = "", type: str = "", **kwargs):
-        return cls(uuid=example_uuid, filename=filename, upload_name=upload_name, text=text, article_id=article_id, order=order, type=type, meta=kwargs)
+        return cls(uuid=example_uuid, filename=filename, upload_name=upload_name, text=text, article_id=filename+"-"+article_id, order=order, type=type, meta=kwargs)
 
     def __hash__(self):
         return hash(tuple(self.dict()))
