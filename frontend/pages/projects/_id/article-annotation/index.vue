@@ -209,7 +209,6 @@ export default {
       this.$route.query.isChecked
     )
     this.currentWholeArticle.items = _.orderBy(this.currentWholeArticle.items, 'order')
-
     const allArticleIds = await this.$services.example.fetchArticleIds(
       this.projectId,
       this.docs.count.toString()

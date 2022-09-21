@@ -48,8 +48,8 @@ export default Vue.extend({
     }
   },
   computed: {
-    itemPosition() {
-      return this.articleItems.findIndex((item : object) => item.id 
+    itemPosition() : number {
+      return this.articleItems.findIndex((item : any) => item.id 
         === this.currentArticleItem.id ) + 1
     }
   },
