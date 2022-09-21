@@ -27,16 +27,24 @@
     </template>
     <template #content>
       <div>
-        <v-row class="mt-3" no-gutters>
-          <v-col cols="6">
-            <div id="viewer_component_placeholder" style="overflow-wrap: break-word;">
-              <h3 class="mt-3">Whole Article Viewer Component Here</h3>
+        <v-row>
+          <v-col cols="12">
               <h3 class="mt-3">Article Title: {{ doc.meta.meta.article_title }}</h3>
               <p class="mt-3">Article ID: {{ currentArticleId }}</p>
-              <p class="mt-3">{{ currentWholeArticleView }}</p>
+              <v-divider />
+          </v-col>
+        </v-row>
+        <v-row class="mt-3">
+          <v-col cols="5">
+            <div>
+              <toolbar-article 
+                :project="project"
+                :article-items="currentWholeArticle.items"
+                :current-article-item="doc"
+              />
             </div>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="7">
             <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
               <v-card-title>
                   <label-group
@@ -56,6 +64,7 @@
                     @remove="removeCategory"
                   />
               </v-card-title>
+              <v-divider />
               <div class="annotation-text pa-4">
                 <entity-editor
                   :dark="$vuetify.theme.dark"
@@ -131,6 +140,7 @@ import LayoutText from '@/components/tasks/layout/LayoutText'
 import ListMetadata from '@/components/tasks/metadata/ListMetadata'
 import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
+import ToolbarArticle from '@/components/tasks/toolbar/ToolbarArticle'
 import EntityEditor from '@/components/tasks/sequenceLabeling/EntityEditor.vue'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
 
@@ -142,6 +152,7 @@ export default {
     ListMetadata,
     ToolbarLaptop,
     ToolbarMobile,
+    ToolbarArticle,
     LabelGroup,
     LabelSelect
   },
@@ -197,6 +208,7 @@ export default {
       this.currentArticleId,
       this.$route.query.isChecked
     )
+    this.currentWholeArticle.items = _.orderBy(this.currentWholeArticle.items, 'order')
     const allArticleIds = await this.$services.example.fetchArticleIds(
       this.projectId,
       this.docs.count.toString()
@@ -252,10 +264,6 @@ export default {
         return this.spanTypes
       }
     },
-
-    currentWholeArticleView() {
-      return JSON.stringify(this.currentWholeArticle)
-    }
   },
 
   watch: {
@@ -293,7 +301,6 @@ export default {
       this.relations = relations
       this.categories = await this.$services.textClassification.list(this.projectId, docId)
     },
-
     async deleteSpan(id) {
       await this.$services.sequenceLabeling.delete(this.projectId, this.doc.id, id)
       await this.list(this.doc.id)
