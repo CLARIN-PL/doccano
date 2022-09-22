@@ -5,8 +5,10 @@
             <li v-for="(item, index) in articleItems" 
               :id="'article-item_'+index"
               :key="'articleItem_'+index"
-              :class="[item.id === currentArticleItem.id ? '--active' : '--inactive', 
+              :class="[item.id === currentArticleItem.id ? '--active' : '', 
+                      item.isConfirmed ? '--confirmed': '',
                       `--${item.type}`]"
+              :title="getItemTitle(item)"
               class="article-list__item" >
               <p class="item__text">
                 {{ item.text }} 
@@ -15,6 +17,7 @@
           </ul>
         </v-card-text>
         <v-progress-linear
+          color="success"
           class="mt-5"
           :value="(itemPosition)/articleItems.length*100"
         ></v-progress-linear>
@@ -59,6 +62,9 @@ export default Vue.extend({
     }
   },
   methods: {
+    getItemTitle(item: any) : string {
+      return `${item.type} - ${item.isConfirmed ? 'checked' : 'not checked'}`
+    },
     setScrollPosition() {
       const index = this.itemPosition - 1
       const articleItem = document.getElementById('article-item_' + index)
@@ -107,10 +113,14 @@ export default Vue.extend({
     > p {
       margin: .25rem 0; 
     }
+
+    &.--confirmed {
+      color: #4CAF50;
+    }
     
     &.--active {
       opacity: 1;
-      border: 1px solid #5097DD; 
+      border: 1px solid #ddd; 
       padding: 5px;
       text-indent: calc(1em - 6px); 
     }
