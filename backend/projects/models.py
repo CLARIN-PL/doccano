@@ -15,6 +15,7 @@ SPEECH2TEXT = "Speech2text"
 IMAGE_CLASSIFICATION = "ImageClassification"
 INTENT_DETECTION_AND_SLOT_FILLING = "IntentDetectionAndSlotFilling"
 ARTICLE_ANNOTATION = "ArticleAnnotation"
+AFFECTIVE_ANNOTATION = "AffectiveAnnotation"
 PROJECT_CHOICES = (
     (DOCUMENT_CLASSIFICATION, "document classification"),
     (SEQUENCE_LABELING, "sequence labeling"),
@@ -22,7 +23,8 @@ PROJECT_CHOICES = (
     (INTENT_DETECTION_AND_SLOT_FILLING, "intent detection and slot filling"),
     (SPEECH2TEXT, "speech to text"),
     (IMAGE_CLASSIFICATION, "image classification"),
-    (ARTICLE_ANNOTATION, "article annotation")
+    (ARTICLE_ANNOTATION, "article annotation"),
+    (AFFECTIVE_ANNOTATION, "affective annotation"),
 )
 
 
@@ -58,6 +60,11 @@ class Project(PolymorphicModel):
     @property
     def is_article_project(self) -> bool:
         """Whether or not the project deals with whole-article annotation"""
+        return False
+
+    @property
+    def is_affective_annotation_project(self) -> bool:
+        """Whether or not the project is for affective annotation"""
         return False
 
     @property
@@ -171,6 +178,37 @@ class ArticleAnnotationProject(Project):
 
     @property
     def is_article_project(self) -> bool:
+        return True
+
+    @property
+    def can_define_label(self) -> bool:
+        return True
+
+    @property
+    def can_define_category(self) -> bool:
+        return True
+
+    @property
+    def can_define_span(self) -> bool:
+        return True
+
+
+class AffectiveAnnotationProject(Project):
+    allow_overlapping = models.BooleanField(default=False)
+    grapheme_mode = models.BooleanField(default=False)
+    use_relation = models.BooleanField(default=False)
+    is_summary_mode = models.BooleanField(default=False)
+    is_emotions_mode = models.BooleanField(default=False)
+    is_offensive_mode = models.BooleanField(default=False)
+    is_humor_mode = models.BooleanField(default=False)
+    is_others_mode = models.BooleanField(default=False)
+
+    @property
+    def is_text_project(self) -> bool:
+        return True
+
+    @property
+    def is_affective_annotation_project(self) -> bool:
         return True
 
     @property
