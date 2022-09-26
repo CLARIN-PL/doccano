@@ -30,7 +30,7 @@ INTENT_DETECTION_DIR = EXAMPLE_DIR / "intent_detection"
 IMAGE_CLASSIFICATION_DIR = EXAMPLE_DIR / "image_classification"
 SPEECH_TO_TEXT_DIR = EXAMPLE_DIR / "speech_to_text"
 ARTICLE_ANNOTATION_DIR = EXAMPLE_DIR / "article_annotation"
-AFFECTIVE_ANNOTATION_DIR = EXAMPLE_DIR / "article_annotation"
+AFFECTIVE_ANNOTATION_DIR = EXAMPLE_DIR / "affective_annotation"
 
 # Define the task identifiers
 RELATION_EXTRACTION = "RelationExtraction"
