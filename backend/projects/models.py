@@ -208,6 +208,10 @@ class AffectiveAnnotationProject(Project):
         return True
 
     @property
+    def is_article_project(self) -> bool:
+        return True
+
+    @property
     def is_affective_annotation_project(self) -> bool:
         return True
 

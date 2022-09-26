@@ -28,6 +28,7 @@ from projects.models import (
     SEQUENCE_LABELING,
     SPEECH2TEXT,
     ARTICLE_ANNOTATION,
+    AFFECTIVE_ANNOTATION,
     Project,
 )
 
@@ -266,7 +267,8 @@ def select_dataset(project: Project, task: str, file_format: Format) -> Type[Dat
         INTENT_DETECTION_AND_SLOT_FILLING: CategoryAndSpanDataset,
         IMAGE_CLASSIFICATION: BinaryDataset,
         SPEECH2TEXT: BinaryDataset,
-        ARTICLE_ANNOTATION: CategoryAndSpanDataset
+        ARTICLE_ANNOTATION: CategoryAndSpanDataset,
+        AFFECTIVE_ANNOTATION: CategoryAndSpanDataset,
     }
     if task not in mapping:
         task = project.project_type
