@@ -16,10 +16,6 @@ import comments from './projects/comments'
 import overview from './projects/overview'
 import statistics from './projects/statistics'
 import settings from './projects/settings'
-import annotation_toolbar from './projects/annotation/toolbar'
-import annotation_sidebar from './projects/annotation/sidebar'
-
-
 
 export default {
   home,
@@ -39,7 +35,5 @@ export default {
   comments,
   overview,
   statistics,
-  settings,
-  annotation_toolbar,
-  annotation_sidebar
+  settings
 }

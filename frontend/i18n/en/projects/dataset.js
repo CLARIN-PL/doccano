@@ -24,5 +24,5 @@ export default {
   deleteDocumentsMessage: 'Are you sure you want to delete {number} items from this project?',
   deleteBulkDocumentsTitle: 'Delete All Documents',
   deleteBulkDocumentsMessage: 'Are you sure you want to delete all documents from this project?',
-  pageText: '{0}-{1} of {2}'
+  pageText: '{0}-{1} z {2}'
 }

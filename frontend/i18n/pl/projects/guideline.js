@@ -1,4 +1,4 @@
 export default {
   guideline: 'Wytyczne',
-  writeGuidelinePrompt: 'Proszę napisać wytyczne dotyczące anotacji.'
+  writeGuidelinePrompt: 'Proszę napisać wytyczne dotyczące adnotacji.'
 }

@@ -6,7 +6,7 @@ export default {
   sequenceLabeling: 'Etykietowanie sekwencji',
   sequenceToSequence: 'Sekwencja do sekwencji',
   randomizeDocOrder: 'Losuj kolejność dokumentów',
-  shareAnnotations: 'Udostępnij anotacje wszystkim użytkownikom',
+  shareAnnotations: 'Udostępnij adnotacje wszystkim użytkownikom',
   remove: 'Usuń',
   deleteProjectTitle: 'Usuń projekt',
   deleteProjectMessage: 'Czy na pewno chcesz usunąć te projekty?',
@@ -17,8 +17,7 @@ export default {
     'Sekwencja do sekwencji',
     'Wykrywanie zamiarów i wypełnianie szczelin',
     'Klasyfikacja obrazu',
-    'Mowa na tekst',
-    'Anotacja do artykułu',
-    'Anotacja afektywna'
+    'Mowa na SMS',
+    'Adnotacja do artykułu'
   ]
 }
