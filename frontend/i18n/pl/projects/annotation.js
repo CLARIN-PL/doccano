@@ -1,5 +1,5 @@
 export default {
-  checkTooltip: 'Zaznaczone',
+  checkedTooltip: 'Zaznaczone',
   notCheckedTooltip: 'Niezaznaczone',
   selectFilterTooltip: 'Wybierz filtr',
   filterOption1: 'Wszystko',
@@ -12,5 +12,10 @@ export default {
   metadataDefaultMessage: 'Brak dostępnych danych',
   key: 'Klucz',
   value: 'Wartość',
-  newText: 'Nowy tekst'
+  newText: 'Nowy tekst',
+  articleTitle: 'Tytuł artykułu',
+  articleId: 'Identyfikator artykułu',
+  labelTypes: 'Typy etykiet',
+  relation: 'Relacja',
+  span: 'Rozpiętość'
 }

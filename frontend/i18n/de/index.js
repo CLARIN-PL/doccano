@@ -12,9 +12,14 @@ import guideline from './projects/guideline'
 import projectHome from './projects/home'
 import labels from './projects/labels'
 import members from './projects/members'
+import comments from './projects/comments'
 import overview from './projects/overview'
 import statistics from './projects/statistics'
-import comments from './projects/comments'
+import settings from './projects/settings'
+import annotation_toolbar from './projects/annotation/toolbar'
+import annotation_sidebar from './projects/annotation/sidebar'
+
+
 
 export default {
   home,
@@ -31,7 +36,10 @@ export default {
   projectHome,
   labels,
   members,
+  comments,
   overview,
   statistics,
-  comments
+  settings,
+  annotation_toolbar,
+  annotation_sidebar
 }

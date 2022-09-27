@@ -12,5 +12,10 @@ export default {
   metadataDefaultMessage: '没有数据可获得',
   key: '键',
   value: '值',
-  newText: '下一条'
+  newText: '下一条',
+  articleTitle: '文章标题',
+  articleId: '文章 ID',
+  labelTypes: '标签类型',
+  relation: '关系',
+  span: '跨度'
 }
