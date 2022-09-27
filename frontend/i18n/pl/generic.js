@@ -1,0 +1,21 @@
+export default {
+  continue: 'Kontynuuj',
+  yes: 'Tak',
+  all: 'Wszystko',
+  save: 'Zapisz',
+  edit: 'Edytuj',
+  create: 'Utwórz',
+  cancel: 'Anuluj',
+  close: 'Zamknij',
+  upload: 'Prześlij',
+  add: 'Dodaj',
+  delete: 'Usuń',
+  deleteAll: 'Usuń wszystko',
+  search: 'Szukaj',
+  name: 'Nazwa',
+  import: 'Import',
+  export: 'Eksport',
+  description: 'Opis',
+  type: 'Typ',
+  loading: 'Wczytywanie... Proszę czekać'
+}
