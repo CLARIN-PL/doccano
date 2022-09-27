@@ -66,6 +66,7 @@
                     @remove="removeCategory"
                   />
                   <summary-input
+                    v-if="isAffectiveSummary"
                     :text="doc.text"
                     :tags="affectiveSummaryTags"
                     :impressions="affectiveSummaryImpressions"
@@ -200,6 +201,7 @@ export default {
       articleIndex: 1,
       currentArticleId: "",
       currentWholeArticle: [],
+      isAffectiveSummary: true,
       affectiveSummaryTags: [],
       affectiveSummaryImpressions: []
     }
@@ -443,25 +445,11 @@ export default {
       console.log(annotationId, text)
     },
     addTag(value) {
-      let flagOk = true
-      if (this.affectiveSummaryTags.length >= 10) {
-        flagOk = false
-        alert("Osiągnięto maksymalną liczbę.")
+      const item = {
+        "id": this.affectiveSummaryTags.length,
+        "text": value
       }
-      for (let i = 0; i < this.affectiveSummaryTags.length; i++) {
-        if (this.affectiveSummaryTags[i].text === value) {
-          flagOk = false
-          alert("Słowo zostało już napisane.")
-          break
-        }
-      }
-      if (flagOk) {
-        const item = {
-          "id": this.affectiveSummaryTags.length,
-          "text": value
-        }
-        this.affectiveSummaryTags.push(item)
-      }
+      this.affectiveSummaryTags.push(item)
     },
     removeImpression(annotationId) {
       for (let i = 0; i < this.affectiveSummaryImpressions.length; i++) {
@@ -475,25 +463,11 @@ export default {
       console.log(annotationId, text)
     },
     addImpression(value) {
-      let flagOk = true
-      if (this.affectiveSummaryImpressions.length >= 10) {
-        flagOk = false
-        alert("Osiągnięto maksymalną liczbę.")
+      const item = {
+        "id": this.affectiveSummaryImpressions.length,
+        "text": value
       }
-      for (let i = 0; i < this.affectiveSummaryImpressions.length; i++) {
-        if (this.affectiveSummaryImpressions[i].text === value) {
-          flagOk = false
-          alert("Słowo zostało już napisane.")
-          break
-        }
-      }
-      if (flagOk) {
-        const item = {
-          "id": this.affectiveSummaryImpressions.length,
-          "text": value
-        }
-        this.affectiveSummaryImpressions.push(item)
-      }
+      this.affectiveSummaryImpressions.push(item)
     }
   }
 }

@@ -137,31 +137,70 @@ export default {
   },
 
   methods: {
+    validateText(field, value) {
+      let flagOk = true
+      const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
+      let arrayToCheck = []
+      if (field==="tags") {
+        arrayToCheck = this.tags
+      }
+      if (field==="impressions") {
+        arrayToCheck = this.impressions
+      }
+      if (!pattern.test(value)) {
+        flagOk = false
+        alert("Nieprawidłowy znak.")
+      }
+      if (arrayToCheck.length >= 10) {
+        flagOk = false
+        alert("Osiągnięto maksymalną liczbę.")
+      }
+      for (let i = 0; i < arrayToCheck.length; i++) {
+        if (arrayToCheck[i].text === value) {
+          flagOk = false
+          alert("Słowo zostało już napisane.")
+          break
+        }
+      }
+      return flagOk
+    },
     removeTag(annotationId) {
       this.$emit('remove:tag', annotationId)
     },
     updateTag(annotationId, text) {
       if (text.length > 0) {
-        this.$emit('update:tag', annotationId, text)
+        const passingValidation = this.validateText("tags", text)
+        if (passingValidation) {
+          this.$emit('update:tag', annotationId, text)
+        }
       } else {
         this.removeTag(annotationId)
       }
     },
     addTag(text) {
-      this.$emit('add:tag', text)
+      const passingValidation = this.validateText("tags", text)
+      if (passingValidation) {
+        this.$emit('add:tag', text)
+      }
     },
     removeImpression(annotationId) {
       this.$emit('remove:impression', annotationId)
     },
     updateImpression(annotationId, text) {
       if (text.length > 0) {
-        this.$emit('update:impression', annotationId, text)
+        const passingValidation = this.validateText("impressions", text)
+        if (passingValidation) {
+          this.$emit('update:impression', annotationId, text)
+        }
       } else {
         this.removeImpression(annotationId)
       }
     },
     addImpression(text) {
-      this.$emit('add:impression', text)
+      const passingValidation = this.validateText("impressions", text)
+      if (passingValidation) {
+        this.$emit('add:impression', text)
+      }
     }
   }
 }
