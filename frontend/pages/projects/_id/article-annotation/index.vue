@@ -65,6 +65,17 @@
                     @add="addCategory"
                     @remove="removeCategory"
                   />
+                  <summary-input
+                    :text="doc.text"
+                    :tags="affectiveSummaryTags"
+                    :impressions="affectiveSummaryImpressions"
+                    @remove:tag="removeTag"
+                    @update:tag="updateTag"
+                    @add:tag="addTag"
+                    @remove:impression="removeImpression"
+                    @update:impression="updateImpression"
+                    @add:impression="addImpression"
+                  />
               </v-card-title>
               <v-divider />
               <div class="annotation-text pa-4">
@@ -145,6 +156,7 @@ import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
 import ToolbarArticle from '@/components/tasks/toolbar/ToolbarArticle'
 import EntityEditor from '@/components/tasks/sequenceLabeling/EntityEditor.vue'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
+import SummaryInput from '@/components/tasks/affectiveAnnotation/summary/SummaryInput.vue'
 
 export default {
   components: {
@@ -156,7 +168,8 @@ export default {
     ToolbarMobile,
     ToolbarArticle,
     LabelGroup,
-    LabelSelect
+    LabelSelect,
+    SummaryInput
   },
 
   layout: 'workspace',
@@ -186,7 +199,9 @@ export default {
       articleTotal: 1,
       articleIndex: 1,
       currentArticleId: "",
-      currentWholeArticle: []
+      currentWholeArticle: [],
+      affectiveSummaryTags: [],
+      affectiveSummaryImpressions: []
     }
   },
 
@@ -412,6 +427,47 @@ export default {
     },
     changeSelectedLabel(event) {
       this.selectedLabelIndex = this.spanTypes.findIndex((item) => item.suffixKey === event.srcKey)
+    },
+
+    removeTag(annotationId) {
+      // await this.$services.seq2seq.delete(this.projectId, this.doc.id, id)
+      // await this.list(this.doc.id)
+      for (let i = 0; i < this.affectiveSummaryTags.length; i++) {
+        if (this.affectiveSummaryTags[i].id === annotationId) {
+          this.affectiveSummaryTags.splice(i, 1)
+          break
+        }
+      }
+    },
+    updateTag(annotationId, text) {
+      console.log(annotationId, text)
+    },
+    addTag(value) {
+      const item = {
+        "id": this.affectiveSummaryTags.length,
+        "text": value
+      }
+      this.affectiveSummaryTags.push(item)
+    },
+    removeImpression(annotationId) {
+      // await this.$services.seq2seq.delete(this.projectId, this.doc.id, id)
+      // await this.list(this.doc.id)
+      for (let i = 0; i < this.affectiveSummaryImpressions.length; i++) {
+        if (this.affectiveSummaryImpressions[i].id === annotationId) {
+          this.affectiveSummaryImpressions.splice(i, 1)
+          break
+        }
+      }
+    },
+    updateImpression(annotationId, text) {
+      console.log(annotationId, text)
+    },
+    addImpression(value) {
+      const item = {
+        "id": this.affectiveSummaryImpressions.length,
+        "text": value
+      }
+      this.affectiveSummaryImpressions.push(item)
     }
   }
 }
