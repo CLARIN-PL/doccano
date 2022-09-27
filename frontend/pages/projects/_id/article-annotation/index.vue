@@ -443,15 +443,27 @@ export default {
       console.log(annotationId, text)
     },
     addTag(value) {
-      const item = {
-        "id": this.affectiveSummaryTags.length,
-        "text": value
+      let flagOk = true
+      if (this.affectiveSummaryTags.length >= 10) {
+        flagOk = false
+        alert("Osiągnięto maksymalną liczbę.")
       }
-      this.affectiveSummaryTags.push(item)
+      for (let i = 0; i < this.affectiveSummaryTags.length; i++) {
+        if (this.affectiveSummaryTags[i].text === value) {
+          flagOk = false
+          alert("Słowo zostało już napisane.")
+          break
+        }
+      }
+      if (flagOk) {
+        const item = {
+          "id": this.affectiveSummaryTags.length,
+          "text": value
+        }
+        this.affectiveSummaryTags.push(item)
+      }
     },
     removeImpression(annotationId) {
-      // await this.$services.seq2seq.delete(this.projectId, this.doc.id, id)
-      // await this.list(this.doc.id)
       for (let i = 0; i < this.affectiveSummaryImpressions.length; i++) {
         if (this.affectiveSummaryImpressions[i].id === annotationId) {
           this.affectiveSummaryImpressions.splice(i, 1)
@@ -463,11 +475,25 @@ export default {
       console.log(annotationId, text)
     },
     addImpression(value) {
-      const item = {
-        "id": this.affectiveSummaryImpressions.length,
-        "text": value
+      let flagOk = true
+      if (this.affectiveSummaryImpressions.length >= 10) {
+        flagOk = false
+        alert("Osiągnięto maksymalną liczbę.")
       }
-      this.affectiveSummaryImpressions.push(item)
+      for (let i = 0; i < this.affectiveSummaryImpressions.length; i++) {
+        if (this.affectiveSummaryImpressions[i].text === value) {
+          flagOk = false
+          alert("Słowo zostało już napisane.")
+          break
+        }
+      }
+      if (flagOk) {
+        const item = {
+          "id": this.affectiveSummaryImpressions.length,
+          "text": value
+        }
+        this.affectiveSummaryImpressions.push(item)
+      }
     }
   }
 }
