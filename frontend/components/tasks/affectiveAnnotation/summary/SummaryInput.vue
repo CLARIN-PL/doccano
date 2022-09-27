@@ -1,84 +1,32 @@
 <template>
-  <v-container class="summary-input">
-    <v-row class="summary-input__question" @click="showDialogTags = true">
-      Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.
-    </v-row>
-    <v-row class="summary-input__answer" @click="showDialogTags = true">
-      <v-text-field
-        small
-        dense
-        readonly
-        :value="stringifiedTags"
-        :rules="rules"
-        hide-details="auto"
-      />
-    </v-row>
-    <v-row class="summary-input__question" @click="showDialogImpressions = true">
-      Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów.
-    </v-row>
-    <v-row class="summary-input__answer" @click="showDialogImpressions = true">
-      <v-text-field
-        small
-        dense
-        readonly
-        :value="stringifiedImpressions"
-        :rules="rules"
-        hide-details="auto"
-      />
-    </v-row>
-
-    <v-dialog
-      v-model="showDialogTags"
-      scrollable
-      width="600"
-      class="summary-dialog"
-    >
-      <v-card>
-        <v-card-title class="summary-dialog__title">
-          Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.
-        </v-card-title>
-        <v-card-text  class="summary-dialog__text">
-          <seq2seq-box
-            :text="text"
-            :annotations="tags"
-            @delete:annotation="removeTag"
-            @update:annotation="updateTag"
-            @create:annotation="addTag"
-          />
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog
-      v-model="showDialogImpressions"
-      scrollable
-      width="600"
-      class="summary-dialog"
-    >
-      <v-card>
-        <v-card-title class="summary-dialog__title">
-          Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów.
-        </v-card-title>
-        <v-card-text  class="summary-dialog__text">
-          <seq2seq-box
-            :text="text"
-            :annotations="impressions"
-            @delete:annotation="removeImpression"
-            @update:annotation="updateImpression"
-            @create:annotation="addImpression"
-          />
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-  </v-container>
+  <div>
+    <textfield-with-seq-2-seq
+      :text="text"
+      question="Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów."
+      :answers="tags"
+      :rules-textfield="rules"
+      @remove="removeTag"
+      @update="updateTag"
+      @add="addTag"
+    />
+    <textfield-with-seq-2-seq
+      :text="text"
+      question="Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów."
+      :answers="impressions"
+      :rules-textfield="rules"
+      @remove="removeImpression"
+      @update="updateImpression"
+      @add="addImpression"
+    />
+  </div>
 </template>
 
 <script>
-import Seq2seqBox from '~/components/tasks/seq2seq/Seq2seqBox'
+import TextfieldWithSeq2Seq from '~/components/tasks/affectiveAnnotation/inputs/TextfieldWithSeq2Seq.vue'
 
 export default {
   components: {
-    Seq2seqBox
+    TextfieldWithSeq2Seq
   },
 
   props: {
@@ -111,28 +59,7 @@ export default {
           const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
           return pattern.test(value) || "Nieprawidłowy znak."
         }
-      ],
-      showDialogTags: false,
-      showDialogImpressions: false,
-      stringifiedTags: "",
-      stringifiedImpressions: ""
-    }
-  },
-
-  watch: {
-    tags() {
-      const res = []
-      for (let i = 0; i < this.tags.length; i++) {
-        res.push(this.tags[i].text)
-      }
-      this.stringifiedTags = res.join(", ")
-    },
-    impressions() {
-      const res = []
-      for (let i = 0; i < this.impressions.length; i++) {
-        res.push(this.impressions[i].text)
-      }
-      this.stringifiedImpressions = res.join(", ")
+      ]
     }
   },
 
@@ -205,34 +132,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.summary-input {
-  word-wrap: normal;
-  word-break: break-word;
-
-  &__question {
-    font-size: .8rem;
-    line-height: 0.95;
-  }
-
-  &__answer {
-    font-size: .6rem;
-    line-height: 0.75;
-    margin-bottom: 10px;
-  }
-}
-
-.summary-dialog {
-  &__title {
-    font-size: .8rem;
-    line-height: 0.95;
-    word-break: break-word !important;
-  }
-
-  &__text {
-    font-size: .6rem;
-    line-height: 0.75;
-  }
-}
-</style>
