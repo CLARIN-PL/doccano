@@ -18,6 +18,7 @@ export default {
     'Wykrywanie zamiarów i wypełnianie szczelin',
     'Klasyfikacja obrazu',
     'Mowa na SMS',
-    'Adnotacja do artykułu'
+    'Adnotacja do artykułu',
+    'Adnotacja afektywna'
   ]
 }
