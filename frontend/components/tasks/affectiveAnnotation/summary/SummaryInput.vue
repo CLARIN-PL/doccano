@@ -10,7 +10,7 @@
         readonly
         :value="stringifiedTags"
         :rules="rules"
-		    hide-details="auto"
+        hide-details="auto"
       />
     </v-row>
     <v-row class="summary-input__question" @click="showDialogImpressions = true">
@@ -23,7 +23,7 @@
         readonly
         :value="stringifiedImpressions"
         :rules="rules"
-		    hide-details="auto"
+        hide-details="auto"
       />
     </v-row>
 
