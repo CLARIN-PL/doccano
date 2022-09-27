@@ -18,6 +18,7 @@ export default {
     'Intent-Erkennung und Slot-Füllung',
     'Bildklassifikation',
     'Sprache zu Text',
-    'Artikelanmerkung'
+    'Artikelanmerkung',
+    'Affektive Anmerkung'
   ]
 }
