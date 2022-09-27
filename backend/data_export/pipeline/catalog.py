@@ -10,6 +10,7 @@ from projects.models import (
     SEQUENCE_LABELING,
     SPEECH2TEXT,
     ARTICLE_ANNOTATION,
+    AFFECTIVE_ANNOTATION,
 )
 
 EXAMPLE_DIR = Path(__file__).parent.resolve() / "examples"
@@ -101,3 +102,10 @@ Options.register(ARTICLE_ANNOTATION, JSON, ARTICLE_ANNOTATION_DIR / "example.jso
 Options.register(ARTICLE_ANNOTATION, JSON, ARTICLE_ANNOTATION_DIR / "relation_extraction.json", True)
 Options.register(ARTICLE_ANNOTATION, JSONL, ARTICLE_ANNOTATION_DIR / "example.jsonl")
 Options.register(ARTICLE_ANNOTATION, JSONL, ARTICLE_ANNOTATION_DIR / "relation_extraction.jsonl", True)
+
+# Affective Annotation
+AFFECTIVE_ANNOTATION_DIR = EXAMPLE_DIR / "affective_annotation"
+Options.register(AFFECTIVE_ANNOTATION, JSON, AFFECTIVE_ANNOTATION_DIR / "example.json")
+Options.register(AFFECTIVE_ANNOTATION, JSONL, AFFECTIVE_ANNOTATION_DIR / "example.jsonl")
+Options.register(AFFECTIVE_ANNOTATION, JSON, AFFECTIVE_ANNOTATION_DIR / "relation_extraction.json", True)
+Options.register(AFFECTIVE_ANNOTATION, JSONL, AFFECTIVE_ANNOTATION_DIR / "relation_extraction.jsonl", True)

@@ -19,6 +19,7 @@ from projects.models import (
     SEQ2SEQ,
     SEQUENCE_LABELING,
     ARTICLE_ANNOTATION,
+    AFFECTIVE_ANNOTATION,
 )
 from projects.tests.utils import prepare_project
 
@@ -392,6 +393,85 @@ class TestImportArticleAnnotationWithOverlapData(TestImportData):
 
 class TestImportArticleAnnotationWithRelationExtractionData(TestImportData):
     task = ARTICLE_ANNOTATION
+
+    def setUp(self):
+        self.project = prepare_project(self.task, use_relation=True)
+        self.user = self.project.admin
+        self.data_path = pathlib.Path(__file__).parent / "data"
+        self.upload_id = _get_file_id()
+
+    def assert_examples(self, dataset):
+        self.assertEqual(Example.objects.count(), len(dataset))
+        for text, expected_label, expected_spans in dataset:
+            example = Example.objects.get(text=text)
+            cats = [cat.label.text for cat in example.categories.all()]
+            spans = [[span.start_offset, span.end_offset, span.label.text] for span in example.spans.all()]
+            self.assertEqual(cats, expected_label)
+            self.assertEqual(spans, expected_spans)
+            self.assertEqual(example.relations.count(), 2)
+
+    def assert_parse_error(self, response):
+        self.assertGreaterEqual(len(response["error"]), 1)
+        self.assertEqual(Example.objects.count(), 0)
+        self.assertEqual(SpanType.objects.count(), 0)
+        self.assertEqual(Span.objects.count(), 0)
+
+    def test_json(self):
+        filename = "custom_relation_extraction/example.json"
+        file_format = "JSON"
+        dataset = [
+            (
+                "Example", ["joy", "positive"],
+                [[2, 16, "miejscownik"], [18, 26, "rzeczownik"], [28, 32, "czasownik"]],
+            ),
+        ]
+        self.import_dataset(filename, file_format, CUSTOM_RELATION_EXTRACTION)
+        self.assert_examples(dataset)
+
+    def test_jsonl(self):
+        filename = "custom_relation_extraction/example.jsonl"
+        file_format = "JSONL"
+        dataset = [
+            (
+                "Example", ["joy", "positive"],
+                [[2, 16, "miejscownik"], [18, 26, "rzeczownik"], [28, 32, "czasownik"]],
+            ),
+        ]
+        self.import_dataset(filename, file_format, CUSTOM_RELATION_EXTRACTION)
+        self.assert_examples(dataset)
+
+
+class TestImportAffectiveAnnotationWithOverlapData(TestImportData):
+    task = AFFECTIVE_ANNOTATION
+
+    def setUp(self):
+        self.project = prepare_project(self.task, allow_overlapping=True)
+        self.user = self.project.admin
+        self.data_path = pathlib.Path(__file__).parent / "data"
+        self.upload_id = _get_file_id()
+
+    def assert_examples(self, dataset):
+        self.assertEqual(Example.objects.count(), len(dataset))
+        for text, expected_labels in dataset:
+            example = Example.objects.get(text=text)
+            cats = set(cat.label.text for cat in example.categories.all())
+            entities = set([(span.start_offset, span.end_offset, span.label.text) for span in example.spans.all()])
+            self.assertEqual(cats, set(expected_labels["cats"]))
+            self.assertEqual(entities, set(expected_labels["entities"]))
+
+    def test_entities_and_cats(self):
+        filename = "affective_annotation/example.json"
+        file_format = "JSON"
+        dataset = [
+            ("Stół z powyłamywanymi nogami", {"cats": ["sadness", "negative"], "entities": [(0, 3, "rzeczownik"), (7, 27, "narzędnik"), (0, 27, "osobnik")]}),
+            ("W Szczebrzeszynie chrząszcz brzmi w trzcinie.", {"cats": ["joy", "positive"], "entities": [(2, 16, "miejscownik"), (18, 26, "rzeczownik"), (28, 32, "czasownik")]}),
+        ]
+        self.import_dataset(filename, file_format, self.task)
+        self.assert_examples(dataset)
+
+
+class TestImportAffectiveAnnotationWithRelationExtractionData(TestImportData):
+    task = AFFECTIVE_ANNOTATION
 
     def setUp(self):
         self.project = prepare_project(self.task, use_relation=True)

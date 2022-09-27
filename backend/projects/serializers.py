@@ -11,7 +11,8 @@ from .models import (
     Speech2textProject,
     Tag,
     TextClassificationProject,
-    ArticleAnnotationProject
+    ArticleAnnotationProject,
+    AffectiveAnnotationProject
 )
 
 
@@ -125,6 +126,12 @@ class ArticleAnnotationProjectSerializer(ProjectSerializer):
     class Meta(ProjectSerializer.Meta):
         model = ArticleAnnotationProject
         fields = ProjectSerializer.Meta.fields + ["allow_overlapping", "grapheme_mode", "use_relation"]
+
+
+class AffectiveAnnotationProjectSerializer(ProjectSerializer):
+    class Meta(ProjectSerializer.Meta):
+        model = AffectiveAnnotationProject
+        fields = ProjectSerializer.Meta.fields + ["allow_overlapping", "grapheme_mode", "use_relation", "is_summary_mode", "is_emotions_mode", "is_offensive_mode", "is_humor_mode", "is_others_mode"]
 
 
 class ProjectPolymorphicSerializer(PolymorphicSerializer):

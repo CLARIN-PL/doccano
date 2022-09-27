@@ -23,7 +23,8 @@ from projects.models import (
     SEQUENCE_LABELING,
     SPEECH2TEXT,
     Project,
-    ARTICLE_ANNOTATION
+    ARTICLE_ANNOTATION,
+    AFFECTIVE_ANNOTATION,
 )
 
 
@@ -49,6 +50,7 @@ def create_formatter(project: Project, file_format: str) -> List[Formatter]:
     mapper_intent_detection = {DATA: "text", Categories.column: "cats"}
     mapper_relation_extraction = {DATA: "text"}
     mapper_article_annotation = {DATA: "text", Categories.column: "cats"}
+    mapper_affective_annotation = {DATA: "text", Categories.column: "cats"}
     mapping: Dict[str, Dict[str, List[Formatter]]] = {
         DOCUMENT_CLASSIFICATION: {
             CSV.name: [
@@ -121,6 +123,32 @@ def create_formatter(project: Project, file_format: str) -> List[Formatter]:
                 RenameFormatter(**mapper_article_annotation)
             ],
         },
+        AFFECTIVE_ANNOTATION: {
+            JSON.name: [
+                ListedCategoryFormatter(Categories.column),
+                DictFormatter(Spans.column),
+                DictFormatter(Relations.column),
+                RenameFormatter(**mapper_affective_annotation),
+            ]
+            if use_relation
+            else [
+                ListedCategoryFormatter(Categories.column),
+                TupledSpanFormatter(Spans.column),
+                RenameFormatter(**mapper_affective_annotation)
+            ],
+            JSONL.name: [
+                ListedCategoryFormatter(Categories.column),
+                DictFormatter(Spans.column),
+                DictFormatter(Relations.column),
+                RenameFormatter(**mapper_affective_annotation),
+            ]
+            if use_relation
+            else [
+                ListedCategoryFormatter(Categories.column),
+                TupledSpanFormatter(Spans.column),
+                RenameFormatter(**mapper_affective_annotation)
+            ],            
+        },
     }
     return mapping[project.project_type][file_format]
 
@@ -135,6 +163,7 @@ def select_label_collection(project: Project) -> List[Type[Labels]]:
         SPEECH2TEXT: [Texts],
         INTENT_DETECTION_AND_SLOT_FILLING: [Categories, Spans],
         ARTICLE_ANNOTATION: [Categories, Spans, Relations] if use_relation else [Categories, Spans],
+        AFFECTIVE_ANNOTATION: [Categories, Spans, Relations] if use_relation else [Categories, Spans],
     }
     return mapping[project.project_type]
 

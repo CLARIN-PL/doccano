@@ -11,6 +11,7 @@ from projects.models import (
     SEQUENCE_LABELING,
     SPEECH2TEXT,
     ARTICLE_ANNOTATION,
+    AFFECTIVE_ANNOTATION,
     Member,
     Role,
 )
@@ -70,6 +71,7 @@ def make_project(task: str, users: List[str], roles: List[str], collaborative_an
         IMAGE_CLASSIFICATION: "ImageClassificationProject",
         INTENT_DETECTION_AND_SLOT_FILLING: "IntentDetectionAndSlotFillingProject",
         ARTICLE_ANNOTATION: "ArticleAnnotationProject",
+        AFFECTIVE_ANNOTATION: "AffectiveAnnotationProject",
     }.get(task, "Project")
     project = mommy.make(
         _model=project_model,
