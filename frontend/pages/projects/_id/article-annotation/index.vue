@@ -434,12 +434,8 @@ export default {
     removeTag(annotationId) {
       // await this.$services.seq2seq.delete(this.projectId, this.doc.id, id)
       // await this.list(this.doc.id)
-      for (let i = 0; i < this.affectiveSummaryTags.length; i++) {
-        if (this.affectiveSummaryTags[i].id === annotationId) {
-          this.affectiveSummaryTags.splice(i, 1)
-          break
-        }
-      }
+      const index = this.affectiveSummaryTags.findIndex((item) => item.id === annotationId)
+      this.affectiveSummaryTags.splice(index, 1)
     },
     updateTag(annotationId, text) {
       console.log(annotationId, text)
@@ -452,12 +448,8 @@ export default {
       this.affectiveSummaryTags.push(item)
     },
     removeImpression(annotationId) {
-      for (let i = 0; i < this.affectiveSummaryImpressions.length; i++) {
-        if (this.affectiveSummaryImpressions[i].id === annotationId) {
-          this.affectiveSummaryImpressions.splice(i, 1)
-          break
-        }
-      }
+      const index = this.affectiveSummaryImpressions.findIndex((item) => item.id === annotationId)
+      this.affectiveSummaryImpressions.splice(index, 1)
     },
     updateImpression(annotationId, text) {
       console.log(annotationId, text)
