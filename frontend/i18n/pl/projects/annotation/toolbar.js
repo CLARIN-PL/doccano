@@ -1,6 +1,6 @@
 export default {
     article: {
-        annotationDescription: 'Adnotowanie {itemPosition} tekstów {articleLength} bieżącego artykułu',
+        annotationDescription: 'Anotowanie {itemPosition} tekstów {articleLength} bieżącego artykułu',
     },
     buttons: {
         buttonPagination: {

@@ -6,7 +6,7 @@ export default {
   filterOption2: 'Gotowe',
   filterOption3: 'Cofnięto',
   guidelineTooltip: 'Pokaż wytyczne',
-  guidelinePopupTitle: 'Wytyczne dotyczące adnotacji',
+  guidelinePopupTitle: 'Wytyczne dotyczące anotacji',
   commentTooltip: 'Kliknij, aby skomentować dokument',
   commentPopupTitle: 'Komentarz',
   metadataDefaultMessage: 'Brak dostępnych danych',

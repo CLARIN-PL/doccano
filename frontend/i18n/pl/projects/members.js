@@ -10,7 +10,7 @@ export default {
   roles: {
     projectAdmin: 'Administrator Projektu',
     annotator: 'Annotator',
-    annotationApprover: 'Zatwierdzający adnotacje',
+    annotationApprover: 'Zatwierdzający anotacje',
     undefined: 'Brak zdefiniowanej roli'
   }
 }
