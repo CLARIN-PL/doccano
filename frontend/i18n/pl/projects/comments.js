@@ -4,7 +4,7 @@ export default {
   removePrompt: 'Czy na pewno chcesz usunąć te komentarze?',
   commentView: 'Widok',
   created_at: 'Utworzono o',
-  dokument: 'Dokument',
+  document: 'Dokument',
   send: 'Wyślij',
   message: 'Wiadomość'
 }
