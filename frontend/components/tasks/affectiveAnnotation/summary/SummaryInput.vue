@@ -5,6 +5,7 @@
       question="Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów."
       :answers="tags"
       :rules-textfield="rules"
+      :text-validation="textValidation"
       @remove="removeTag"
       @update="updateTag"
       @add="addTag"
@@ -14,6 +15,7 @@
       question="Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów."
       :answers="impressions"
       :rules-textfield="rules"
+      :text-validation="textValidation"
       @remove="removeImpression"
       @update="updateImpression"
       @add="addImpression"
@@ -64,70 +66,46 @@ export default {
   },
 
   methods: {
-    validateText(field, value) {
-      let flagOk = true
+    textValidation(value, arrayToCheck) {
+      let errorMessage = ""
       const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
-      let arrayToCheck = []
-      if (field==="tags") {
-        arrayToCheck = this.tags
-      }
-      if (field==="impressions") {
-        arrayToCheck = this.impressions
-      }
       if (!pattern.test(value)) {
-        flagOk = false
-        alert("Nieprawidłowy znak.")
+        errorMessage = "Nieprawidłowy znak."
       }
       if (arrayToCheck.length >= 10) {
-        flagOk = false
-        alert("Osiągnięto maksymalną liczbę.")
+        errorMessage = "Osiągnięto maksymalną liczbę."
       }
-      for (let i = 0; i < arrayToCheck.length; i++) {
-        if (arrayToCheck[i].text === value) {
-          flagOk = false
-          alert("Słowo zostało już napisane.")
-          break
-        }
+      const isWordEntered = arrayToCheck.findIndex((item) => item.text === value)
+      if (isWordEntered > -1) {
+        errorMessage = "Słowo zostało już napisane."
       }
-      return flagOk
+      return errorMessage
     },
     removeTag(annotationId) {
       this.$emit('remove:tag', annotationId)
     },
     updateTag(annotationId, text) {
       if (text.length > 0) {
-        const passingValidation = this.validateText("tags", text)
-        if (passingValidation) {
-          this.$emit('update:tag', annotationId, text)
-        }
+        this.$emit('update:tag', annotationId, text)
       } else {
         this.removeTag(annotationId)
       }
     },
     addTag(text) {
-      const passingValidation = this.validateText("tags", text)
-      if (passingValidation) {
-        this.$emit('add:tag', text)
-      }
+      this.$emit('add:tag', text)
     },
     removeImpression(annotationId) {
       this.$emit('remove:impression', annotationId)
     },
     updateImpression(annotationId, text) {
       if (text.length > 0) {
-        const passingValidation = this.validateText("impressions", text)
-        if (passingValidation) {
-          this.$emit('update:impression', annotationId, text)
-        }
+        this.$emit('update:impression', annotationId, text)
       } else {
         this.removeImpression(annotationId)
       }
     },
     addImpression(text) {
-      const passingValidation = this.validateText("impressions", text)
-      if (passingValidation) {
-        this.$emit('add:impression', text)
-      }
+      this.$emit('add:impression', text)
     }
   }
 }

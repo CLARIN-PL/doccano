@@ -25,6 +25,7 @@
           {{ question }}
         </v-card-title>
         <v-card-text  class="widget-dialog__text">
+          <p class="widget-dialog__warning">{{ dialogErrorMessage }}</p>
           <seq2seq-box
             :text="text"
             :annotations="answers"
@@ -60,6 +61,10 @@ export default {
       default: () => []
     },
     rulesTextfield: {
+      type: Array,
+      default: () => []
+    },
+    textValidation: {
       type: Function,
       default: () => true
     }
@@ -68,33 +73,44 @@ export default {
   data() {
     return {
       showDialog: false,
+      dialogErrorMessage: "",
       stringifiedAnswers: ""
     }
   },
 
   watch: {
     answers() {
-      const res = []
-      for (let i = 0; i < this.answers.length; i++) {
-        res.push(this.answers[i].text)
-      }
+      const res = this.answers.map((value) => value.text)
       this.stringifiedAnswers = res.join(", ")
     }
   },
 
   methods: {
     removeAnswer(annotationId) {
+      this.dialogErrorMessage = ""
       this.$emit('remove', annotationId)
     },
     updateAnswer(annotationId, text) {
       if (text.length > 0) {
-        this.$emit('update', annotationId, text)
+        const errorMessage = this.textValidation(text, this.answers)
+        if (errorMessage.length === 0) {
+          this.dialogErrorMessage = ""
+          this.$emit('update', annotationId, text)
+        } else {
+          this.dialogErrorMessage = errorMessage
+        }
       } else {
         this.removeAnswer(annotationId)
       }
     },
     addAnswer(text) {
-      this.$emit('add', text)
+      const errorMessage = this.textValidation(text, this.answers)
+      if (errorMessage.length === 0) {
+        this.dialogErrorMessage = ""
+        this.$emit('add', text)
+      } else {
+        this.dialogErrorMessage = errorMessage
+      }
     }
   }
 }
@@ -125,8 +141,12 @@ export default {
     }
   
     &__text {
-      font-size: .6rem;
-      line-height: 0.75;
+      font-size: .7rem;
+      line-height: 0.85;
+    }
+
+    &__warning {
+      color: red;
     }
   }
   </style>
