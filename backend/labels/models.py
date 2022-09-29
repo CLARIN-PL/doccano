@@ -13,6 +13,7 @@ from .managers import (
 )
 from examples.models import Example
 from label_types.models import CategoryType, RelationType, SpanType
+from questions.models import Question
 
 
 class Label(models.Model):
@@ -95,6 +96,7 @@ class TextLabel(Label):
     objects = TextLabelManager()
     example = models.ForeignKey(to=Example, on_delete=models.CASCADE, related_name="texts")
     text = models.TextField()
+    question = models.ForeignKey(to=Question, on_delete=models.CASCADE)
 
     def is_same_text(self, other: "TextLabel"):
         return self.text == other.text
