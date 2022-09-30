@@ -1,0 +1,52 @@
+[
+    {
+        "text": "Obraża mnie",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Może kogoś atakować / obrażać / lekceważyć",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Odczłowieczenie",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Mowa nienawiści",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Nawoływanie do przemocy",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Nawoływanie do ludobójstwa",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Niesprawiedliwe uogólnianie, stereotypy",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Lekceważenie",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Upokorzenie",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Inne",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    }
+]

@@ -1,0 +1,62 @@
+[
+    {
+        "text": "Pozytywne",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Negatywne",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Radość, szczęście",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Zachwyt, podziw, duma",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Podnosi na duchu, inspiruje",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Spokój, relaks",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Zaskoczenie, zdziwienie",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Współczucie",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Strach, niepokój",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Smutek, nieszczęście",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Wstręt, obrzydzenie",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Złość, wkurzenie, gniew, irytacja",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    }
+]

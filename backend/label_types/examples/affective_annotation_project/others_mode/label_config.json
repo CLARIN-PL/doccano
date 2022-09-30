@@ -1,0 +1,47 @@
+[
+    {
+        "text": "Ironiczny, sarkastyczny",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Żenujący",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Wulgarny",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Polityczny",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Interesujący, ciekawy",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Zrozumiały",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Zgadzam się z tekstem",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Wierzę w tę informację",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    },
+    {
+        "text": "Potrzebuję więcej informacji, aby ocenić ten tekst",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
+    }
+]
