@@ -96,7 +96,7 @@ class TextLabel(Label):
     objects = TextLabelManager()
     example = models.ForeignKey(to=Example, on_delete=models.CASCADE, related_name="texts")
     text = models.TextField()
-    question = models.ForeignKey(to=Question, on_delete=models.CASCADE)
+    question = models.ForeignKey(to=Question, on_delete=models.CASCADE, default=19)
 
     def is_same_text(self, other: "TextLabel"):
         return self.text == other.text
