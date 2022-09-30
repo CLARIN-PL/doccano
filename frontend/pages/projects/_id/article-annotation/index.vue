@@ -162,7 +162,10 @@ export default {
   layout: 'workspace',
 
   validate({ params, query }) {
-    return /^\d+$/.test(params.id) && /^\d+$/.test(query.page)
+    return (
+      /^\d+$/.test(params.id) && /^\d+$/.test(query.page) &&
+      (typeof query.q === 'undefined' || query.q !== null)
+    )
   },
 
   data() {
