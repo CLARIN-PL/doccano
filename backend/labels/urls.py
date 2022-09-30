@@ -9,6 +9,8 @@ from .views import (
     SpanListAPI,
     TextLabelDetailAPI,
     TextLabelListAPI,
+    ScaleDetailAPI,
+    ScaleListAPI,
 )
 
 urlpatterns = [
@@ -31,5 +33,11 @@ urlpatterns = [
         route="examples/<int:example_id>/texts/<int:annotation_id>",
         view=TextLabelDetailAPI.as_view(),
         name="text_detail",
+    ),
+    path(route="examples/<int:example_id>/scales", view=ScaleListAPI.as_view(), name="scale_list"),
+    path(
+        route="examples/<int:example_id>/scales/<int:annotation_id>",
+        view=ScaleDetailAPI.as_view(),
+        name="scale_detail",
     ),
 ]
