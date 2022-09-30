@@ -53,13 +53,13 @@ export default {
           if (value) {
             const words_array = value.split(",")
             const count_ok = words_array.length >= 2 && words_array.length <= 10
-            return count_ok || $t('annotation.warningFrom2To10Words')
+            return count_ok || this.$i18n.t('annotation.warningFrom2To10Words')
           }
-          return $t('annotation.warningRequired')
+          return this.$i18n.t('annotation.warningRequired')
         },
         (value) => {
           const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
-          return pattern.test(value) || $t('annotation.warningInvalidChar')
+          return pattern.test(value) || this.$i18n.t('annotation.warningInvalidChar')
         }
       ]
     }
@@ -70,14 +70,14 @@ export default {
       let errorMessage = ""
       const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
       if (!pattern.test(value)) {
-        errorMessage = $t('annotation.warningInvalidChar')
+        errorMessage = this.$i18n.t('annotation.warningInvalidChar')
       }
       if (arrayToCheck.length >= 10) {
-        errorMessage = $t('annotation.warningMaxCount')
+        errorMessage = this.$i18n.t('annotation.warningMaxCount')
       }
       const isWordEntered = arrayToCheck.findIndex((item) => item.text === value)
       if (isWordEntered > -1) {
-        errorMessage = $t('annotation.warningAlreadyWritten')
+        errorMessage = this.$i18n.t('annotation.warningAlreadyWritten')
       }
       return errorMessage
     },
