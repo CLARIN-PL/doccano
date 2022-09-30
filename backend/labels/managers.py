@@ -81,3 +81,9 @@ class RelationManager(LabelManager):
 
     def can_annotate(self, label, project) -> bool:
         return True
+
+
+class ScaleManager(LabelManager):
+    def can_annotate(self, label, project) -> bool:
+        scale = self.get_labels(label, project)
+        return not scale.exists()
