@@ -2,7 +2,7 @@
   <div>
     <textfield-with-seq-2-seq
       :text="text"
-      question="Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów."
+      :question="$t('annotation.summaryTagQuestion')"
       :answers="tags"
       :rules-textfield="rules"
       :text-validation="textValidation"
@@ -12,7 +12,7 @@
     />
     <textfield-with-seq-2-seq
       :text="text"
-      question="Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów."
+      :question="$t('annotation.summaryImpressionQuestion')"
       :answers="impressions"
       :rules-textfield="rules"
       :text-validation="textValidation"
@@ -53,13 +53,13 @@ export default {
           if (value) {
             const words_array = value.split(",")
             const count_ok = words_array.length >= 2 && words_array.length <= 10
-            return count_ok || "Proszę wpisać 2-10 słów."
+            return count_ok || $t('annotation.warningFrom2To10Words')
           }
-          return "Wymagany."
+          return $t('annotation.warningRequired')
         },
         (value) => {
           const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
-          return pattern.test(value) || "Nieprawidłowy znak."
+          return pattern.test(value) || $t('annotation.warningInvalidChar')
         }
       ]
     }
@@ -70,14 +70,14 @@ export default {
       let errorMessage = ""
       const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
       if (!pattern.test(value)) {
-        errorMessage = "Nieprawidłowy znak."
+        errorMessage = $t('annotation.warningInvalidChar')
       }
       if (arrayToCheck.length >= 10) {
-        errorMessage = "Osiągnięto maksymalną liczbę."
+        errorMessage = $t('annotation.warningMaxCount')
       }
       const isWordEntered = arrayToCheck.findIndex((item) => item.text === value)
       if (isWordEntered > -1) {
-        errorMessage = "Słowo zostało już napisane."
+        errorMessage = $t('annotation.warningAlreadyWritten')
       }
       return errorMessage
     },

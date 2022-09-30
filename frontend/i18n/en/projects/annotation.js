@@ -17,5 +17,12 @@ export default {
   articleId: 'Article ID',
   labelTypes: 'Label Types',
   relation: 'Relation',
-  span: 'Span'
+  span: 'Span',
+  summaryTagQuestion: "What words would you describe this text (tags, keywords) with? Please enter 2-10 words.",
+  summaryImpressionQuestion: "What impressions/emotions/feelings does this text evoke in you? Please enter 2-10 words.",
+  warningFrom2To10Words: "Please enter 2-10 words.",
+  warningRequired: "Required.",
+  warningInvalidChar: "Invalid character.",
+  warningMaxCount: "Maximum count has been reached.",
+  warningAlreadyWritten: "Word is already entered."
 }

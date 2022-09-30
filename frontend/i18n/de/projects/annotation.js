@@ -15,5 +15,12 @@ export default {
   articleId: 'Artikel-ID',
   labelTypes: 'Etikettentypen',
   relation: 'Beziehung',
-  span: 'Spanne'
+  span: 'Spanne',
+  summaryTagQuestion: "Mit welchen Worten würden Sie diesen Text (Tags, Keywords) beschreiben? Bitte geben Sie 2-10 Wörter ein.",
+  summaryImpressionQuestion: "Welche Eindrücke/Emotionen/Gefühle löst dieser Text in Ihnen aus? Bitte geben Sie 2-10 Wörter ein.",
+  warningFrom2To10Words: "Bitte geben Sie 2-10 Wörter ein.",
+  warningRequired: "Erforderlich.",
+  warningInvalidChar: "Ungültiges Zeichen.",
+  warningMaxCount: "Die maximale Anzahl wurde erreicht.",
+  warningAlreadyWritten: "Wort ist bereits eingegeben."
 }
