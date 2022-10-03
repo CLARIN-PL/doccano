@@ -162,8 +162,8 @@ export class ProjectWriteItem {
       is_humor_mode: this.is_humor_mode,
       is_emotions_mode: this.is_emotions_mode,
       is_summary_mode: this.is_summary_mode,
-      is_others_mode: this.is_others_mode,
       is_offensive_mode: this.is_offensive_mode,
+      is_others_mode: this.is_others_mode,
     }
   }
 }

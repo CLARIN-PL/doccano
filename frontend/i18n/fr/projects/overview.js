@@ -18,5 +18,18 @@ export default {
     'De la parole au texte',
     "Annotations d'articles",
     'Annotation affective'
-  ]
+  ],
+  tags : "Balises",
+  allowSingleLabel : "Autoriser une seule étiquette",
+  allowOverlapping : "Permet le chevauchement des entités",
+  useRelation : "Utiliser l'étiquetage des relations",
+  count : 'Compte',
+  graphemeClusters : "grappes de graphèmes",
+  emojiDescription : 'Comme les emoji(🌷, 💩, et 👍), CRLF(\r\n), et ainsi de suite',
+  asOneCharacter : "comme un seul caractère",
+  enableSummary : "Permet à l'utilisateur d'ajouter un résumé",
+  enableHumor : "Permet à l'utilisateur de mesurer l'humour",
+  enableOffensive : "Permet à l'utilisateur de mesurer le caractère offensant",
+  enableEmotions : "Permet à l'utilisateur de mesurer les émotions",
+  enableOthers : "Permet à l'utilisateur de mesurer d'autres paramètres",
 }

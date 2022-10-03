@@ -57,11 +57,9 @@ export default Vue.extend({
       const affectiveAnnotationModes = ['isHumorMode', 'isSummaryMode', 'isEmotionsMode',
         'isOthersMode', 'isOffensiveMode']
       affectiveAnnotationModes.forEach((key: string) => {
-        editedItem[key] = editedItem[key] || false
+        editedItem[key] = editedItem[key] ? editedItem[key] : false
       })
-      if (editedItem.affectiveAnnotationMode) {
-        delete editedItem.affectiveAnnotationMode
-      }
+      delete editedItem.affectiveAnnotationMode
       const project = await this.$services.project.create(editedItem)
       this.$router.push(`/projects/${project.id}`)
       this.$nextTick(() => {

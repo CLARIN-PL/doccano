@@ -71,6 +71,7 @@ export type ProjectWriteDTO = Pick<
   | 'allowOverlapping'
   | 'graphemeMode'
   | 'useRelation'
+  | 'affectiveAnnotationMode'
   | 'isHumorMode'
   | 'isOthersMode'
   | 'isSummaryMode'

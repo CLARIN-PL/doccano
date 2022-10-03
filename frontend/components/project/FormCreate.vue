@@ -50,7 +50,7 @@
         <v-combobox
           :value="tags"
           :items="tags"
-          label="Tags"
+          :label="$t('overview.tags')"
           multiple
           chips
           outlined
@@ -64,13 +64,13 @@
             <v-checkbox
               v-if="hasSingleLabelOption"
               :value="singleClassClassification"
-              label="Allow single label"
+              :label="$t('overview.allowSingleLabel')"
               @change="updateValue('singleClassClassification', $event === true)"
             />
             <v-checkbox
               v-if="isSequenceLabelingProject"
               :value="allowOverlapping"
-              label="Allow overlapping entity"
+              :label="$t('overview.allowOverlapping')"
               @change="updateValue('allowOverlapping', $event === true)"
             />
             <v-img
@@ -83,7 +83,7 @@
             <v-checkbox
               v-if="isSequenceLabelingProject"
               :value="useRelation"
-              label="Use relation labeling"
+              :label="$t('overview.useRelation')"
               @change="updateValue('useRelation', $event === true)"
             />
             <v-checkbox
@@ -93,16 +93,16 @@
             >
               <template #label>
                 <div>
-                  Count
+                  {{ $t('overview.count')}}
                   <v-tooltip bottom>
                     <template #activator="{ on }">
                       <a target="_blank" href="https://unicode.org/reports/tr29/" @click.stop v-on="on">
-                        grapheme clusters
+                        {{ $t('overview.graphemeClusters')}}
                       </a>
                     </template>
-                    Like emoji(🌷, 💩, and 👍), CRLF(\r\n), and so on.
+                    {{ $t('overview.emojiDescription')}}
                   </v-tooltip>
-                  as one character
+                    {{ $t('overview.asOneCharacter')}}
                 </div>
               </template>
             </v-checkbox>
@@ -220,23 +220,23 @@ export default Vue.extend({
     affectiveAnnotationOptions() {
       return [
         {
-          label: 'Enable user to add summary',
+          label: this.$t('overview.enableSummary'),
           value: 'isSummaryMode'
         },
         {
-          label: 'Enable user to measure humor',
+          label: this.$t('overview.enableHumor'),
           value: 'isHumorMode'
         },
         {
-          label: 'Enable user to measure offensiveness',
+          label: this.$t('overview.enableOffensive'),
           value: 'isOffensiveMode'
         },
         {
-          label: 'Enable user to measure emotions',
+          label: this.$t('overview.enableEmotions'),
           value: 'isEmotionsMode'
         },
         {
-          label: 'Enable user to measure other parameters',
+          label: this.$t('overview.enableOthers'),
           value: 'isOthersMode'
         },
       ]

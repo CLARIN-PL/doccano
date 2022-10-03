@@ -20,5 +20,18 @@ export default {
     'Sprache zu Text',
     'Artikelanmerkung',
     'Affektive Anmerkung'
-  ]
+  ],
+  tags: 'Stichworte',
+  allowSingleLabel: 'Einzelne Beschriftung zulassen',
+  allowOverlapping: 'Überlappende Entität zulassen',
+  useRelation: 'Beziehungskennzeichnung verwenden',
+  count: 'Anzahl',
+  graphemeClusters: 'grapheme-cluster',
+  emojiDescription: 'Wie emoji(🌷, 💩 und 👍), CRLF(\r\n), und so weiter.',
+  asOneCharacter: 'als ein Zeichen',
+  enableSummary: 'Dem Benutzer die Möglichkeit geben, eine Zusammenfassung hinzuzufügen',
+  enableHumor: 'Ermöglicht es dem Benutzer, Humor zu messen',
+  enableOffensive: 'Ermöglicht dem Benutzer die Messung der Beleidigung',
+  enableEmotions: 'Ermöglicht dem Benutzer die Messung von Emotionen',
+  enableOthers: 'Ermöglicht dem Benutzer die Messung anderer Parameter',
 }

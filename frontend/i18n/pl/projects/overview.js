@@ -20,5 +20,18 @@ export default {
     'Mowa na tekst',
     'Anotacja do artykułu',
     'Anotacja afektywna'
-  ]
+  ],
+  tags: 'Tagi',
+  allowSingleLabel: 'Pozwól na pojedynczą etykietę',
+  allowOverlapping: 'Pozwól na nakładanie się encji',
+  useRelation: 'Użyj etykietki relacji',
+  count: 'Licz',
+  graphemeClusters: 'klastry grafemowe',
+  emojiDescription: 'Jak emoji(🌷, 💩, i 👍), CRLF(i tak dalej)',
+  asOneCharacter: 'jako jeden znak',
+  enableSummary: 'Umożliwić użytkownikowi dodawanie podsumowania',
+  enableHumor: 'Umożliwić użytkownikowi pomiar humoru',
+  enableOffensive: 'Umożliwić użytkownikowi mierzenie ofensywności',
+  enableEmotions: 'Umożliw użytkownikowi pomiar emocji',
+  enableOthers: 'Umożliwić użytkownikowi pomiar innych parametrów',
 }
