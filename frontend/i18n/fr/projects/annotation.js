@@ -15,5 +15,12 @@ export default {
   articleId: "ID de l'article",
   labelTypes: "Types d'étiquettes",
   relation: 'Relation',
-  span: 'étendue'
+  span: 'étendue',
+  summaryTagQuestion: "Avec quels mots décririez-vous ce texte (tags, mots-clés)? Veuillez entrer 2 à 10 mots.",
+  summaryImpressionQuestion: "Quelles impressions/émotions/sentiments ce texte évoque-t-il en vous? Veuillez entrer 2 à 10 mots.",
+  warningFrom2To10Words: "Veuillez entrer 2 à 10 mots.",
+  warningRequired: "Obligatoire.",
+  warningInvalidChar: "Caractère non valide.",
+  warningMaxCount: "Le nombre maximum a été atteint.",
+  warningAlreadyWritten: "Le mot est déjà entré."
 }

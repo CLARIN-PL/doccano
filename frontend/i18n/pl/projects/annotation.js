@@ -17,5 +17,12 @@ export default {
   articleId: 'Identyfikator artykułu',
   labelTypes: 'Typy etykiet',
   relation: 'Relacja',
-  span: 'Rozpiętość'
+  span: 'Rozpiętość',
+  summaryTagQuestion: "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.",
+  summaryImpressionQuestion: "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów.",
+  warningFrom2To10Words: "Proszę wpisać 2-10 słów.",
+  warningRequired: "Wymagany.",
+  warningInvalidChar: "Nieprawidłowy znak.",
+  warningMaxCount: "Osiągnięto maksymalną liczbę.",
+  warningAlreadyWritten: "Słowo zostało już napisane."
 }

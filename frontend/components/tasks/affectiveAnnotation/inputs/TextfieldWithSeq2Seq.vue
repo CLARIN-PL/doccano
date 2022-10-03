@@ -1,0 +1,152 @@
+<template>
+  <v-container class="widget">
+    <v-row class="widget__question" @click="showDialog = true">
+      {{ question }}
+    </v-row>
+    <v-row class="widget__answer" @click="showDialog = true">
+      <v-text-field
+        small
+        dense
+        readonly
+        :value="stringifiedAnswers"
+        :rules="rulesTextfield"
+        hide-details="auto"
+      />
+    </v-row>
+
+    <v-dialog
+      v-model="showDialog"
+      scrollable
+      width="600"
+      class="widget-dialog"
+    >
+      <v-card>
+        <v-card-title class="widget-dialog__title">
+          {{ question }}
+        </v-card-title>
+        <v-card-text  class="widget-dialog__text">
+          <p class="widget-dialog__warning">{{ dialogErrorMessage }}</p>
+          <seq2seq-box
+            :text="text"
+            :annotations="answers"
+            @delete:annotation="removeAnswer"
+            @update:annotation="updateAnswer"
+            @create:annotation="addAnswer"
+          />
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+  </v-container>
+</template>
+
+<script>
+import Seq2seqBox from '~/components/tasks/seq2seq/Seq2seqBox'
+
+export default {
+  components: {
+    Seq2seqBox
+  },
+
+  props: {
+    text: {
+      type: String,
+      default: ""
+    },
+    question: {
+      type: String,
+      default: ""
+    },
+    answers: {
+      type: Array,
+      default: () => []
+    },
+    rulesTextfield: {
+      type: Array,
+      default: () => []
+    },
+    textValidation: {
+      type: Function,
+      default: () => true
+    }
+  },
+
+  data() {
+    return {
+      showDialog: false,
+      dialogErrorMessage: "",
+      stringifiedAnswers: ""
+    }
+  },
+
+  watch: {
+    answers() {
+      const res = this.answers.map((value) => value.text)
+      this.stringifiedAnswers = res.join(", ")
+    }
+  },
+
+  methods: {
+    removeAnswer(annotationId) {
+      this.dialogErrorMessage = ""
+      this.$emit('remove', annotationId)
+    },
+    updateAnswer(annotationId, text) {
+      if (text.length > 0) {
+        const errorMessage = this.textValidation(text, this.answers)
+        if (errorMessage.length === 0) {
+          this.dialogErrorMessage = ""
+          this.$emit('update', annotationId, text)
+        } else {
+          this.dialogErrorMessage = errorMessage
+        }
+      } else {
+        this.removeAnswer(annotationId)
+      }
+    },
+    addAnswer(text) {
+      const errorMessage = this.textValidation(text, this.answers)
+      if (errorMessage.length === 0) {
+        this.dialogErrorMessage = ""
+        this.$emit('add', text)
+      } else {
+        this.dialogErrorMessage = errorMessage
+      }
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+  .widget {
+    word-wrap: normal;
+    word-break: break-word;
+  
+    &__question {
+      font-size: .8rem;
+      line-height: 0.95;
+    }
+  
+    &__answer {
+      font-size: .6rem;
+      line-height: 0.75;
+      margin-bottom: 10px;
+    }
+  }
+  
+  .widget-dialog {
+    &__title {
+      font-size: .8rem;
+      line-height: 0.95;
+      word-break: break-word !important;
+    }
+  
+    &__text {
+      font-size: .7rem;
+      line-height: 0.85;
+    }
+
+    &__warning {
+      color: red;
+    }
+  }
+  </style>
