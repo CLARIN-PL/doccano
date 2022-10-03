@@ -77,6 +77,9 @@
                     @update:impression="updateImpression"
                     @add:impression="addImpression"
                   />
+                  <emotions-input
+                    v-if="isAffectiveEmotions"
+                  />
               </v-card-title>
               <v-divider />
               <div class="annotation-text pa-4">
@@ -158,6 +161,7 @@ import ToolbarArticle from '@/components/tasks/toolbar/ToolbarArticle'
 import EntityEditor from '@/components/tasks/sequenceLabeling/EntityEditor.vue'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
 import SummaryInput from '@/components/tasks/affectiveAnnotation/summary/SummaryInput.vue'
+import EmotionsInput from '@/components/tasks/affectiveAnnotation/emotions/EmotionsInput.vue'
 
 export default {
   components: {
@@ -170,7 +174,8 @@ export default {
     ToolbarArticle,
     LabelGroup,
     LabelSelect,
-    SummaryInput
+    SummaryInput,
+    EmotionsInput
   },
 
   layout: 'workspace',
@@ -201,9 +206,10 @@ export default {
       articleIndex: 1,
       currentArticleId: "",
       currentWholeArticle: [],
-      isAffectiveSummary: true,
+      isAffectiveSummary: false,
       affectiveSummaryTags: [],
-      affectiveSummaryImpressions: []
+      affectiveSummaryImpressions: [],
+      isAffectiveEmotions: true
     }
   },
 
