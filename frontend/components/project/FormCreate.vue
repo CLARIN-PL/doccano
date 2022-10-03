@@ -59,61 +59,77 @@
           hide-selected
           @input="updateValue('tags', $event)"
         />
-        <v-checkbox
-          v-if="hasSingleLabelOption"
-          :value="singleClassClassification"
-          label="Allow single label"
-          @change="updateValue('singleClassClassification', $event === true)"
-        />
-        <v-checkbox
-          v-if="isSequenceLabelingProject"
-          :value="allowOverlapping"
-          label="Allow overlapping entity"
-          @change="updateValue('allowOverlapping', $event === true)"
-        />
-        <v-img
-          v-if="isSequenceLabelingProject"
-          :src="require('~/assets/project/creation.gif')"
-          height="200"
-          position="left"
-          contain
-        />
-        <v-checkbox
-          v-if="isSequenceLabelingProject"
-          :value="useRelation"
-          label="Use relation labeling"
-          @change="updateValue('useRelation', $event === true)"
-        />
-        <v-checkbox
-          v-if="isSequenceLabelingProject"
-          :value="graphemeMode"
-          @change="updateValue('graphemeMode', $event === true)"
-        >
-          <template #label>
-            <div>
-              Count
-              <v-tooltip bottom>
-                <template #activator="{ on }">
-                  <a target="_blank" href="https://unicode.org/reports/tr29/" @click.stop v-on="on">
-                    grapheme clusters
-                  </a>
-                </template>
-                Like emoji(🌷, 💩, and 👍), CRLF(\r\n), and so on.
-              </v-tooltip>
-              as one character
-            </div>
-          </template>
-        </v-checkbox>
-        <v-checkbox
-          :value="enableRandomOrder"
-          :label="$t('overview.randomizeDocOrder')"
-          @change="updateValue('enableRandomOrder', $event === true)"
-        />
-        <v-checkbox
-          :value="enableShareAnnotation"
-          :label="$t('overview.shareAnnotations')"
-          @change="updateValue('enableShareAnnotation', $event === true)"
-        />
+        <v-row>
+          <v-col col="7">
+            <v-checkbox
+              v-if="hasSingleLabelOption"
+              :value="singleClassClassification"
+              label="Allow single label"
+              @change="updateValue('singleClassClassification', $event === true)"
+            />
+            <v-checkbox
+              v-if="isSequenceLabelingProject"
+              :value="allowOverlapping"
+              label="Allow overlapping entity"
+              @change="updateValue('allowOverlapping', $event === true)"
+            />
+            <v-img
+              v-if="isSequenceLabelingProject"
+              :src="require('~/assets/project/creation.gif')"
+              height="200"
+              position="left"
+              contain
+            />
+            <v-checkbox
+              v-if="isSequenceLabelingProject"
+              :value="useRelation"
+              label="Use relation labeling"
+              @change="updateValue('useRelation', $event === true)"
+            />
+            <v-checkbox
+              v-if="isSequenceLabelingProject"
+              :value="graphemeMode"
+              @change="updateValue('graphemeMode', $event === true)"
+            >
+              <template #label>
+                <div>
+                  Count
+                  <v-tooltip bottom>
+                    <template #activator="{ on }">
+                      <a target="_blank" href="https://unicode.org/reports/tr29/" @click.stop v-on="on">
+                        grapheme clusters
+                      </a>
+                    </template>
+                    Like emoji(🌷, 💩, and 👍), CRLF(\r\n), and so on.
+                  </v-tooltip>
+                  as one character
+                </div>
+              </template>
+            </v-checkbox>
+            <v-checkbox
+              :value="enableRandomOrder"
+              :label="$t('overview.randomizeDocOrder')"
+              @change="updateValue('enableRandomOrder', $event === true)"
+            />
+            <v-checkbox
+              :value="enableShareAnnotation"
+              :label="$t('overview.shareAnnotations')"
+              @change="updateValue('enableShareAnnotation', $event === true)"
+            />
+          </v-col>
+          <v-col v-if="isAffectiveAnnotationProject" col="5">
+            <v-radio-group 
+              @change="updateValue('affectiveAnnotationMode', $event)"
+            >
+              <v-radio
+                v-for="(affectiveAnnotationOption, idx) in affectiveAnnotationOptions"
+                :key="idx"
+                :label="affectiveAnnotationOption.label"
+                :value="affectiveAnnotationOption.value"
+              ></v-radio>
+            </v-radio-group>
+          </v-col>
+        </v-row>
       </v-form>
     </v-card-text>
     <v-card-actions class="ps-4">
@@ -179,6 +195,10 @@ export default Vue.extend({
       type: Boolean,
       default: false
     },
+    affectiveAnnotationMode: {
+      type: String,
+      default: ''
+    },
     tags: {
       type: Array,
       default: () => []
@@ -192,11 +212,35 @@ export default Vue.extend({
       projectTypeRules,
       descriptionRules,
       mdiCheckBold,
-      selected: 0
+      selected: 0,
     }
   },
 
   computed: {
+    affectiveAnnotationOptions() {
+      return [
+        {
+          label: 'Enable user to add summary',
+          value: 'isSummaryMode'
+        },
+        {
+          label: 'Enable user to measure humor',
+          value: 'isHumorMode'
+        },
+        {
+          label: 'Enable user to measure offensiveness',
+          value: 'isOffensiveMode'
+        },
+        {
+          label: 'Enable user to measure emotions',
+          value: 'isEmotionsMode'
+        },
+        {
+          label: 'Enable user to measure other parameters',
+          value: 'isOthersMode'
+        },
+      ]
+    },
     projectTypes() {
       return [
         'DocumentClassification',
@@ -205,7 +249,8 @@ export default Vue.extend({
         'IntentDetectionAndSlotFilling',
         'ImageClassification',
         'Speech2text',
-        'ArticleAnnotation'
+        'ArticleAnnotation',
+        'AffectiveAnnotation'
       ]
     },
     images() {
@@ -216,14 +261,20 @@ export default Vue.extend({
         'intent_detection.png',
         'image_classification.png',
         'speech_to_text.png',
+        'article_annotation.png',
         'article_annotation.png'
       ]
     },
     hasSingleLabelOption() {
-      return ['DocumentClassification', 'ImageClassification', 'ArticleAnnotation'].includes(this.projectType)
+      const singleLabelProjects = ['DocumentClassification', 'ImageClassification', 'ArticleAnnotation', 'AffectiveAnnotation']
+      return singleLabelProjects.includes(this.projectType)
     },
     isSequenceLabelingProject() {
-      return this.projectType === 'SequenceLabeling' || this.projectType === 'ArticleAnnotation'
+      const sequenceLabelingProjects = ['SequenceLabeling', 'ArticleAnnotation', 'AffectiveAnnotation']
+      return sequenceLabelingProjects.includes(this.projectType)
+    },
+    isAffectiveAnnotationProject() {
+      return this.projectType === 'AffectiveAnnotation'
     }
   },
 

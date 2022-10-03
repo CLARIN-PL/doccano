@@ -9,6 +9,7 @@ export type ProjectType =
   | 'ImageClassification'
   | 'Speech2text'
   | 'ArticleAnnotation'
+  | 'AffectiveAnnotation'
 
 export class ProjectReadItem {
   id: number
@@ -45,6 +46,21 @@ export class ProjectReadItem {
   @Expose({ name: 'use_relation' })
   useRelation: boolean
 
+  @Expose({ name: 'is_humor_mode' })
+  isHumorMode: boolean
+
+  @Expose({ name: 'is_summary_mode' })
+  isSummaryMode: boolean
+
+  @Expose({ name: 'is_others_mode' })
+  isOthersMode: boolean
+
+  @Expose({ name: 'is_emotions_mode' })
+  isEmotionsMode: boolean
+
+  @Expose({ name: 'is_offensive_mode' })
+  isOffensiveMode: boolean
+
   @Expose({ name: 'is_text_project' })
   isTextProject: boolean
 
@@ -68,7 +84,8 @@ export class ProjectReadItem {
       IntentDetectionAndSlotFilling: 'intent-detection-and-slot-filling',
       ImageClassification: 'image-classification',
       Speech2text: 'speech-to-text',
-      ArticleAnnotation: 'article-annotation'
+      ArticleAnnotation: 'article-annotation',
+      AffectiveAnnotation: 'affective-annotation'
     }
     const url = `/projects/${this.id}/${mapping[this.projectType]}`
     return url
@@ -105,6 +122,11 @@ export class ProjectWriteItem {
     public allow_overlapping: boolean,
     public grapheme_mode: boolean,
     public use_relation: boolean,
+    public is_humor_mode: boolean,
+    public is_emotions_mode: boolean,
+    public is_summary_mode: boolean,
+    public is_offensive_mode: boolean,
+    public is_others_mode: boolean,
     public tags: string[]
   ) {}
 
@@ -116,7 +138,8 @@ export class ProjectWriteItem {
       IntentDetectionAndSlotFilling: 'IntentDetectionAndSlotFillingProject',
       ImageClassification: 'ImageClassificationProject',
       Speech2text: 'Speech2textProject',
-      ArticleAnnotation: 'ArticleAnnotationProject'
+      ArticleAnnotation: 'ArticleAnnotationProject',
+      AffectiveAnnotation: 'AffectiveAnnotationProject'
     }
     return mapping[this.project_type]
   }
@@ -135,7 +158,12 @@ export class ProjectWriteItem {
       grapheme_mode: this.grapheme_mode,
       use_relation: this.use_relation,
       tags: this.tags.map((tag) => ({ text: tag })),
-      resourcetype: this.resourceType
+      resourcetype: this.resourceType,
+      is_humor_mode: this.is_humor_mode,
+      is_emotions_mode: this.is_emotions_mode,
+      is_summary_mode: this.is_summary_mode,
+      is_others_mode: this.is_others_mode,
+      is_offensive_mode: this.is_offensive_mode,
     }
   }
 }

@@ -57,7 +57,12 @@ export class ProjectApplicationService {
       item.allowOverlapping,
       item.graphemeMode,
       item.useRelation,
-      item.tags
+      item.isEmotionsMode,
+      item.isHumorMode,
+      item.isOffensiveMode,
+      item.isSummaryMode,
+      item.isOthersMode,
+      item.tags,
     )
   }
 }

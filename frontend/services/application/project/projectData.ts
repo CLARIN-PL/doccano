@@ -21,6 +21,12 @@ export class ProjectDTO {
   hasSpan: boolean
   taskNames: string[]
   useRelation: boolean
+  isHumorMode: boolean
+  isOthersMode: boolean
+  isSummaryMode: boolean
+  isOffensiveMode: boolean
+  isEmotionsMode: boolean
+  affectiveAnnotationMode: string
 
   constructor(item: ProjectReadItem) {
     this.id = item.id
@@ -43,6 +49,12 @@ export class ProjectDTO {
     this.hasSpan = item.canDefineSpan
     this.taskNames = item.taskNames
     this.useRelation = item.useRelation
+    this.isHumorMode = item.isHumorMode
+    this.isOthersMode = item.isOthersMode
+    this.isSummaryMode = item.isSummaryMode
+    this.isOffensiveMode = item.isOffensiveMode
+    this.isEmotionsMode = item.isEmotionsMode
+
   }
 }
 
@@ -59,6 +71,11 @@ export type ProjectWriteDTO = Pick<
   | 'allowOverlapping'
   | 'graphemeMode'
   | 'useRelation'
+  | 'isHumorMode'
+  | 'isOthersMode'
+  | 'isSummaryMode'
+  | 'isOffensiveMode'
+  | 'isEmotionsMode'
 > & { tags: string[] }
 
 export class ProjectListDTO {
