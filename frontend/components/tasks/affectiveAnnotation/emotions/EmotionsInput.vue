@@ -7,11 +7,17 @@
         category="Pozytywne"
         color="green"
         hint="Pozytywne"
+        :value="generalPositivity"
+        :must-click="true"
+        @change="updateEmotions"
       />
       <slider
         category="Negatywne"
         color="red"
         hint="Negatywne"
+        :value="generalNegativity"
+        :must-click="true"
+        @change="updateEmotions"
       />
     </div>
     <v-divider class="emotions-input__divider" />
@@ -21,51 +27,81 @@
         category="Radość"
         color="pink"
         hint="Radość, szczęście"
+        :value="joy"
+        :must-click="true"
+        @change="updateEmotions"
       />
       <slider
         category="Zachwyt"
         color="purple"
         hint="Zachwyt, podziw, duma"
+        :value="admiration"
+        :must-click="true"
+        @change="updateEmotions"
       />
       <slider
         category="Inspiruje"
         color="indigo"
         hint="Podnosi na duchu, inspiruje"
+        :value="inspiration"
+        :must-click="true"
+        @change="updateEmotions"
       />
       <slider
         category="Spokój"
         color="teal"
         hint="Spokój, relaks"
+        :value="peace"
+        :must-click="true"
+        @change="updateEmotions"
       />
       <slider
         category="Zaskoczenie"
         color="amber"
         hint="Zaskoczenie, zdziwienie"
+        :value="surprise"
+        :must-click="true"
+        @change="updateEmotions"
       />
       <slider
         category="Współczucie"
-        color="lime"
+        color="cyan"
         hint="Współczucie"
+        :value="sympathy"
+        :must-click="true"
+        @change="updateEmotions"
       />
       <slider
         category="Strach"
         color="brown"
         hint="Strach, niepokój"
+        :value="fear"
+        :must-click="true"
+        @change="updateEmotions"
       />
       <slider
         category="Smutek"
         color="blue-grey darken-4"
         hint="Smutek, nieszczęście"
+        :value="sadness"
+        :must-click="true"
+        @change="updateEmotions"
       />
       <slider
         category="Wstręt"
         color="lime darken-4"
         hint="Wstręt, obrzydzenie"
+        :value="disgust"
+        :must-click="true"
+        @change="updateEmotions"
       />
       <slider
         category="Złość"
         color="red darken-4"
         hint="Złość, wkurzenie, gniew, irytacja"
+        :value="anger"
+        :must-click="true"
+        @change="updateEmotions"
       />
     </div>
   </div>
@@ -78,6 +114,65 @@ export default {
   components: {
     Slider
   },
+
+  props: {
+    generalPositivity: {
+      type: Number,
+      default: 0
+    },
+    generalNegativity: {
+      type: Number,
+      default: 0
+    },
+    joy: {
+      type: Number,
+      default: 0
+    },
+    admiration: {
+      type: Number,
+      default: 0
+    },
+    inspiration: {
+      type: Number,
+      default: 0
+    },
+    peace: {
+      type: Number,
+      default: 0
+    },
+    surprise: {
+      type: Number,
+      default: 0
+    },
+    sympathy: {
+      type: Number,
+      default: 0
+    },
+    fear: {
+      type: Number,
+      default: 0
+    },
+    sadness: {
+      type: Number,
+      default: 0
+    },
+    disgust: {
+      type: Number,
+      default: 0
+    },
+    anger: {
+      type: Number,
+      default: 0
+    }
+  },
+
+  methods: {
+    updateEmotions(value, category) {
+      console.log("new value!")
+      console.log(value)
+      console.log(category)
+    }
+  }
 }
 </script>
 
@@ -85,6 +180,8 @@ export default {
 .emotions-input {
   word-wrap: normal;
   word-break: break-word;
+  max-height: 170px;
+  overflow-x: auto;
 
   &__title {
     font-size: 1.0rem;

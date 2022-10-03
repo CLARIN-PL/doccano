@@ -32,7 +32,7 @@
               <h3 class="mt-3"> 
                 {{ $t('annotation.articleTitle') }}: {{ doc.meta.meta.article_title }}
               </h3>
-              <p class="mt-3">{{ $t('annotation.articleId') }}: {{ currentArticleId }}</p>
+              <p class="mt-0 mb-0">{{ $t('annotation.articleId') }}: {{ currentArticleId }}</p>
               <v-divider />
           </v-col>
         </v-row>
@@ -79,6 +79,18 @@
                   />
                   <emotions-input
                     v-if="isAffectiveEmotions"
+                    :general-positivity="affectiveEmotionsPositive"
+                    :general-negativity="affectiveEmotionsNegative"
+                    :joy="affectiveEmotionsJoy"
+                    :admiration="affectiveEmotionsAdmiration"
+                    :inspiration="affectiveEmotionsInspiration"
+                    :peace="affectiveEmotionsPeace"
+                    :surprise="affectiveEmotionsSurprise"
+                    :sympathy="affectiveEmotionsSympathy"
+                    :fear="affectiveEmotionsFear"
+                    :sadness="affectiveEmotionsSadness"
+                    :disgust="affectiveEmotionsDisgust"
+                    :anger="affectiveEmotionsAnger"
                   />
               </v-card-title>
               <v-divider />
@@ -209,7 +221,19 @@ export default {
       isAffectiveSummary: false,
       affectiveSummaryTags: [],
       affectiveSummaryImpressions: [],
-      isAffectiveEmotions: true
+      isAffectiveEmotions: true,
+      affectiveEmotionsPositive: 0,
+      affectiveEmotionsNegative: 0,
+      affectiveEmotionsJoy: 0,
+      affectiveEmotionsAdmiration: 0,
+      affectiveEmotionsInspiration: 0,
+      affectiveEmotionsPeace: 0,
+      affectiveEmotionsSurprise: 0,
+      affectiveEmotionsSympathy: 0,
+      affectiveEmotionsFear: 0,
+      affectiveEmotionsSadness: 0,
+      affectiveEmotionsDisgust: 0,
+      affectiveEmotionsAnger: 0
     }
   },
 
