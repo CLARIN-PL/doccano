@@ -109,7 +109,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      search: this.$route.query.q,
+      search: this.$route.query.q || '',
       options: {} as DataOptions,
       selectedArticleItems: [] as ExampleArticleDTO[],
       selectedChildArticleItems: [] as ExampleDTO[],

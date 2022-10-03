@@ -162,10 +162,7 @@ export default {
   layout: 'workspace',
 
   validate({ params, query }) {
-    return (
-      /^\d+$/.test(params.id) && /^\d+$/.test(query.page) &&
-      (typeof query.q === 'undefined' || query.q !== null)
-    )
+    return /^\d+$/.test(params.id) && /^\d+$/.test(query.page)
   },
 
   data() {
@@ -194,11 +191,13 @@ export default {
   },
 
   async fetch() {
+    const query = this.$route.query.q || ''
+    const isChecked = this.$route.query.isChecked || ''
     this.docs = await this.$services.example.fetchOne(
       this.projectId,
       this.$route.query.page,
-      this.$route.query.q,
-      this.$route.query.isChecked
+      query,
+      isChecked
     )
     const doc = this.docs.items[0]
     if (this.enableAutoLabeling && !doc.isConfirmed) {
@@ -211,7 +210,7 @@ export default {
       this.projectId,
       this.docs.count.toString(),
       this.currentArticleId,
-      this.$route.query.isChecked
+      isChecked
     )
     this.currentWholeArticle.items = _.orderBy(this.currentWholeArticle.items, 'order')
     const allArticleIds = await this.$services.example.fetchArticleIds(
