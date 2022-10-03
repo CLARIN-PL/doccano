@@ -13,8 +13,9 @@ from .serializers import (
     RelationSerializer,
     SpanSerializer,
     TextLabelSerializer,
+    ScaleSerializer,
 )
-from labels.models import Category, Label, Relation, Span, TextLabel
+from labels.models import Category, Label, Relation, Span, TextLabel, Scale
 from projects.models import Project
 from projects.permissions import IsProjectMember
 
@@ -111,3 +112,13 @@ class RelationList(BaseListAPI):
 class RelationDetail(BaseDetailAPI):
     queryset = Relation.objects.all()
     serializer_class = RelationSerializer
+
+
+class ScaleListAPI(BaseListAPI):
+    label_class = Scale
+    serializer_class = ScaleSerializer
+
+
+class ScaleDetailAPI(BaseDetailAPI):
+    queryset = Scale.objects.all()
+    serializer_class = ScaleSerializer

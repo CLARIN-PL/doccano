@@ -11,12 +11,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .exceptions import LabelValidationError
-from .models import CategoryType, LabelType, RelationType, SpanType
+from .models import CategoryType, LabelType, RelationType, SpanType, ScaleType
 from .serializers import (
     CategoryTypeSerializer,
     LabelSerializer,
     RelationTypeSerializer,
     SpanTypeSerializer,
+    ScaleTypeSerializer,
 )
 from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly
 
@@ -117,3 +118,19 @@ class SpanTypeUploadAPI(LabelUploadAPI):
 
 class RelationTypeUploadAPI(LabelUploadAPI):
     serializer_class = RelationTypeSerializer
+
+
+class ScaleTypeList(LabelList):
+    model = ScaleType
+    serializer_class = ScaleTypeSerializer
+
+
+class ScaleTypeDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ScaleType.objects.all()
+    serializer_class = ScaleTypeSerializer
+    lookup_url_kwarg = "label_id"
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
+
+
+class ScaleTypeUploadAPI(LabelUploadAPI):
+    serializer_class = ScaleTypeSerializer

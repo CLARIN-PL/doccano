@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
-from .models import Category, Relation, Span, TextLabel
+from .models import Category, Relation, Span, TextLabel, Scale
 from examples.models import Example
-from label_types.models import CategoryType, RelationType, SpanType
+from label_types.models import CategoryType, RelationType, SpanType, ScaleType
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -19,6 +19,7 @@ class CategorySerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "label",
+            "question",
         )
         read_only_fields = ("user",)
 
@@ -56,6 +57,7 @@ class TextLabelSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "text",
+            "question",
         )
         read_only_fields = ("user",)
 
@@ -67,4 +69,14 @@ class RelationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Relation
         fields = ("id", "prob", "user", "example", "created_at", "updated_at", "from_id", "to_id", "type")
+        read_only_fields = ("user",)
+
+
+class ScaleSerializer(serializers.ModelSerializer):
+    label = serializers.PrimaryKeyRelatedField(queryset=ScaleType.objects.all())
+    example = serializers.PrimaryKeyRelatedField(queryset=Example.objects.all())
+    
+    class Meta:
+        model = Scale
+        fields = ("id", "prob", "user", "example", "created_at", "updated_at", "label", "question")
         read_only_fields = ("user",)

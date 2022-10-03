@@ -76,3 +76,9 @@ class RelationType(LabelType):
     @property
     def labels(self):
         return RelationType.objects.filter(project=self.project)
+
+
+class ScaleType(LabelType):
+    @property
+    def labels(self):
+        return ScaleType.objects.filter(project=self.project)

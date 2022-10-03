@@ -10,6 +10,9 @@ from .views import (
     SpanTypeDetail,
     SpanTypeList,
     SpanTypeUploadAPI,
+    ScaleTypeDetail,
+    ScaleTypeList,
+    ScaleTypeUploadAPI,
 )
 
 urlpatterns = [
@@ -22,4 +25,7 @@ urlpatterns = [
     path(route="relation-type-upload", view=RelationTypeUploadAPI.as_view(), name="relation_type-upload"),
     path(route="relation-types", view=RelationTypeList.as_view(), name="relation_types_list"),
     path(route="relation-types/<int:label_id>", view=RelationTypeDetail.as_view(), name="relation_type_detail"),
+    path(route="scale-types", view=ScaleTypeList.as_view(), name="scale_types"),
+    path(route="scale-types/<int:label_id>", view=ScaleTypeDetail.as_view(), name="scale_type"),
+    path(route="scale-type-upload", view=ScaleTypeUploadAPI.as_view(), name="scale_type_upload"),
 ]

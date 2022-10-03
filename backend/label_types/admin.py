@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import CategoryType, SpanType
+from .models import CategoryType, SpanType, ScaleType
 
 
 class LabelAdmin(admin.ModelAdmin):
@@ -17,5 +17,10 @@ class SpanTypeAdmin(LabelAdmin):
     pass
 
 
+class ScaleTypeAdmin(LabelAdmin):
+    pass
+
+
 admin.site.register(CategoryType, CategoryTypeAdmin)
 admin.site.register(SpanType, SpanTypeAdmin)
+admin.site.register(ScaleType, ScaleTypeAdmin)
