@@ -141,7 +141,7 @@ export default Vue.extend({
     },
     filterOption(): string {
       // @ts-ignore
-      return this.$route.query.isChecked
+      return this.$route.query.isChecked || ''
     }
   },
 
@@ -151,7 +151,7 @@ export default Vue.extend({
         query: {
           page: page.toString(),
           isChecked: this.filterOption,
-          q: this.$route.query.q
+          q: this.$route.query.q || ''
         }
       })
     },
@@ -161,7 +161,7 @@ export default Vue.extend({
         query: {
           page: '1',
           isChecked,
-          q: this.$route.query.q
+          q: this.$route.query.q || ''
         }
       })
     },
