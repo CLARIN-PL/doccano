@@ -10,5 +10,10 @@ export default {
   metadataDefaultMessage: 'Aucune donnée disponible',
   key: 'Clé',
   value: 'Valeur',
-  newText: 'Nouveau texte'
+  newText: 'Nouveau texte',
+  articleTitle: "Titre de l'article",
+  articleId: "ID de l'article",
+  labelTypes: "Types d'étiquettes",
+  relation: 'Relation',
+  span: 'étendue'
 }

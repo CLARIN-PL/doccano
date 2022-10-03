@@ -18,6 +18,7 @@ export default {
     'Intent Detection and Slot Filling',
     'Image Classification',
     'Speech to Text',
-    'Article Annotation'
+    'Article Annotation',
+    'Affective Annotation'
   ]
 }

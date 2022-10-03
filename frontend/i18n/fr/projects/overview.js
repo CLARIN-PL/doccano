@@ -16,6 +16,7 @@ export default {
     "Détection d'intention et remplissage d'emplacements",
     "Classification d'images",
     'De la parole au texte',
-    "Annotations d'articles"
+    "Annotations d'articles",
+    'Annotation affective'
   ]
 }

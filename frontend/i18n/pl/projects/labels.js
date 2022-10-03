@@ -1,0 +1,20 @@
+export default {
+  labels: 'Etykiety',
+  shortkey: 'Skrót',
+  color: 'Kolor',
+  createLabel: 'Utwórz etykietę',
+  importLabels: 'Importuj etykiety',
+  exportLabels: 'Eksportuj etykiety',
+  labelName: 'Nazwa etykiety',
+  labelMessage: 'Nazwa etykiety jest wymagana',
+  createLink: 'Utwórz link',
+  linkName: 'Nazwa linku',
+  linkMessage: 'Nazwa linku jest wymagana',
+  key: 'Klucz',
+  deleteLabel: 'Usuń etykietę',
+  deleteMessage: 'Czy na pewno chcesz usunąć te etykiety z tego projektu?',
+  importTitle: 'Prześlij etykietę',
+  importMessage1: 'Przykładowy format',
+  importMessage2: 'Wybierz plik',
+  filePlaceholder: 'Wprowadzanie pliku'
+}

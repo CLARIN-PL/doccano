@@ -22,7 +22,8 @@
           :value="(itemPosition)/articleItems.length*100"
         ></v-progress-linear>
         <v-card-actions class="toolbar-article__footer">
-          Annotating {{ itemPosition }} / {{ articleItems.length }} texts
+          {{ $t('annotation_toolbar.article.annotationDescription', 
+            { itemPosition: itemPosition, articleLength: articleItems.length }) }}
         </v-card-actions>
     </v-card>
 </template>

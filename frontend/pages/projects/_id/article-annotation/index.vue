@@ -29,8 +29,10 @@
       <div>
         <v-row>
           <v-col cols="12">
-              <h3 class="mt-3">Article Title: {{ doc.meta.meta.article_title }}</h3>
-              <p class="mt-3">Article ID: {{ currentArticleId }}</p>
+              <h3 class="mt-3"> 
+                {{ $t('annotation.articleTitle') }}: {{ doc.meta.meta.article_title }}
+              </h3>
+              <p class="mt-3">{{ $t('annotation.articleId') }}: {{ currentArticleId }}</p>
               <v-divider />
           </v-col>
         </v-row>
@@ -94,12 +96,12 @@
     <template #sidebar>
       <annotation-progress :progress="progress" />
       <v-card class="mt-4">
-        <v-card-title>Label Types</v-card-title>
+        <v-card-title>{{ $t('annotation.labelTypes') }}</v-card-title>
         <v-card-text>
           <v-switch v-if="useRelationLabeling" v-model="relationMode">
             <template #label>
-              <span v-if="relationMode">Relation</span>
-              <span v-else>Span</span>
+              <span v-if="relationMode">{{ $t('annotation.relation') }}</span>
+              <span v-else>{{ $t('annotation.span') }}</span>
             </template>
           </v-switch>
           <v-chip-group v-model="selectedLabelIndex" column>

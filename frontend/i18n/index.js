@@ -23,6 +23,12 @@ export default {
       code: 'de',
       iso: 'de-DE',
       file: 'de'
+    },
+    {
+      name: 'Polish',
+      code: 'pl',
+      iso: 'pl-PL',
+      file: 'pl'
     }
   ],
   lazy: true,
