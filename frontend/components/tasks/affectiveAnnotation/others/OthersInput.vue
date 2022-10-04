@@ -99,18 +99,6 @@
         @markCheckbox="nullifyCategory"
       />
       <slider
-        category-label="Czuję sympatię do autora"
-        color="blue"
-        hint="Czuję sympatię do autora"
-        :value="sympathyToAuthor"
-        :must-click="true"
-        :with-checkbox="true"
-        :checkbox-label="checkboxLabel"
-        :hide-slider-on-checked="true"
-        @change="updateCategory"
-        @markCheckbox="nullifyCategory"
-      />
-      <slider
         category-label="Potrzebuję więcej informacji"
         color="blue"
         hint="Potrzebuję więcej informacji, aby ocenić ten tekst"
@@ -122,17 +110,44 @@
         @change="updateCategory"
         @markCheckbox="nullifyCategory"
       />
-      <!-- Add textfield for Czego życzę autorowi tego tekstu? -->
+      <slider
+        category-label="Czuję sympatię do autora"
+        color="blue"
+        hint="Czuję sympatię do autora"
+        :value="sympathyToAuthor"
+        :must-click="true"
+        :with-checkbox="true"
+        :checkbox-label="checkboxLabel"
+        :hide-slider-on-checked="true"
+        @change="updateCategory"
+        @markCheckbox="nullifyCategory"
+      />
+      <textfield-with-seq-2-seq
+        text="Czego życzę autorowi tego tekstu?"
+        category-label="Czego życzę autorowi tego tekstu?"
+        :answers="wishToAuthor"
+        :rules-textfield="rules"
+        :text-validation="textValidation"
+        :with-checkbox="true"
+        checkbox-label="Nie mam życzeń"
+        :hide-textfield-on-checked="true"
+        @remove="removeWishToAuthor"
+        @update="updateWishToAuthor"
+        @add="addWishToAuthor"
+        @markCheckbox="nullifyWishToAuthor"
+      />
     </div>
   </div>
 </template>
   
 <script>
-import Slider from '~/components/tasks/affectiveAnnotation/inputs/Slider.vue'
+import Slider from '../inputs/Slider.vue'
+import TextfieldWithSeq2Seq from '../inputs/TextfieldWithSeq2Seq.vue'
 
 export default {
   components: {
-    Slider
+    Slider,
+    TextfieldWithSeq2Seq
   },
 
   props: {
@@ -177,13 +192,22 @@ export default {
       default: 0
     },
     wishToAuthor: {
-      type: String,
-      default: ""
+      type: Array,
+      default: () => []
     }
   },
 
   data() {
     return {
+      rules: [
+        (value) => {
+          if (value) {
+            const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż,().! -]+$/
+            return pattern.test(value) || this.$i18n.t('annotation.warningInvalidChar')
+          }
+          return true
+        }
+      ],
       checkboxLabel: "Nie wiem",
       categoryLabelDict: {
         "Ironiczny": "ironic",
@@ -195,8 +219,7 @@ export default {
         "Zgadzam się z tekstem": "agreeable",
         "Wierzę w tę informację": "believable",
         "Czuję sympatię do autora": "sympathyToAuthor",
-        "Potrzebuję więcej informacji": "needMoreInfo",
-        "wishToAuthor": "wishToAuthor"
+        "Potrzebuję więcej informacji": "needMoreInfo"
       }
     }
   },
@@ -209,6 +232,37 @@ export default {
     nullifyCategory(checkboxIsMarked, categoryLabel) {
       const category = this.categoryLabelDict[categoryLabel]
       this.$emit('markCheckbox', checkboxIsMarked, category)
+    },
+    textValidation(value, arrayToCheck) {
+      let errorMessage = ""
+      const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż,().! -]+$/
+      if (!pattern.test(value)) {
+        errorMessage = this.$i18n.t('annotation.warningInvalidChar')
+      }
+      if (arrayToCheck.length >= 1) {
+        errorMessage = this.$i18n.t('annotation.warningMaxCount')
+      }
+      const isWordEntered = arrayToCheck.findIndex((item) => item.text === value)
+      if (isWordEntered > -1) {
+        errorMessage = this.$i18n.t('annotation.warningAlreadyWritten')
+      }
+      return errorMessage
+    },
+    removeWishToAuthor() {
+      this.$emit('remove:wishToAuthor')
+    },
+    updateWishToAuthor(text) {
+      if (text.length > 0) {
+        this.$emit('update:wishToAuthor', text)
+      } else {
+        this.removeWishToAuthor()
+      }
+    },
+    addWishToAuthor(text) {
+      this.$emit('add:wishToAuthor', text)
+    },
+    nullifyWishToAuthor() {
+      this.removeWishToAuthor()
     }
   }
 }

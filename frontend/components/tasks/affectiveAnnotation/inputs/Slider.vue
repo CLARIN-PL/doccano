@@ -26,7 +26,7 @@
         <v-checkbox
           :label="checkboxLabel"
           @change="checkboxChangeHandler"
-        ></v-checkbox>
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -140,9 +140,5 @@ export default {
       line-height: 0.95;
     }
   }
-}
-
-.invisible {
-  visibility: hidden;
 }
 </style>

@@ -105,9 +105,12 @@
                     :believable="affectiveOthers.believable"
                     :sympathy-to-author="affectiveOthers.sympathyToAuthor"
                     :need-more-info="affectiveOthers.needMoreInfo"
-                    :wisht-to-author="affectiveOthers.wishToAuthor"
+                    :wish-to-author="affectiveOthers.wishToAuthor"
                     @change="othersChangeHandler"
                     @markCheckbox="nullifyOthersHandler"
+                    @remove:wishToAuthor="removeWishToAuthor"
+                    @update:wishToAuthor="updateWishToAuthor"
+                    @add:wishToAuthor="addWishToAuthor"
                   />
               </v-card-title>
               <v-divider />
@@ -240,7 +243,7 @@ export default {
       isAffectiveSummary: false,
       affectiveSummaryTags: [],
       affectiveSummaryImpressions: [],
-      isAffectiveEmotions: true,
+      isAffectiveEmotions: false,
       affectiveEmotions: {
         "positive": 0,
         "negative": 0,
@@ -267,7 +270,7 @@ export default {
         "believable": 0,
         "sympathyToAuthor": 0,
         "needMoreInfo": 0,
-        "wishToAuthor": ""
+        "wishToAuthor": []
       }
     }
   },
@@ -537,7 +540,20 @@ export default {
         this.affectiveOthers[category] = -1
         console.log("nullify others value!", this.affectiveOthers[category], category)
       }
-    }
+    },
+    removeWishToAuthor() {
+      this.affectiveOthers.wishToAuthor = []
+    },
+    updateWishToAuthor(text) {
+      console.log(text)
+    },
+    addWishToAuthor(value) {
+      const item = {
+        "id": 0,
+        "text": value
+      }
+      this.affectiveOthers.wishToAuthor.push(item)
+    },
   }
 }
 </script>
