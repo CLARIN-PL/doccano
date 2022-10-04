@@ -262,7 +262,7 @@ export default Vue.extend({
         'image_classification.png',
         'speech_to_text.png',
         'article_annotation.png',
-        'article_annotation.png'
+        'affective_annotation.png'
       ]
     },
     hasSingleLabelOption() {
