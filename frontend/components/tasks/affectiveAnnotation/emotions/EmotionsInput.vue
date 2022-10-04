@@ -4,7 +4,7 @@
     <p class="emotions-input__subheader">Jakie?</p>
     <div class="emotions-input__content">
       <slider
-        category="Pozytywne"
+        category-label="Pozytywne"
         color="green"
         hint="Pozytywne"
         :value="generalPositivity"
@@ -12,7 +12,7 @@
         @change="updateEmotions"
       />
       <slider
-        category="Negatywne"
+        category-label="Negatywne"
         color="red"
         hint="Negatywne"
         :value="generalNegativity"
@@ -24,7 +24,7 @@
     <p class="emotions-input__subheader">Emocje</p>
     <div class="emotions-input__content">
       <slider
-        category="Radość"
+        category-label="Radość"
         color="pink"
         hint="Radość, szczęście"
         :value="joy"
@@ -32,7 +32,7 @@
         @change="updateEmotions"
       />
       <slider
-        category="Zachwyt"
+        category-label="Zachwyt"
         color="purple"
         hint="Zachwyt, podziw, duma"
         :value="admiration"
@@ -40,7 +40,7 @@
         @change="updateEmotions"
       />
       <slider
-        category="Inspiruje"
+        category-label="Inspiruje"
         color="indigo"
         hint="Podnosi na duchu, inspiruje"
         :value="inspiration"
@@ -48,7 +48,7 @@
         @change="updateEmotions"
       />
       <slider
-        category="Spokój"
+        category-label="Spokój"
         color="teal"
         hint="Spokój, relaks"
         :value="peace"
@@ -56,7 +56,7 @@
         @change="updateEmotions"
       />
       <slider
-        category="Zaskoczenie"
+        category-label="Zaskoczenie"
         color="amber"
         hint="Zaskoczenie, zdziwienie"
         :value="surprise"
@@ -64,7 +64,7 @@
         @change="updateEmotions"
       />
       <slider
-        category="Współczucie"
+        category-label="Współczucie"
         color="cyan"
         hint="Współczucie"
         :value="sympathy"
@@ -72,7 +72,7 @@
         @change="updateEmotions"
       />
       <slider
-        category="Strach"
+        category-label="Strach"
         color="brown"
         hint="Strach, niepokój"
         :value="fear"
@@ -80,7 +80,7 @@
         @change="updateEmotions"
       />
       <slider
-        category="Smutek"
+        category-label="Smutek"
         color="blue-grey darken-4"
         hint="Smutek, nieszczęście"
         :value="sadness"
@@ -88,7 +88,7 @@
         @change="updateEmotions"
       />
       <slider
-        category="Wstręt"
+        category-label="Wstręt"
         color="lime darken-4"
         hint="Wstręt, obrzydzenie"
         :value="disgust"
@@ -96,7 +96,7 @@
         @change="updateEmotions"
       />
       <slider
-        category="Złość"
+        category-label="Złość"
         color="red darken-4"
         hint="Złość, wkurzenie, gniew, irytacja"
         :value="anger"
@@ -166,11 +166,29 @@ export default {
     }
   },
 
+  data() {
+    return {
+      categoryLabelDict: {
+        "Pozytywne": "positive",
+        "Negatywne": "negative",
+        "Radość": "joy",
+        "Zachwyt": "admiration",
+        "Inspiruje": "inspiration",
+        "Spokój": "peace",
+        "Zaskoczenie": "surprise",
+        "Współczucie": "sympathy",
+        "Strach": "fear",
+        "Smutek": "sadness",
+        "Wstręt": "disgust",
+        "Złość": "anger"
+      }
+    }
+  },
+
   methods: {
-    updateEmotions(value, category) {
-      console.log("new value!")
-      console.log(value)
-      console.log(category)
+    updateEmotions(value, categoryLabel) {
+      const category = this.categoryLabelDict[categoryLabel]
+      this.$emit('change', value, category)
     }
   }
 }
@@ -182,6 +200,7 @@ export default {
   word-break: break-word;
   max-height: 170px;
   overflow-x: auto;
+  width: 100%;
 
   &__title {
     font-size: 1.0rem;
@@ -197,7 +216,8 @@ export default {
   }
 
   &__content {
-    margin-bottom: 15px !important;
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
   }
 }
 </style>

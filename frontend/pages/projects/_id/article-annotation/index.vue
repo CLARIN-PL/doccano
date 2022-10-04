@@ -79,18 +79,35 @@
                   />
                   <emotions-input
                     v-if="isAffectiveEmotions"
-                    :general-positivity="affectiveEmotionsPositive"
-                    :general-negativity="affectiveEmotionsNegative"
-                    :joy="affectiveEmotionsJoy"
-                    :admiration="affectiveEmotionsAdmiration"
-                    :inspiration="affectiveEmotionsInspiration"
-                    :peace="affectiveEmotionsPeace"
-                    :surprise="affectiveEmotionsSurprise"
-                    :sympathy="affectiveEmotionsSympathy"
-                    :fear="affectiveEmotionsFear"
-                    :sadness="affectiveEmotionsSadness"
-                    :disgust="affectiveEmotionsDisgust"
-                    :anger="affectiveEmotionsAnger"
+                    :general-positivity="affectiveEmotions.positive"
+                    :general-negativity="affectiveEmotions.negative"
+                    :joy="affectiveEmotions.joy"
+                    :admiration="affectiveEmotions.admiration"
+                    :inspiration="affectiveEmotions.inspiration"
+                    :peace="affectiveEmotions.peace"
+                    :surprise="affectiveEmotions.surprise"
+                    :sympathy="affectiveEmotions.sympathy"
+                    :fear="affectiveEmotions.fear"
+                    :sadness="affectiveEmotions.sadness"
+                    :disgust="affectiveEmotions.disgust"
+                    :anger="affectiveEmotions.anger"
+                    @change="emotionsChangeHandler"
+                  />
+                  <others-input
+                    v-if="isAffectiveOthers"
+                    :ironic="affectiveOthers.ironic"
+                    :embarassing="affectiveOthers.embarassing"
+                    :vulgar="affectiveOthers.vulgar"
+                    :politic="affectiveOthers.politic"
+                    :interesting="affectiveOthers.interesting"
+                    :comprehensible="affectiveOthers.comprehensible"
+                    :agreeable="affectiveOthers.agreeable"
+                    :believable="affectiveOthers.believable"
+                    :sympathy-to-author="affectiveOthers.sympathyToAuthor"
+                    :need-more-info="affectiveOthers.needMoreInfo"
+                    :wisht-to-author="affectiveOthers.wishToAuthor"
+                    @change="othersChangeHandler"
+                    @markCheckbox="nullifyOthersHandler"
                   />
               </v-card-title>
               <v-divider />
@@ -174,6 +191,7 @@ import EntityEditor from '@/components/tasks/sequenceLabeling/EntityEditor.vue'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
 import SummaryInput from '@/components/tasks/affectiveAnnotation/summary/SummaryInput.vue'
 import EmotionsInput from '@/components/tasks/affectiveAnnotation/emotions/EmotionsInput.vue'
+import OthersInput from '@/components/tasks/affectiveAnnotation/others/OthersInput.vue'
 
 export default {
   components: {
@@ -187,7 +205,8 @@ export default {
     LabelGroup,
     LabelSelect,
     SummaryInput,
-    EmotionsInput
+    EmotionsInput,
+    OthersInput
   },
 
   layout: 'workspace',
@@ -222,18 +241,34 @@ export default {
       affectiveSummaryTags: [],
       affectiveSummaryImpressions: [],
       isAffectiveEmotions: true,
-      affectiveEmotionsPositive: 0,
-      affectiveEmotionsNegative: 0,
-      affectiveEmotionsJoy: 0,
-      affectiveEmotionsAdmiration: 0,
-      affectiveEmotionsInspiration: 0,
-      affectiveEmotionsPeace: 0,
-      affectiveEmotionsSurprise: 0,
-      affectiveEmotionsSympathy: 0,
-      affectiveEmotionsFear: 0,
-      affectiveEmotionsSadness: 0,
-      affectiveEmotionsDisgust: 0,
-      affectiveEmotionsAnger: 0
+      affectiveEmotions: {
+        "positive": 0,
+        "negative": 0,
+        "joy": 0,
+        "admiration": 0,
+        "inspiration": 0,
+        "peace": 0,
+        "surprise": 0,
+        "sympathy": 0,
+        "fear": 0,
+        "sadness": 0,
+        "disgust": 0,
+        "anger": 0
+      },
+      isAffectiveOthers: true,
+      affectiveOthers: {
+        "ironic": 0,
+        "embarassing": 0,
+        "vulgar": 0,
+        "politic": 0,
+        "interesting": 0,
+        "comprehensible": 0,
+        "agreeable": 0,
+        "believable": 0,
+        "sympathyToAuthor": 0,
+        "needMoreInfo": 0,
+        "wishToAuthor": ""
+      }
     }
   },
 
@@ -490,6 +525,18 @@ export default {
         "text": value
       }
       this.affectiveSummaryImpressions.push(item)
+    },
+    emotionsChangeHandler(value, category) {
+      console.log("new emotions value!", value, category)
+    },
+    othersChangeHandler(value, category) {
+      console.log("new others value!", value, category)
+    },
+    nullifyOthersHandler(checkboxIsMarked, category) {
+      if (checkboxIsMarked) {
+        this.affectiveOthers[category] = -1
+        console.log("nullify others value!", this.affectiveOthers[category], category)
+      }
     }
   }
 }
