@@ -132,7 +132,8 @@ export default Vue.extend({
       return this.$route.params.id
     },
     isArticleTask(): boolean {
-      return this.project.projectType === 'ArticleAnnotation'
+      const articleTasks = ['ArticleAnnotation', 'AffectiveAnnotation']
+      return articleTasks.includes(this.project.projectType)
     },
     isImageTask(): boolean {
       return this.project.projectType === 'ImageClassification'

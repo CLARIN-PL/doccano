@@ -20,5 +20,18 @@ export default {
     'Speech to Text',
     'Article Annotation',
     'Affective Annotation'
-  ]
+  ],
+  tags: 'Tags',
+  allowSingleLabel: 'Allow single label',
+  allowOverlapping: 'Allow overlapping entity',
+  useRelation: 'Use relation labeling',
+  count: 'Count',
+  graphemeClusters: 'grapheme clusters',
+  emojiDescription: 'Like emoji(🌷, 💩, and 👍), CRLF(\r\n), and so on.',
+  asOneCharacter: 'as one character',
+  enableSummary: 'Enable user to add summary',
+  enableHumor: 'Enable user to measure humor',
+  enableOffensive: 'Enable user to measure offensiveness',
+  enableEmotions: 'Enable user to measure emotions',
+  enableOthers: 'Enable user to measure other parameters',
 }
