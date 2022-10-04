@@ -221,6 +221,7 @@ export default {
   max-height: 170px;
   overflow-x: auto;
   width: 100%;
+  padding-right: 20px !important;
 
   &__title {
     font-size: 1.0rem;

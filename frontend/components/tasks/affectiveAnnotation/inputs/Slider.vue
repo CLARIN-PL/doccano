@@ -133,6 +133,8 @@ export default {
   }
 
   &__checkbox {
+    padding-left: 10px !important;
+
     label.v-label {
       font-size: 0.8rem;
       line-height: 0.95;

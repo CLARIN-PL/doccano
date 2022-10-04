@@ -1,6 +1,7 @@
 <template>
   <div class="emotions-input">
     <p class="emotions-input__title">Czy tekst wzbudza w Tobie jakiekolwiek emocje?</p>
+    <v-divider class="emotions-input__divider" />
     <p class="emotions-input__subheader">Jakie?</p>
     <div class="emotions-input__content">
       <slider
@@ -201,11 +202,11 @@ export default {
   max-height: 170px;
   overflow-x: auto;
   width: 100%;
+  padding-right: 20px !important;
 
   &__title {
     font-size: 1.0rem;
     line-height: 1.0;
-    margin-bottom: 0 !important;
   }
 
   &__subheader {
