@@ -26,7 +26,7 @@ export class ProjectDTO {
   isSummaryMode: boolean
   isOffensiveMode: boolean
   isEmotionsMode: boolean
-  affectiveAnnotationMode: string
+  affectiveAnnotationMode?: string
 
   constructor(item: ProjectReadItem) {
     this.id = item.id
@@ -54,7 +54,6 @@ export class ProjectDTO {
     this.isSummaryMode = item.isSummaryMode
     this.isOffensiveMode = item.isOffensiveMode
     this.isEmotionsMode = item.isEmotionsMode
-
   }
 }
 

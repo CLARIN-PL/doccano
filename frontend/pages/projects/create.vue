@@ -57,7 +57,7 @@ export default Vue.extend({
         this.editedItem = Object.assign({}, this.defaultItem)
       })
     },
-    getProjectItem() : any {
+    getProjectItem() : ProjectWriteDTO {
       const editedItem : any = _.cloneDeep(this.editedItem)
       if(this.editedItem.affectiveAnnotationMode) {
         editedItem[this.editedItem.affectiveAnnotationMode] = true
