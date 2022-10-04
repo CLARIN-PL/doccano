@@ -50,6 +50,14 @@ export default Vue.extend({
 
   methods: {
     async create() {
+      const projectItem = this.getProjectItem()
+      const project = await this.$services.project.create(projectItem)
+      this.$router.push(`/projects/${project.id}`)
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem)
+      })
+    },
+    getProjectItem() : any {
       const editedItem : any = _.cloneDeep(this.editedItem)
       if(this.editedItem.affectiveAnnotationMode) {
         editedItem[this.editedItem.affectiveAnnotationMode] = true
@@ -60,11 +68,7 @@ export default Vue.extend({
         editedItem[key] = editedItem[key] ? editedItem[key] : false
       })
       delete editedItem.affectiveAnnotationMode
-      const project = await this.$services.project.create(editedItem)
-      this.$router.push(`/projects/${project.id}`)
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-      })
+      return editedItem
     }
   }
 })
