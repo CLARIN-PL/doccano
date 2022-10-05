@@ -150,13 +150,20 @@ class RelationLabel(Label):
 
 class ScaleLabel(Label):
     label: NonEmptyStr
+    scale: NonNegativeInt
 
     def __lt__(self, other):
         return self.label < other.label
 
     @classmethod
     def parse(cls, example_uuid: UUID4, obj: Any):
-        return cls(example_uuid=example_uuid, label=obj)
+        if isinstance(obj, list) or isinstance(obj, tuple):
+            columns = ["scale", "label"]
+            obj = zip(columns, obj)
+            return cls(example_uuid=example_uuid, **dict(obj))
+        elif isinstance(obj, dict):
+            return cls(example_uuid=example_uuid, **obj)
+        raise ValueError("ScaleLabel.parse()")
 
     def create_type(self, project: Project) -> Optional[LabelType]:
         return ScaleType(text=self.label, project=project)
@@ -167,5 +174,6 @@ class ScaleLabel(Label):
             user=user,
             example=example,
             label=types[self.label],
+            scale=self.scale,
             **kwargs,
         )

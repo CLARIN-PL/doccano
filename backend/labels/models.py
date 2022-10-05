@@ -136,7 +136,5 @@ class Scale(Label):
     objects = ScaleManager()
     example = models.ForeignKey(to=Example, on_delete=models.CASCADE, related_name="scales")
     label = models.ForeignKey(to=ScaleType, on_delete=models.CASCADE)
+    scale = models.IntegerField()
     question = models.ForeignKey(to=Question, on_delete=models.CASCADE, null=True, blank=True)
-
-    class Meta:
-        unique_together = ("example", "user", "label")

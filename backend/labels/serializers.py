@@ -78,5 +78,5 @@ class ScaleSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Scale
-        fields = ("id", "prob", "user", "example", "created_at", "updated_at", "label", "question")
+        fields = ("id", "prob", "user", "example", "created_at", "updated_at", "label", "scale", "question")
         read_only_fields = ("user",)
