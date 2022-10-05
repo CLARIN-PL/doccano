@@ -8,9 +8,9 @@ from .pipeline.catalog import RELATION_EXTRACTION, CUSTOM_RELATION_EXTRACTION, F
 from .pipeline.data import BaseData, BinaryData, TextData
 from .pipeline.exceptions import FileParseException
 from .pipeline.factories import create_parser
-from .pipeline.label import CategoryLabel, Label, RelationLabel, SpanLabel, TextLabel
+from .pipeline.label import CategoryLabel, Label, RelationLabel, SpanLabel, TextLabel, ScaleLabel
 from .pipeline.label_types import LabelTypes
-from .pipeline.labels import Categories, Labels, Relations, Spans, Texts
+from .pipeline.labels import Categories, Labels, Relations, Spans, Texts, Scales
 from .pipeline.makers import BinaryExampleMaker, ExampleMaker, LabelMaker
 from .pipeline.readers import (
     DEFAULT_LABEL_COLUMN,
@@ -19,7 +19,7 @@ from .pipeline.readers import (
     Reader,
 )
 from examples.models import Example
-from label_types.models import CategoryType, LabelType, RelationType, SpanType
+from label_types.models import CategoryType, LabelType, RelationType, SpanType, ScaleType
 from projects.models import (
     DOCUMENT_CLASSIFICATION,
     IMAGE_CLASSIFICATION,
@@ -257,6 +257,50 @@ class CategoryAndSpanDataset(Dataset):
         return self.reader.errors + self.example_maker.errors + self.category_maker.errors + self.span_maker.errors
 
 
+class CategoryAndScaleDataset(Dataset):
+    def __init__(self, reader: Reader, project: Project, **kwargs):
+        super().__init__(reader, project, **kwargs)
+        self.category_types = LabelTypes(CategoryType)
+        self.scale_types = LabelTypes(ScaleType)
+        self.label_types = LabelTypes(DummyLabelType)
+        self.example_maker = ExampleMaker(
+            project=project,
+            data_class=TextData,
+            column_data=kwargs.get("column_data") or DEFAULT_TEXT_COLUMN,
+            exclude_columns=["cats", "scale"],
+        )
+        self.category_maker = LabelMaker(column="cats", label_class=CategoryLabel)
+        self.scale_maker = LabelMaker(column="scale", label_class=ScaleLabel)
+        self.label_maker = LabelMaker(column=kwargs.get("column_label") or DEFAULT_LABEL_COLUMN, label_class=TextLabel)
+
+    def save(self, user: User, batch_size: int = 1000):
+        for records in self.reader.batch(batch_size):
+            # create examples
+            examples = self.example_maker.make(records)
+            Example.objects.bulk_create(examples)
+
+            # create label types
+            categories = Categories(self.category_maker.make(records), self.category_types)
+            categories.clean(self.project)
+            categories.save_types(self.project)
+
+            scales = Scales(self.scale_maker.make(records), self.scale_types)
+            scales.clean(self.project)
+            scales.save_types(self.project)
+
+            labels = Texts(self.label_maker.make(records), self.label_types)
+            labels.clean(self.project)
+            labels.save_types(self.project)
+
+            # create Labels
+            categories.save(user)
+            scales.save(user)
+
+    @property
+    def errors(self) -> List[FileParseException]:
+        return self.reader.errors + self.example_maker.errors + self.category_maker.errors + self.scale_maker.errors
+
+
 def select_dataset(project: Project, task: str, file_format: Format) -> Type[Dataset]:
     mapping = {
         DOCUMENT_CLASSIFICATION: TextClassificationDataset,
@@ -268,7 +312,7 @@ def select_dataset(project: Project, task: str, file_format: Format) -> Type[Dat
         IMAGE_CLASSIFICATION: BinaryDataset,
         SPEECH2TEXT: BinaryDataset,
         ARTICLE_ANNOTATION: CategoryAndSpanDataset,
-        AFFECTIVE_ANNOTATION: CategoryAndSpanDataset,
+        AFFECTIVE_ANNOTATION: CategoryAndScaleDataset,
     }
     if task not in mapping:
         task = project.project_type

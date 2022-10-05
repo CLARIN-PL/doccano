@@ -156,7 +156,7 @@ class ScaleLabel(Label):
 
     @classmethod
     def parse(cls, example_uuid: UUID4, obj: Any):
-        return cls(example_uuid=example_uuid, **obj)
+        return cls(example_uuid=example_uuid, label=obj)
 
     def create_type(self, project: Project) -> Optional[LabelType]:
         return ScaleType(text=self.label, project=project)
