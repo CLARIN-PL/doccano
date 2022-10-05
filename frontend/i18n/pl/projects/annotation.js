@@ -82,5 +82,80 @@ export default {
     wishToAuthorHint: "Czego życzę autorowi tego tekstu?",
     labelDontKnow: "Nie wiem",
     labelNoWishToAuthor: "Nie mam życzeń"
+  },
+  slider: {
+    zero: "Wcale",
+    full: "W pełni"
+  },
+  offensive: {
+    question: "Czy tekst ma charakter obraźliwy lub lekceważący?",
+    subquestion1: "Obraża mnie",
+    subquestion2: "Może kogoś atakować / obrażać / lekceważyć",
+    subquestion3: {
+      question: "Ze względu na co obraża",
+      substatement1: "Płeć",
+      substatement1Question: "Którą?",
+      substatement2: "Narodowość",
+      substatement2Question: "Którą?",
+      substatement3: "Rzekonania religijne",
+      substatement3Question: "Jakie?",
+      substatement4: "Rasę, kolor skóry",
+      substatement4Question: "Którą?",
+      substatement5: "Orientację seksualną",
+      substatement5Question: "Jaką?",
+      substatement6: "Poglądy polityczne ",
+      substatement6Question: "Jakie?",
+      substatement7: "Inne, np. grupy społeczne, zawodowe",
+      substatement7Question: "Jakie?",
+    },
+    subquestion4: {
+      question: "W jaki sposób?",
+      substatement1: "Odczłowieczenie",
+      substatement2: "Mowa nienawiści",
+      substatement3: "Nawoływanie do przemocy",
+      substatement4: "Nawoływanie do ludobójstwa",
+      substatement5: "Niesprawiedliwe uogólnianie, stereotypy",
+      substatement6: "Lekceważenie",
+      substatement7: "Upokorzenie",
+      substatement8: "Inne"
+    }
+  },
+  humor: {
+    question: "Czy ten tekst ma charakter humorystyczny?",
+    subquestion1: "Mnie bawi/śmieszy?",
+    subquestion2: "Może kogoś bawić?",
+    subquestion3: {
+      question: "Autor śmieje się z",
+      description: "Jeśli tak to z kogo",
+      substatement1: "Płeć",
+      substatement1Question: "Którą?",
+      substatement2: "Narodowość",
+      substatement2Question: "Którą?",
+      substatement3: "Rzekonania religijne",
+      substatement3Question: "Jakie?",
+      substatement4: "Rasę, kolor skóry",
+      substatement4Question: "Którą?",
+      substatement5: "Orientację seksualną",
+      substatement5Question: "Jaką?",
+      substatement6: "Poglądy polityczne ",
+      substatement6Question: "Jakie?",
+      substatement7: "Inne, np. grupy społeczne, zawodowe",
+      substatement7Question: "Jakie?",
+    },
+    subquestion4: {
+      question: "Charakter humoru, śmieszy ze względu na",
+      substatement1: "Czarny humor",
+      substatement2: "Ironię",
+      substatement3: "Sarkazm",
+      substatement4: "Dwuznaczność",
+      substatement5: "Grę słów",
+      substatement6: "Seksualność",
+      substatement7: "Humor fekalny (o kupie :-) )",
+      substatement8: "Brzmienie słów [",
+      substatement9: "Wyolbrzymienie",
+      substatement10: "Niecenzuralne słowa",
+      substatement11: "Kontrast",
+      substatement12: "Ma charakter dowcipu, kawału, żartu"
+    }
   }
 }

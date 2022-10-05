@@ -80,5 +80,80 @@ export default {
     wishToAuthorHint: "Was wünsche ich dem Autor dieses Textes?",
     labelDontKnow: "Ich weiß nicht",
     labelNoWishToAuthor: "Ich habe keine Wünsche"
+  },
+  slider: {
+    zero: "Überhaupt nicht",
+    full: "Völlig"
+  },
+  offensive: {
+    question: "Ist der Text beleidigend oder respektlos?",
+    subquestion1: "Er beleidigt mich",
+    subquestion2: "Er könnte jemanden angreifen/beleidigen/verunglimpfen",
+    subquestion3: {
+      question: "Was beleidigt es?",
+      substatement1: "Geschlecht",
+      substatement1Question: "Welche Art?",
+      substatement2: "Nationalität",
+      substatement2Question: "Welcher Art?",
+      substatement3: "Religiöse Überzeugungen",
+      substatement3Question: "Welcher Art?",
+      substatement4: "Rasse, Hautfarbe",
+      substatement4Question: "Welcher Art?",
+      substatement5: "Sexuelle Orientierung",
+      substatement5Question: "Welcher Art?",
+      substatement6: "Politische Ansichten",
+      substatement6Question: "Welcher Art?",
+      substatement7: "andere, z.B. soziale, berufliche Gruppen",
+      substatement7Question: "Welcher Art?",
+    },
+    subquestion4: {
+      question: "Auf welche Weise?",
+      substatement1: "Entmenschlichung",
+      substatement2: "Hassrede",
+      substatement3: "Aufstachelung zur Gewalt",
+      substatement4: "Aufstachelung zum Völkermord",
+      substatement5: "Unfaire Verallgemeinerung, Stereotypisierung",
+      substatement6: "Respektlosigkeit",
+      substatement7: "Erniedrigung",
+      substatement8: "Sonstiges"
+    }
+  },
+  humor: {
+    question: "Ist dieser Text witzig?",
+    subquestion1: "Er amüsiert mich/bringt mich zum Lachen",
+    subquestion2: "Vielleicht amüsiert er jemand anderen",
+    subquestion3: {
+      question: "Über was macht sich der Autor lustig?",
+      description: "Wenn sie sich über etwas lustig machen, worüber?",
+      substatement1: "Geschlecht",
+      substatement1Question: "Welche Art?",
+      substatement2: "Nationalität",
+      substatement2Question: "Welcher Art?",
+      substatement3: "Religiöse Überzeugungen",
+      substatement3Question: "Welcher Art?",
+      substatement4: "Rasse",
+      substatement4Question: "Welcher Art?",
+      substatement5: "Sexuelle Orientierung",
+      substatement5Question: "Welcher Art?",
+      substatement6: "Politische Ansichten",
+      substatement6Question: "Welcher Art?",
+      substatement7: "Andere",
+      substatement7Question: "Welcher Art?",
+    },
+    subquestion4: {
+      question: "Natur des Humors. Er bringt dich zum Lachen, weil:",
+      substatement1: "Dunkler Humor",
+      substatement2: "Ironie",
+      substatement3: "Sarkasmus",
+      substatement4: "Zweideutigkeit",
+      substatement5: "Wortspiel",
+      substatement6: "Sexualität",
+      substatement7: "Fäkalhumor (über Kacke :-) )",
+      substatement8: "Klang der Worte",
+      substatement9: "Übertreibung",
+      substatement10: "Unzensierte Wörter",
+      substatement11: "Kontrast",
+      substatement12: "Hat Merkmale eines Witzes"
+    }
   }
 }

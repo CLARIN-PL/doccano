@@ -80,5 +80,80 @@ export default {
     wishToAuthorHint: "Qu'est-ce que je souhaite à l'auteur de ce texte ?",
     labelDontKnow: "je ne sais pas",
     labelNoWishToAuthor: "je n'ai pas de souhaits"
+  },
+  slider: {
+    zero: "Pas du tout",
+    full: "Totalement"
+  },
+  offensive: {
+    question: "Le texte est-il offensant ou irrespectueux ?",
+    subquestion1: "Il m'offense",
+    subquestion2: "Il peut attaquer / offenser / dénigrer quelqu'un",
+    subquestion3: {
+      question: "Qu'est-ce que ça offense ?",
+      substatement1: "Sexe",
+      substatement1Question: "Quel genre ?",
+      substatement2: "Nationalité",
+      substatementQuestion: "Quel genre ?",
+      substatement3: "Croyances religieuses",
+      substatement3Question: "Quel genre ?",
+      substatement4: "Race, couleur de peau",
+      substatementQuestion: "Quel genre ?",
+      substatement5: "Orientation sexuelle",
+      substatement5Question: "Quel genre ?",
+      substatement6: "Opinions politiques",
+      substatement6Question: "Quel genre ?",
+      substatement7: "autres, par exemple, groupes sociaux, professionnels",
+      substatement7Question: "Quel type ?",
+    },
+    subquestion4: {
+      question: "De quelle manière ?",
+      substatement1: " déshumanisation ",
+      substatement2: " discours de haine ",
+      substatement3: "incitation à la violence",
+      substatement4: "incitation au génocide",
+      substatement5: "généralisation injuste, stéréotypes",
+      substatement6: "manque de respect",
+      substatement7: "humiliation",
+      substatement8: "autre"
+    }
+  },
+  humor: {
+    question: "Ce texte est-il humoristique ?",
+    subquestion1: "Il m'amuse/me fait rire",
+    subquestion2: "Il peut amuser quelqu'un d'autre",
+    subquestion3: {
+      question: "De quoi l'auteur se moque-t-il ?",
+      description: "S'ils se moquent de quelque chose, de quoi ?",
+      substatement1: "Sexe",
+      substatement1Question: "Quel genre ?",
+      substatement2: "Nationalité",
+      substatement2Question: "Quel genre ?",
+      substatement3: "Croyances religieuses",
+      substatement3Question: "Quel genre ?",
+      substatement4: "Race",
+      substatement4Question: "Quel genre ?",
+      substatement5: "Orientation sexuelle",
+      substatement5Question: "Quel genre ?",
+      substatement6: "Opinions politiques",
+      substatement6Question: "Quel genre ?",
+      substatement7: "Autres",
+      substatement7Question: "Quel genre ?",
+    },
+    subquestion4: {
+      question: "Nature de l'humor. Il vous fait rire parce que: ",
+      substatement1: "humor noir",
+      substatement2: "Ironie",
+      substatement3: "Sarcasme",
+      substatement4: "Ambiguïté",
+      substatement5: "Jeu de mots",
+      substatement6: "Sexualité",
+      substatement7: " humor fécal (sur le caca:-) ) ",
+      substatement8: " Sonorité des mots ",
+      substatement9: "Exagération",
+      substatement10: " Mots non censurés ",
+      substatement11: " Contraste ",
+      substatement12: "Présente les caractéristiques d'une blague"
+    }
   }
 }
