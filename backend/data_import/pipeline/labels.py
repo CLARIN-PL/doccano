@@ -12,6 +12,7 @@ from labels.models import Label as LabelModel
 from labels.models import Relation as RelationModel
 from labels.models import Span as SpanModel
 from labels.models import TextLabel as TextLabelModel
+from labels.models import Scale as ScaleModel
 from projects.models import Project
 
 
@@ -96,3 +97,8 @@ class Relations(Labels):
     def save(self, user, **kwargs):
         id_to_span = kwargs["spans"].id_to_span
         super().save(user, id_to_span=id_to_span)
+
+
+class Scales(Labels):
+    label_model = ScaleModel
+    

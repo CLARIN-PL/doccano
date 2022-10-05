@@ -6,12 +6,13 @@ from pydantic import UUID4, BaseModel, ConstrainedStr, NonNegativeInt, root_vali
 
 from .label_types import LabelTypes
 from examples.models import Example
-from label_types.models import CategoryType, LabelType, RelationType, SpanType
+from label_types.models import CategoryType, LabelType, RelationType, SpanType, ScaleType
 from labels.models import Category as CategoryModel
 from labels.models import Label as LabelModel
 from labels.models import Relation as RelationModel
 from labels.models import Span as SpanModel
 from labels.models import TextLabel as TextLabelModel
+from labels.models import Scale as ScaleModel
 from projects.models import Project
 
 
@@ -62,7 +63,7 @@ class CategoryLabel(Label):
         return CategoryType(text=self.label, project=project)
 
     def create(self, user, example: Example, types: LabelTypes, **kwargs):
-        return CategoryModel(uuid=self.uuid, user=user, example=example, label=types[self.label])
+        return CategoryModel(uuid=self.uuid, user=user, example=example, label=types[self.label], **kwargs)
 
 
 class SpanLabel(Label):
@@ -118,7 +119,7 @@ class TextLabel(Label):
         return None
 
     def create(self, user, example: Example, types: LabelTypes, **kwargs):
-        return TextLabelModel(uuid=self.uuid, user=user, example=example, text=self.text)
+        return TextLabelModel(uuid=self.uuid, user=user, example=example, text=self.text, **kwargs)
 
 
 class RelationLabel(Label):
@@ -144,4 +145,27 @@ class RelationLabel(Label):
             type=types[self.type],
             from_id=kwargs["id_to_span"][self.from_id],
             to_id=kwargs["id_to_span"][self.to_id],
+        )
+
+
+class ScaleLabel(Label):
+    label: NonEmptyStr
+
+    def __lt__(self, other):
+        return self.label < other.label
+
+    @classmethod
+    def parse(cls, example_uuid: UUID4, obj: Any):
+        return cls(example_uuid=example_uuid, **obj)
+
+    def create_type(self, project: Project) -> Optional[LabelType]:
+        return ScaleType(text=self.label, project=project)
+
+    def create(self, user, example: Example, types: LabelTypes, **kwargs):
+        return ScaleModel(
+            uuid=self.uuid,
+            user=user,
+            example=example,
+            label=types[self.label],
+            **kwargs,
         )
