@@ -17,6 +17,7 @@ from labels.models import Span as SpanModel
 from labels.models import TextLabel as TextModel
 from projects.models import DOCUMENT_CLASSIFICATION, SEQ2SEQ, SEQUENCE_LABELING
 from projects.tests.utils import prepare_project
+from questions.models import Question
 
 
 class TestLabel(TestCase):
@@ -57,6 +58,14 @@ class TestCategoryLabel(TestLabel):
         types = MagicMock()
         types.__getitem__.return_value = mommy.make(CategoryType, project=self.project.item)
         category_model = category.create(self.user, self.example, types)
+        self.assertIsInstance(category_model, CategoryModel)
+
+    def test_create_with_question_id(self):
+        category = CategoryLabel(label="A", example_uuid=uuid.uuid4())
+        types = MagicMock()
+        types.__getitem__.return_value = mommy.make(CategoryType, project=self.project.item)
+        question_id = Question.objects.first().id
+        category_model = category.create(self.user, self.example, types, question_id=question_id)
         self.assertIsInstance(category_model, CategoryModel)
 
 
@@ -136,6 +145,13 @@ class TestTextLabel(TestLabel):
         text = TextLabel(text="A", example_uuid=uuid.uuid4())
         types = MagicMock()
         text_model = text.create(self.user, self.example, types)
+        self.assertIsInstance(text_model, TextModel)
+
+    def test_create_with_question_id(self):
+        text = TextLabel(text="A", example_uuid=uuid.uuid4())
+        types = MagicMock()
+        question_id = Question.objects.filter(annotation_mode='humor').first().id
+        text_model = text.create(self.user, self.example, types, question_id=question_id)
         self.assertIsInstance(text_model, TextModel)
 
 
