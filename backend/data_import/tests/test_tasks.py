@@ -457,17 +457,17 @@ class TestImportAffectiveAnnotation(TestImportData):
             example = Example.objects.get(text=text)
             cats = set(cat.label.text for cat in example.categories.all())
             scale = set(scale.label.text for scale in example.scales.all())
-            labels = set(text_label.label.text for text_label in example.texts.all())
+            labels = set(text_label.text for text_label in example.texts.all())
             self.assertEqual(cats, set(expected_labels["cats"]))
             self.assertEqual(scale, set(expected_labels["scale"]))
-            self.assertEqual(labels, set(expected_labels['labels']))
+            self.assertEqual(labels, set(expected_labels['label']))
 
     def test_scale_and_cats(self):
         filename = "affective_annotation/example.json"
         file_format = "JSON"
         dataset = [
-            ("Stół z powyłamywanymi nogami", {"cats": ["sadness", "negative"], "scale": ["1", "2", "3", "4", "5"], "labels": []}),
-            ("W Szczebrzeszynie chrząszcz brzmi w trzcinie.", {"cats": ["joy", "positive"], "scale": ["1", "2", "3", "4", "5"], "labels": []}),
+            ("Stół z powyłamywanymi nogami", {"cats": ["sadness", "negative"], "scale": ["1", "2", "3", "4", "5"], "label": ["I dont know"]}),
+            ("W Szczebrzeszynie chrząszcz brzmi w trzcinie.", {"cats": ["joy", "positive"], "scale": ["1", "2", "3", "4", "5"], "label": ["happy"]}),
         ]
         self.import_dataset(filename, file_format, self.task)
         self.assert_examples(dataset)

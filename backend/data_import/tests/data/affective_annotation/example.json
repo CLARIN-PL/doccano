@@ -3,7 +3,7 @@
         "text": "Stół z powyłamywanymi nogami",
         "cats": ["sadness", "negative"],
         "scale": ["1", "2", "3", "4", "5"],
-        "labels": [],
+        "label": ["I dont know"],
         "meta": {
             "article_title": "10 Craziest Polish Tongue Twisters",
             "publish_datetime": "2022-08-01 13:59:59",
@@ -17,7 +17,7 @@
         "text": "W Szczebrzeszynie chrząszcz brzmi w trzcinie.",
         "cats": ["joy", "positive"],
         "scale": ["1", "2", "3", "4", "5"],
-        "labels": [],
+        "label": ["happy"],
         "meta": {
             "article_title": "10 Craziest Polish Tongue Twisters",
             "publish_datetime": "2022-08-01 13:59:59",

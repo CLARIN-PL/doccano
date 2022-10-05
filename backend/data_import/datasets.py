@@ -267,11 +267,11 @@ class CategoryAndScaleDataset(Dataset):
             project=project,
             data_class=TextData,
             column_data=kwargs.get("column_data") or DEFAULT_TEXT_COLUMN,
-            exclude_columns=["cats", "scale"],
+            exclude_columns=["cats", "scale", "label"],
         )
         self.category_maker = LabelMaker(column="cats", label_class=CategoryLabel)
         self.scale_maker = LabelMaker(column="scale", label_class=ScaleLabel)
-        self.label_maker = LabelMaker(column=kwargs.get("column_label") or DEFAULT_LABEL_COLUMN, label_class=TextLabel)
+        self.label_maker = LabelMaker(column="label", label_class=TextLabel)
 
     def save(self, user: User, batch_size: int = 1000):
         for records in self.reader.batch(batch_size):
@@ -295,6 +295,7 @@ class CategoryAndScaleDataset(Dataset):
             # create Labels
             categories.save(user)
             scales.save(user)
+            labels.save(user)
 
     @property
     def errors(self) -> List[FileParseException]:

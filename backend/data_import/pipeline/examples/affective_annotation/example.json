@@ -2,7 +2,8 @@
     {
         "text": "Firma Biometryks LLC planuje zrewolucjonizować nieinwazyjną diagnostykę oraz monitorowanie pacjentów z chorobami przewlekłymi poprzez wykorzystanie w swoim sensorze matrycy grafenowej, która jest kluczowym elementem tego urządzenia - poinformował Uniwersytecki Ośrodek Transferu Technologii UW w przesłanym PAP komunikacie.",
         "cats": ["positive", "negative"],
-        "entities": [[0, 3, "rzeczownik"], [7, 27, "narzędnik"]],
+        "scale": ["1", "2", "3", "4", "5"],
+        "label": ["sorrow", "gloomy"],
         "meta": {
             "article_title": "Grafenowa matryca opracowana na UW ma pomóc w monitorowaniu stanu zdrowia pacjentów",
             "publish_datetime": "09.09.2022 00:00:00",
