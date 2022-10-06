@@ -107,7 +107,8 @@
                     :need-more-info="affectiveOthers.needMoreInfo"
                     :wish-to-author="affectiveOthers.wishToAuthor"
                     @change="othersChangeHandler"
-                    @markCheckbox="nullifyOthersHandler"
+                    @nullifyCategoryValue="nullifyOthersValueHandler"
+                    @restoreCategoryValue="restoreOthersValueHandler"
                     @remove:wishToAuthor="removeWishToAuthor"
                     @update:wishToAuthor="updateWishToAuthor"
                     @add:wishToAuthor="addWishToAuthor"
@@ -268,7 +269,8 @@ export default {
         "sympathyToAuthor": 0,
         "needMoreInfo": 0,
         "wishToAuthor": []
-      }
+      },
+      affectiveOthersSlidersTmp: {}
     }
   },
 
@@ -527,16 +529,20 @@ export default {
       this.affectiveSummaryImpressions.push(item)
     },
     emotionsChangeHandler(value, category) {
-      console.log("new emotions value!", value, category)
+      this.affectiveEmotions[category] = value
+      console.log("new emotions value!", this.affectiveEmotions[category], category)
     },
     othersChangeHandler(value, category) {
-      console.log("new others value!", value, category)
+      this.affectiveOthers[category] = value
+      console.log("new others value!", this.affectiveOthers[category], category)
     },
-    nullifyOthersHandler(checkboxIsMarked, category) {
-      if (checkboxIsMarked) {
-        this.affectiveOthers[category] = -1
-        console.log("nullify others value!", this.affectiveOthers[category], category)
-      }
+    nullifyOthersValueHandler(category) {
+      this.affectiveOthersSlidersTmp[category] = this.affectiveOthers[category]
+      this.affectiveOthers[category] = -1
+    },
+    restoreOthersValueHandler(category) {
+      const previousValue = this.affectiveOthersSlidersTmp[category] || 0
+      this.affectiveOthers[category] = previousValue
     },
     removeWishToAuthor() {
       this.affectiveOthers.wishToAuthor = []

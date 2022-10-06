@@ -1,18 +1,20 @@
 <template>
   <v-container class="widget">
     <v-row class="widget-row" justify="center" align="center">
-      <v-col :cols="(withCheckbox)?3:4" class="widget-row__category">
+      <v-col :cols="(withCheckbox) ? 3 : 4" class="widget-row__category">
         {{ categoryLabel }}
       </v-col>
-      <v-col v-show="showSlider" :cols="(withCheckbox)?6:8" class="widget-row__slider">
+      <v-col :cols="(withCheckbox) ? 6 : 8" class="widget-row__slider">
         <v-slider
           :value="value"
+          :disabled="!enableSlider"
           min="0"
           max="10"
           step="1"
-          ticks
+          ticks="always"
+          tick-size="4"
           dense
-          :color="color"
+          :color="(enableSlider) ? color : 'grey'"
           track-color="grey"
           :hint="hint"
           persistent-hint
@@ -75,7 +77,7 @@ export default {
     return {
       mdiCheck,
       isClicked: false,
-      showSlider: true
+      enableSlider: true
     }
   },
 
@@ -87,8 +89,16 @@ export default {
       return 12
     },
     sliderThumbColor() {
-      if (this.mustClick && this.value === 0) {
-        return (this.isClicked)? this.color : "transparent"
+      if (this.mustClick) {
+        if (!this.isClicked) {
+          return "transparent"
+        }
+        if (this.isClicked && this.enableSlider) {
+          return this.color
+        }
+        if (this.isClicked && !this.enableSlider) {
+          return "grey"
+        }
       }
       return this.color
     }
@@ -104,12 +114,13 @@ export default {
     },
     checkboxChangeHandler(checkboxValue) {
       if (this.hideSliderOnChecked && checkboxValue) {
-        this.showSlider = false
+        this.$emit('markCheckbox', this.categoryLabel)
+        this.enableSlider = false
       }
       if (this.hideSliderOnChecked && !checkboxValue) {
-        this.showSlider = true
+        this.$emit('unmarkCheckbox', this.categoryLabel)
+        this.enableSlider = true
       }
-      this.$emit('markCheckbox', checkboxValue, this.categoryLabel)
     }
   }
 }

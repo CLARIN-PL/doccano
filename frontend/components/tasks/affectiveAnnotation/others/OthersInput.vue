@@ -12,7 +12,8 @@
         :checkbox-label="checkboxLabel"
         :hide-slider-on-checked="true"
         @change="updateCategory"
-        @markCheckbox="nullifyCategory"
+        @markCheckbox="nullifyCategoryValue"
+        @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
         :category-label="$t('annotation.affectiveOthers.embarrassingCategory')"
@@ -24,7 +25,8 @@
         :checkbox-label="checkboxLabel"
         :hide-slider-on-checked="true"
         @change="updateCategory"
-        @markCheckbox="nullifyCategory"
+        @markCheckbox="nullifyCategoryValue"
+        @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
         :category-label="$t('annotation.affectiveOthers.vulgarCategory')"
@@ -36,7 +38,8 @@
         :checkbox-label="checkboxLabel"
         :hide-slider-on-checked="true"
         @change="updateCategory"
-        @markCheckbox="nullifyCategory"
+        @markCheckbox="nullifyCategoryValue"
+        @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
         :category-label="$t('annotation.affectiveOthers.politicCategory')"
@@ -48,7 +51,8 @@
         :checkbox-label="checkboxLabel"
         :hide-slider-on-checked="true"
         @change="updateCategory"
-        @markCheckbox="nullifyCategory"
+        @markCheckbox="nullifyCategoryValue"
+        @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
         :category-label="$t('annotation.affectiveOthers.interestingCategory')"
@@ -60,7 +64,8 @@
         :checkbox-label="checkboxLabel"
         :hide-slider-on-checked="true"
         @change="updateCategory"
-        @markCheckbox="nullifyCategory"
+        @markCheckbox="nullifyCategoryValue"
+        @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
         :category-label="$t('annotation.affectiveOthers.comprehensibleCategory')"
@@ -72,7 +77,8 @@
         :checkbox-label="checkboxLabel"
         :hide-slider-on-checked="true"
         @change="updateCategory"
-        @markCheckbox="nullifyCategory"
+        @markCheckbox="nullifyCategoryValue"
+        @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
         :category-label="$t('annotation.affectiveOthers.agreeableCategory')"
@@ -84,7 +90,8 @@
         :checkbox-label="checkboxLabel"
         :hide-slider-on-checked="true"
         @change="updateCategory"
-        @markCheckbox="nullifyCategory"
+        @markCheckbox="nullifyCategoryValue"
+        @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
         :category-label="$t('annotation.affectiveOthers.believableCategory')"
@@ -96,7 +103,8 @@
         :checkbox-label="checkboxLabel"
         :hide-slider-on-checked="true"
         @change="updateCategory"
-        @markCheckbox="nullifyCategory"
+        @markCheckbox="nullifyCategoryValue"
+        @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
         :category-label="$t('annotation.affectiveOthers.needMoreInfoCategory')"
@@ -108,7 +116,8 @@
         :checkbox-label="checkboxLabel"
         :hide-slider-on-checked="true"
         @change="updateCategory"
-        @markCheckbox="nullifyCategory"
+        @markCheckbox="nullifyCategoryValue"
+        @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
         :category-label="$t('annotation.affectiveOthers.sympathyToAuthorCategory')"
@@ -120,7 +129,8 @@
         :checkbox-label="checkboxLabel"
         :hide-slider-on-checked="true"
         @change="updateCategory"
-        @markCheckbox="nullifyCategory"
+        @markCheckbox="nullifyCategoryValue"
+        @unmarkCheckbox="restoreCategoryValue"
       />
       <textfield-with-seq-2-seq
         :text="$t('annotation.affectiveOthers.wishToAuthorCategory')"
@@ -245,9 +255,13 @@ export default {
       const category = this.categoryLabelDict[categoryLabel]
       this.$emit('change', value, category)
     },
-    nullifyCategory(checkboxIsMarked, categoryLabel) {
+    nullifyCategoryValue(categoryLabel) {
       const category = this.categoryLabelDict[categoryLabel]
-      this.$emit('markCheckbox', checkboxIsMarked, category)
+      this.$emit('nullifyCategoryValue', category)
+    },
+    restoreCategoryValue(categoryLabel) {
+      const category = this.categoryLabelDict[categoryLabel]
+      this.$emit('restoreCategoryValue', category)
     },
     textValidation(value, arrayToCheck) {
       let errorMessage = ""
