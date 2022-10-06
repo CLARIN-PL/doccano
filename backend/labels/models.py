@@ -35,7 +35,6 @@ class Category(Label):
     objects = CategoryManager()
     example = models.ForeignKey(to=Example, on_delete=models.CASCADE, related_name="categories")
     label = models.ForeignKey(to=CategoryType, on_delete=models.CASCADE)
-    question = models.ForeignKey(to=Question, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         unique_together = ("example", "user", "label")

@@ -1,7 +1,6 @@
 [
     {
         "text": "Stół z powyłamywanymi nogami",
-        "cats": ["sadness", "negative"],
         "scale": [[1, "happy"], [4, "sadness"], [2, "negative"]],
         "label": ["I dont know"],
         "meta": {
@@ -15,7 +14,6 @@
     },
     {
         "text": "W Szczebrzeszynie chrząszcz brzmi w trzcinie.",
-        "cats": ["joy", "positive"],
         "scale": [[1, "sorrow"], [3, "sadness"], [2, "positive"]],
         "label": ["happy"],
         "meta": {
@@ -29,7 +27,6 @@
     },
     {
         "text": "Nowa generacja biosensora pozwoli na bieżąco analizować próbki potu",
-        "cats": ["joy", "positive"],
         "scale": [[1, "sorrow"], [5, "sadness"], [2, "positive"]],
         "label": [["happy", "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)"], ["funny", "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst?"]],
         "meta": {

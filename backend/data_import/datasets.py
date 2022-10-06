@@ -257,10 +257,9 @@ class CategoryAndSpanDataset(Dataset):
         return self.reader.errors + self.example_maker.errors + self.category_maker.errors + self.span_maker.errors
 
 
-class CategoryAndScaleDataset(Dataset):
+class AffectiveDataset(Dataset):
     def __init__(self, reader: Reader, project: Project, **kwargs):
         super().__init__(reader, project, **kwargs)
-        self.category_types = LabelTypes(CategoryType)
         self.scale_types = LabelTypes(ScaleType)
         self.label_types = LabelTypes(DummyLabelType)
         self.example_maker = ExampleMaker(
@@ -269,7 +268,6 @@ class CategoryAndScaleDataset(Dataset):
             column_data=kwargs.get("column_data") or DEFAULT_TEXT_COLUMN,
             exclude_columns=["cats", "scale", "label"],
         )
-        self.category_maker = LabelMaker(column="cats", label_class=CategoryLabel)
         self.scale_maker = LabelMaker(column="scale", label_class=ScaleLabel)
         self.label_maker = LabelMaker(column="label", label_class=TextLabel)
 
@@ -280,10 +278,6 @@ class CategoryAndScaleDataset(Dataset):
             Example.objects.bulk_create(examples)
 
             # create label types
-            categories = Categories(self.category_maker.make(records), self.category_types)
-            categories.clean(self.project)
-            categories.save_types(self.project)
-
             scales = Scales(self.scale_maker.make(records), self.scale_types)
             scales.clean(self.project)
             scales.save_types(self.project)
@@ -293,13 +287,12 @@ class CategoryAndScaleDataset(Dataset):
             labels.save_types(self.project)
 
             # create Labels
-            categories.save(user)
             scales.save(user)
             labels.save(user)
 
     @property
     def errors(self) -> List[FileParseException]:
-        return self.reader.errors + self.example_maker.errors + self.category_maker.errors + self.scale_maker.errors
+        return self.reader.errors + self.example_maker.errors + self.scale_maker.errors + self.label_maker.errors
 
 
 def select_dataset(project: Project, task: str, file_format: Format) -> Type[Dataset]:
@@ -313,7 +306,7 @@ def select_dataset(project: Project, task: str, file_format: Format) -> Type[Dat
         IMAGE_CLASSIFICATION: BinaryDataset,
         SPEECH2TEXT: BinaryDataset,
         ARTICLE_ANNOTATION: CategoryAndSpanDataset,
-        AFFECTIVE_ANNOTATION: CategoryAndScaleDataset,
+        AFFECTIVE_ANNOTATION: AffectiveDataset,
     }
     if task not in mapping:
         task = project.project_type
