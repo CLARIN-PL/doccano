@@ -1,11 +1,11 @@
 <template>
   <div class="others-input">
-    <p class="others-input__title">Jaki jest ten tekst?</p>
+    <p class="others-input__title">{{ $t('annotation.affectiveOthers.titleQuestion') }}</p>
     <div class="others-input__content">
       <slider
-        category-label="Ironiczny"
+        :category-label="$t('annotation.affectiveOthers.ironicCategory')"
         color="blue"
-        hint="Ironiczny, sarkastyczny"
+        :hint="$t('annotation.affectiveOthers.ironicHint')"
         :value="ironic"
         :must-click="true"
         :with-checkbox="true"
@@ -15,10 +15,10 @@
         @markCheckbox="nullifyCategory"
       />
       <slider
-        category-label="Żenujący"
+        :category-label="$t('annotation.affectiveOthers.embarrassingCategory')"
         color="blue"
-        hint="Żenujący"
-        :value="embarassing"
+        :hint="$t('annotation.affectiveOthers.embarrassingHint')"
+        :value="embarrassing"
         :must-click="true"
         :with-checkbox="true"
         :checkbox-label="checkboxLabel"
@@ -27,9 +27,9 @@
         @markCheckbox="nullifyCategory"
       />
       <slider
-        category-label="Wulgarny"
+        :category-label="$t('annotation.affectiveOthers.vulgarCategory')"
         color="blue"
-        hint="Wulgarny"
+        :hint="$t('annotation.affectiveOthers.vulgarHint')"
         :value="vulgar"
         :must-click="true"
         :with-checkbox="true"
@@ -39,9 +39,9 @@
         @markCheckbox="nullifyCategory"
       />
       <slider
-        category-label="Polityczny"
+        :category-label="$t('annotation.affectiveOthers.politicCategory')"
         color="blue"
-        hint="Polityczny"
+        :hint="$t('annotation.affectiveOthers.politicHint')"
         :value="politic"
         :must-click="true"
         :with-checkbox="true"
@@ -51,9 +51,9 @@
         @markCheckbox="nullifyCategory"
       />
       <slider
-        category-label="Interesujący"
+        :category-label="$t('annotation.affectiveOthers.interestingCategory')"
         color="blue"
-        hint="Interesujący, ciekawy"
+        :hint="$t('annotation.affectiveOthers.interestingHint')"
         :value="interesting"
         :must-click="true"
         :with-checkbox="true"
@@ -63,9 +63,9 @@
         @markCheckbox="nullifyCategory"
       />
       <slider
-        category-label="Zrozumiały"
+        :category-label="$t('annotation.affectiveOthers.comprehensibleCategory')"
         color="blue"
-        hint="Zrozumiały"
+        :hint="$t('annotation.affectiveOthers.comprehensibleHint')"
         :value="comprehensible"
         :must-click="true"
         :with-checkbox="true"
@@ -75,9 +75,9 @@
         @markCheckbox="nullifyCategory"
       />
       <slider
-        category-label="Zgadzam się z tekstem"
+        :category-label="$t('annotation.affectiveOthers.agreeableCategory')"
         color="blue"
-        hint="Zgadzam się z tekstem"
+        :hint="$t('annotation.affectiveOthers.agreeableHint')"
         :value="agreeable"
         :must-click="true"
         :with-checkbox="true"
@@ -87,9 +87,9 @@
         @markCheckbox="nullifyCategory"
       />
       <slider
-        category-label="Wierzę w tę informację"
+        :category-label="$t('annotation.affectiveOthers.believableCategory')"
         color="blue"
-        hint="Wierzę w tę informację"
+        :hint="$t('annotation.affectiveOthers.believableHint')"
         :value="believable"
         :must-click="true"
         :with-checkbox="true"
@@ -99,9 +99,9 @@
         @markCheckbox="nullifyCategory"
       />
       <slider
-        category-label="Potrzebuję więcej informacji"
+        :category-label="$t('annotation.affectiveOthers.needMoreInfoCategory')"
         color="blue"
-        hint="Potrzebuję więcej informacji, aby ocenić ten tekst"
+        :hint="$t('annotation.affectiveOthers.needMoreInfoHint')"
         :value="needMoreInfo"
         :must-click="true"
         :with-checkbox="true"
@@ -111,9 +111,9 @@
         @markCheckbox="nullifyCategory"
       />
       <slider
-        category-label="Czuję sympatię do autora"
+        :category-label="$t('annotation.affectiveOthers.sympathyToAuthorCategory')"
         color="blue"
-        hint="Czuję sympatię do autora"
+        :hint="$t('annotation.affectiveOthers.sympathyToAuthorHint')"
         :value="sympathyToAuthor"
         :must-click="true"
         :with-checkbox="true"
@@ -123,13 +123,13 @@
         @markCheckbox="nullifyCategory"
       />
       <textfield-with-seq-2-seq
-        text="Czego życzę autorowi tego tekstu?"
-        category-label="Czego życzę autorowi tego tekstu?"
+        :text="$t('annotation.affectiveOthers.wishToAuthorCategory')"
+        :category-label="$t('annotation.affectiveOthers.wishToAuthorCategory')"
         :answers="wishToAuthor"
         :rules-textfield="rules"
         :text-validation="textValidation"
         :with-checkbox="true"
-        checkbox-label="Nie mam życzeń"
+        :checkbox-label="$t('annotation.affectiveOthers.noWishToAuthor')"
         :hide-textfield-on-checked="true"
         @remove="removeWishToAuthor"
         @update="updateWishToAuthor"
@@ -155,7 +155,7 @@ export default {
       type: Number,
       default: 0
     },
-    embarassing: {
+    embarrassing: {
       type: Number,
       default: 0
     },
@@ -209,18 +209,33 @@ export default {
         }
       ],
       checkboxLabel: "Nie wiem",
-      categoryLabelDict: {
-        "Ironiczny": "ironic",
-        "Żenujący": "embarassing",
-        "Wulgarny": "vulgar",
-        "Polityczny": "politic",
-        "Interesujący": "interesting",
-        "Zrozumiały": "comprehensible",
-        "Zgadzam się z tekstem": "agreeable",
-        "Wierzę w tę informację": "believable",
-        "Czuję sympatię do autora": "sympathyToAuthor",
-        "Potrzebuję więcej informacji": "needMoreInfo"
-      }
+      ironicCategory: this.$i18n.t('annotation.affectiveOthers.ironicCategory'),
+      embarrassingCategory: this.$i18n.t('annotation.affectiveOthers.embarrassingCategory'),
+      vulgarCategory: this.$i18n.t('annotation.affectiveOthers.vulgarCategory'),
+      politicCategory: this.$i18n.t('annotation.affectiveOthers.politicCategory'),
+      interestingCategory: this.$i18n.t('annotation.affectiveOthers.interestingCategory'),
+      comprehensibleCategory: this.$i18n.t('annotation.affectiveOthers.comprehensibleCategory'),
+      agreeableCategory: this.$i18n.t('annotation.affectiveOthers.agreeableCategory'),
+      believableCategory: this.$i18n.t('annotation.affectiveOthers.believableCategory'),
+      sympathyToAuthorCategory: this.$i18n.t('annotation.affectiveOthers.sympathyToAuthorCategory'),
+      needMoreInfoCategory: this.$i18n.t('annotation.affectiveOthers.needMoreInfoCategory')
+    }
+  },
+
+  computed: {
+    categoryLabelDict() {
+      const output = {}
+      output[this.ironicCategory]= "ironic"
+      output[this.embarrassingCategory]= "embarrassing"
+      output[this.vulgarCategory]= "vulgar"
+      output[this.politicCategory]= "politic"
+      output[this.interestingCategory]= "interesting"
+      output[this.comprehensibleCategory]= "comprehensible"
+      output[this.agreeableCategory]= "agreeable"
+      output[this.believableCategory]= "believable"
+      output[this.sympathyToAuthorCategory]= "sympathyToAuthor"
+      output[this.needMoreInfoCategory]= "needMoreInfo"
+      return []
     }
   },
 

@@ -96,7 +96,7 @@
                   <others-input
                     v-if="isAffectiveOthers"
                     :ironic="affectiveOthers.ironic"
-                    :embarassing="affectiveOthers.embarassing"
+                    :embarrassing="affectiveOthers.embarrassing"
                     :vulgar="affectiveOthers.vulgar"
                     :politic="affectiveOthers.politic"
                     :interesting="affectiveOthers.interesting"
@@ -240,7 +240,7 @@ export default {
       articleIndex: 1,
       currentArticleId: "",
       currentWholeArticle: [],
-      isAffectiveSummary: false,
+      isAffectiveSummary: true,
       affectiveSummaryTags: [],
       affectiveSummaryImpressions: [],
       isAffectiveEmotions: false,
@@ -261,7 +261,7 @@ export default {
       isAffectiveOthers: true,
       affectiveOthers: {
         "ironic": 0,
-        "embarassing": 0,
+        "embarrassing": 0,
         "vulgar": 0,
         "politic": 0,
         "interesting": 0,

@@ -1,105 +1,105 @@
 <template>
   <div class="emotions-input">
-    <p class="emotions-input__title">Czy tekst wzbudza w Tobie jakiekolwiek emocje?</p>
+    <p class="emotions-input__title">{{ $t('annotation.affectiveEmotions.titleQuestion') }}</p>
     <v-divider class="emotions-input__divider" />
-    <p class="emotions-input__subheader">Jakie?</p>
+    <p class="emotions-input__subheader">{{ $t('annotation.affectiveEmotions.titleWhat') }}</p>
     <div class="emotions-input__content">
       <slider
-        category-label="Pozytywne"
+        :category-label="$t('annotation.affectiveEmotions.positiveCategory')"
         color="green"
-        hint="Pozytywne"
+        :hint="$t('annotation.affectiveEmotions.positiveHint')"
         :value="generalPositivity"
         :must-click="true"
         @change="updateEmotions"
       />
       <slider
-        category-label="Negatywne"
+        :category-label="$t('annotation.affectiveEmotions.negativeCategory')"
         color="red"
-        hint="Negatywne"
+        :hint="$t('annotation.affectiveEmotions.negativeHint')"
         :value="generalNegativity"
         :must-click="true"
         @change="updateEmotions"
       />
     </div>
     <v-divider class="emotions-input__divider" />
-    <p class="emotions-input__subheader">Emocje</p>
+    <p class="emotions-input__subheader">{{ $t('annotation.affectiveEmotions.titleEmotions') }}</p>
     <div class="emotions-input__content">
       <slider
-        category-label="Radość"
+        :category-label="$t('annotation.affectiveEmotions.joyCategory')"
         color="pink"
-        hint="Radość, szczęście"
+        :hint="$t('annotation.affectiveEmotions.joyHint')"
         :value="joy"
         :must-click="true"
         @change="updateEmotions"
       />
       <slider
-        category-label="Zachwyt"
+        :category-label="$t('annotation.affectiveEmotions.admirationCategory')"
         color="purple"
-        hint="Zachwyt, podziw, duma"
+        :hint="$t('annotation.affectiveEmotions.admirationHint')"
         :value="admiration"
         :must-click="true"
         @change="updateEmotions"
       />
       <slider
-        category-label="Inspiruje"
+        :category-label="$t('annotation.affectiveEmotions.inspirationCategory')"
         color="indigo"
-        hint="Podnosi na duchu, inspiruje"
+        :hint="$t('annotation.affectiveEmotions.inspirationHint')"
         :value="inspiration"
         :must-click="true"
         @change="updateEmotions"
       />
       <slider
-        category-label="Spokój"
+        :category-label="$t('annotation.affectiveEmotions.peaceCategory')"
         color="teal"
-        hint="Spokój, relaks"
+        :hint="$t('annotation.affectiveEmotions.peaceHint')"
         :value="peace"
         :must-click="true"
         @change="updateEmotions"
       />
       <slider
-        category-label="Zaskoczenie"
+        :category-label="$t('annotation.affectiveEmotions.surpriseCategory')"
         color="amber"
-        hint="Zaskoczenie, zdziwienie"
+        :hint="$t('annotation.affectiveEmotions.surpriseHint')"
         :value="surprise"
         :must-click="true"
         @change="updateEmotions"
       />
       <slider
-        category-label="Współczucie"
+        :category-label="$t('annotation.affectiveEmotions.sympathyCategory')"
         color="cyan"
-        hint="Współczucie"
+        :hint="$t('annotation.affectiveEmotions.sympathyHint')"
         :value="sympathy"
         :must-click="true"
         @change="updateEmotions"
       />
       <slider
-        category-label="Strach"
+        :category-label="$t('annotation.affectiveEmotions.fearCategory')"
         color="brown"
-        hint="Strach, niepokój"
+        :hint="$t('annotation.affectiveEmotions.fearHint')"
         :value="fear"
         :must-click="true"
         @change="updateEmotions"
       />
       <slider
-        category-label="Smutek"
+        :category-label="$t('annotation.affectiveEmotions.sadnessCategory')"
         color="blue-grey darken-4"
-        hint="Smutek, nieszczęście"
+        :hint="$t('annotation.affectiveEmotions.sadnessHint')"
         :value="sadness"
         :must-click="true"
         @change="updateEmotions"
       />
       <slider
-        category-label="Wstręt"
+        :category-label="$t('annotation.affectiveEmotions.disgustCategory')"
         color="lime darken-4"
-        hint="Wstręt, obrzydzenie"
+        :hint="$t('annotation.affectiveEmotions.disgustHint')"
         :value="disgust"
         :must-click="true"
         @change="updateEmotions"
       />
       <slider
-        category-label="Złość"
+        :category-label="$t('annotation.affectiveEmotions.angerCategory')"
         color="red darken-4"
-        hint="Złość, wkurzenie, gniew, irytacja"
+        :hint="$t('annotation.affectiveEmotions.angerHint')"
         :value="anger"
         :must-click="true"
         @change="updateEmotions"
@@ -169,20 +169,37 @@ export default {
 
   data() {
     return {
-      categoryLabelDict: {
-        "Pozytywne": "positive",
-        "Negatywne": "negative",
-        "Radość": "joy",
-        "Zachwyt": "admiration",
-        "Inspiruje": "inspiration",
-        "Spokój": "peace",
-        "Zaskoczenie": "surprise",
-        "Współczucie": "sympathy",
-        "Strach": "fear",
-        "Smutek": "sadness",
-        "Wstręt": "disgust",
-        "Złość": "anger"
-      }
+      positiveCategory: this.$i18n.t('annotation.affectiveEmotions.positiveCategory'),
+      negativeCategory: this.$i18n.t('annotation.affectiveEmotions.negativeCategory'),
+      joyCategory: this.$i18n.t('annotation.affectiveEmotions.joyCategory'),
+      admirationCategory: this.$i18n.t('annotation.affectiveEmotions.admirationCategory'),
+      inspirationCategory: this.$i18n.t('annotation.affectiveEmotions.inspirationCategory'),
+      peaceCategory: this.$i18n.t('annotation.affectiveEmotions.peaceCategory'),
+      surpriseCategory: this.$i18n.t('annotation.affectiveEmotions.surpriseCategory'),
+      sympathyCategory: this.$i18n.t('annotation.affectiveEmotions.sympathyCategory'),
+      fearCategory: this.$i18n.t('annotation.affectiveEmotions.fearCategory'),
+      sadnessCategory: this.$i18n.t('annotation.affectiveEmotions.sadnessCategory'),
+      disgustCategory: this.$i18n.t('annotation.affectiveEmotions.disgustCategory'),
+      angerCategory: this.$i18n.t('annotation.affectiveEmotions.angerCategory')
+    }
+  },
+
+  computed: {
+    categoryLabelDict() {
+      const output = {}
+      output[this.positiveCategory]= "positive"
+      output[this.negativeCategory]= "negative"
+      output[this.joyCategory]= "joy"
+      output[this.admirationCategory]= "admiration"
+      output[this.inspirationCategory]= "inspiration"
+      output[this.peaceCategory]= "peace"
+      output[this.surpriseCategory]= "surprise"
+      output[this.sympathyCategory]= "sympathy"
+      output[this.fearCategory]= "fear"
+      output[this.sadnessCategory]= "sadness"
+      output[this.disgustCategory]= "disgust"
+      output[this.angerCategory]= "anger"
+      return output
     }
   },
 
