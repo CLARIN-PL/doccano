@@ -145,6 +145,7 @@
         @update="updateWishToAuthor"
         @add="addWishToAuthor"
         @markCheckbox="nullifyWishToAuthor"
+        @unmarkCheckbox="restoreWishToAuthor"
       />
     </div>
   </div>
@@ -251,7 +252,6 @@ export default {
 
   methods: {
     updateCategory(value, categoryLabel) {
-      console.log(categoryLabel)
       const category = this.categoryLabelDict[categoryLabel]
       this.$emit('change', value, category)
     },
@@ -292,7 +292,10 @@ export default {
       this.$emit('add:wishToAuthor', text)
     },
     nullifyWishToAuthor() {
-      this.removeWishToAuthor()
+      this.$emit('nullify:wishToAuthor')
+    },
+    restoreWishToAuthor() {
+      this.$emit('restore:wishToAuthor')
     }
   }
 }

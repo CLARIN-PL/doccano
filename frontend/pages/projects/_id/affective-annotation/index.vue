@@ -112,6 +112,8 @@
                     @remove:wishToAuthor="removeWishToAuthor"
                     @update:wishToAuthor="updateWishToAuthor"
                     @add:wishToAuthor="addWishToAuthor"
+                    @nullify:wishToAuthor="nullifyWishToAuthor"
+                    @restore:wishToAuthor="restoreWishToAuthor"
                   />
               </v-card-title>
               <v-divider />
@@ -270,7 +272,7 @@ export default {
         "needMoreInfo": 0,
         "wishToAuthor": []
       },
-      affectiveOthersSlidersTmp: {}
+      affectiveOthersTmp: {}
     }
   },
 
@@ -369,7 +371,6 @@ export default {
     this.relationTypes = await this.$services.relationType.list(this.projectId)
     this.project = await this.$services.project.findById(this.projectId)
     this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
-    console.log(this.project)
   },
 
   methods: {
@@ -537,12 +538,14 @@ export default {
       console.log("new others value!", this.affectiveOthers[category], category)
     },
     nullifyOthersValueHandler(category) {
-      this.affectiveOthersSlidersTmp[category] = this.affectiveOthers[category]
+      this.affectiveOthersTmp[category] = this.affectiveOthers[category]
       this.affectiveOthers[category] = -1
+      // don't forget to update data in BE too here
     },
     restoreOthersValueHandler(category) {
-      const previousValue = this.affectiveOthersSlidersTmp[category] || 0
+      const previousValue = this.affectiveOthersTmp[category] || 0
       this.affectiveOthers[category] = previousValue
+      // don't forget to update data in BE too here
     },
     removeWishToAuthor() {
       this.affectiveOthers.wishToAuthor = []
@@ -556,6 +559,16 @@ export default {
         "text": value
       }
       this.affectiveOthers.wishToAuthor.push(item)
+    },
+    nullifyWishToAuthor() {
+      this.affectiveOthersTmp.wishToAuthor = this.affectiveOthers.wishToAuthor
+      this.affectiveOthers.wishToAuthor = []
+      // don't forget to update data in BE too here
+    },
+    restoreWishToAuthor() {
+      const previousValue = this.affectiveOthersTmp.wishToAuthor || []
+      this.affectiveOthers.wishToAuthor = previousValue
+      // don't forget to update data in BE too here
     }
   }
 }

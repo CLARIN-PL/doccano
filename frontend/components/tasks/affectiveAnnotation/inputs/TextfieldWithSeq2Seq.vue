@@ -8,12 +8,12 @@
         {{ categoryLabel }}
       </v-col>
       <v-col
-        v-show="showTextfield"
         :cols="colsTextfield"
         class="widget__textfield"
         @click="showDialog = true"
       >
         <v-text-field
+          :disabled="!showTextfield"
           small
           dense
           readonly
@@ -161,14 +161,14 @@ export default {
       }
     },
     checkboxChangeHandler(checkboxValue) {
-      const annotationsIds = this.answers.map((item) => item.id)
       if (this.hideTextfieldOnChecked && checkboxValue) {
+        this.$emit('markCheckbox', this.categoryLabel)
         this.showTextfield = false
       }
       if (this.hideTextfieldOnChecked && !checkboxValue) {
+        this.$emit('unmarkCheckbox', this.categoryLabel)
         this.showTextfield = true
       }
-      this.$emit('markCheckbox', checkboxValue, annotationsIds)
     }
   }
 }
