@@ -60,14 +60,6 @@ class TestCategoryLabel(TestLabel):
         category_model = category.create(self.user, self.example, types)
         self.assertIsInstance(category_model, CategoryModel)
 
-    def test_create_with_question_id(self):
-        category = CategoryLabel(label="A", example_uuid=uuid.uuid4())
-        types = MagicMock()
-        types.__getitem__.return_value = mommy.make(CategoryType, project=self.project.item)
-        question_id = Question.objects.first().id
-        category_model = category.create(self.user, self.example, types, question_id=question_id)
-        self.assertIsInstance(category_model, CategoryModel)
-
 
 class TestSpanLabel(TestLabel):
     task = SEQUENCE_LABELING
@@ -122,8 +114,8 @@ class TestTextLabel(TestLabel):
     task = SEQ2SEQ
 
     def test_comparison(self):
-        text1 = TextLabel(text="A", example_uuid=uuid.uuid4())
-        text2 = TextLabel(text="B", example_uuid=uuid.uuid4())
+        text1 = TextLabel(text="A", example_uuid=uuid.uuid4(), question="name?")
+        text2 = TextLabel(text="B", example_uuid=uuid.uuid4(), question="name?")
         self.assertLess(text1, text2)
 
     def test_parse(self):
@@ -137,21 +129,14 @@ class TestTextLabel(TestLabel):
             TextLabel.parse(example_uuid, obj=[])
 
     def test_create_type(self):
-        text = TextLabel(text="A", example_uuid=uuid.uuid4())
+        text = TextLabel(text="A", example_uuid=uuid.uuid4(), question="name?")
         text_type = text.create_type(self.project.item)
         self.assertEqual(text_type, None)
 
     def test_create(self):
-        text = TextLabel(text="A", example_uuid=uuid.uuid4())
+        text = TextLabel(text="A", example_uuid=uuid.uuid4(), question="name?")
         types = MagicMock()
         text_model = text.create(self.user, self.example, types)
-        self.assertIsInstance(text_model, TextModel)
-
-    def test_create_with_question_id(self):
-        text = TextLabel(text="A", example_uuid=uuid.uuid4())
-        types = MagicMock()
-        question_id = Question.objects.filter(annotation_mode='humor').first().id
-        text_model = text.create(self.user, self.example, types, question_id=question_id)
         self.assertIsInstance(text_model, TextModel)
 
 

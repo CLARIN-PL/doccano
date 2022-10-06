@@ -107,19 +107,24 @@ class SpanLabel(Label):
 
 class TextLabel(Label):
     text: NonEmptyStr
+    question: NonEmptyStr
 
     def __lt__(self, other):
         return self.text < other.text
 
     @classmethod
     def parse(cls, example_uuid: UUID4, obj: Any):
-        return cls(example_uuid=example_uuid, text=obj)
+        if isinstance(obj, list) or isinstance(obj, tuple):
+            columns = ["text", "question"]
+            obj = zip(columns, obj)
+            return cls(example_uuid=example_uuid, **dict(obj))
+        return cls(example_uuid=example_uuid, text=obj, question='None')
 
     def create_type(self, project: Project) -> Optional[LabelType]:
         return None
 
     def create(self, user, example: Example, types: LabelTypes, **kwargs):
-        return TextLabelModel(uuid=self.uuid, user=user, example=example, text=self.text, **kwargs)
+        return TextLabelModel(uuid=self.uuid, user=user, example=example, text=self.text, question=self.question)
 
 
 class RelationLabel(Label):

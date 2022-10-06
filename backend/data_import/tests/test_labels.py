@@ -111,8 +111,8 @@ class TestTexts(TestCase):
         self.user = self.project.admin
         example_uuid = uuid.uuid4()
         labels = [
-            TextLabel(example_uuid=example_uuid, text="A"),
-            TextLabel(example_uuid=example_uuid, text="B"),
+            TextLabel(example_uuid=example_uuid, text="A", question="name?"),
+            TextLabel(example_uuid=example_uuid, text="B", question="name?"),
         ]
         mommy.make("Example", project=self.project.item, uuid=example_uuid)
         self.texts = Texts(labels, self.types)
