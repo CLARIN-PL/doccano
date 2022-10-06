@@ -32,7 +32,7 @@
               <h3 class="mt-3"> 
                 {{ $t('annotation.articleTitle') }}: {{ doc.meta.meta.article_title }}
               </h3>
-              <p class="mt-3">{{ $t('annotation.articleId') }}: {{ currentArticleId }}</p>
+              <p class="mt-0 mb-0">{{ $t('annotation.articleId') }}: {{ currentArticleId }}</p>
               <v-divider />
           </v-col>
         </v-row>
@@ -64,6 +64,53 @@
                     :single-label="project.singleClassClassification"
                     @add="addCategory"
                     @remove="removeCategory"
+                  />
+                  <summary-input
+                    v-if="project.is_summary_mode"
+                    :text="doc.text"
+                    :tags="affectiveSummaryTags"
+                    :impressions="affectiveSummaryImpressions"
+                    @remove:tag="removeTag"
+                    @update:tag="updateTag"
+                    @add:tag="addTag"
+                    @remove:impression="removeImpression"
+                    @update:impression="updateImpression"
+                    @add:impression="addImpression"
+                  />
+                  <emotions-input
+                    v-if="project.is_emotions_mode"
+                    :general-positivity="affectiveEmotions.positive"
+                    :general-negativity="affectiveEmotions.negative"
+                    :joy="affectiveEmotions.joy"
+                    :admiration="affectiveEmotions.admiration"
+                    :inspiration="affectiveEmotions.inspiration"
+                    :peace="affectiveEmotions.peace"
+                    :surprise="affectiveEmotions.surprise"
+                    :sympathy="affectiveEmotions.sympathy"
+                    :fear="affectiveEmotions.fear"
+                    :sadness="affectiveEmotions.sadness"
+                    :disgust="affectiveEmotions.disgust"
+                    :anger="affectiveEmotions.anger"
+                    @change="emotionsChangeHandler"
+                  />
+                  <others-input
+                    v-if="project.is_others_mode"
+                    :ironic="affectiveOthers.ironic"
+                    :embarrassing="affectiveOthers.embarrassing"
+                    :vulgar="affectiveOthers.vulgar"
+                    :politic="affectiveOthers.politic"
+                    :interesting="affectiveOthers.interesting"
+                    :comprehensible="affectiveOthers.comprehensible"
+                    :agreeable="affectiveOthers.agreeable"
+                    :believable="affectiveOthers.believable"
+                    :sympathy-to-author="affectiveOthers.sympathyToAuthor"
+                    :need-more-info="affectiveOthers.needMoreInfo"
+                    :wish-to-author="affectiveOthers.wishToAuthor"
+                    @change="othersChangeHandler"
+                    @markCheckbox="nullifyOthersHandler"
+                    @remove:wishToAuthor="removeWishToAuthor"
+                    @update:wishToAuthor="updateWishToAuthor"
+                    @add:wishToAuthor="addWishToAuthor"
                   />
               </v-card-title>
               <v-divider />
@@ -145,6 +192,9 @@ import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
 import ToolbarArticle from '@/components/tasks/toolbar/ToolbarArticle'
 import EntityEditor from '@/components/tasks/sequenceLabeling/EntityEditor.vue'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
+import SummaryInput from '@/components/tasks/affectiveAnnotation/summary/SummaryInput.vue'
+import EmotionsInput from '@/components/tasks/affectiveAnnotation/emotions/EmotionsInput.vue'
+import OthersInput from '@/components/tasks/affectiveAnnotation/others/OthersInput.vue'
 
 export default {
   components: {
@@ -156,7 +206,10 @@ export default {
     ToolbarMobile,
     ToolbarArticle,
     LabelGroup,
-    LabelSelect
+    LabelSelect,
+    SummaryInput,
+    EmotionsInput,
+    OthersInput
   },
 
   layout: 'workspace',
@@ -186,16 +239,47 @@ export default {
       articleTotal: 1,
       articleIndex: 1,
       currentArticleId: "",
-      currentWholeArticle: []
+      currentWholeArticle: [],
+      affectiveSummaryTags: [],
+      affectiveSummaryImpressions: [],
+      affectiveEmotions: {
+        "positive": 0,
+        "negative": 0,
+        "joy": 0,
+        "admiration": 0,
+        "inspiration": 0,
+        "peace": 0,
+        "surprise": 0,
+        "sympathy": 0,
+        "fear": 0,
+        "sadness": 0,
+        "disgust": 0,
+        "anger": 0
+      },
+      affectiveOthers: {
+        "ironic": 0,
+        "embarrassing": 0,
+        "vulgar": 0,
+        "politic": 0,
+        "interesting": 0,
+        "comprehensible": 0,
+        "agreeable": 0,
+        "believable": 0,
+        "sympathyToAuthor": 0,
+        "needMoreInfo": 0,
+        "wishToAuthor": []
+      }
     }
   },
 
   async fetch() {
+    const query = this.$route.query.q || ''
+    const isChecked = this.$route.query.isChecked || ''
     this.docs = await this.$services.example.fetchOne(
       this.projectId,
       this.$route.query.page,
-      this.$route.query.q,
-      this.$route.query.isChecked
+      query,
+      isChecked
     )
     const doc = this.docs.items[0]
     if (this.enableAutoLabeling && !doc.isConfirmed) {
@@ -208,7 +292,7 @@ export default {
       this.projectId,
       this.docs.count.toString(),
       this.currentArticleId,
-      this.$route.query.isChecked
+      isChecked
     )
     this.currentWholeArticle.items = _.orderBy(this.currentWholeArticle.items, 'order')
     const allArticleIds = await this.$services.example.fetchArticleIds(
@@ -410,6 +494,61 @@ export default {
     },
     changeSelectedLabel(event) {
       this.selectedLabelIndex = this.spanTypes.findIndex((item) => item.suffixKey === event.srcKey)
+    },
+    removeTag(annotationId) {
+      // await this.$services.seq2seq.delete(this.projectId, this.doc.id, id)
+      // await this.list(this.doc.id)
+      const index = this.affectiveSummaryTags.findIndex((item) => item.id === annotationId)
+      this.affectiveSummaryTags.splice(index, 1)
+    },
+    updateTag(annotationId, text) {
+      console.log(annotationId, text)
+    },
+    addTag(value) {
+      const item = {
+        "id": this.affectiveSummaryTags.length,
+        "text": value
+      }
+      this.affectiveSummaryTags.push(item)
+    },
+    removeImpression(annotationId) {
+      const index = this.affectiveSummaryImpressions.findIndex((item) => item.id === annotationId)
+      this.affectiveSummaryImpressions.splice(index, 1)
+    },
+    updateImpression(annotationId, text) {
+      console.log(annotationId, text)
+    },
+    addImpression(value) {
+      const item = {
+        "id": this.affectiveSummaryImpressions.length,
+        "text": value
+      }
+      this.affectiveSummaryImpressions.push(item)
+    },
+    emotionsChangeHandler(value, category) {
+      console.log("new emotions value!", value, category)
+    },
+    othersChangeHandler(value, category) {
+      console.log("new others value!", value, category)
+    },
+    nullifyOthersHandler(checkboxIsMarked, category) {
+      if (checkboxIsMarked) {
+        this.affectiveOthers[category] = -1
+        console.log("nullify others value!", this.affectiveOthers[category], category)
+      }
+    },
+    removeWishToAuthor() {
+      this.affectiveOthers.wishToAuthor = []
+    },
+    updateWishToAuthor(text) {
+      console.log(text)
+    },
+    addWishToAuthor(value) {
+      const item = {
+        "id": 0,
+        "text": value
+      }
+      this.affectiveOthers.wishToAuthor.push(item)
     }
   }
 }
