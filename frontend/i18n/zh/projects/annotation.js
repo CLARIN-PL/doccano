@@ -101,7 +101,7 @@ export default {
     subquestion3: {
       question: "它冒犯了什么？",
       substatement1: "性别",
-      substatement2Question: "什么类型？", 
+      substatement1Question: "什么类型？", 
       substatement2: "国籍",
       substatement2Question: "什么类型？",
       substatement3: "宗教信仰",
