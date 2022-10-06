@@ -14,7 +14,6 @@ from .managers import (
 )
 from examples.models import Example
 from label_types.models import CategoryType, RelationType, SpanType, ScaleType
-from questions.models import Question
 
 
 class Label(models.Model):
@@ -136,4 +135,3 @@ class Scale(Label):
     example = models.ForeignKey(to=Example, on_delete=models.CASCADE, related_name="scales")
     label = models.ForeignKey(to=ScaleType, on_delete=models.CASCADE)
     scale = models.IntegerField()
-    question = models.ForeignKey(to=Question, on_delete=models.CASCADE, null=True, blank=True)
