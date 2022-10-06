@@ -80,6 +80,7 @@ export default {
     needMoreInfoHint: "Potrzebuję więcej informacji, aby ocenić ten tekst",
     wishToAuthorCategory: "Czego życzę autorowi tego tekstu?",
     wishToAuthorHint: "Czego życzę autorowi tego tekstu?",
-    noWishToAuthor: "Nie mam życzeń"
+    labelDontKnow: "Nie wiem",
+    labelNoWishToAuthor: "Nie mam życzeń"
   }
 }

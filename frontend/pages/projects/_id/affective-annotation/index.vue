@@ -66,7 +66,7 @@
                     @remove="removeCategory"
                   />
                   <summary-input
-                    v-if="project.is_summary_mode"
+                    v-if="project.isSummaryMode"
                     :text="doc.text"
                     :tags="affectiveSummaryTags"
                     :impressions="affectiveSummaryImpressions"
@@ -78,7 +78,7 @@
                     @add:impression="addImpression"
                   />
                   <emotions-input
-                    v-if="project.is_emotions_mode"
+                    v-if="project.isEmotionsMode"
                     :general-positivity="affectiveEmotions.positive"
                     :general-negativity="affectiveEmotions.negative"
                     :joy="affectiveEmotions.joy"
@@ -94,7 +94,7 @@
                     @change="emotionsChangeHandler"
                   />
                   <others-input
-                    v-if="project.is_others_mode"
+                    v-if="project.isOthersMode"
                     :ironic="affectiveOthers.ironic"
                     :embarrassing="affectiveOthers.embarrassing"
                     :vulgar="affectiveOthers.vulgar"
@@ -367,6 +367,7 @@ export default {
     this.relationTypes = await this.$services.relationType.list(this.projectId)
     this.project = await this.$services.project.findById(this.projectId)
     this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
+    console.log(this.project)
   },
 
   methods: {

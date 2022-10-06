@@ -129,7 +129,7 @@
         :rules-textfield="rules"
         :text-validation="textValidation"
         :with-checkbox="true"
-        :checkbox-label="$t('annotation.affectiveOthers.noWishToAuthor')"
+        :checkbox-label="$t('annotation.affectiveOthers.labelNoWishToAuthor')"
         :hide-textfield-on-checked="true"
         @remove="removeWishToAuthor"
         @update="updateWishToAuthor"
@@ -208,7 +208,7 @@ export default {
           return true
         }
       ],
-      checkboxLabel: "Nie wiem",
+      checkboxLabel: this.$i18n.t('annotation.affectiveOthers.labelDontKnow'),
       ironicCategory: this.$i18n.t('annotation.affectiveOthers.ironicCategory'),
       embarrassingCategory: this.$i18n.t('annotation.affectiveOthers.embarrassingCategory'),
       vulgarCategory: this.$i18n.t('annotation.affectiveOthers.vulgarCategory'),
@@ -235,12 +235,13 @@ export default {
       output[this.believableCategory]= "believable"
       output[this.sympathyToAuthorCategory]= "sympathyToAuthor"
       output[this.needMoreInfoCategory]= "needMoreInfo"
-      return []
+      return output
     }
   },
 
   methods: {
     updateCategory(value, categoryLabel) {
+      console.log(categoryLabel)
       const category = this.categoryLabelDict[categoryLabel]
       this.$emit('change', value, category)
     },

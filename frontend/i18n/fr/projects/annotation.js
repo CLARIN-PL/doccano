@@ -78,6 +78,7 @@ export default {
     needMoreInfoHint: "J'ai besoin de plus d'informations pour évaluer ce texte",
     wishToAuthorCategory: "Qu'est-ce que je souhaite à l'auteur de ce texte ?",
     wishToAuthorHint: "Qu'est-ce que je souhaite à l'auteur de ce texte ?",
-    noWishToAuthor: "je n'ai pas de souhaits"
+    labelDontKnow: "je ne sais pas",
+    labelNoWishToAuthor: "je n'ai pas de souhaits"
   }
 }

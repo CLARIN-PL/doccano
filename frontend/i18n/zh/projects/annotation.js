@@ -80,6 +80,7 @@ export default {
     needMoreInfoHint: "我需要更多信息来评价这篇文章",
     wishToAuthorCategory: "我希望这篇文章的作者是什么?",
     wishToAuthorHint: "我希望这篇文章的作者是什么?",
-    noWishToAuthor: "我没有愿望"
+    labelDontKnow: "我不知道",
+    labelNoWishToAuthor: "我没有愿望"
   }
 }

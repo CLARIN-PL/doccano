@@ -80,6 +80,7 @@ export default {
     needMoreInfoHint: "I need more information to rate this text",
     wishToAuthorCategory: "What do I wish the author of this text?",
     wishToAuthorHint: "What do I wish the author of this text?",
-    noWishToAuthor: "I have no wishes"
+    labelDontKnow: "I don't know",
+    labelNoWishToAuthor: "I have no wishes"
   }
 }
