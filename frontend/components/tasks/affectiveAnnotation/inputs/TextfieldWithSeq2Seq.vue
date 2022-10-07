@@ -1,6 +1,6 @@
 <template>
   <v-container class="widget">
-    <v-row v-if="question" class="widget__question" @click="showDialog = true">
+    <v-row v-if="question" class="widget__question">
       {{ question }}
     </v-row>
     <v-row class="widget__answer"  justify="center" align="center">
@@ -10,10 +10,10 @@
       <v-col
         :cols="colsTextfield"
         class="widget__textfield"
-        @click="showDialog = true"
+        @click="textfieldClickHandler"
       >
         <v-text-field
-          :disabled="!showTextfield"
+          :disabled="!enableTextfield"
           small
           dense
           readonly
@@ -104,7 +104,7 @@ export default {
 
   data() {
     return {
-      showTextfield: true,
+      enableTextfield: true,
       showDialog: false,
       dialogErrorMessage: "",
       stringifiedAnswers: ""
@@ -163,11 +163,18 @@ export default {
     checkboxChangeHandler(checkboxValue) {
       if (this.hideTextfieldOnChecked && checkboxValue) {
         this.$emit('markCheckbox', this.categoryLabel)
-        this.showTextfield = false
+        this.enableTextfield = false
       }
       if (this.hideTextfieldOnChecked && !checkboxValue) {
         this.$emit('unmarkCheckbox', this.categoryLabel)
-        this.showTextfield = true
+        this.enableTextfield = true
+      }
+    },
+    textfieldClickHandler() {
+      if (this.enableTextfield) {
+        this.showDialog = true
+      } else {
+        this.showDialog = false
       }
     }
   }
