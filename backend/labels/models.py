@@ -14,7 +14,6 @@ from .managers import (
 )
 from examples.models import Example
 from label_types.models import CategoryType, RelationType, SpanType, ScaleType
-from questions.models import Question
 
 
 class Label(models.Model):
@@ -35,7 +34,6 @@ class Category(Label):
     objects = CategoryManager()
     example = models.ForeignKey(to=Example, on_delete=models.CASCADE, related_name="categories")
     label = models.ForeignKey(to=CategoryType, on_delete=models.CASCADE)
-    question = models.ForeignKey(to=Question, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         unique_together = ("example", "user", "label")
@@ -98,7 +96,7 @@ class TextLabel(Label):
     objects = TextLabelManager()
     example = models.ForeignKey(to=Example, on_delete=models.CASCADE, related_name="texts")
     text = models.TextField()
-    question = models.ForeignKey(to=Question, on_delete=models.CASCADE, null=True, blank=True)
+    question = models.TextField(null=True, blank=True)
 
     def is_same_text(self, other: "TextLabel"):
         return self.text == other.text
@@ -136,7 +134,4 @@ class Scale(Label):
     objects = ScaleManager()
     example = models.ForeignKey(to=Example, on_delete=models.CASCADE, related_name="scales")
     label = models.ForeignKey(to=ScaleType, on_delete=models.CASCADE)
-    question = models.ForeignKey(to=Question, on_delete=models.CASCADE, null=True, blank=True)
-
-    class Meta:
-        unique_together = ("example", "user", "label")
+    scale = models.IntegerField()

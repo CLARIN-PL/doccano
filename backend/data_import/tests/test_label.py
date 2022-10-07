@@ -17,6 +17,7 @@ from labels.models import Span as SpanModel
 from labels.models import TextLabel as TextModel
 from projects.models import DOCUMENT_CLASSIFICATION, SEQ2SEQ, SEQUENCE_LABELING
 from projects.tests.utils import prepare_project
+from questions.models import Question
 
 
 class TestLabel(TestCase):
@@ -113,8 +114,8 @@ class TestTextLabel(TestLabel):
     task = SEQ2SEQ
 
     def test_comparison(self):
-        text1 = TextLabel(text="A", example_uuid=uuid.uuid4())
-        text2 = TextLabel(text="B", example_uuid=uuid.uuid4())
+        text1 = TextLabel(text="A", example_uuid=uuid.uuid4(), question="name?")
+        text2 = TextLabel(text="B", example_uuid=uuid.uuid4(), question="name?")
         self.assertLess(text1, text2)
 
     def test_parse(self):
@@ -128,12 +129,12 @@ class TestTextLabel(TestLabel):
             TextLabel.parse(example_uuid, obj=[])
 
     def test_create_type(self):
-        text = TextLabel(text="A", example_uuid=uuid.uuid4())
+        text = TextLabel(text="A", example_uuid=uuid.uuid4(), question="name?")
         text_type = text.create_type(self.project.item)
         self.assertEqual(text_type, None)
 
     def test_create(self):
-        text = TextLabel(text="A", example_uuid=uuid.uuid4())
+        text = TextLabel(text="A", example_uuid=uuid.uuid4(), question="name?")
         types = MagicMock()
         text_model = text.create(self.user, self.example, types)
         self.assertIsInstance(text_model, TextModel)

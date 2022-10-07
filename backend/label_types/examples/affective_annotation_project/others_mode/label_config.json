@@ -43,5 +43,10 @@
         "text": "Potrzebuję więcej informacji, aby ocenić ten tekst",
         "background_color": "#63486c",
         "text_color": "#ffffff"
+    },
+    {
+        "text": "Czuję sympatię do autora",
+        "background_color": "#63486c",
+        "text_color": "#ffffff"
     }
 ]
