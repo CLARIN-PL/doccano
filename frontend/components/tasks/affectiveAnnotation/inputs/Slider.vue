@@ -8,21 +8,24 @@
         <v-slider
           :value="value"
           :disabled="!enableSlider"
-          min="0"
-          max="10"
-          step="1"
-          ticks="always"
-          tick-size="4"
+          :min="sliderMinVal"
+          :max="sliderMaxVal"
+          step='1'
+          ticks='always'
+          tick-size='3'
           dense
           :color="(enableSlider) ? color : 'grey'"
-          track-color="grey"
+          track-color='grey'
           :hint="hint"
           persistent-hint
           :thumb-size="sliderThumbSize"
           :thumb-color="sliderThumbColor"
           @click="markClicked"
           @change="valueChangeHandler"
-        />
+        >
+          <template #prepend>{{ sliderMinVal }}</template>
+          <template #append>{{ sliderMaxVal }}</template>
+        </v-slider>
       </v-col>
       <v-col v-if="withCheckbox" cols="3" class="widget-row__checkbox">
         <v-checkbox
@@ -76,6 +79,8 @@ export default {
   data() {
     return {
       mdiCheck,
+      sliderMinVal: 0,
+      sliderMaxVal: 10,
       isClicked: false,
       enableSlider: true
     }
@@ -135,15 +140,30 @@ export default {
     font-size: 0.8rem;
     line-height: 0.95;
     padding: 0 !important;
+    padding-right: 5px !important;
   }
 
-  &__slider, &__checkbox {
+  &__slider {
     font-size: 0.7rem;
     line-height: 0.85;
     padding: 0 !important;
+
+    .v-input {
+      &__prepend-outer, &__append-outer {
+        font-size: 0.65rem;
+        line-height: 0.8;
+        margin: 0 !important;
+        padding: 0 !important;
+        white-space: nowrap;
+        overflow-x: visible;
+      }
+    }
   }
 
   &__checkbox {
+    font-size: 0.7rem;
+    line-height: 0.85;
+    padding: 0 !important;
     padding-left: 10px !important;
 
     label.v-label {
