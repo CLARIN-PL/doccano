@@ -305,7 +305,7 @@ export default {
 .others-input {
   word-wrap: normal;
   word-break: break-word;
-  max-height: 170px;
+  max-height: 230px;
   overflow-x: auto;
   width: 100%;
   padding-right: 20px !important;
