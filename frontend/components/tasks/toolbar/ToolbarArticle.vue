@@ -95,6 +95,7 @@ export default Vue.extend({
 
   &__footer {
     padding: 10px;
+    font-size: .8rem;
   }
 }
 

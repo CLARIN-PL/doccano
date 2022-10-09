@@ -1,4 +1,5 @@
 export default {
+  required: 'Wymagany',
   colorRules: {
     colorRequired: 'Kolor jest wymagany'
   },

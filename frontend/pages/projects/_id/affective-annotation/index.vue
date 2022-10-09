@@ -139,6 +139,7 @@
                 />
               </div>
             </v-card>
+            <component :is="affectiveAnnotationComponent" v-if="affectiveAnnotationComponent" />
           </v-col>
         </v-row>
       </div>
@@ -198,6 +199,10 @@ import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vu
 import SummaryInput from '@/components/tasks/affectiveAnnotation/summary/SummaryInput.vue'
 import EmotionsInput from '@/components/tasks/affectiveAnnotation/emotions/EmotionsInput.vue'
 import OthersInput from '@/components/tasks/affectiveAnnotation/others/OthersInput.vue'
+import OffensiveInput from '@/components/tasks/affectiveAnnotation/offensive/OffensiveInput.vue'
+import HumorInput from '@/components/tasks/affectiveAnnotation/humor/HumorInput.vue'
+import SummaryInput from '@/components/tasks/affectiveAnnotation/summary/SummaryInput.vue'
+
 
 export default {
   components: {
@@ -212,7 +217,9 @@ export default {
     LabelSelect,
     SummaryInput,
     EmotionsInput,
-    OthersInput
+    OthersInput,
+    OffensiveInput,
+    HumorInput
   },
 
   layout: 'workspace',
@@ -286,11 +293,7 @@ export default {
       isChecked
     )
     const doc = this.docs.items[0]
-    if (this.enableAutoLabeling && !doc.isConfirmed) {
-      await this.autoLabel(doc.id)
-    }
-    await this.list(doc.id)
-
+    
     this.currentArticleId = doc.articleId
     this.currentWholeArticle = await this.$services.example.fetchByLimit(
       this.projectId,
@@ -329,6 +332,22 @@ export default {
       } else {
         return this.docs.items[0]
       }
+    },
+
+    affectiveAnnotationComponent() {
+      const modes = ['isHumorMode', 'isEmotionsMode', 'isSummaryMode', 'isOffensiveMode', 'isOthersMode']
+      const modeComponents = {
+        isHumorMode: 'HumorInput',
+        isSummaryMode: 'SummaryInput',
+        isOffensiveMode: 'OffensiveInput',
+        isOthersMode: 'OthersInput',
+        isEmotionsMode: 'EmotionsInput'
+      }
+      let activeMode = 'isHumorMode'
+      modes.forEach((mode)=> {
+        activeMode = this.project[mode] ? mode : activeMode
+      })
+      return activeMode ? modeComponents[activeMode] : ''
     },
 
     selectedLabel() {
@@ -379,6 +398,12 @@ export default {
       if (spans.some((item) => !labelIds.has(item.label))) {
         this.spanTypes = await this.$services.spanType.list(this.projectId)
       }
+    },
+    async loadLabels() {
+      if (this.enableAutoLabeling && !this.doc.isConfirmed) {
+        await this.autoLabel(this.doc.id)
+      }
+      await this.list(this.doc.id)
     },
     async list(docId) {
       const spans = await this.$services.sequenceLabeling.list(this.projectId, docId)
@@ -574,12 +599,19 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 .annotation-text {
   font-size: 1.1rem !important;
   font-weight: 500;
   line-height: 2rem;
   font-family: 'Roboto', sans-serif !important;
   opacity: 0.6;
+  margin-bottom: 20px;
+
+  > div > div > svg:last-of-type {
+    height: 0;
+    overflow: hidden;
+  }
 }
+
 </style>
