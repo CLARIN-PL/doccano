@@ -134,7 +134,7 @@ export default {
 <style lang="scss">
 .widget-row {
   word-wrap: normal;
-  word-break: break-word;
+  word-break: normal;
 
   &__category {
     font-size: 0.8rem;
