@@ -2,7 +2,7 @@
   <div>
     <textfield-with-seq-2-seq
       :text="text"
-      :question="$t('annotation.summaryTagQuestion')"
+      :question="$t('annotation.affectiveSummary.tagsQuestion')"
       :answers="tags"
       :rules-textfield="rules"
       :text-validation="textValidation"
@@ -12,7 +12,7 @@
     />
     <textfield-with-seq-2-seq
       :text="text"
-      :question="$t('annotation.summaryImpressionQuestion')"
+      :question="$t('annotation.affectiveSummary.impressionsQuestion')"
       :answers="impressions"
       :rules-textfield="rules"
       :text-validation="textValidation"

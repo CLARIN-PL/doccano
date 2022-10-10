@@ -1,17 +1,33 @@
 <template>
   <v-container class="widget">
-    <v-row class="widget__question" @click="showDialog = true">
+    <v-row v-if="question" class="widget__question">
       {{ question }}
     </v-row>
-    <v-row class="widget__answer" @click="showDialog = true">
-      <v-text-field
-        small
-        dense
-        readonly
-        :value="stringifiedAnswers"
-        :rules="rulesTextfield"
-        hide-details="auto"
-      />
+    <v-row class="widget__answer"  justify="center" align="center">
+      <v-col v-if="categoryLabel" :cols="(withCheckbox)?3:4" class="widget__category">
+        {{ categoryLabel }}
+      </v-col>
+      <v-col
+        :cols="colsTextfield"
+        class="widget__textfield"
+        @click="textfieldClickHandler"
+      >
+        <v-text-field
+          :disabled="!enableTextfield"
+          small
+          dense
+          readonly
+          :value="stringifiedAnswers"
+          :rules="rulesTextfield"
+          hide-details="auto"
+        />
+      </v-col>
+      <v-col v-if="withCheckbox" cols="3" class="widget__checkbox">
+        <v-checkbox
+          :label="checkboxLabel"
+          @change="checkboxChangeHandler"
+        />
+      </v-col>
     </v-row>
 
     <v-dialog
@@ -56,6 +72,10 @@ export default {
       type: String,
       default: ""
     },
+    categoryLabel: {
+      type: String,
+      default: ""
+    },
     answers: {
       type: Array,
       default: () => []
@@ -66,15 +86,43 @@ export default {
     },
     textValidation: {
       type: Function,
-      default: () => true
+      default: () => ""
+    },
+    withCheckbox: {
+      type: Boolean,
+      default: false
+    },
+    checkboxLabel: {
+      type: String,
+      default: ""
+    },
+    hideTextfieldOnChecked: {
+      type: Boolean,
+      default: false
     }
   },
 
   data() {
     return {
+      enableTextfield: true,
       showDialog: false,
       dialogErrorMessage: "",
       stringifiedAnswers: ""
+    }
+  },
+
+  computed: {
+    colsTextfield() {
+      if (this.withCheckbox && this.categoryLabel) {
+        return 6
+      }
+      if (!this.withCheckbox && this.categoryLabel) {
+        return 8
+      }
+      if (this.withCheckbox && !this.categoryLabel) {
+        return 9
+      }
+      return 12
     }
   },
 
@@ -111,6 +159,23 @@ export default {
       } else {
         this.dialogErrorMessage = errorMessage
       }
+    },
+    checkboxChangeHandler(checkboxValue) {
+      if (this.hideTextfieldOnChecked && checkboxValue) {
+        this.$emit('markCheckbox', this.categoryLabel)
+        this.enableTextfield = false
+      }
+      if (this.hideTextfieldOnChecked && !checkboxValue) {
+        this.$emit('unmarkCheckbox', this.categoryLabel)
+        this.enableTextfield = true
+      }
+    },
+    textfieldClickHandler() {
+      if (this.enableTextfield) {
+        this.showDialog = true
+      } else {
+        this.showDialog = false
+      }
     }
   }
 }
@@ -121,15 +186,28 @@ export default {
     word-wrap: normal;
     word-break: break-word;
   
-    &__question {
+    &__question, &__category {
       font-size: .8rem;
       line-height: 0.95;
+    }
+
+    &__category {
+      padding: 0 !important;
     }
   
     &__answer {
       font-size: .6rem;
       line-height: 0.75;
       margin-bottom: 10px;
+    }
+
+    &__checkbox {
+      padding: 0 0 0 10px !important;
+
+      label.v-label {
+        font-size: 0.8rem;
+        line-height: 0.95;
+      }
     }
   }
   
