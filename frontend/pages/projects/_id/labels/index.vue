@@ -91,7 +91,9 @@ export default Vue.extend({
     hasMultiType(): boolean {
       if ('projectType' in this.project) {
         return (this.isIntentDetectionAndSlotFilling ||
-          this.isArticleAnnotation || !!this.project.useRelation
+          this.isArticleAnnotation ||
+          this.isAffectiveAnnotation ||
+          !!this.project.useRelation
         )
       } else {
         return false
