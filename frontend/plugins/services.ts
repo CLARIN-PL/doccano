@@ -42,6 +42,8 @@ import { DownloadFormatApplicationService } from '~/services/application/downloa
 import { APITagRepository } from '~/repositories/tag/apiTagRepository'
 import { TagApplicationService } from '~/services/application/tag/tagApplicationService'
 import { ApiRelationRepository } from '~/repositories/tasks/sequenceLabeling/apiRelationRepository'
+import { APIAffectiveSummaryRepository } from '~/repositories/tasks/affectiveAnnotation/apiAffectiveSummary'
+import { AffectiveSummaryApplicationService } from '~/services/application/tasks/affectiveSummary/summaryApplicationService'
 
 export interface Services {
   categoryType: LabelApplicationService
@@ -66,7 +68,8 @@ export interface Services {
   taskStatus: TaskStatusApplicationService
   downloadFormat: DownloadFormatApplicationService
   download: DownloadApplicationService
-  tag: TagApplicationService
+  tag: TagApplicationService,
+  affectiveSummary: AffectiveSummaryApplicationService
 }
 
 declare module 'vue/types/vue' {
@@ -97,6 +100,7 @@ const plugin: Plugin = (_, inject) => {
   const taskStatusRepository = new APITaskStatusRepository()
   const downloadFormatRepository = new APIDownloadFormatRepository()
   const downloadRepository = new APIDownloadRepository()
+  const affectiveSummaryRepository = new APIAffectiveSummaryRepository()
 
   const categoryType = new LabelApplicationService(new APILabelRepository('category-type'))
   const spanType = new LabelApplicationService(new APILabelRepository('span-type'))
@@ -124,6 +128,7 @@ const plugin: Plugin = (_, inject) => {
   const taskStatus = new TaskStatusApplicationService(taskStatusRepository)
   const downloadFormat = new DownloadFormatApplicationService(downloadFormatRepository)
   const download = new DownloadApplicationService(downloadRepository)
+  const affectiveSummary = new AffectiveSummaryApplicationService(affectiveSummaryRepository)
 
   const services: Services = {
     categoryType,
@@ -148,7 +153,8 @@ const plugin: Plugin = (_, inject) => {
     taskStatus,
     downloadFormat,
     download,
-    tag
+    tag,
+    affectiveSummary
   }
   inject('services', services)
 }

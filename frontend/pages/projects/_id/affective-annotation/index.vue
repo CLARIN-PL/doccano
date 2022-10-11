@@ -259,7 +259,9 @@ export default {
       currentWholeArticle: [],
       affectiveTmp: {},
       affectiveSummaryTags: [],
+      affectiveSummaryTagsQuestion: "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.",
       affectiveSummaryImpressions: [],
+      affectiveSummaryImpressionsQuestion: "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów.",
       affectiveEmotions: {
         "positive": 0,
         "negative": 0,
@@ -417,6 +419,13 @@ export default {
       this.spans = spans
       this.relations = relations
       this.categories = await this.$services.textClassification.list(this.projectId, docId)
+      const affectiveSummaryKeywords = await this.$services.affectiveSummary.list(this.projectId, docId)
+      this.affectiveSummaryTags = affectiveSummaryKeywords.filter(
+        (item) => item.question === this.affectiveSummaryTagsQuestion
+      )
+      this.affectiveSummaryImpressions = affectiveSummaryKeywords.filter(
+        (item) => item.question === this.affectiveSummaryImpressionsQuestion
+      )
     },
     async deleteSpan(id) {
       await this.$services.sequenceLabeling.delete(this.projectId, this.doc.id, id)
@@ -527,41 +536,38 @@ export default {
       this.selectedLabelIndex = this.spanTypes.findIndex((item) => item.suffixKey === event.srcKey)
     },
     async removeTag(annotationId) {
-      // const index = this.affectiveSummaryTags.findIndex((item) => item.id === annotationId)
-      // this.affectiveSummaryTags.splice(index, 1)
       await this.$services.affectiveSummary.delete(this.projectId, this.doc.id, annotationId)
       await this.list(this.doc.id)
     },
     async updateTag(annotationId, text) {
-      // console.log(annotationId, text)
       await this.$services.affectiveSummary.changeText(this.projectId, this.doc.id, annotationId, text)
       await this.list(this.doc.id)
     },
     async addTag(text) {
-      /*
-      const item = {
-        "id": this.affectiveSummaryTags.length,
-        "text": text
-      }
-      this.affectiveSummaryTags.push(item)
-      */
-      const question = "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów."
-      await this.$services.affectiveSummary.create(this.projectId, this.doc.id, text, question)
+      await this.$services.affectiveSummary.create(
+        this.projectId,
+        this.doc.id,
+        text,
+        this.affectiveSummaryTagsQuestion
+      )
       await this.list(this.doc.id)
     },
-    removeImpression(annotationId) {
-      const index = this.affectiveSummaryImpressions.findIndex((item) => item.id === annotationId)
-      this.affectiveSummaryImpressions.splice(index, 1)
+    async removeImpression(annotationId) {
+      await this.$services.affectiveSummary.delete(this.projectId, this.doc.id, annotationId)
+      await this.list(this.doc.id)
     },
-    updateImpression(annotationId, text) {
-      console.log(annotationId, text)
+    async updateImpression(annotationId, text) {
+      await this.$services.affectiveSummary.changeText(this.projectId, this.doc.id, annotationId, text)
+      await this.list(this.doc.id)
     },
-    addImpression(value) {
-      const item = {
-        "id": this.affectiveSummaryImpressions.length,
-        "text": value
-      }
-      this.affectiveSummaryImpressions.push(item)
+    async addImpression(text) {
+      await this.$services.affectiveSummary.create(
+        this.projectId,
+        this.doc.id,
+        text,
+        this.affectiveSummaryImpressionsQuestion
+      )
+      await this.list(this.doc.id)
     },
     emotionsChangeHandler(value, category) {
       this.affectiveEmotions[category] = value
