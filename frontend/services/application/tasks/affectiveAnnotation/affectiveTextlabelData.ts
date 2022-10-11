@@ -1,12 +1,12 @@
-import { AffectiveSummaryLabel } from '~/domain/models/tasks/affectiveSummary'
+import { AffectiveTextlabel } from '~/domain/models/tasks/affectiveTextlabel'
 
-export class AffectiveSummaryDTO {
+export class AffectiveTextlabelDTO {
   id: number
   text: string
   question: string
   user: number
 
-  constructor(item: AffectiveSummaryLabel) {
+  constructor(item: AffectiveTextlabel) {
     this.id = item.id
     this.text = item.text
     this.question = item.question

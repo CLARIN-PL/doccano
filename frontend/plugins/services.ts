@@ -42,8 +42,8 @@ import { DownloadFormatApplicationService } from '~/services/application/downloa
 import { APITagRepository } from '~/repositories/tag/apiTagRepository'
 import { TagApplicationService } from '~/services/application/tag/tagApplicationService'
 import { ApiRelationRepository } from '~/repositories/tasks/sequenceLabeling/apiRelationRepository'
-import { APIAffectiveSummaryRepository } from '~/repositories/tasks/affectiveAnnotation/apiAffectiveSummary'
-import { AffectiveSummaryApplicationService } from '~/services/application/tasks/affectiveSummary/summaryApplicationService'
+import { APIAffectiveTextlabelRepository } from '~/repositories/tasks/affectiveAnnotation/apiAffectiveTextlabel'
+import { AffectiveTextlabelApplicationService } from '~/services/application/tasks/affectiveAnnotation/affectiveTextlabelApplicationService'
 
 export interface Services {
   categoryType: LabelApplicationService
@@ -69,7 +69,7 @@ export interface Services {
   downloadFormat: DownloadFormatApplicationService
   download: DownloadApplicationService
   tag: TagApplicationService,
-  affectiveSummary: AffectiveSummaryApplicationService
+  affectiveTextlabel: AffectiveTextlabelApplicationService
 }
 
 declare module 'vue/types/vue' {
@@ -100,7 +100,7 @@ const plugin: Plugin = (_, inject) => {
   const taskStatusRepository = new APITaskStatusRepository()
   const downloadFormatRepository = new APIDownloadFormatRepository()
   const downloadRepository = new APIDownloadRepository()
-  const affectiveSummaryRepository = new APIAffectiveSummaryRepository()
+  const affectiveTextlabelRepository = new APIAffectiveTextlabelRepository()
 
   const categoryType = new LabelApplicationService(new APILabelRepository('category-type'))
   const spanType = new LabelApplicationService(new APILabelRepository('span-type'))
@@ -128,7 +128,7 @@ const plugin: Plugin = (_, inject) => {
   const taskStatus = new TaskStatusApplicationService(taskStatusRepository)
   const downloadFormat = new DownloadFormatApplicationService(downloadFormatRepository)
   const download = new DownloadApplicationService(downloadRepository)
-  const affectiveSummary = new AffectiveSummaryApplicationService(affectiveSummaryRepository)
+  const affectiveTextlabel = new AffectiveTextlabelApplicationService(affectiveTextlabelRepository)
 
   const services: Services = {
     categoryType,
@@ -154,7 +154,7 @@ const plugin: Plugin = (_, inject) => {
     downloadFormat,
     download,
     tag,
-    affectiveSummary
+    affectiveTextlabel
   }
   inject('services', services)
 }

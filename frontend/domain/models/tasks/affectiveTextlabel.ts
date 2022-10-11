@@ -1,10 +1,10 @@
 import { AnnotationModel } from './interface'
 
-export class AffectiveSummaryLabel implements AnnotationModel {
+export class AffectiveTextlabel implements AnnotationModel {
   constructor(public id: number, public text: string, public question: string, public user: number) {}
 
   static valueOf({id, text, question, user}: {id: number; text: string; question: string, user: number}) {
-    return new AffectiveSummaryLabel(id, text, question, user)
+    return new AffectiveTextlabel(id, text, question, user)
   }
 
   toObject() {

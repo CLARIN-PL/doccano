@@ -1,9 +1,9 @@
 import { AnnotationRepository } from '@/domain/models/tasks/annotationRepository'
-import { AffectiveSummaryLabel } from '~/domain/models/tasks/affectiveSummary'
+import { AffectiveTextlabel } from '~/domain/models/tasks/affectiveTextlabel'
 
-export class APIAffectiveSummaryRepository extends AnnotationRepository<AffectiveSummaryLabel> {
+export class APIAffectiveTextlabelRepository extends AnnotationRepository<AffectiveTextlabel> {
   constructor() {
-    super(AffectiveSummaryLabel)
+    super(AffectiveTextlabel)
   }
 
   public async update(projectId: string, docId: number, annotationId: number, text: string, question: string) {

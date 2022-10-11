@@ -419,7 +419,7 @@ export default {
       this.spans = spans
       this.relations = relations
       this.categories = await this.$services.textClassification.list(this.projectId, docId)
-      const affectiveSummaryKeywords = await this.$services.affectiveSummary.list(this.projectId, docId)
+      const affectiveSummaryKeywords = await this.$services.affectiveTextlabel.list(this.projectId, docId)
       this.affectiveSummaryTags = affectiveSummaryKeywords.filter(
         (item) => item.question === this.affectiveSummaryTagsQuestion
       )
@@ -536,15 +536,15 @@ export default {
       this.selectedLabelIndex = this.spanTypes.findIndex((item) => item.suffixKey === event.srcKey)
     },
     async removeTag(annotationId) {
-      await this.$services.affectiveSummary.delete(this.projectId, this.doc.id, annotationId)
+      await this.$services.affectiveTextlabel.delete(this.projectId, this.doc.id, annotationId)
       await this.list(this.doc.id)
     },
     async updateTag(annotationId, text) {
-      await this.$services.affectiveSummary.changeText(this.projectId, this.doc.id, annotationId, text)
+      await this.$services.affectiveTextlabel.changeText(this.projectId, this.doc.id, annotationId, text)
       await this.list(this.doc.id)
     },
     async addTag(text) {
-      await this.$services.affectiveSummary.create(
+      await this.$services.affectiveTextlabel.create(
         this.projectId,
         this.doc.id,
         text,
@@ -553,15 +553,15 @@ export default {
       await this.list(this.doc.id)
     },
     async removeImpression(annotationId) {
-      await this.$services.affectiveSummary.delete(this.projectId, this.doc.id, annotationId)
+      await this.$services.affectiveTextlabel.delete(this.projectId, this.doc.id, annotationId)
       await this.list(this.doc.id)
     },
     async updateImpression(annotationId, text) {
-      await this.$services.affectiveSummary.changeText(this.projectId, this.doc.id, annotationId, text)
+      await this.$services.affectiveTextlabel.changeText(this.projectId, this.doc.id, annotationId, text)
       await this.list(this.doc.id)
     },
     async addImpression(text) {
-      await this.$services.affectiveSummary.create(
+      await this.$services.affectiveTextlabel.create(
         this.projectId,
         this.doc.id,
         text,
