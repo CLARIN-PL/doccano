@@ -274,7 +274,8 @@ export default {
         "needMoreInfo": 0,
         "wishToAuthor": []
       },
-      affectiveOthersTmp: {}
+      affectiveOthersTmp: {},
+      affectiveOthersWishToAuthorQuestion: "Czego życzę autorowi tego tekstu?"
     }
   },
 
@@ -392,13 +393,20 @@ export default {
       this.spans = spans
       this.relations = relations
       this.categories = await this.$services.textClassification.list(this.projectId, docId)
-      const affectiveSummaryKeywords = await this.$services.affectiveTextlabel.list(this.projectId, docId)
-      this.affectiveSummaryTags = affectiveSummaryKeywords.filter(
-        (item) => item.question === this.affectiveSummaryTagsQuestion
-      )
-      this.affectiveSummaryImpressions = affectiveSummaryKeywords.filter(
-        (item) => item.question === this.affectiveSummaryImpressionsQuestion
-      )
+      const affectiveTextlabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
+      if (this.project.isSummaryMode) {
+        this.affectiveSummaryTags = affectiveTextlabels.filter(
+          (item) => item.question === this.affectiveSummaryTagsQuestion
+        )
+        this.affectiveSummaryImpressions = affectiveTextlabels.filter(
+          (item) => item.question === this.affectiveSummaryImpressionsQuestion
+        )
+      }
+      else if (this.project.isOthersMode) {
+        this.affectiveOthers.wishToAuthor = affectiveTextlabels.filter(
+          (item) => item.question === this.affectiveOthersWishToAuthorQuestion
+        )
+      }
     },
     async deleteSpan(id) {
       await this.$services.sequenceLabeling.delete(this.projectId, this.doc.id, id)
@@ -560,28 +568,37 @@ export default {
       this.affectiveOthers[category] = previousValue
       // don't forget to update data in BE too here
     },
-    removeWishToAuthor() {
-      this.affectiveOthers.wishToAuthor = []
+    async removeWishToAuthor(annotationId) {
+      await this.$services.affectiveTextlabel.delete(this.projectId, this.doc.id, annotationId)
+      await this.list(this.doc.id)
     },
-    updateWishToAuthor(text) {
-      console.log(text)
+    async updateWishToAuthor(annotationId, text) {
+      await this.$services.affectiveTextlabel.changeText(this.projectId, this.doc.id, annotationId, text)
+      await this.list(this.doc.id)
     },
-    addWishToAuthor(value) {
-      const item = {
-        "id": 0,
-        "text": value
-      }
-      this.affectiveOthers.wishToAuthor.push(item)
+    async addWishToAuthor(text) {
+      await this.$services.affectiveTextlabel.create(
+        this.projectId,
+        this.doc.id,
+        text,
+        this.affectiveOthersWishToAuthorQuestion
+      )
+      await this.list(this.doc.id)
     },
-    nullifyWishToAuthor() {
+    async nullifyWishToAuthor() {
       this.affectiveOthersTmp.wishToAuthor = this.affectiveOthers.wishToAuthor
-      this.affectiveOthers.wishToAuthor = []
-      // don't forget to update data in BE too here
+      if (this.affectiveOthers.wishToAuthor.length > 0) {
+        const annotationId = this.affectiveOthers.wishToAuthor[0].id
+        await this.removeWishToAuthor(annotationId)
+        await this.list(this.doc.id)
+      }
     },
-    restoreWishToAuthor() {
-      const previousValue = this.affectiveOthersTmp.wishToAuthor || []
-      this.affectiveOthers.wishToAuthor = previousValue
-      // don't forget to update data in BE too here
+    async restoreWishToAuthor() {
+      if (this.affectiveOthersTmp.wishToAuthor.length > 0) {
+        const text = this.affectiveOthersTmp.wishToAuthor[0].text
+        await this.addWishToAuthor(text)
+        await this.list(this.doc.id)
+      }
     }
   }
 }
