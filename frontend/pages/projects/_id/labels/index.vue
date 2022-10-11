@@ -10,6 +10,12 @@
         <v-tab class="text-capitalize">Span</v-tab>
         <v-tab v-if="project.useRelation" class="text-capitalize">Relation</v-tab>
       </template>
+      <template v-else-if="isAffectiveAnnotation">
+        <v-tab class="text-capitalize">Category</v-tab>
+        <v-tab class="text-capitalize">Span</v-tab>
+        <v-tab v-if="project.useRelation" class="text-capitalize">Relation</v-tab>
+        <v-tab class="text-capitalize">Scale</v-tab>
+      </template>
       <template v-else>
         <v-tab class="text-capitalize">Span</v-tab>
         <v-tab class="text-capitalize">Relation</v-tab>
@@ -100,12 +106,18 @@ export default Vue.extend({
       return this.project.projectType === 'ArticleAnnotation'
     },
 
+    isAffectiveAnnotation(): boolean {
+      return this.project.projectType === 'AffectiveAnnotation'
+    },
+
     labelType(): string {
       if (this.hasMultiType) {
         if (this.isIntentDetectionAndSlotFilling) {
           return ['category', 'span'][this.tab!]
         } else if (this.isArticleAnnotation) {
           return ['category', 'span', 'relation'][this.tab!]
+        } else if (this.isAffectiveAnnotation) {
+          return ['category', 'span', 'relation', 'scale'][this.tab!]
         } else {
           return ['span', 'relation'][this.tab!]
         }
@@ -128,6 +140,13 @@ export default Vue.extend({
             this.$services.categoryType,
             this.$services.spanType,
             this.$services.relationType
+          ][this.tab!]
+        } else if (this.isAffectiveAnnotation) {
+          return [
+            this.$services.categoryType,
+            this.$services.spanType,
+            this.$services.relationType,
+            this.$services.scaleType
           ][this.tab!]
         } else {
           return [this.$services.spanType, this.$services.relationType][this.tab!]

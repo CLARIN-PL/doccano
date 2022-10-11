@@ -49,6 +49,7 @@ export interface Services {
   categoryType: LabelApplicationService
   spanType: LabelApplicationService
   relationType: LabelApplicationService
+  scaleType: LabelApplicationService
   member: MemberApplicationService
   user: UserApplicationService
   role: RoleApplicationService
@@ -68,7 +69,7 @@ export interface Services {
   taskStatus: TaskStatusApplicationService
   downloadFormat: DownloadFormatApplicationService
   download: DownloadApplicationService
-  tag: TagApplicationService,
+  tag: TagApplicationService
   affectiveTextlabel: AffectiveTextlabelApplicationService
 }
 
@@ -105,6 +106,7 @@ const plugin: Plugin = (_, inject) => {
   const categoryType = new LabelApplicationService(new APILabelRepository('category-type'))
   const spanType = new LabelApplicationService(new APILabelRepository('span-type'))
   const relationType = new LabelApplicationService(new APILabelRepository('relation-type'))
+  const scaleType = new LabelApplicationService(new APILabelRepository('scale-type'))
   const member = new MemberApplicationService(memberRepository)
   const user = new UserApplicationService(userRepository)
   const role = new RoleApplicationService(roleRepository)
@@ -134,6 +136,7 @@ const plugin: Plugin = (_, inject) => {
     categoryType,
     spanType,
     relationType,
+    scaleType,
     member,
     user,
     role,

@@ -20,7 +20,7 @@ export default Vue.extend({
   layout: 'project',
 
   validate({ params, query, app }) {
-    if (!['category', 'span', 'relation'].includes(query.type as string)) {
+    if (!['category', 'span', 'relation', 'scale'].includes(query.type as string)) {
       return false
     }
     if (/^\d+$/.test(params.id)) {
@@ -59,6 +59,8 @@ export default Vue.extend({
         return this.$services.categoryType
       } else if (type === 'span') {
         return this.$services.spanType
+      } else if (type === 'scale') {
+        return this.$services.scaleType
       } else {
         return this.$services.relationType
       }
