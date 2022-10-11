@@ -526,21 +526,28 @@ export default {
     changeSelectedLabel(event) {
       this.selectedLabelIndex = this.spanTypes.findIndex((item) => item.suffixKey === event.srcKey)
     },
-    removeTag(annotationId) {
-      // await this.$services.seq2seq.delete(this.projectId, this.doc.id, id)
-      // await this.list(this.doc.id)
-      const index = this.affectiveSummaryTags.findIndex((item) => item.id === annotationId)
-      this.affectiveSummaryTags.splice(index, 1)
+    async removeTag(annotationId) {
+      // const index = this.affectiveSummaryTags.findIndex((item) => item.id === annotationId)
+      // this.affectiveSummaryTags.splice(index, 1)
+      await this.$services.affectiveSummary.delete(this.projectId, this.doc.id, annotationId)
+      await this.list(this.doc.id)
     },
-    updateTag(annotationId, text) {
-      console.log(annotationId, text)
+    async updateTag(annotationId, text) {
+      // console.log(annotationId, text)
+      await this.$services.affectiveSummary.changeText(this.projectId, this.doc.id, annotationId, text)
+      await this.list(this.doc.id)
     },
-    addTag(value) {
+    async addTag(text) {
+      /*
       const item = {
         "id": this.affectiveSummaryTags.length,
-        "text": value
+        "text": text
       }
       this.affectiveSummaryTags.push(item)
+      */
+      const question = "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów."
+      await this.$services.affectiveSummary.create(this.projectId, this.doc.id, text, question)
+      await this.list(this.doc.id)
     },
     removeImpression(annotationId) {
       const index = this.affectiveSummaryImpressions.findIndex((item) => item.id === annotationId)
