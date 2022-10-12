@@ -16,6 +16,8 @@ export class ExampleMetaItem {
 export class ExampleItem {
   id: number
   text: string
+  scale: []
+  label: []
   meta: ExampleMetaItem
   itemId: string 
   type: string 
@@ -50,6 +52,8 @@ export class ExampleItem {
       id: this.id,
       text: this.text,
       meta: this.meta,
+      scale: this.scale,
+      label: this.label,
       annotation_approver: this.annotationApprover,
       comment_count: this.commentCount
     }

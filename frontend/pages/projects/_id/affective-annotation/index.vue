@@ -141,7 +141,7 @@
                     @restore:wishToAuthor="restoreWishToAuthor"
                   />
               </div>
-              <component :is="affectiveAnnotationComponent" v-if="affectiveAnnotationComponent" />
+              <component :is="affectiveAnnotationComponent" v-if="affectiveAnnotationComponent" v-model="affectiveTmp" />
             </v-card>
           </v-col>
         </v-row>
@@ -252,6 +252,7 @@ export default {
       articleIndex: 1,
       currentArticleId: "",
       currentWholeArticle: [],
+      affectiveTmp: {},
       affectiveSummaryTags: [],
       affectiveSummaryImpressions: [],
       affectiveEmotions: {
