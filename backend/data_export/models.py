@@ -95,8 +95,19 @@ class ExportedScale(Scale):
     def to_dict(self):
         return {"id": self.id, "label": self.label.text, "scale": self.scale}
 
-    def to_tupele(self):
+    def to_tuple(self):
         return self.scale, self.label.text
+
+    class Meta:
+        proxy = True
+
+
+class ExportedTextQuestion(TextLabel):
+    def to_dict(self):
+        return {"label": self.text, "question": self.question}
+
+    def to_tuple(self):
+        return self.text, self.question
 
     class Meta:
         proxy = True
