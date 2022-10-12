@@ -246,7 +246,7 @@ export default {
       currentArticleId: "",
       currentWholeArticle: [],
       affectiveScalesValues: {},
-      affectiveTextfieldsQuestions: {
+      affectiveTextlabelQuestions: {
         summaryTag: "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.",
         summaryImpression: "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów.",
         othersWishToAuthor: "Czego życzę autorowi tego tekstu?"
@@ -391,13 +391,13 @@ export default {
       const affectiveScales = await this.$services.affectiveScale.list(this.projectId, docId)
 
       this.affectiveSummaryTags = affectiveTextlabels.filter(
-        (item) => item.question === this.affectiveTextfieldsQuestions.summaryTag
+        (item) => item.question === this.affectiveTextlabelQuestions.summaryTag
       )
       this.affectiveSummaryImpressions = affectiveTextlabels.filter(
-        (item) => item.question === this.affectiveTextfieldsQuestions.summaryImpression
+        (item) => item.question === this.affectiveTextlabelQuestions.summaryImpression
       )
       this.affectiveOthersWishToAuthor = affectiveTextlabels.filter(
-        (item) => item.question === this.affectiveTextfieldsQuestions.othersWishToAuthor
+        (item) => item.question === this.affectiveTextlabelQuestions.othersWishToAuthor
       )
 
       const scaleTypesIdsTexts = this.scaleTypesIdsTexts
@@ -548,7 +548,7 @@ export default {
         this.projectId,
         this.doc.id,
         text,
-        this.affectiveTextfieldsQuestions.summaryTag
+        this.affectiveTextlabelQuestions.summaryTag
       )
       await this.list(this.doc.id)
     },
@@ -565,7 +565,7 @@ export default {
         this.projectId,
         this.doc.id,
         text,
-        this.affectiveTextfieldsQuestions.summaryImpression
+        this.affectiveTextlabelQuestions.summaryImpression
       )
       await this.list(this.doc.id)
     },
@@ -629,7 +629,7 @@ export default {
         this.projectId,
         this.doc.id,
         text,
-        this.affectiveTextfieldsQuestions.othersWishToAuthor
+        this.affectiveTextlabelQuestions.othersWishToAuthor
       )
       await this.list(this.doc.id)
     },
