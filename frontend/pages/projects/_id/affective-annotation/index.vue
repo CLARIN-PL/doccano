@@ -647,15 +647,13 @@ export default {
       )
       await this.list(this.doc.id)
     },
-    nullifyOthersValueHandler(category) {
+    async nullifyOthersValueHandler(category) {
       this.affectiveOthersTmp[category] = this.affectiveOthers[category]
-      this.affectiveOthers[category] = -1
-      // don't forget to update data in BE too here
+      await this.othersChangeHandler(-1, category)
     },
-    restoreOthersValueHandler(category) {
+    async restoreOthersValueHandler(category) {
       const previousValue = this.affectiveOthersTmp[category] || 0
-      this.affectiveOthers[category] = previousValue
-      // don't forget to update data in BE too here
+      await this.othersChangeHandler(previousValue, category)
     },
     async removeWishToAuthor(annotationId) {
       await this.$services.affectiveTextlabel.delete(this.projectId, this.doc.id, annotationId)
