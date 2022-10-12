@@ -15,7 +15,7 @@ export default Vue.extend({
   layout: 'project',
 
   validate({ params, query, app }) {
-    if (!['category', 'span', 'relation', 'scale'].includes(query.type as string)) {
+    if (!['category', 'span', 'scale', 'relation'].includes(query.type as string)) {
       return false
     }
     if (/^\d+$/.test(params.id)) {
