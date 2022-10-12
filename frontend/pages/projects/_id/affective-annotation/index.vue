@@ -226,6 +226,8 @@ export default {
       mdiText,
       mdiFormatListBulleted,
       docs: [],
+      scaleTypesIdsTexts: {},
+      scaleTypesTextsIds: {},
       spans: [],
       spanTypes: [],
       relations: [],
@@ -259,7 +261,7 @@ export default {
         "fear": 0,
         "sadness": 0,
         "disgust": 0,
-        "anger": 0
+        "anger":  0
       },
       affectiveOthers: {
         "ironic": 0,
@@ -374,6 +376,16 @@ export default {
     this.relationTypes = await this.$services.relationType.list(this.projectId)
     this.project = await this.$services.project.findById(this.projectId)
     this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
+
+    const scaleTypesRaw = await this.$services.scaleType.list(this.projectId)
+    const scaleTypesIdsTexts = {}
+    const scaleTypesTextsIds = {}
+    scaleTypesRaw.forEach(function(item) {
+      scaleTypesIdsTexts[item.id] = item.text
+      scaleTypesTextsIds[item.text] = item.id
+    })
+    this.scaleTypesIdsTexts = scaleTypesIdsTexts
+    this.scaleTypesTextsIds = scaleTypesTextsIds
   },
 
   methods: {
@@ -393,20 +405,37 @@ export default {
       this.spans = spans
       this.relations = relations
       this.categories = await this.$services.textClassification.list(this.projectId, docId)
+
       const affectiveTextlabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
-      if (this.project.isSummaryMode) {
-        this.affectiveSummaryTags = affectiveTextlabels.filter(
-          (item) => item.question === this.affectiveSummaryTagsQuestion
-        )
-        this.affectiveSummaryImpressions = affectiveTextlabels.filter(
-          (item) => item.question === this.affectiveSummaryImpressionsQuestion
-        )
+      const affectiveScales = await this.$services.affectiveScale.list(this.projectId, docId)
+
+      this.affectiveSummaryTags = affectiveTextlabels.filter(
+        (item) => item.question === this.affectiveSummaryTagsQuestion
+      )
+      this.affectiveSummaryImpressions = affectiveTextlabels.filter(
+        (item) => item.question === this.affectiveSummaryImpressionsQuestion
+      )
+      this.affectiveOthers.wishToAuthor = affectiveTextlabels.filter(
+        (item) => item.question === this.affectiveOthersWishToAuthorQuestion
+      )
+
+      const scaleTypesIdsTexts = this.scaleTypesIdsTexts
+      const affectiveEmotionsDict = {
+        "Pozytywne": "positive", "Negatywne": "negative", "Radość": "joy", "Zachwyt": "admiration",
+        "Inspiruje": "inspiration", "Spokój": "peace", "Zaskoczenie": "surprise", "Współczucie": "sympathy",
+        "Strach": "fear", "Smutek": "sadness", "Wstręt": "disgust", "Złość": "anger"
       }
-      else if (this.project.isOthersMode) {
-        this.affectiveOthers.wishToAuthor = affectiveTextlabels.filter(
-          (item) => item.question === this.affectiveOthersWishToAuthorQuestion
-        )
-      }
+      const affectiveEmotions = {}
+      const affectiveOthers = {}
+      affectiveScales.forEach(function(item) {
+        const category = affectiveEmotionsDict[scaleTypesIdsTexts[item.label]]
+        affectiveEmotions[category] = item.scale
+        affectiveOthers[category] = item.scale
+        // add more scale data below
+      })
+      this.affectiveEmotions = affectiveEmotions
+      console.log(this.affectiveEmotions)
+      this.affectiveOthers = affectiveOthers
     },
     async deleteSpan(id) {
       await this.$services.sequenceLabeling.delete(this.projectId, this.doc.id, id)
@@ -550,13 +579,32 @@ export default {
       )
       await this.list(this.doc.id)
     },
-    emotionsChangeHandler(value, category) {
-      this.affectiveEmotions[category] = value
-      console.log("new emotions value!", this.affectiveEmotions[category], category)
+    async emotionsChangeHandler(value, category) {
+      const affectiveEmotionsDict = {
+        "positive": "Pozytywne", "negative": "Negatywne", "joy": "Radość", "admiration": "Zachwyt",
+        "inspiration": "Inspiruje", "peace": "Spokój", "surprise": "Zaskoczenie", "sympathy": "Współczucie",
+        "fear": "Strach", "sadness": "Smutek", "disgust": "Wstręt", "anger": "Złość"
+      }
+      const label = affectiveEmotionsDict[category]
+      const labelId = this.scaleTypesTextsIds[label]
+      console.log("labelId", labelId)
+      await this.$services.affectiveScale.create(
+        this.projectId,
+        this.doc.id,
+        labelId,
+        value
+      )
+      await this.list(this.doc.id)
     },
-    othersChangeHandler(value, category) {
-      this.affectiveOthers[category] = value
-      console.log("new others value!", this.affectiveOthers[category], category)
+    async othersChangeHandler(value, category) {
+      const labelId = this.scaleTypesTextsIds[category]
+      await this.$services.affectiveScale.create(
+        this.projectId,
+        this.doc.id,
+        labelId,
+        value
+      )
+      await this.list(this.doc.id)
     },
     nullifyOthersValueHandler(category) {
       this.affectiveOthersTmp[category] = this.affectiveOthers[category]
