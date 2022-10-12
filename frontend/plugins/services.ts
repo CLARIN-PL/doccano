@@ -44,6 +44,8 @@ import { TagApplicationService } from '~/services/application/tag/tagApplication
 import { ApiRelationRepository } from '~/repositories/tasks/sequenceLabeling/apiRelationRepository'
 import { APIAffectiveTextlabelRepository } from '~/repositories/tasks/affectiveAnnotation/apiAffectiveTextlabel'
 import { AffectiveTextlabelApplicationService } from '~/services/application/tasks/affectiveAnnotation/affectiveTextlabelApplicationService'
+import { APIAffectiveScaleRepository } from '~/repositories/tasks/affectiveAnnotation/apiAffectiveScale'
+import { AffectiveScaleApplicationService } from '~/services/application/tasks/affectiveAnnotation/affectiveScaleApplicationService'
 
 export interface Services {
   categoryType: LabelApplicationService
@@ -71,6 +73,7 @@ export interface Services {
   download: DownloadApplicationService
   tag: TagApplicationService
   affectiveTextlabel: AffectiveTextlabelApplicationService
+  affectiveScale: AffectiveScaleApplicationService
 }
 
 declare module 'vue/types/vue' {
@@ -102,6 +105,7 @@ const plugin: Plugin = (_, inject) => {
   const downloadFormatRepository = new APIDownloadFormatRepository()
   const downloadRepository = new APIDownloadRepository()
   const affectiveTextlabelRepository = new APIAffectiveTextlabelRepository()
+  const affectiveScaleRepository = new APIAffectiveScaleRepository()
 
   const categoryType = new LabelApplicationService(new APILabelRepository('category-type'))
   const spanType = new LabelApplicationService(new APILabelRepository('span-type'))
@@ -131,6 +135,7 @@ const plugin: Plugin = (_, inject) => {
   const downloadFormat = new DownloadFormatApplicationService(downloadFormatRepository)
   const download = new DownloadApplicationService(downloadRepository)
   const affectiveTextlabel = new AffectiveTextlabelApplicationService(affectiveTextlabelRepository)
+  const affectiveScale = new AffectiveScaleApplicationService(affectiveScaleRepository)
 
   const services: Services = {
     categoryType,
@@ -157,7 +162,8 @@ const plugin: Plugin = (_, inject) => {
     downloadFormat,
     download,
     tag,
-    affectiveTextlabel
+    affectiveTextlabel,
+    affectiveScale
   }
   inject('services', services)
 }
