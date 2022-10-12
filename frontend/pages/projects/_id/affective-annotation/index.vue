@@ -79,33 +79,33 @@
                   />
                   <emotions-input
                     v-if="project.isEmotionsMode"
-                    :general-positivity="affectiveEmotions.positive"
-                    :general-negativity="affectiveEmotions.negative"
-                    :joy="affectiveEmotions.joy"
-                    :admiration="affectiveEmotions.admiration"
-                    :inspiration="affectiveEmotions.inspiration"
-                    :peace="affectiveEmotions.peace"
-                    :surprise="affectiveEmotions.surprise"
-                    :sympathy="affectiveEmotions.sympathy"
-                    :fear="affectiveEmotions.fear"
-                    :sadness="affectiveEmotions.sadness"
-                    :disgust="affectiveEmotions.disgust"
-                    :anger="affectiveEmotions.anger"
+                    :general-positivity="affectiveScalesValues.positive"
+                    :general-negativity="affectiveScalesValues.negative"
+                    :joy="affectiveScalesValues.joy"
+                    :admiration="affectiveScalesValues.admiration"
+                    :inspiration="affectiveScalesValues.inspiration"
+                    :peace="affectiveScalesValues.peace"
+                    :surprise="affectiveScalesValues.surprise"
+                    :sympathy="affectiveScalesValues.sympathy"
+                    :fear="affectiveScalesValues.fear"
+                    :sadness="affectiveScalesValues.sadness"
+                    :disgust="affectiveScalesValues.disgust"
+                    :anger="affectiveScalesValues.anger"
                     @change="emotionsChangeHandler"
                   />
                   <others-input
                     v-if="project.isOthersMode"
-                    :ironic="affectiveOthers.ironic"
-                    :embarrassing="affectiveOthers.embarrassing"
-                    :vulgar="affectiveOthers.vulgar"
-                    :politic="affectiveOthers.politic"
-                    :interesting="affectiveOthers.interesting"
-                    :comprehensible="affectiveOthers.comprehensible"
-                    :agreeable="affectiveOthers.agreeable"
-                    :believable="affectiveOthers.believable"
-                    :sympathy-to-author="affectiveOthers.sympathyToAuthor"
-                    :need-more-info="affectiveOthers.needMoreInfo"
-                    :wish-to-author="affectiveOthers.wishToAuthor"
+                    :ironic="affectiveScalesValues.ironic"
+                    :embarrassing="affectiveScalesValues.embarrassing"
+                    :vulgar="affectiveScalesValues.vulgar"
+                    :politic="affectiveScalesValues.politic"
+                    :interesting="affectiveScalesValues.interesting"
+                    :comprehensible="affectiveScalesValues.comprehensible"
+                    :agreeable="affectiveScalesValues.agreeable"
+                    :believable="affectiveScalesValues.believable"
+                    :sympathy-to-author="affectiveScalesValues.sympathyToAuthor"
+                    :need-more-info="affectiveScalesValues.needMoreInfo"
+                    :wish-to-author="affectiveOthersWishToAuthor"
                     @change="othersChangeHandler"
                     @nullifyCategoryValue="nullifyOthersValueHandler"
                     @restoreCategoryValue="restoreOthersValueHandler"
@@ -245,39 +245,16 @@ export default {
       articleIndex: 1,
       currentArticleId: "",
       currentWholeArticle: [],
+      affectiveScalesValues: {},
+      affectiveTextfieldsQuestions: {
+        summaryTag: "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.",
+        summaryImpression: "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów.",
+        othersWishToAuthor: "Czego życzę autorowi tego tekstu?"
+      },
       affectiveSummaryTags: [],
-      affectiveSummaryTagsQuestion: "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.",
       affectiveSummaryImpressions: [],
-      affectiveSummaryImpressionsQuestion: "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów.",
-      affectiveEmotions: {
-        "positive": 0,
-        "negative": 0,
-        "joy": 0,
-        "admiration": 0,
-        "inspiration": 0,
-        "peace": 0,
-        "surprise": 0,
-        "sympathy": 0,
-        "fear": 0,
-        "sadness": 0,
-        "disgust": 0,
-        "anger":  0
-      },
-      affectiveOthers: {
-        "ironic": 0,
-        "embarrassing": 0,
-        "vulgar": 0,
-        "politic": 0,
-        "interesting": 0,
-        "comprehensible": 0,
-        "agreeable": 0,
-        "believable": 0,
-        "sympathyToAuthor": 0,
-        "needMoreInfo": 0,
-        "wishToAuthor": []
-      },
-      affectiveOthersTmp: {},
-      affectiveOthersWishToAuthorQuestion: "Czego życzę autorowi tego tekstu?"
+      affectiveOthersWishToAuthor: [],
+      affectiveOthersTmp: {}
     }
   },
 
@@ -378,14 +355,18 @@ export default {
     this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
 
     const scaleTypesRaw = await this.$services.scaleType.list(this.projectId)
-    const scaleTypesIdsTexts = {}
-    const scaleTypesTextsIds = {}
-    scaleTypesRaw.forEach(function(item) {
-      scaleTypesIdsTexts[item.id] = item.text
-      scaleTypesTextsIds[item.text] = item.id
-    })
-    this.scaleTypesIdsTexts = scaleTypesIdsTexts
-    this.scaleTypesTextsIds = scaleTypesTextsIds
+    if (scaleTypesRaw.length > 0) {
+      const scaleTypesIdsTexts = {}
+      const scaleTypesTextsIds = {}
+      scaleTypesRaw.forEach(function(item) {
+        scaleTypesIdsTexts[item.id] = item.text
+        scaleTypesTextsIds[item.text] = item.id
+      })
+      this.scaleTypesIdsTexts = scaleTypesIdsTexts
+      this.scaleTypesTextsIds = scaleTypesTextsIds
+    } else {
+      alert("No scale labels found. Please import scale labels first!")
+    }
   },
 
   methods: {
@@ -410,38 +391,41 @@ export default {
       const affectiveScales = await this.$services.affectiveScale.list(this.projectId, docId)
 
       this.affectiveSummaryTags = affectiveTextlabels.filter(
-        (item) => item.question === this.affectiveSummaryTagsQuestion
+        (item) => item.question === this.affectiveTextfieldsQuestions.summaryTag
       )
       this.affectiveSummaryImpressions = affectiveTextlabels.filter(
-        (item) => item.question === this.affectiveSummaryImpressionsQuestion
+        (item) => item.question === this.affectiveTextfieldsQuestions.summaryImpression
       )
-      this.affectiveOthers.wishToAuthor = affectiveTextlabels.filter(
-        (item) => item.question === this.affectiveOthersWishToAuthorQuestion
+      this.affectiveOthersWishToAuthor = affectiveTextlabels.filter(
+        (item) => item.question === this.affectiveTextfieldsQuestions.othersWishToAuthor
       )
 
       const scaleTypesIdsTexts = this.scaleTypesIdsTexts
       const affectiveScalesDict = {
-        "Pozytywne": "positive", "Negatywne": "negative", "Radość": "joy", "Zachwyt": "admiration",
-        "Inspiruje": "inspiration", "Spokój": "peace", "Zaskoczenie": "surprise", "Współczucie": "sympathy",
-        "Strach": "fear", "Smutek": "sadness", "Wstręt": "disgust", "Złość": "anger",
-        "Ironiczny": "ironic", "Żenujący": "embarrassing", "Wulgarny": "vulgar", "Polityczny": "politic",
+        "Pozytywne": "positive", "Negatywne": "negative",
+        "Radość": "joy", "Zachwyt": "admiration",
+        "Inspiruje": "inspiration", "Spokój": "peace",
+        "Zaskoczenie": "surprise", "Współczucie": "sympathy",
+        "Strach": "fear", "Smutek": "sadness",
+        "Wstręt": "disgust", "Złość": "anger",
+        "Ironiczny": "ironic", "Żenujący": "embarrassing",
+        "Wulgarny": "vulgar", "Polityczny": "politic",
         "Interesujący": "interesting", "Zrozumiały": "comprehensible",
         "Zgadzam się z tekstem": "agreeable",
         "Wierzę w tę informację": "believable",
         "Czuję sympatię do autora": "sympathyToAuthor",
         "Potrzebuję więcej informacji, aby ocenić ten tekst": "needMoreInfo"
         // add more scaleType-variable mapping below
+        // "key": "value"
+        // key is the 'text' in table 'label_types_scaletype'
+        // value is the variable name used in FE code in this code
       }
-      const affectiveEmotions = {}
-      const affectiveOthers = {}
+      const affectiveScalesValues = {}
       affectiveScales.forEach(function(item) {
         const category = affectiveScalesDict[scaleTypesIdsTexts[item.label]]
-        affectiveEmotions[category] = item.scale
-        affectiveOthers[category] = item.scale
-        // add more scale data below
+        affectiveScalesValues[category] = item.scale
       })
-      this.affectiveEmotions = affectiveEmotions
-      this.affectiveOthers = affectiveOthers
+      this.affectiveScalesValues = affectiveScalesValues
     },
     async deleteSpan(id) {
       await this.$services.sequenceLabeling.delete(this.projectId, this.doc.id, id)
@@ -564,7 +548,7 @@ export default {
         this.projectId,
         this.doc.id,
         text,
-        this.affectiveSummaryTagsQuestion
+        this.affectiveTextfieldsQuestions.summaryTag
       )
       await this.list(this.doc.id)
     },
@@ -581,15 +565,18 @@ export default {
         this.projectId,
         this.doc.id,
         text,
-        this.affectiveSummaryImpressionsQuestion
+        this.affectiveTextfieldsQuestions.summaryImpression
       )
       await this.list(this.doc.id)
     },
     async emotionsChangeHandler(value, category) {
       const affectiveEmotionsDict = {
-        "positive": "Pozytywne", "negative": "Negatywne", "joy": "Radość", "admiration": "Zachwyt",
-        "inspiration": "Inspiruje", "peace": "Spokój", "surprise": "Zaskoczenie", "sympathy": "Współczucie",
-        "fear": "Strach", "sadness": "Smutek", "disgust": "Wstręt", "anger": "Złość"
+        "positive": "Pozytywne", "negative": "Negatywne",
+        "joy": "Radość", "admiration": "Zachwyt",
+        "inspiration": "Inspiruje", "peace": "Spokój",
+        "surprise": "Zaskoczenie", "sympathy": "Współczucie",
+        "fear": "Strach", "sadness": "Smutek",
+        "disgust": "Wstręt", "anger": "Złość"
       }
       const label = affectiveEmotionsDict[category]
       const labelId = this.scaleTypesTextsIds[label]
@@ -622,7 +609,7 @@ export default {
       await this.list(this.doc.id)
     },
     async nullifyOthersValueHandler(category) {
-      this.affectiveOthersTmp[category] = this.affectiveOthers[category]
+      this.affectiveOthersTmp[category] = this.affectiveScalesValues[category]
       await this.othersChangeHandler(-1, category)
     },
     async restoreOthersValueHandler(category) {
@@ -642,14 +629,14 @@ export default {
         this.projectId,
         this.doc.id,
         text,
-        this.affectiveOthersWishToAuthorQuestion
+        this.affectiveTextfieldsQuestions.othersWishToAuthor
       )
       await this.list(this.doc.id)
     },
     async nullifyWishToAuthor() {
-      this.affectiveOthersTmp.wishToAuthor = this.affectiveOthers.wishToAuthor
-      if (this.affectiveOthers.wishToAuthor.length > 0) {
-        const annotationId = this.affectiveOthers.wishToAuthor[0].id
+      this.affectiveOthersTmp.wishToAuthor = this.affectiveOthersWishToAuthor
+      if (this.affectiveOthersWishToAuthor.length > 0) {
+        const annotationId = this.affectiveOthersWishToAuthor[0].id
         await this.removeWishToAuthor(annotationId)
         await this.list(this.doc.id)
       }
