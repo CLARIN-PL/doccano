@@ -85,11 +85,6 @@ export default {
   },
   summaryTagQuestion: "你会用什么词来描述这个文本（标签、关键词）？ 请输入2-10个字: ",
   summaryImpressionQuestion: "这段文字唤起了你什么印象/情感/感受？ 请输入2-10个字: ",
-  warningFrom2To10Words: "请输入2-10个字: ",
-  warningRequired: "必需的: ",
-  warningInvalidChar: "无效字符: ",
-  warningMaxCount: "已达到最大计数: ",
-  warningAlreadyWritten: "单词已经输入: ",
   slider: {
     zero: "完全没有",
     full: "完全"

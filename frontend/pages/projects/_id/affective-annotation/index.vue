@@ -201,7 +201,6 @@ import EmotionsInput from '@/components/tasks/affectiveAnnotation/emotions/Emoti
 import OthersInput from '@/components/tasks/affectiveAnnotation/others/OthersInput.vue'
 import OffensiveInput from '@/components/tasks/affectiveAnnotation/offensive/OffensiveInput.vue'
 import HumorInput from '@/components/tasks/affectiveAnnotation/humor/HumorInput.vue'
-import SummaryInput from '@/components/tasks/affectiveAnnotation/summary/SummaryInput.vue'
 
 
 export default {
@@ -284,30 +283,10 @@ export default {
   },
 
   async fetch() {
-    const query = this.$route.query.q || ''
-    const isChecked = this.$route.query.isChecked || ''
-    this.docs = await this.$services.example.fetchOne(
-      this.projectId,
-      this.$route.query.page,
-      query,
-      isChecked
-    )
-    const doc = this.docs.items[0]
-    
-    this.currentArticleId = doc.articleId
-    this.currentWholeArticle = await this.$services.example.fetchByLimit(
-      this.projectId,
-      this.docs.count.toString(),
-      this.currentArticleId,
-      isChecked
-    )
-    this.currentWholeArticle.items = _.orderBy(this.currentWholeArticle.items, 'order')
-    const allArticleIds = await this.$services.example.fetchArticleIds(
-      this.projectId,
-      this.docs.count.toString()
-    )
-    this.articleTotal = allArticleIds.length
-    this.articleIndex = allArticleIds.indexOf(this.currentArticleId) + 1
+    await this.setDoc()
+    this.$nextTick(()=> {
+      this.setArticleData()
+    })
   },
 
   computed: {
@@ -393,6 +372,36 @@ export default {
   },
 
   methods: {
+    async setDoc() {
+      const query = this.$route.query.q || ''
+      const isChecked = this.$route.query.isChecked || ''
+      this.docs = await this.$services.example.fetchOne(
+        this.projectId,
+        this.$route.query.page,
+        query,
+        isChecked
+      )
+    },
+    async setArticleData() {
+      if(this.docs.items && this.docs.items.length) {
+        const doc = this.docs.items[0]
+        const isChecked = this.$route.query.isChecked || ''
+        this.currentArticleId = doc.articleId
+        this.currentWholeArticle = await this.$services.example.fetchByLimit(
+          this.projectId,
+          this.docs.count.toString(),
+          this.currentArticleId,
+          isChecked
+        )
+        this.currentWholeArticle.items = _.orderBy(this.currentWholeArticle.items, 'order')
+        const allArticleIds = await this.$services.example.fetchArticleIds(
+          this.projectId,
+          this.docs.count.toString()
+        )
+        this.articleTotal = allArticleIds.length
+        this.articleIndex = allArticleIds.indexOf(this.currentArticleId) + 1
+      }
+    },
     async maybeFetchSpanTypes(spans) {
       const labelIds = new Set(this.spanTypes.map((label) => label.id))
       if (spans.some((item) => !labelIds.has(item.label))) {
