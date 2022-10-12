@@ -10,7 +10,6 @@ export class AffectiveScaleApplicationService extends AnnotationApplicationServi
 
   public async create(projectId: string, docId: number, labelId: number, scale: number): Promise<void> {
     const item = new ScaleItem(0, labelId, scale, 0)
-    console.log(item)
     await this.repository.create(projectId, docId, item)
   }
 }
