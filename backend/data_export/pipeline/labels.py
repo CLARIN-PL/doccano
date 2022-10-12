@@ -14,7 +14,8 @@ from data_export.models import (
     ExportedRelation,
     ExportedSpan,
     ExportedText,
-    ExportedScale
+    ExportedScale,
+    ExportedTextQuestion
 )
 
 
@@ -62,4 +63,10 @@ class Texts(Labels):
 class Scales(Labels):
     label_class = ExportedScale
     column = "scale"
+    fields = ("example", "label")
+
+
+class TextQuestions(Labels):
+    label_class = ExportedTextQuestion
+    column = "label"
     fields = ("example",)

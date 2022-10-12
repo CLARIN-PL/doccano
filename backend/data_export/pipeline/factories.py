@@ -12,8 +12,9 @@ from .formatters import (
     ListedCategoryFormatter,
     RenameFormatter,
     TupledSpanFormatter,
+    TupledTextFormatter
 )
-from .labels import Categories, Labels, Relations, Spans, Texts
+from .labels import Categories, Labels, Relations, Spans, Texts, Scales, TextQuestions
 from data_export.models import DATA, ExportedExample
 from projects.models import (
     DOCUMENT_CLASSIFICATION,
@@ -42,6 +43,8 @@ def create_writer(file_format: str) -> writers.Writer:
 
 def create_formatter(project: Project, file_format: str) -> List[Formatter]:
     use_relation = getattr(project, "use_relation", False)
+    is_summary_mode = getattr(project, "is_summary_mode", False)
+    is_emotions_mode = getattr(project, "is_emotions_mode", False)
     mapper_text_classification = {DATA: "text", Categories.column: "label"}
     mapper_sequence_labeling = {DATA: "text", Spans.column: "label"}
     mapper_seq2seq = {DATA: "text", Texts.column: "label"}
@@ -50,7 +53,7 @@ def create_formatter(project: Project, file_format: str) -> List[Formatter]:
     mapper_intent_detection = {DATA: "text", Categories.column: "cats"}
     mapper_relation_extraction = {DATA: "text"}
     mapper_article_annotation = {DATA: "text", Categories.column: "cats"}
-    mapper_affective_annotation = {DATA: "text", Categories.column: "cats"}
+    mapper_affective_annotation = {DATA: "text"}
     mapping: Dict[str, Dict[str, List[Formatter]]] = {
         DOCUMENT_CLASSIFICATION: {
             CSV.name: [
@@ -125,29 +128,35 @@ def create_formatter(project: Project, file_format: str) -> List[Formatter]:
         },
         AFFECTIVE_ANNOTATION: {
             JSON.name: [
-                ListedCategoryFormatter(Categories.column),
-                DictFormatter(Spans.column),
-                DictFormatter(Relations.column),
+                TupledTextFormatter(TextQuestions.column),
                 RenameFormatter(**mapper_affective_annotation),
             ]
-            if use_relation
+            if is_summary_mode
             else [
-                ListedCategoryFormatter(Categories.column),
-                TupledSpanFormatter(Spans.column),
+                TupledSpanFormatter(Scales.column),
+                RenameFormatter(**mapper_affective_annotation),
+            ]
+            if is_emotions_mode
+            else [
+                TupledSpanFormatter(Scales.column),
+                TupledTextFormatter(TextQuestions.column),
                 RenameFormatter(**mapper_affective_annotation)
             ],
             JSONL.name: [
-                ListedCategoryFormatter(Categories.column),
-                DictFormatter(Spans.column),
-                DictFormatter(Relations.column),
+                TupledTextFormatter(TextQuestions.column),
                 RenameFormatter(**mapper_affective_annotation),
             ]
-            if use_relation
+            if is_summary_mode
             else [
-                ListedCategoryFormatter(Categories.column),
-                TupledSpanFormatter(Spans.column),
+                TupledSpanFormatter(Scales.column),
+                RenameFormatter(**mapper_affective_annotation),
+            ]
+            if is_emotions_mode
+            else [
+                TupledSpanFormatter(Scales.column),
+                TupledTextFormatter(TextQuestions.column),
                 RenameFormatter(**mapper_affective_annotation)
-            ],            
+            ],           
         },
     }
     return mapping[project.project_type][file_format]
@@ -155,6 +164,8 @@ def create_formatter(project: Project, file_format: str) -> List[Formatter]:
 
 def select_label_collection(project: Project) -> List[Type[Labels]]:
     use_relation = getattr(project, "use_relation", False)
+    is_summary_mode = getattr(project, "is_summary_mode", False)
+    is_emotions_mode = getattr(project, "is_emotions_mode", False)
     mapping: Dict[str, List[Type[Labels]]] = {
         DOCUMENT_CLASSIFICATION: [Categories],
         SEQUENCE_LABELING: [Spans, Relations] if use_relation else [Spans],
@@ -163,7 +174,7 @@ def select_label_collection(project: Project) -> List[Type[Labels]]:
         SPEECH2TEXT: [Texts],
         INTENT_DETECTION_AND_SLOT_FILLING: [Categories, Spans],
         ARTICLE_ANNOTATION: [Categories, Spans, Relations] if use_relation else [Categories, Spans],
-        AFFECTIVE_ANNOTATION: [Categories, Spans, Relations] if use_relation else [Categories, Spans],
+        AFFECTIVE_ANNOTATION: [TextQuestions] if is_summary_mode else [Scales] if is_emotions_mode else [Scales, TextQuestions],
     }
     return mapping[project.project_type]
 
