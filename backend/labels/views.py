@@ -1,3 +1,4 @@
+from cProfile import label
 from functools import partial
 from typing import Type
 
@@ -120,9 +121,11 @@ class ScaleListAPI(BaseListAPI):
 
     def create(self, request, *args, **kwargs):
         if self.project.is_affective_annotation_project:
-            self.get_queryset().delete()
-        return super().create(request, *args, **kwargs)
-
+            queryset = Scale.objects.filter(example=self.kwargs["example_id"], label=self.kwargs["label_id"])
+            if not self.project.collaborative_annotation:
+                queryset = queryset.filter(user=self.request.user)
+            queryset.delete()
+        return super().create(request, args, kwargs)
 
 class ScaleDetailAPI(BaseDetailAPI):
     queryset = Scale.objects.all()
