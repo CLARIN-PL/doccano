@@ -420,21 +420,27 @@ export default {
       )
 
       const scaleTypesIdsTexts = this.scaleTypesIdsTexts
-      const affectiveEmotionsDict = {
+      const affectiveScalesDict = {
         "Pozytywne": "positive", "Negatywne": "negative", "Radość": "joy", "Zachwyt": "admiration",
         "Inspiruje": "inspiration", "Spokój": "peace", "Zaskoczenie": "surprise", "Współczucie": "sympathy",
-        "Strach": "fear", "Smutek": "sadness", "Wstręt": "disgust", "Złość": "anger"
+        "Strach": "fear", "Smutek": "sadness", "Wstręt": "disgust", "Złość": "anger",
+        "Ironiczny": "ironic", "Żenujący": "embarrassing", "Wulgarny": "vulgar", "Polityczny": "politic",
+        "Interesujący": "interesting", "Zrozumiały": "comprehensible",
+        "Zgadzam się z tekstem": "agreeable",
+        "Wierzę w tę informację": "believable",
+        "Czuję sympatię do autora": "sympathyToAuthor",
+        "Potrzebuję więcej informacji, aby ocenić ten tekst": "needMoreInfo"
+        // add more scaleType-variable mapping below
       }
       const affectiveEmotions = {}
       const affectiveOthers = {}
       affectiveScales.forEach(function(item) {
-        const category = affectiveEmotionsDict[scaleTypesIdsTexts[item.label]]
+        const category = affectiveScalesDict[scaleTypesIdsTexts[item.label]]
         affectiveEmotions[category] = item.scale
         affectiveOthers[category] = item.scale
         // add more scale data below
       })
       this.affectiveEmotions = affectiveEmotions
-      console.log(this.affectiveEmotions)
       this.affectiveOthers = affectiveOthers
     },
     async deleteSpan(id) {
@@ -587,7 +593,6 @@ export default {
       }
       const label = affectiveEmotionsDict[category]
       const labelId = this.scaleTypesTextsIds[label]
-      console.log("labelId", labelId)
       await this.$services.affectiveScale.create(
         this.projectId,
         this.doc.id,
@@ -597,7 +602,16 @@ export default {
       await this.list(this.doc.id)
     },
     async othersChangeHandler(value, category) {
-      const labelId = this.scaleTypesTextsIds[category]
+      const affectiveOthersDict = {
+        "Ironiczny": "ironic", "Żenujący": "embarrassing", "Wulgarny": "vulgar", "Polityczny": "politic",
+        "Interesujący": "interesting", "Zrozumiały": "comprehensible",
+        "Zgadzam się z tekstem": "agreeable",
+        "Wierzę w tę informację": "believable",
+        "Czuję sympatię do autora": "sympathyToAuthor",
+        "Potrzebuję więcej informacji, aby ocenić ten tekst": "needMoreInfo"
+      }
+      const label = affectiveOthersDict[category]
+      const labelId = this.scaleTypesTextsIds[label]
       await this.$services.affectiveScale.create(
         this.projectId,
         this.doc.id,
