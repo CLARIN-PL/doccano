@@ -118,6 +118,11 @@ class ScaleListAPI(BaseListAPI):
     label_class = Scale
     serializer_class = ScaleSerializer
 
+    def create(self, request, *args, **kwargs):
+        if self.project.is_affective_annotation_project:
+            self.get_queryset().delete()
+        return super().create(request, *args, **kwargs)
+
 
 class ScaleDetailAPI(BaseDetailAPI):
     queryset = Scale.objects.all()
