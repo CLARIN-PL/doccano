@@ -630,12 +630,13 @@ export default {
     },
     async othersChangeHandler(value, category) {
       const affectiveOthersDict = {
-        "Ironiczny": "ironic", "Żenujący": "embarrassing", "Wulgarny": "vulgar", "Polityczny": "politic",
-        "Interesujący": "interesting", "Zrozumiały": "comprehensible",
-        "Zgadzam się z tekstem": "agreeable",
-        "Wierzę w tę informację": "believable",
-        "Czuję sympatię do autora": "sympathyToAuthor",
-        "Potrzebuję więcej informacji, aby ocenić ten tekst": "needMoreInfo"
+        "ironic": "Ironiczny", "embarrassing": "Żenujący",
+        "vulgar": "Wulgarny", "politic": "Polityczny",
+        "interesting": "Interesujący", "comprehensible": "Zrozumiały",
+        "agreeable": "Zgadzam się z tekstem",
+        "believable": "Wierzę w tę informację",
+        "sympathyToAuthor": "Czuję sympatię do autora",
+        "needMoreInfo": "Potrzebuję więcej informacji, aby ocenić ten tekst"
       }
       const label = affectiveOthersDict[category]
       const labelId = this.scaleTypesTextsIds[label]

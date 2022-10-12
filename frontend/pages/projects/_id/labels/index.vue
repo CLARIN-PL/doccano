@@ -13,8 +13,8 @@
       <template v-else-if="isAffectiveAnnotation">
         <v-tab class="text-capitalize">Category</v-tab>
         <v-tab class="text-capitalize">Span</v-tab>
-        <v-tab v-if="project.useRelation" class="text-capitalize">Relation</v-tab>
         <v-tab class="text-capitalize">Scale</v-tab>
+        <v-tab v-if="project.useRelation" class="text-capitalize">Relation</v-tab>
       </template>
       <template v-else>
         <v-tab class="text-capitalize">Span</v-tab>
@@ -119,7 +119,7 @@ export default Vue.extend({
         } else if (this.isArticleAnnotation) {
           return ['category', 'span', 'relation'][this.tab!]
         } else if (this.isAffectiveAnnotation) {
-          return ['category', 'span', 'relation', 'scale'][this.tab!]
+          return ['category', 'span', 'scale', 'relation'][this.tab!]
         } else {
           return ['span', 'relation'][this.tab!]
         }
@@ -147,8 +147,8 @@ export default Vue.extend({
           return [
             this.$services.categoryType,
             this.$services.spanType,
-            this.$services.relationType,
-            this.$services.scaleType
+            this.$services.scaleType,
+            this.$services.relationType
           ][this.tab!]
         } else {
           return [this.$services.spanType, this.$services.relationType][this.tab!]
