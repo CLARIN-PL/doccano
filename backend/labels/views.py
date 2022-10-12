@@ -121,7 +121,8 @@ class ScaleListAPI(BaseListAPI):
 
     def create(self, request, *args, **kwargs):
         if self.project.is_affective_annotation_project:
-            queryset = Scale.objects.filter(example=self.kwargs["example_id"])
+            queryset = Scale.objects.filter(example=self.kwargs["example_id"], label=self.kwargs['label_id'])
+            print(queryset)
             if not self.project.collaborative_annotation:
                 queryset = queryset.filter(user=self.request.user)
             queryset.delete()
