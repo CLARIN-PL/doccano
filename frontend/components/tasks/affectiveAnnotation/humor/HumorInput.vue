@@ -71,7 +71,7 @@
 
                                     <textfield-modal
                                         v-if="substatement.isChecked"
-                                        :value="substatement.reason"
+                                        v-model="substatement.reason"
                                         :disabled="!hasFilledTopQuestions"
                                         :question="$t(`annotation.humor.subquestion3.substatement${(idx+1)}Question`)"
                                         :full-question="`
@@ -118,6 +118,16 @@ import TextfieldModal from '~/components/tasks/affectiveAnnotation/inputs/Textfi
 export default Vue.extend({
   components: {
     TextfieldModal
+  },
+  props: {
+    project: {
+        type: Object,
+        default: () => {}
+    },
+    doc: {
+        type: Object,
+        default: () => {}
+    }
   },
     data() {
         return {

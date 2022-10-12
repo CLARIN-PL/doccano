@@ -65,7 +65,32 @@
                     @add="addCategory"
                     @remove="removeCategory"
                   />
-                  <summary-input
+              </v-card-title>
+              <v-divider />
+              <div class="annotation-text pa-4">
+                <entity-editor
+                  :dark="$vuetify.theme.dark"
+                  :rtl="isRTL"
+                  :text="doc.text"
+                  :entities="spans"
+                  :entity-labels="spanTypes"
+                  :relations="relations"
+                  :relation-labels="relationTypes"
+                  :allow-overlapping="project.allowOverlapping"
+                  :grapheme-mode="project.graphemeMode"
+                  :selected-label="selectedLabel"
+                  :relation-mode="relationMode"
+                  @addEntity="addSpan"
+                  @addRelation="addRelation"
+                  @click:entity="updateSpan"
+                  @click:relation="updateRelation"
+                  @contextmenu:entity="deleteSpan"
+                  @contextmenu:relation="deleteRelation"
+                />
+              </div>
+              <v-divider />
+              <div class="pa-4">
+                <summary-input
                     v-if="project.isSummaryMode"
                     :text="doc.text"
                     :tags="affectiveSummaryTags"
@@ -115,31 +140,9 @@
                     @nullify:wishToAuthor="nullifyWishToAuthor"
                     @restore:wishToAuthor="restoreWishToAuthor"
                   />
-              </v-card-title>
-              <v-divider />
-              <div class="annotation-text pa-4">
-                <entity-editor
-                  :dark="$vuetify.theme.dark"
-                  :rtl="isRTL"
-                  :text="doc.text"
-                  :entities="spans"
-                  :entity-labels="spanTypes"
-                  :relations="relations"
-                  :relation-labels="relationTypes"
-                  :allow-overlapping="project.allowOverlapping"
-                  :grapheme-mode="project.graphemeMode"
-                  :selected-label="selectedLabel"
-                  :relation-mode="relationMode"
-                  @addEntity="addSpan"
-                  @addRelation="addRelation"
-                  @click:entity="updateSpan"
-                  @click:relation="updateRelation"
-                  @contextmenu:entity="deleteSpan"
-                  @contextmenu:relation="deleteRelation"
-                />
               </div>
+              <component :is="affectiveAnnotationComponent" v-if="affectiveAnnotationComponent" />
             </v-card>
-            <component :is="affectiveAnnotationComponent" v-if="affectiveAnnotationComponent" />
           </v-col>
         </v-row>
       </div>
@@ -314,15 +317,12 @@ export default {
     },
 
     affectiveAnnotationComponent() {
-      const modes = ['isHumorMode', 'isEmotionsMode', 'isSummaryMode', 'isOffensiveMode', 'isOthersMode']
+      const modes = ['isHumorMode',  'isOffensiveMode']
       const modeComponents = {
         isHumorMode: 'HumorInput',
-        isSummaryMode: 'SummaryInput',
         isOffensiveMode: 'OffensiveInput',
-        isOthersMode: 'OthersInput',
-        isEmotionsMode: 'EmotionsInput'
       }
-      let activeMode = 'isHumorMode'
+      let activeMode = ''
       modes.forEach((mode)=> {
         activeMode = this.project[mode] ? mode : activeMode
       })

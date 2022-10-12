@@ -15,7 +15,7 @@
           dense
           outlined
           readonly
-          :value="answer"
+          :value="value"
           :rules="rulesTextfield"
           hide-details="auto"
         />
@@ -45,7 +45,7 @@
                     <v-btn 
                     primary 
                     height="40"
-                    :disabled="!!answer"
+                    :disabled="!value"
                     @click="submitAnswer">
                         Submit
                     </v-btn>
@@ -73,7 +73,7 @@ export default {
       type: String,
       default: ""
     },
-    answer: {
+    value: {
       type: String,
       default: ""
     },
@@ -94,17 +94,17 @@ export default {
   computed: {
     text: {
         get() {
-            return this.answer
+            return this.value
         },
         set(val) {
-            this.$emit('value', val)
+            this.$emit('input', val)
         }
     }
   },
 
   methods: {
     submitAnswer() {
-        // do something
+        this.showDialog = false
     },
     textfieldClickHandler() {
       if (this.enableTextfield) {
