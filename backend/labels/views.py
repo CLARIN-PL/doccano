@@ -1,4 +1,3 @@
-from cProfile import label
 from functools import partial
 from typing import Type
 
