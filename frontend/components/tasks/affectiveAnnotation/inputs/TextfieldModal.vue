@@ -43,11 +43,14 @@
                 @keyup.enter="submitAnswer" >
                 <template #append-outer>
                     <v-btn 
-                    primary 
-                    height="40"
+                    large 
+                    primary
+                    color="primary"
+                    height="55px"
+                    class="ma-0"
                     :disabled="!value"
                     @click="submitAnswer">
-                        Submit
+                      <v-icon>{{ mdiSend }}</v-icon>
                     </v-btn>
                 </template>
             </v-text-field>
@@ -58,6 +61,7 @@
 </template>
 
 <script>
+import {  mdiSend } from '@mdi/js'
 
 export default {
   props: {
@@ -85,6 +89,7 @@ export default {
 
   data() {
     return {
+      mdiSend,
       enableTextfield: true,
       showDialog: false,
       dialogErrorMessage: "",
@@ -145,6 +150,12 @@ export default {
         line-height: 0.95;
       }
     }
+
+    &__textfield {
+      .v-input {
+        font-size: .8rem;
+      }
+    }
   }
   
   .widget-dialog {
@@ -157,10 +168,16 @@ export default {
     &__text {
       font-size: .7rem;
       line-height: 0.85;
+
+      .v-input__append-outer {
+        margin-top: 0;
+      }
     }
 
     &__warning {
       color: red;
     }
+    
+
   }
   </style>

@@ -103,7 +103,7 @@
                     @add:impression="addImpression"
                   />
                   <emotions-input
-                    v-if="project.isEmotionsMode"
+                    v-else-if="project.isEmotionsMode"
                     :general-positivity="affectiveEmotions.positive"
                     :general-negativity="affectiveEmotions.negative"
                     :joy="affectiveEmotions.joy"
@@ -119,7 +119,7 @@
                     @change="emotionsChangeHandler"
                   />
                   <others-input
-                    v-if="project.isOthersMode"
+                    v-else-if="project.isOthersMode"
                     :ironic="affectiveOthers.ironic"
                     :embarrassing="affectiveOthers.embarrassing"
                     :vulgar="affectiveOthers.vulgar"
@@ -140,8 +140,13 @@
                     @nullify:wishToAuthor="nullifyWishToAuthor"
                     @restore:wishToAuthor="restoreWishToAuthor"
                   />
+                  <offensive-input
+                    v-else-if="project.isOffensiveMode"
+                    v-model="affectiveTmp" />
+                  <humor-input
+                    v-else-if="project.isHumorMode"
+                    v-model="affectiveTmp" />
               </div>
-              <component :is="affectiveAnnotationComponent" v-if="affectiveAnnotationComponent" v-model="affectiveTmp" />
             </v-card>
           </v-col>
         </v-row>
@@ -315,19 +320,6 @@ export default {
       } else {
         return this.docs.items[0]
       }
-    },
-
-    affectiveAnnotationComponent() {
-      const modes = ['isHumorMode',  'isOffensiveMode']
-      const modeComponents = {
-        isHumorMode: 'HumorInput',
-        isOffensiveMode: 'OffensiveInput',
-      }
-      let activeMode = ''
-      modes.forEach((mode)=> {
-        activeMode = this.project[mode] ? mode : activeMode
-      })
-      return activeMode ? modeComponents[activeMode] : ''
     },
 
     selectedLabel() {
