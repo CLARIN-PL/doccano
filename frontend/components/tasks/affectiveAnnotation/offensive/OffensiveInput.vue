@@ -216,11 +216,34 @@ export default Vue.extend({
     watch: {
         formData: {
             deep: true,
-            handler(val) {
-                this.$emit('input', { mode: 'offensive', data: val })
+            handler() {
+                const data = this.getMappedFormData()
+                this.$emit('input', { mode: 'humor', data })
             }
         }
-    }
+    },
+    methods: {
+        getMappedFormData() : any {
+            const subquestion3 : any = this.formData.subquestion3.map((subquestion, index)=> {
+                const substatement = this.$t(`annotation.humor.subquestion3.substatement${index+1}`)
+                const substatementQuestion = this.$t(`annotation.humor.subquestion3.substatement${index+1}Question`)
+                const question = `${substatement} - ${substatementQuestion}`
+                return [(this.hasFilledTopQuestions && subquestion.isChecked ? subquestion.reason : ''), question]
+            })
+            const subquestion4 : any = this.formData.subquestion3.map((subquestion, index)=> {
+                const substatement = this.$t(`annotation.humor.subquestion4.substatement${index+1}`)
+                return [this.hasFilledTopQuestions && subquestion.isChecked, substatement]
+            })
+            const data = {
+                scale: [
+                    [this.formData.subquestion1, this.$t('annotation.humor.subquestion1')],
+                    [this.formData.subquestion2, this.$t('annotation.humor.subquestion2')],
+                ],
+                label: subquestion3.concat(subquestion4)
+            }
+            return data
+        }
+    },
 })
 </script>
 <style lang="scss">

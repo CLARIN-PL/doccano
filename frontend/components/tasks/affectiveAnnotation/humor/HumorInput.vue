@@ -236,13 +236,13 @@ export default Vue.extend({
     },
     methods: {
         getMappedFormData() : any {
-            const subquestion3 = this.formData.subquestion3.map((subquestion, index)=> {
+            const subquestion3 : any = this.formData.subquestion3.map((subquestion, index)=> {
                 const substatement = this.$t(`annotation.humor.subquestion3.substatement${index+1}`)
                 const substatementQuestion = this.$t(`annotation.humor.subquestion3.substatement${index+1}Question`)
                 const question = `${substatement} - ${substatementQuestion}`
                 return [(this.hasFilledTopQuestions && subquestion.isChecked ? subquestion.reason : ''), question]
             })
-            const subquestion4 = this.formData.subquestion3.map((subquestion, index)=> {
+            const subquestion4 : any = this.formData.subquestion3.map((subquestion, index)=> {
                 const substatement = this.$t(`annotation.humor.subquestion4.substatement${index+1}`)
                 return [this.hasFilledTopQuestions && subquestion.isChecked, substatement]
             })
