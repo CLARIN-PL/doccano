@@ -15,6 +15,7 @@
                             </span>
                                 <v-slider 
                                     v-model="formData.subquestion1"
+                                    @change="emitChange('update:scale', 'subquestion1')"
                                     class="slider"
                                     :class="{'--has-filled': formData.subquestion1 }"
                                     ticks="always"
@@ -113,6 +114,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import polishAnnotation from '@/i18n/pl/projects/annotation.js'
 import TextfieldModal from '~/components/tasks/affectiveAnnotation/inputs/TextfieldModal.vue'
 
 export default Vue.extend({
@@ -131,6 +133,7 @@ export default Vue.extend({
   },
     data() {
         return {
+            polishAnnotation,
             rules: {
                 required: (value : any) => !!value || this.$i18n.t('rules.required'),
             },
@@ -225,37 +228,15 @@ export default Vue.extend({
                 !!this.formData.subquestion2; 
         }
     },
-    watch: {
-        formData: {
-            deep: true,
-            handler() {
-                const data = this.getMappedFormData()
-                this.$emit('input', { mode: 'humor', data })
-            }
-        }
-    },
     methods: {
-        getMappedFormData() : any {
-            const subquestion3 : any = this.formData.subquestion3.map((subquestion, index)=> {
-                const substatement = this.$t(`annotation.humor.subquestion3.substatement${index+1}`)
-                const substatementQuestion = this.$t(`annotation.humor.subquestion3.substatement${index+1}Question`)
-                const question = `${substatement} - ${substatementQuestion}`
-                return [(this.hasFilledTopQuestions && subquestion.isChecked ? subquestion.reason : ''), question]
-            })
-            const subquestion4 : any = this.formData.subquestion3.map((subquestion, index)=> {
-                const substatement = this.$t(`annotation.humor.subquestion4.substatement${index+1}`)
-                return [this.hasFilledTopQuestions && subquestion.isChecked, substatement]
-            })
-            const data = {
-                scale: [
-                    [this.formData.subquestion1, this.$t('annotation.humor.subquestion1')],
-                    [this.formData.subquestion2, this.$t('annotation.humor.subquestion2')],
-                ],
-                label: subquestion3.concat(subquestion4)
+        emitChange(eventName: string, formDataKey: string) {
+            const value = this.formData[formDataKey]
+            const key = polishAnnotation.humor[formDataKey]
+            if(value && key) {
+                this.$emit(eventName, key, value)
             }
-            return data
         }
-    },
+    }
 })
 </script>
 <style lang="scss">

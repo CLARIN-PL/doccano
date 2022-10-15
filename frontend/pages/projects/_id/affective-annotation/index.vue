@@ -91,6 +91,7 @@
               <v-divider />
               <div v-if="isScaleImported" class="pa-4">
                 <summary-input
+<<<<<<< HEAD
                   v-if="project.isSummaryMode"
                   :text="doc.text"
                   :tags="affectiveSummaryTags"
@@ -146,6 +147,69 @@
                 <humor-input
                   v-else-if="project.isHumorMode"
                   v-model="affectiveTmp" />
+=======
+                    v-if="project.isSummaryMode"
+                    :text="doc.text"
+                    :tags="affectiveSummaryTags"
+                    :impressions="affectiveSummaryImpressions"
+                    @remove:tag="removeTag"
+                    @update:tag="updateTag"
+                    @add:tag="addTag"
+                    @remove:impression="removeImpression"
+                    @update:impression="updateImpression"
+                    @add:impression="addImpression"
+                  />
+                  <emotions-input
+                    v-if="project.isEmotionsMode"
+                    :general-positivity="affectiveScalesValues.positive"
+                    :general-negativity="affectiveScalesValues.negative"
+                    :joy="affectiveScalesValues.joy"
+                    :admiration="affectiveScalesValues.admiration"
+                    :inspiration="affectiveScalesValues.inspiration"
+                    :peace="affectiveScalesValues.peace"
+                    :surprise="affectiveScalesValues.surprise"
+                    :sympathy="affectiveScalesValues.sympathy"
+                    :fear="affectiveScalesValues.fear"
+                    :sadness="affectiveScalesValues.sadness"
+                    :disgust="affectiveScalesValues.disgust"
+                    :anger="affectiveScalesValues.anger"
+                    @change="emotionsChangeHandler"
+                  />
+                  <others-input
+                    v-if="project.isOthersMode"
+                    :ironic="affectiveScalesValues.ironic"
+                    :embarrassing="affectiveScalesValues.embarrassing"
+                    :vulgar="affectiveScalesValues.vulgar"
+                    :politic="affectiveScalesValues.politic"
+                    :interesting="affectiveScalesValues.interesting"
+                    :comprehensible="affectiveScalesValues.comprehensible"
+                    :agreeable="affectiveScalesValues.agreeable"
+                    :believable="affectiveScalesValues.believable"
+                    :sympathy-to-author="affectiveScalesValues.sympathyToAuthor"
+                    :need-more-info="affectiveScalesValues.needMoreInfo"
+                    :wish-to-author="affectiveOthersWishToAuthor"
+                    @change="othersChangeHandler"
+                    @nullifyCategoryValue="nullifyOthersValueHandler"
+                    @restoreCategoryValue="restoreOthersValueHandler"
+                    @remove:wishToAuthor="removeWishToAuthor"
+                    @update:wishToAuthor="updateWishToAuthor"
+                    @add:wishToAuthor="addWishToAuthor"
+                    @nullify:wishToAuthor="nullifyWishToAuthor"
+                    @restore:wishToAuthor="restoreWishToAuthor"
+                  />
+                  <offensive-input
+                    v-else-if="project.isOffensiveMode"
+                    @update:scale="updateScale"
+                    @add:label="addLabel"
+                    @update:label="updateLabel"
+                    @remove:label="removeLabel" />
+                  <humor-input
+                    v-else-if="project.isHumorMode"
+                    @update:scale="updateScale"
+                    @add:label="addLabel"
+                    @update:label="updateLabel"
+                    @remove:label="removeLabel"  />
+>>>>>>> 29be3208 (feat: api (in progress))
               </div>
             </v-card>
           </v-col>
@@ -342,7 +406,7 @@ export default {
       if (val) {
         this.list(this.doc.id)
       }
-    }
+    },
   },
 
   async created() {
@@ -663,7 +727,19 @@ export default {
         await this.addWishToAuthor(text)
         await this.list(this.doc.id)
       }
-    }
+    },
+    async updateScale(key, value) {
+      await this.$services.affectiveScale.create(
+        this.projectId,
+        this.doc.id,
+        key,
+        value
+      )
+      await this.list(this.doc.id)
+    },
+    addLabel() {},
+    updateLabel() {},
+    removeLabel() {},
   }
 }
 </script>
