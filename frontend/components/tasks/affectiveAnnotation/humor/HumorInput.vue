@@ -118,7 +118,7 @@
                 </ol>
             </v-col>
             <v-col v-else>
-                No scale labels found. Please contact the administrator.
+                {{ $t('annotation.noScaleLabels')}}
             </v-col>
         </v-row>
     </v-container>

@@ -164,5 +164,6 @@ export default {
       substatement11: " Contraste ",
       substatement12: "Présente les caractéristiques d'une blague"
     }
-  }
+  },
+  noScaleLabels : "Aucune étiquette d'échelle n'a été trouvée. Veuillez contacter l'administrateur."
 }

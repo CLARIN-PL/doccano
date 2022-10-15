@@ -118,7 +118,7 @@
                 </ol>
             </v-col>
             <v-col v-else>
-                No scale labels found. Please contact the administrator.
+                {{ $t('annotation.noScaleLabels')}}
             </v-col>
         </v-row>
     </v-container>
@@ -281,7 +281,7 @@ export default Vue.extend({
             deep: true,
             handler(val) {
                 val.forEach((textLabel : any) => {
-                    const substatementIndex = textLabel.substatementKey.split('.substatement')[1]
+                    const substatementIndex = textLabel.substatementKey.split('.substatement')[1] || 0
                     const subquestionIndex = textLabel.substatementKey.split(".")[0]
                     const formDataKey = `${subquestionIndex}[${parseInt(substatementIndex)-1}]`
                     const formData = _.get(this.formData, formDataKey)

@@ -165,5 +165,6 @@ export default {
       substatement11: "Kontrast",
       substatement12: "Ma charakter dowcipu, kawału, żartu"
     }
-  }
+  },
+  noScaleLabels: 'Nie znaleziono etykiet skali. Prosimy o kontakt z administratorem.'
 }

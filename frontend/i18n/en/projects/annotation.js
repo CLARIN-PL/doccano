@@ -165,5 +165,6 @@ export default {
       substatement11: "Contrast",
       substatement12: "Has characteristics of a joke"
     }
-  }
+  },
+  noScaleLabels: 'No scale labels found. Please contact the administrator.'
 }
