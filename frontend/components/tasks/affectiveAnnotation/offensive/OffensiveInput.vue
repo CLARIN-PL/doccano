@@ -1,7 +1,7 @@
 <template>
     <v-container class="offensive-input widget">
         <v-row >
-            <v-col>
+            <v-col v-if="scaleTypes.length">
                 <h3 class="widget__title">{{ $t('annotation.offensive.question')}}</h3>
                 <ol class="widget__questions">
                     <li class="widget-questions__item questions-item --visible">
@@ -20,8 +20,11 @@
                                     ticks="always"
                                     min="0" 
                                     max="10" 
+                                    :disabled="!scaleTypes.length"
                                     :tick-labels="zeroToTenLabels"
-                                    step="1"   />
+                                    step="1"   
+                                    @input="onScaleChange('subquestion1')"
+                                    />
                             <span class="slider-text --end">
                                 {{ $t('annotation.slider.full')}}
                             </span>
@@ -44,8 +47,11 @@
                                     ticks="always"
                                     min="0" 
                                     max="10" 
+                                    :disabled="!scaleTypes.length"
                                     :tick-labels="zeroToTenLabels"
-                                    step="1"  >
+                                    step="1"  
+                                    @input="onScaleChange('subquestion2')"
+                                    >
                                 </v-slider>
                             <span class="slider-text --end">
                                 {{ $t('annotation.slider.full')}}
@@ -67,11 +73,12 @@
                                         v-model="substatement.isChecked" 
                                         :disabled="!hasFilledTopQuestions"
                                         :label="$t(`annotation.offensive.subquestion3.substatement${(idx+1)}`)"
-                                        class="subquestions-item__checkbox" />
+                                        class="subquestions-item__checkbox"
+                                        @change="onLabelChange(substatement, `subquestion3`, idx)" />
 
                                     <textfield-modal
                                         v-if="substatement.isChecked"
-                                        v-model="substatement.reason"
+                                        v-model="substatement.answer"
                                         :disabled="!hasFilledTopQuestions"
                                         :question="$t(`annotation.offensive.subquestion3.substatement${(idx+1)}Question`)"
                                         :full-question="`
@@ -79,6 +86,7 @@
                                              (${$t(`annotation.offensive.subquestion3.substatement${(idx+1)}`)})`"
                                         :rules="[rules.required]"
                                         class="subquestions-item__textfield"
+                                        @submit="onLabelChange(substatement, `subquestion3`, idx)"
                                     />
                                 </li>
                             </ul>
@@ -100,6 +108,7 @@
                                             :disabled="!hasFilledTopQuestions"
                                             :label="$t(`annotation.offensive.subquestion4.substatement${(idx+1)}`)" 
                                             class="subquestions-item__checkbox"
+                                            @change="onLabelChange(substatement, `subquestion4`, idx)"
                                         />
                                     </p>
                                     </li>
@@ -108,11 +117,16 @@
                     </li>
                 </ol>
             </v-col>
+            <v-col v-else>
+                No scale labels found. Please contact the administrator.
+            </v-col>
         </v-row>
     </v-container>
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import _ from 'lodash'
+import polishAnnotation from '@/i18n/pl/projects/annotation.js'
 import TextfieldModal from '~/components/tasks/affectiveAnnotation/inputs/TextfieldModal.vue'
 
 export default Vue.extend({
@@ -127,10 +141,24 @@ export default Vue.extend({
     doc: {
         type: Object,
         default: () => {}
+    },
+    scales: {
+        type: Array,
+        default: () => []
+    },
+    scaleTypes: {
+        type: Array,
+        default: () => []
+    },
+    textLabels: {
+        type: Array,
+        default: () => []
     }
   },
     data() {
         return {
+            polishAnnotation,
+            isLoaded: false,
             rules: {
                 required: (value : any) => !!value || this.$i18n.t('rules.required'),
             },
@@ -140,39 +168,39 @@ export default Vue.extend({
                 subquestion3: [
                     {
                         isChecked: false,
-                        reason: ''
+                        answer: ''
                     },
                     {
                         isChecked: false,
-                        reason: ''
+                        answer: ''
                     },
                     {
                         isChecked: false,
-                        reason: ''
+                        answer: ''
                     },
                     {
                         isChecked: false,
-                        reason: ''
+                        answer: ''
                     },
                     {
                         isChecked: false,
-                        reason: ''
+                        answer: ''
                     },
                     {
                         isChecked: false,
-                        reason: ''
+                        answer: ''
                     },
                     {
                         isChecked: false,
-                        reason: ''
+                        answer: ''
                     },
                     {
                         isChecked: false,
-                        reason: ''
+                        answer: ''
                     },
                     {
                         isChecked: false,
-                        reason: ''
+                        answer: ''
                     }
                 ],
                 subquestion4: [
@@ -205,45 +233,102 @@ export default Vue.extend({
         }
     },
     computed: {
+        scaleValues() {
+            return this.scales.map((scale: any) => {
+                const scaleType = this.scaleTypes.find((scaleType: any) => scaleType.id === scale.label)
+                return {
+                    ...scale,
+                    ...(scaleType || {}),
+                    scaleTypeId: scale.label
+                }
+            })
+        },
+        textLabelValues() {
+            return this.textLabels.map((textLabel: any) => {
+                const substatements = textLabel.question.split('##')
+                const substatementQuestion = substatements.length > 1 ? substatements[1] : substatements[0]
+                const substatementKey = substatements.length > 1 ? substatements[0] : ''
+                return {
+                    ...textLabel,
+                    substatementQuestion,
+                    substatementKey
+                }
+            })
+        },
         zeroToTenLabels() : number[] {
             return Array.from(Array(11).keys())
         },
         hasFilledTopQuestions() :  boolean {
             return !!this.formData.subquestion1 || 
                 !!this.formData.subquestion2; 
-        }
+        },
     },
     watch: {
-        formData: {
+        scaleValues: {
             deep: true,
-            handler() {
-                const data = this.getMappedFormData()
-                this.$emit('input', { mode: 'humor', data })
+            handler(val) {
+                const keys = ['subquestion1', 'subquestion2']
+                keys.forEach((key)=> {
+                    const polishAnnotation : any = this.polishAnnotation.offensive[key]
+                    const scaleValue = val.find((scale)=> scale.text === polishAnnotation)
+                    if(scaleValue) {
+                        this.formData[key] = scaleValue.scale
+                    } 
+                })
+            }
+        },
+        textLabelValues: {
+            deep: true,
+            handler(val) {
+                val.forEach((textLabel : any) => {
+                    const substatementIndex = textLabel.substatementKey.split('.substatement')[1]
+                    const subquestionIndex = textLabel.substatementKey.split(".")[0]
+                    const formDataKey = `${subquestionIndex}[${parseInt(substatementIndex)-1}]`
+                    const formData = _.get(this.formData, formDataKey)
+                    if(formData) {
+                        _.set(this.formData, `${formDataKey}.isChecked`, !!textLabel.text)
+                        _.set(this.formData, `${formDataKey}.answer`, textLabel.text)
+                     }
+                })                
             }
         }
+    },
+    mounted() {
+        this.isLoaded = true;
     },
     methods: {
-        getMappedFormData() : any {
-            const subquestion3 : any = this.formData.subquestion3.map((subquestion, index)=> {
-                const substatement = this.$t(`annotation.humor.subquestion3.substatement${index+1}`)
-                const substatementQuestion = this.$t(`annotation.humor.subquestion3.substatement${index+1}Question`)
-                const question = `${substatement} - ${substatementQuestion}`
-                return [(subquestion.isChecked ? subquestion.reason : ''), question]
-            })
-            const subquestion4 : any = this.formData.subquestion3.map((subquestion, index)=> {
-                const substatement = this.$t(`annotation.humor.subquestion4.substatement${index+1}`)
-                return [subquestion.isChecked, substatement]
-            })
-            const data = {
-                scale: [
-                    [this.formData.subquestion1, this.$t('annotation.humor.subquestion1')],
-                    [this.formData.subquestion2, this.$t('annotation.humor.subquestion2')],
-                ],
-                label: this.hasFilledTopQuestions ? subquestion3.concat(subquestion4) : []
-            }
-            return data
+        onScaleChange: _.debounce(function (formDataKey: string) {
+            const value = this.formData[formDataKey] || 0
+            const labelQuestion = this.polishAnnotation.offensive[formDataKey]
+            const scaleLabel = this.scaleTypes.find((scaleType: any)=> scaleType.text === labelQuestion)
+            if(scaleLabel && this.isLoaded) {
+                this.$emit('update:scale', scaleLabel.id, value)
+            } 
+        }, 100),
+        onLabelChange(substatement: any, key: string, index: number) {
+            const formDataKey = `${key}[${index}]`
+            const labelQuestionKey = `${key}.substatement${index+1}`
+            const formData = _.get(this.formData, formDataKey)
+            const labelQuestion = _.get(this.polishAnnotation.offensive, labelQuestionKey)
+            const question = `${labelQuestionKey}##${labelQuestion}`
+
+            const textLabelValue = this.textLabelValues.find((textLabel : any) => textLabel.question === question)
+            let eventName = textLabelValue ? 'update:label' : 'add:label'
+            eventName = substatement.isChecked ? eventName : 'remove:label'
+            if(!_.isEmpty(formData) && labelQuestion) {
+                const answer = formData.answer === undefined ? `${labelQuestionKey}##1` : formData.answer
+                if(eventName === 'add:label' && answer) {
+                    this.$emit(eventName, question, answer)
+                } else if(eventName === 'update:label' && textLabelValue) {
+                    const substatementId = textLabelValue.id
+                    this.$emit(eventName, substatementId, formData.answer)
+                } else if(eventName === 'remove:label' && textLabelValue) {
+                    const substatementId = textLabelValue.id
+                    this.$emit(eventName, substatementId)
+                }
+            } 
         }
-    },
+    }
 })
 </script>
 <style lang="scss">

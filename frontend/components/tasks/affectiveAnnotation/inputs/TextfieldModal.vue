@@ -110,6 +110,7 @@ export default {
   methods: {
     submitAnswer() {
         this.showDialog = false
+        this.$emit("submit", this.text)
     },
     textfieldClickHandler() {
       if (this.enableTextfield) {
