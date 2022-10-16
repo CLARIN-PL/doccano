@@ -1,7 +1,7 @@
 import abc
 
 import pandas as pd
-
+import json
 
 class Writer(abc.ABC):
     extension = ""
@@ -42,3 +42,13 @@ class FastTextWriter(Writer):
     @staticmethod
     def write(file, dataset: pd.DataFrame):
         dataset.to_csv(file, index=False, encoding="utf-8", header=False)
+
+
+class JsonArticleWriter(Writer):
+    extension = "json"
+
+    @staticmethod
+    def write(file, dataset: pd.DataFrame):
+        dataset = dataset.groupby('article_id').apply(lambda x: x.drop('article_id',axis=1).to_json(orient='records')).reset_index(name='data')
+        dataset.data = dataset.data.apply(json.loads)
+        dataset.to_json(file, orient="records", force_ascii=False, lines=True)
