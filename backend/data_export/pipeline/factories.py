@@ -3,7 +3,7 @@ from typing import Dict, List, Type
 from django.db.models import QuerySet
 
 from . import writers
-from .catalog import CSV, JSON, JSONL, FastText
+from .catalog import CSV, JSON, JSONL, FastText, JSONArticle
 from .formatters import (
     DictFormatter,
     FastTextCategoryFormatter,
@@ -35,6 +35,7 @@ def create_writer(file_format: str) -> writers.Writer:
         JSON.name: writers.JsonWriter(),
         JSONL.name: writers.JsonlWriter(),
         FastText.name: writers.FastTextWriter(),
+        JSONArticle.name: writers.JsonArticleWriter(),
     }
     if file_format not in mapping:
         ValueError(f"Invalid format: {file_format}")
@@ -156,7 +157,22 @@ def create_formatter(project: Project, file_format: str) -> List[Formatter]:
                 TupledSpanFormatter(Scales.column),
                 TupledTextFormatter(TextQuestions.column),
                 RenameFormatter(**mapper_affective_annotation)
-            ],           
+            ],    
+            JSONArticle.name: [
+                TupledTextFormatter(TextQuestions.column),
+                RenameFormatter(**mapper_affective_annotation),
+            ]
+            if is_summary_mode
+            else [
+                TupledSpanFormatter(Scales.column),
+                RenameFormatter(**mapper_affective_annotation),
+            ]
+            if is_emotions_mode
+            else [
+                TupledSpanFormatter(Scales.column),
+                TupledTextFormatter(TextQuestions.column),
+                RenameFormatter(**mapper_affective_annotation)
+            ],
         },
     }
     return mapping[project.project_type][file_format]
