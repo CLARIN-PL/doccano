@@ -1,0 +1,86 @@
+[
+    {
+        "text":"Pozytywne",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "positive"
+    },
+    {
+        "text":"Negatywne",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "negative"
+    },
+    {
+        "text":"Radość",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "joy"
+    },
+    {
+        "text":"Zachwyt",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "admiration"
+    },
+    {
+        "text":"Inspiruje",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "inspiration"
+    },
+    {
+        "text":"Spokój",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "peace"
+    },
+    {
+        "text":"Zaskoczenie",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "surprise"
+    },
+    {
+        "text":"Współczucie",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "sympathy"
+    },
+    {
+        "text":"Strach",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "fear"
+    },
+    {
+        "text":"Smutek",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "sadness"
+    },
+    {
+        "text":"Wstręt",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "disgust"
+    },
+    {
+        "text":"Złość",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "anger"
+    }
+]
