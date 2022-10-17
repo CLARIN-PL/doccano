@@ -48,7 +48,7 @@
           </v-col>
           <v-col cols="7">
             <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
-              <v-card-title>
+              <v-card-title v-if="isScaleImported">
                   <label-group
                     v-if="labelOption === 0"
                     :labels="categoryTypes"
@@ -197,7 +197,9 @@ import EntityEditor from '@/components/tasks/sequenceLabeling/EntityEditor.vue'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
 import SummaryInput from '@/components/tasks/affectiveAnnotation/summary/SummaryInput.vue'
 import EmotionsInput from '@/components/tasks/affectiveAnnotation/emotions/EmotionsInput.vue'
+import EmotionsScales from '@/static/formats/affective_annotation/affective_emotions_scales.json'
 import OthersInput from '@/components/tasks/affectiveAnnotation/others/OthersInput.vue'
+import OthersScales from '@/static/formats/affective_annotation/affective_others_scales.json'
 
 export default {
   components: {
@@ -226,6 +228,7 @@ export default {
       mdiText,
       mdiFormatListBulleted,
       docs: [],
+      isScaleImported: true,
       scaleTypesIdsTexts: {},
       scaleTypesTextsIds: {},
       spans: [],
@@ -245,6 +248,7 @@ export default {
       articleIndex: 1,
       currentArticleId: "",
       currentWholeArticle: [],
+      affectiveScalesDict: {},
       affectiveScalesValues: {},
       affectiveTextlabelQuestions: {
         summaryTag: "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.",
@@ -354,6 +358,17 @@ export default {
     this.project = await this.$services.project.findById(this.projectId)
     this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
 
+    let affectiveScaleLabelsJSON = []
+    if (this.project.isEmotionsMode) {
+      affectiveScaleLabelsJSON = EmotionsScales
+    } else if (this.project.isOthersMode) {
+      affectiveScaleLabelsJSON = OthersScales
+    }
+    const affectiveScalesDict = {}
+    affectiveScaleLabelsJSON.forEach(function(item) {
+      affectiveScalesDict[item.text] = item.varname
+    })
+    this.affectiveScalesDict = affectiveScalesDict
     const scaleTypesRaw = await this.$services.scaleType.list(this.projectId)
     if (scaleTypesRaw.length > 0) {
       const scaleTypesIdsTexts = {}
@@ -364,8 +379,8 @@ export default {
       })
       this.scaleTypesIdsTexts = scaleTypesIdsTexts
       this.scaleTypesTextsIds = scaleTypesTextsIds
-    } else {
-      alert("No scale labels found. Please import scale labels first!")
+    } else if (!this.project.isSummaryMode) {
+      this.isScaleImported = false
     }
   },
 
@@ -388,8 +403,6 @@ export default {
       this.categories = await this.$services.textClassification.list(this.projectId, docId)
 
       const affectiveTextlabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
-      const affectiveScales = await this.$services.affectiveScale.list(this.projectId, docId)
-
       this.affectiveSummaryTags = affectiveTextlabels.filter(
         (item) => item.question === this.affectiveTextlabelQuestions.summaryTag
       )
@@ -400,27 +413,10 @@ export default {
         (item) => item.question === this.affectiveTextlabelQuestions.othersWishToAuthor
       )
 
-      const scaleTypesIdsTexts = this.scaleTypesIdsTexts
-      const affectiveScalesDict = {
-        "Pozytywne": "positive", "Negatywne": "negative",
-        "Radość": "joy", "Zachwyt": "admiration",
-        "Inspiruje": "inspiration", "Spokój": "peace",
-        "Zaskoczenie": "surprise", "Współczucie": "sympathy",
-        "Strach": "fear", "Smutek": "sadness",
-        "Wstręt": "disgust", "Złość": "anger",
-        "Ironiczny": "ironic", "Żenujący": "embarrassing",
-        "Wulgarny": "vulgar", "Polityczny": "politic",
-        "Interesujący": "interesting", "Zrozumiały": "comprehensible",
-        "Zgadzam się z tekstem": "agreeable",
-        "Wierzę w tę informację": "believable",
-        "Czuję sympatię do autora": "sympathyToAuthor",
-        "Potrzebuję więcej informacji, aby ocenić ten tekst": "needMoreInfo"
-        // add more scaleType-variable mapping below
-        // "key": "value"
-        // key is the 'text' in table 'label_types_scaletype'
-        // value is the variable name used in FE code in this code
-      }
+      const affectiveScales = await this.$services.affectiveScale.list(this.projectId, docId)
+      const affectiveScalesDict = this.affectiveScalesDict
       const affectiveScalesValues = {}
+      const scaleTypesIdsTexts = this.scaleTypesIdsTexts
       affectiveScales.forEach(function(item) {
         const category = affectiveScalesDict[scaleTypesIdsTexts[item.label]]
         affectiveScalesValues[category] = item.scale
