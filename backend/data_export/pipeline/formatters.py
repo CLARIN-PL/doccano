@@ -2,7 +2,6 @@
 Convert a dataset to the specified format.
 """
 import abc
-
 import pandas as pd
 
 from data_export.models import DATA
@@ -80,4 +79,13 @@ class RenameFormatter(Formatter):
     def apply(self, dataset: pd.DataFrame) -> pd.DataFrame:
         """Rename columns"""
         dataset.rename(columns=self.mapper, inplace=True)
+        return dataset
+
+
+class TupledTextFormatter(Formatter):
+    def apply(self, dataset: pd.DataFrame) -> pd.DataFrame:
+        """Format the span column to `(label, question)` format"""
+        dataset[self.target_column] = dataset[self.target_column].apply(
+            lambda spans: list(span.to_tuple() for span in spans)
+        )
         return dataset

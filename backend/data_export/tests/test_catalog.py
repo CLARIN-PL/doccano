@@ -9,6 +9,7 @@ from projects.models import (
     SEQUENCE_LABELING,
     SPEECH2TEXT,
     ARTICLE_ANNOTATION,
+    AFFECTIVE_ANNOTATION
 )
 
 
@@ -22,6 +23,7 @@ class TestOptions(unittest.TestCase):
             SEQUENCE_LABELING,
             SPEECH2TEXT,
             ARTICLE_ANNOTATION,
+            AFFECTIVE_ANNOTATION,
         ]
         for task in tasks:
             with self.subTest(task=task):

@@ -107,5 +107,3 @@ Options.register(ARTICLE_ANNOTATION, JSONL, ARTICLE_ANNOTATION_DIR / "relation_e
 AFFECTIVE_ANNOTATION_DIR = EXAMPLE_DIR / "affective_annotation"
 Options.register(AFFECTIVE_ANNOTATION, JSON, AFFECTIVE_ANNOTATION_DIR / "example.json")
 Options.register(AFFECTIVE_ANNOTATION, JSONL, AFFECTIVE_ANNOTATION_DIR / "example.jsonl")
-Options.register(AFFECTIVE_ANNOTATION, JSON, AFFECTIVE_ANNOTATION_DIR / "relation_extraction.json", True)
-Options.register(AFFECTIVE_ANNOTATION, JSONL, AFFECTIVE_ANNOTATION_DIR / "relation_extraction.jsonl", True)

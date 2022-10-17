@@ -3,7 +3,7 @@ from typing import Any, Dict, Protocol, Tuple
 from django.db import models
 
 from examples.models import Example
-from labels.models import Category, Relation, Span, TextLabel
+from labels.models import Category, Relation, Span, TextLabel, Scale
 from projects.models import Project
 
 DATA = "data"
@@ -86,6 +86,28 @@ class ExportedRelation(Relation):
 class ExportedText(TextLabel):
     def to_string(self) -> str:
         return self.text
+
+    class Meta:
+        proxy = True
+
+
+class ExportedScale(Scale):
+    def to_dict(self):
+        return {"id": self.id, "label": self.label.text, "scale": self.scale}
+
+    def to_tuple(self):
+        return self.scale, self.label.text
+
+    class Meta:
+        proxy = True
+
+
+class ExportedTextQuestion(TextLabel):
+    def to_dict(self):
+        return {"label": self.text, "question": self.question}
+
+    def to_tuple(self):
+        return self.text, self.question
 
     class Meta:
         proxy = True
