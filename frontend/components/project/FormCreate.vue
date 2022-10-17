@@ -81,7 +81,7 @@
               contain
             />
             <v-checkbox
-              v-if="isSequenceLabelingProject"
+              v-if="(isSequenceLabelingProject && projectType != 'AffectiveAnnotation')"
               :value="useRelation"
               :label="$t('overview.useRelation')"
               @change="updateValue('useRelation', $event === true)"
