@@ -102,7 +102,7 @@ class TextLabel(Label):
         return self.text == other.text
 
     class Meta:
-        unique_together = ("example", "user", "text")
+        unique_together = ("example", "user", "text", "question")
 
 
 class Relation(Label):
