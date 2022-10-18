@@ -14,5 +14,6 @@ export default {
   importTitle: 'Label hochladen',
   importMessage1: 'Beispielformat',
   importMessage2: 'Wähle eine Datei',
-  filePlaceholder: 'Eingabe einer Datei'
+  filePlaceholder: 'Eingabe einer Datei',
+  clickEnter: 'Klicken Sie auf Enter, um die Antwort zu speichern'
 }

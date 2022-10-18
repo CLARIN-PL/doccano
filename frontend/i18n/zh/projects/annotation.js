@@ -82,5 +82,82 @@ export default {
     wishToAuthorHint: "我希望这篇文章的作者是什么?",
     labelDontKnow: "我不知道",
     labelNoWishToAuthor: "我没有愿望"
+  },
+  summaryTagQuestion: "你会用什么词来描述这个文本（标签、关键词）？ 请输入2-10个字: ",
+  summaryImpressionQuestion: "这段文字唤起了你什么印象/情感/感受？ 请输入2-10个字: ",
+  slider: {
+    zero: "完全没有",
+    full: "完全"
+  },
+  offensive: {
+    question: "这个文本是冒犯性的还是不尊重人的？",
+    subquestion1: "它冒犯了我",
+    subquestion2: "它可能攻击/冒犯/贬低某人",
+    subquestion3: {
+      question: "它冒犯了什么？",
+      substatement1: "性别",
+      substatement1Question: "什么类型？", 
+      substatement2: "国籍",
+      substatement2Question: "什么类型？",
+      substatement3: "宗教信仰",
+      substatement3Question: "什么样的？",
+      substatement4: "种族，肤色",
+      substatement4Question: "什么类型？",
+      substatement5: "性取向",
+      substatement5Question: "什么样的？",
+      substatement6: "政治观点",
+      substatement6Question: "什么样的？",
+      substatement7: "其他，如社会、专业团体",
+      substatement7Question: "什么类型？",
+    },
+    subquestion4: {
+      question: "以何种方式？",
+      substatement1: "非人化",
+      substatement2: "仇恨言论",
+      substatement3: "煽动暴力",
+      substatement4: "煽动种族灭绝",
+      substatement5: "不公平的概括，陈规定型",
+      substatement6: "不尊重",
+      substatement7: "羞辱",
+      substatement8: "其他"
+    }
+  },
+  humor: {
+    question: "这个文本是否幽默？",
+    subquestion1: "它使我感到有趣/让我笑",
+    subquestion2: "它可能会使其他人感到有趣",
+    subquestion3: {
+      question: "作者在取笑什么？",
+      description: "如果他们取笑什么，取笑什么？",
+      substatement1: "性别",
+      substatement1Question: "什么类型？",
+      substatement2: "国籍",
+      substatement2Question: "什么类型？",
+      substatement3: "宗教信仰",
+      substatement3Question: "什么类型？",
+      substatement4: "种族",
+      substatement4Question: "什么样的？",
+      substatement5: "性取向",
+      substatement5Question: "什么类型？",
+      substatement6: "政治观点",
+      substatement6Question: "什么类型？",
+      substatement7: "什么类型的政治观点",
+      substatement7Question: "什么类型？",
+    },
+    subquestion4: {
+      question: "幽默的性质,它让你笑是因为: ",
+      substatement1: "黑色幽默",
+      substatement2: "讽刺",
+      substatement3: "讽刺",
+      substatement4: "模糊性",
+      substatement5: "文字游戏",
+      substatement6: "性",
+      substatement7: "粪便幽默（关于大便:-) )",
+      substatement8: "文字的声音",
+      substatement9: "夸张",
+      substatement10: "未经审查的词语",
+      substatement11: "对比",
+      substatement12: "具有笑话的特征"
+    }
   }
 }

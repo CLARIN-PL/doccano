@@ -16,5 +16,6 @@ export default {
   importTitle: "Télécharger l'étiquette",
   importMessage1: 'Exemple de format',
   importMessage2: 'Sélectionnez un fichier',
-  filePlaceholder: 'Saisir un fichier'
+  filePlaceholder: 'Saisir un fichier',
+  clickEnter : "Cliquez sur la touche Entrée pour enregistrer la réponse"
 }

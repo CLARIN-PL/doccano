@@ -7,6 +7,7 @@ export default {
   filterOption3: 'Non terminé',
   guidelineTooltip: 'Afficher la ligne directrice',
   guidelinePopupTitle: 'Ligne directrice pour les annotations',
+  commentTooltip: 'Cliquez pour commenter le document',
   metadataDefaultMessage: 'Aucune donnée disponible',
   key: 'Clé',
   value: 'Valeur',
@@ -80,5 +81,88 @@ export default {
     wishToAuthorHint: "Qu'est-ce que je souhaite à l'auteur de ce texte ?",
     labelDontKnow: "je ne sais pas",
     labelNoWishToAuthor: "je n'ai pas de souhaits"
+  },
+  slider: {
+    zero: "Pas du tout",
+    full: "Totalement"
+  },
+  offensive: {
+    question: "Le texte est-il offensant ou irrespectueux ?",
+    subquestion1: "Il m'offense",
+    subquestion2: "Il peut attaquer / offenser / dénigrer quelqu'un",
+    subquestion3: {
+      question: "Qu'est-ce que ça offense ?",
+      substatement1: "Sexe",
+      substatement1Question: "Lequel ?",
+      substatement2: "Nationalité",
+      substatement2Question: "Lequel ?",
+      substatement3: "convictions religieuses",
+      substatement3Question: "Lequel ?",
+      substatement4: "Race, couleur de peau, apparence",
+      substatement4Question: "Quel genre ?",
+      substatement5: 'Age',
+      substatement5Question: "Quoi ?",
+      substatement6: "Deed, action",
+      substatement6Question: "Laquelle ?",
+      substatement7: "Orientation sexuelle",
+      substatement7Question: "Quel genre ?",
+      substatement8: "Opinions politiques, partis",
+      substatement8Question: "Quel genre ?",
+      substatement9: "Autres, par exemple groupes sociaux, professionnels",
+      substatement9Question: "Laquelle ?"
+    },
+    subquestion4: {
+      question: "De quelle manière ?",
+      substatement1: " déshumanisation ",
+      substatement2: " discours de haine ",
+      substatement3: "incitation à la violence",
+      substatement4: "incitation au génocide",
+      substatement5: "généralisation injuste, stéréotypes",
+      substatement6: "manque de respect",
+      substatement7: "humiliation",
+      substatement8: "autre"
+    }
+  },
+  humor: {
+    question: "Ce texte est-il humoristique ?",
+    subquestion1: "Il m'amuse/me fait rire",
+    subquestion2: "Il peut amuser quelqu'un d'autre",
+    subquestion3: {
+      question: "De quoi l'auteur se moque-t-il ?",
+      description: "S'ils se moquent de quelque chose, de quoi ?",
+      substatement1: "Sexe",
+      substatement1Question: "Lequel ?",
+      substatement2: "Nationalité",
+      substatement2Question: "Lequel ?",
+      substatement3: "convictions religieuses",
+      substatement3Question: "Lequel ?",
+      substatement4: "Race, couleur de peau, apparence",
+      substatement4Question: "Quel genre ?",
+      substatement5: 'Age',
+      substatement5Question: "Quoi ?",
+      substatement6: "Deed, action",
+      substatement6Question: "Laquelle ?",
+      substatement7: "Orientation sexuelle",
+      substatement7Question: "Quel genre ?",
+      substatement8: "Opinions politiques, partis",
+      substatement8Question: "Quel genre ?",
+      substatement9: "Autres, par exemple groupes sociaux, professionnels",
+      substatement9Question: "Laquelle ?"
+    },
+    subquestion4: {
+      question: "Nature de l'humor. Il vous fait rire parce que: ",
+      substatement1: "humor noir",
+      substatement2: "Ironie",
+      substatement3: "Sarcasme",
+      substatement4: "Ambiguïté",
+      substatement5: "Jeu de mots",
+      substatement6: "Sexualité",
+      substatement7: " humor fécal (sur le caca:-) ) ",
+      substatement8: " Sonorité des mots ",
+      substatement9: "Exagération",
+      substatement10: " Mots non censurés ",
+      substatement11: " Contraste ",
+      substatement12: "Présente les caractéristiques d'une blague"
+    }
   }
 }

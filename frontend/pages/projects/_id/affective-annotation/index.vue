@@ -65,56 +65,6 @@
                     @add="addCategory"
                     @remove="removeCategory"
                   />
-                  <summary-input
-                    v-if="project.isSummaryMode"
-                    :text="doc.text"
-                    :tags="affectiveSummaryTags"
-                    :impressions="affectiveSummaryImpressions"
-                    @remove:tag="removeTag"
-                    @update:tag="updateTag"
-                    @add:tag="addTag"
-                    @remove:impression="removeImpression"
-                    @update:impression="updateImpression"
-                    @add:impression="addImpression"
-                  />
-                  <emotions-input
-                    v-if="project.isEmotionsMode"
-                    :general-positivity="affectiveEmotions.positive"
-                    :general-negativity="affectiveEmotions.negative"
-                    :joy="affectiveEmotions.joy"
-                    :admiration="affectiveEmotions.admiration"
-                    :inspiration="affectiveEmotions.inspiration"
-                    :peace="affectiveEmotions.peace"
-                    :surprise="affectiveEmotions.surprise"
-                    :sympathy="affectiveEmotions.sympathy"
-                    :fear="affectiveEmotions.fear"
-                    :sadness="affectiveEmotions.sadness"
-                    :disgust="affectiveEmotions.disgust"
-                    :anger="affectiveEmotions.anger"
-                    @change="emotionsChangeHandler"
-                  />
-                  <others-input
-                    v-if="project.isOthersMode"
-                    :ironic="affectiveOthers.ironic"
-                    :embarrassing="affectiveOthers.embarrassing"
-                    :vulgar="affectiveOthers.vulgar"
-                    :politic="affectiveOthers.politic"
-                    :interesting="affectiveOthers.interesting"
-                    :comprehensible="affectiveOthers.comprehensible"
-                    :agreeable="affectiveOthers.agreeable"
-                    :believable="affectiveOthers.believable"
-                    :sympathy-to-author="affectiveOthers.sympathyToAuthor"
-                    :need-more-info="affectiveOthers.needMoreInfo"
-                    :wish-to-author="affectiveOthers.wishToAuthor"
-                    @change="othersChangeHandler"
-                    @nullifyCategoryValue="nullifyOthersValueHandler"
-                    @restoreCategoryValue="restoreOthersValueHandler"
-                    @remove:wishToAuthor="removeWishToAuthor"
-                    @update:wishToAuthor="updateWishToAuthor"
-                    @add:wishToAuthor="addWishToAuthor"
-                    @nullify:wishToAuthor="nullifyWishToAuthor"
-                    @restore:wishToAuthor="restoreWishToAuthor"
-                  />
               </v-card-title>
               <v-divider />
               <div class="annotation-text pa-4">
@@ -137,6 +87,65 @@
                   @contextmenu:entity="deleteSpan"
                   @contextmenu:relation="deleteRelation"
                 />
+              </div>
+              <v-divider />
+              <div class="pa-4">
+                <summary-input
+                    v-if="project.isSummaryMode"
+                    :text="doc.text"
+                    :tags="affectiveSummaryTags"
+                    :impressions="affectiveSummaryImpressions"
+                    @remove:tag="removeTag"
+                    @update:tag="updateTag"
+                    @add:tag="addTag"
+                    @remove:impression="removeImpression"
+                    @update:impression="updateImpression"
+                    @add:impression="addImpression"
+                  />
+                  <emotions-input
+                    v-else-if="project.isEmotionsMode"
+                    :general-positivity="affectiveEmotions.positive"
+                    :general-negativity="affectiveEmotions.negative"
+                    :joy="affectiveEmotions.joy"
+                    :admiration="affectiveEmotions.admiration"
+                    :inspiration="affectiveEmotions.inspiration"
+                    :peace="affectiveEmotions.peace"
+                    :surprise="affectiveEmotions.surprise"
+                    :sympathy="affectiveEmotions.sympathy"
+                    :fear="affectiveEmotions.fear"
+                    :sadness="affectiveEmotions.sadness"
+                    :disgust="affectiveEmotions.disgust"
+                    :anger="affectiveEmotions.anger"
+                    @change="emotionsChangeHandler"
+                  />
+                  <others-input
+                    v-else-if="project.isOthersMode"
+                    :ironic="affectiveOthers.ironic"
+                    :embarrassing="affectiveOthers.embarrassing"
+                    :vulgar="affectiveOthers.vulgar"
+                    :politic="affectiveOthers.politic"
+                    :interesting="affectiveOthers.interesting"
+                    :comprehensible="affectiveOthers.comprehensible"
+                    :agreeable="affectiveOthers.agreeable"
+                    :believable="affectiveOthers.believable"
+                    :sympathy-to-author="affectiveOthers.sympathyToAuthor"
+                    :need-more-info="affectiveOthers.needMoreInfo"
+                    :wish-to-author="affectiveOthers.wishToAuthor"
+                    @change="othersChangeHandler"
+                    @nullifyCategoryValue="nullifyOthersValueHandler"
+                    @restoreCategoryValue="restoreOthersValueHandler"
+                    @remove:wishToAuthor="removeWishToAuthor"
+                    @update:wishToAuthor="updateWishToAuthor"
+                    @add:wishToAuthor="addWishToAuthor"
+                    @nullify:wishToAuthor="nullifyWishToAuthor"
+                    @restore:wishToAuthor="restoreWishToAuthor"
+                  />
+                  <offensive-input
+                    v-else-if="project.isOffensiveMode"
+                    v-model="affectiveTmp" />
+                  <humor-input
+                    v-else-if="project.isHumorMode"
+                    v-model="affectiveTmp" />
               </div>
             </v-card>
           </v-col>
@@ -198,6 +207,9 @@ import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vu
 import SummaryInput from '@/components/tasks/affectiveAnnotation/summary/SummaryInput.vue'
 import EmotionsInput from '@/components/tasks/affectiveAnnotation/emotions/EmotionsInput.vue'
 import OthersInput from '@/components/tasks/affectiveAnnotation/others/OthersInput.vue'
+import OffensiveInput from '@/components/tasks/affectiveAnnotation/offensive/OffensiveInput.vue'
+import HumorInput from '@/components/tasks/affectiveAnnotation/humor/HumorInput.vue'
+
 
 export default {
   components: {
@@ -212,7 +224,9 @@ export default {
     LabelSelect,
     SummaryInput,
     EmotionsInput,
-    OthersInput
+    OthersInput,
+    OffensiveInput,
+    HumorInput
   },
 
   layout: 'workspace',
@@ -243,6 +257,7 @@ export default {
       articleIndex: 1,
       currentArticleId: "",
       currentWholeArticle: [],
+      affectiveTmp: {},
       affectiveSummaryTags: [],
       affectiveSummaryImpressions: [],
       affectiveEmotions: {
@@ -277,34 +292,10 @@ export default {
   },
 
   async fetch() {
-    const query = this.$route.query.q || ''
-    const isChecked = this.$route.query.isChecked || ''
-    this.docs = await this.$services.example.fetchOne(
-      this.projectId,
-      this.$route.query.page,
-      query,
-      isChecked
-    )
-    const doc = this.docs.items[0]
-    if (this.enableAutoLabeling && !doc.isConfirmed) {
-      await this.autoLabel(doc.id)
-    }
-    await this.list(doc.id)
-
-    this.currentArticleId = doc.articleId
-    this.currentWholeArticle = await this.$services.example.fetchByLimit(
-      this.projectId,
-      this.docs.count.toString(),
-      this.currentArticleId,
-      isChecked
-    )
-    this.currentWholeArticle.items = _.orderBy(this.currentWholeArticle.items, 'order')
-    const allArticleIds = await this.$services.example.fetchArticleIds(
-      this.projectId,
-      this.docs.count.toString()
-    )
-    this.articleTotal = allArticleIds.length
-    this.articleIndex = allArticleIds.indexOf(this.currentArticleId) + 1
+    await this.setDoc()
+    this.$nextTick(()=> {
+      this.setArticleData()
+    })
   },
 
   computed: {
@@ -374,11 +365,47 @@ export default {
   },
 
   methods: {
+    async setDoc() {
+      const query = this.$route.query.q || ''
+      const isChecked = this.$route.query.isChecked || ''
+      this.docs = await this.$services.example.fetchOne(
+        this.projectId,
+        this.$route.query.page,
+        query,
+        isChecked
+      )
+    },
+    async setArticleData() {
+      if(this.docs.items && this.docs.items.length) {
+        const doc = this.docs.items[0]
+        const isChecked = this.$route.query.isChecked || ''
+        this.currentArticleId = doc.articleId
+        this.currentWholeArticle = await this.$services.example.fetchByLimit(
+          this.projectId,
+          this.docs.count.toString(),
+          this.currentArticleId,
+          isChecked
+        )
+        this.currentWholeArticle.items = _.orderBy(this.currentWholeArticle.items, 'order')
+        const allArticleIds = await this.$services.example.fetchArticleIds(
+          this.projectId,
+          this.docs.count.toString()
+        )
+        this.articleTotal = allArticleIds.length
+        this.articleIndex = allArticleIds.indexOf(this.currentArticleId) + 1
+      }
+    },
     async maybeFetchSpanTypes(spans) {
       const labelIds = new Set(this.spanTypes.map((label) => label.id))
       if (spans.some((item) => !labelIds.has(item.label))) {
         this.spanTypes = await this.$services.spanType.list(this.projectId)
       }
+    },
+    async loadLabels() {
+      if (this.enableAutoLabeling && !this.doc.isConfirmed) {
+        await this.autoLabel(this.doc.id)
+      }
+      await this.list(this.doc.id)
     },
     async list(docId) {
       const spans = await this.$services.sequenceLabeling.list(this.projectId, docId)
@@ -574,12 +601,19 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 .annotation-text {
   font-size: 1.1rem !important;
   font-weight: 500;
   line-height: 2rem;
   font-family: 'Roboto', sans-serif !important;
   opacity: 0.6;
+  margin-bottom: 20px;
+
+  > div > div > svg:last-of-type {
+    height: 0;
+    overflow: hidden;
+  }
 }
+
 </style>

@@ -7,6 +7,7 @@ export default {
   filterOption3: 'Unerledigt',
   guidelineTooltip: 'Zeige Leitfaden',
   guidelinePopupTitle: 'Annotationsleitfaden',
+  commentTooltip: 'Klicken Sie hier, um das Dokument zu kommentieren',
   metadataDefaultMessage: 'Keine Daten verfügbar',
   key: 'Schlüssel',
   value: 'Wert',
@@ -80,5 +81,88 @@ export default {
     wishToAuthorHint: "Was wünsche ich dem Autor dieses Textes?",
     labelDontKnow: "Ich weiß nicht",
     labelNoWishToAuthor: "Ich habe keine Wünsche"
+  },
+  slider: {
+    zero: "Überhaupt nicht",
+    full: "Völlig"
+  },
+  offensive: {
+    question: "Ist der Text beleidigend oder respektlos?",
+    subquestion1: "Er beleidigt mich",
+    subquestion2: "Er könnte jemanden angreifen/beleidigen/verunglimpfen",
+    subquestion3: {
+      question: "Was beleidigt es?",      
+      substatement1: "Geschlecht",
+      substatement1Question: "Welche?",
+      substatement2: 'Staatsangehörigkeit',
+      substatement2Question: "Welche?",
+      substatement3: "Religiöse Überzeugungen",
+      substatement3Question: "Welche?",
+      substatement4: "Rasse, Hautfarbe, Aussehen",
+      substatement4Question: "Welche Art?",
+      substatement5: 'Alter',
+      substatement5Question: "Was?",
+      substatement6: 'Urkunde, Handlung',
+      substatement6Question: "Welche?",
+      substatement7: "Sexuelle Ausrichtung",
+      substatement7Question: "Welche Art?",
+      substatement8: "Politische Ansichten, Parteien",
+      substatement8Question: "Welche Art?",
+      substatement9: "Sonstige, z. B. soziale, berufliche Gruppen",
+      substatement9Question: "Welche Art?"
+    },
+    subquestion4: {
+      question: "Auf welche Weise?",
+      substatement1: "Entmenschlichung",
+      substatement2: "Hassrede",
+      substatement3: "Aufstachelung zur Gewalt",
+      substatement4: "Aufstachelung zum Völkermord",
+      substatement5: "Unfaire Verallgemeinerung, Stereotypisierung",
+      substatement6: "Respektlosigkeit",
+      substatement7: "Erniedrigung",
+      substatement8: "Sonstiges"
+    }
+  },
+  humor: {
+    question: "Ist dieser Text witzig?",
+    subquestion1: "Er amüsiert mich/bringt mich zum Lachen",
+    subquestion2: "Vielleicht amüsiert er jemand anderen",
+    subquestion3: {
+      question: "Über was macht sich der Autor lustig?",
+      description: "Wenn sie sich über etwas lustig machen, worüber?",
+      substatement1: "Geschlecht",
+      substatement1Question: "Welche?",
+      substatement2: 'Staatsangehörigkeit',
+      substatement2Question: "Welche?",
+      substatement3: "Religiöse Überzeugungen",
+      substatement3Question: "Welche?",
+      substatement4: "Rasse, Hautfarbe, Aussehen",
+      substatement4Question: "Welche Art?",
+      substatement5: 'Alter',
+      substatement5Question: "Was?",
+      substatement6: 'Urkunde, Handlung',
+      substatement6Question: "Welche?",
+      substatement7: "Sexuelle Ausrichtung",
+      substatement7Question: "Welche Art?",
+      substatement8: "Politische Ansichten, Parteien",
+      substatement8Question: "Welche Art?",
+      substatement9: "Sonstige, z. B. soziale, berufliche Gruppen",
+      substatement9Question: "Welche Art?"
+    },
+    subquestion4: {
+      question: "Natur des Humors. Er bringt dich zum Lachen, weil:",
+      substatement1: "Dunkler Humor",
+      substatement2: "Ironie",
+      substatement3: "Sarkasmus",
+      substatement4: "Zweideutigkeit",
+      substatement5: "Wortspiel",
+      substatement6: "Sexualität",
+      substatement7: "Fäkalhumor (über Kacke :-) )",
+      substatement8: "Klang der Worte",
+      substatement9: "Übertreibung",
+      substatement10: "Unzensierte Wörter",
+      substatement11: "Kontrast",
+      substatement12: "Hat Merkmale eines Witzes"
+    }
   }
 }

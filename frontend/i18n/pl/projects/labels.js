@@ -16,5 +16,6 @@ export default {
   importTitle: 'Prześlij etykietę',
   importMessage1: 'Przykładowy format',
   importMessage2: 'Wybierz plik',
-  filePlaceholder: 'Wprowadzanie pliku'
+  filePlaceholder: 'Wprowadzanie pliku',
+  clickEnter: 'Kliknij Enter, aby zapisać odpowiedź'
 }

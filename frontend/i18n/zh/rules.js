@@ -1,4 +1,5 @@
 export default {
+  required: '请输入',
   colorRules: {
     colorRequired: '请输入颜色'
   },
