@@ -1,0 +1,44 @@
+{
+    "article_id":"Eer9fFjy3gV7Y634t5rv6A\/3KhH4zL9NJtUgqZQMpvBXJ-8eabas8s5pveszg917vm1357",
+    "data":[
+        {
+            "id":4,
+            "text":"Stół z powyłamywanymi nogami",
+            "order":5,
+            "type":"subheader",
+            "meta":{
+                "article_title":"10 Craziest Polish Tongue Twisters",
+                "publish_datetime":"2022-08-01 13:59:59",
+                "crawled_datetime":"2022-09-05 08:12:45"
+            },
+            "scale":[],
+            "label":[]
+            },
+        {
+            "id":5,
+            "text":"W Szczebrzeszynie chrząszcz brzmi w trzcinie.",
+            "order":10,
+            "type":"subheader",
+            "meta":{
+                "article_title":"10 Craziest Polish Tongue Twisters",
+                "publish_datetime":"2022-08-01 13:59:59",
+                "crawled_datetime":"2022-09-05 08:12:45"
+            },
+            "scale":[],
+            "label":[]
+            },
+        {
+            "id":6,
+            "text":"Nowa generacja biosensora pozwoli na bieżąco analizować próbki potu",
+            "order":19,
+            "type":"subheader",
+            "meta":{
+                "article_title":"10 Craziest Polish Tongue Twisters",
+                "publish_datetime":"2022-08-01 13:59:59",
+                "crawled_datetime":"2022-09-05 08:12:45"
+            },
+            "scale":[],
+            "label":[]
+            }
+        ]
+}
