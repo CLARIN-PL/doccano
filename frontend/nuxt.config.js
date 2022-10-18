@@ -158,7 +158,7 @@ export default {
       // })
       config.module.rules.push({
         enforce: 'pre',
-        test: /\.(txt|csv|json|jsonl)$/,
+        test: /\.(txt|csv|jsonl)$/,
         loader: 'raw-loader',
         exclude: /(node_modules)/
       })

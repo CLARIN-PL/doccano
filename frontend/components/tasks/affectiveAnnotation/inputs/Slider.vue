@@ -95,7 +95,7 @@ export default {
     },
     sliderThumbColor() {
       if (this.mustClick) {
-        if (!this.isClicked) {
+        if (!this.isClicked && this.value === 0) {
           return "transparent"
         }
         if (this.isClicked && this.enableSlider) {
@@ -104,6 +104,7 @@ export default {
         if (this.isClicked && !this.enableSlider) {
           return "grey"
         }
+        return this.color
       }
       return this.color
     }

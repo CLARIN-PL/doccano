@@ -278,14 +278,14 @@ export default {
       }
       return errorMessage
     },
-    removeWishToAuthor() {
-      this.$emit('remove:wishToAuthor')
+    removeWishToAuthor(annotationId) {
+      this.$emit('remove:wishToAuthor', annotationId)
     },
-    updateWishToAuthor(text) {
+    updateWishToAuthor(annotationId, text) {
       if (text.length > 0) {
-        this.$emit('update:wishToAuthor', text)
+        this.$emit('update:wishToAuthor', annotationId, text)
       } else {
-        this.removeWishToAuthor()
+        this.removeWishToAuthor(annotationId)
       }
     },
     addWishToAuthor(text) {

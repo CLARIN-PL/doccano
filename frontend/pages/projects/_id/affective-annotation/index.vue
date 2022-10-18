@@ -89,63 +89,63 @@
                 />
               </div>
               <v-divider />
-              <div class="pa-4">
+              <div v-if="isScaleImported" class="pa-4">
                 <summary-input
-                    v-if="project.isSummaryMode"
-                    :text="doc.text"
-                    :tags="affectiveSummaryTags"
-                    :impressions="affectiveSummaryImpressions"
-                    @remove:tag="removeTag"
-                    @update:tag="updateTag"
-                    @add:tag="addTag"
-                    @remove:impression="removeImpression"
-                    @update:impression="updateImpression"
-                    @add:impression="addImpression"
-                  />
-                  <emotions-input
-                    v-else-if="project.isEmotionsMode"
-                    :general-positivity="affectiveEmotions.positive"
-                    :general-negativity="affectiveEmotions.negative"
-                    :joy="affectiveEmotions.joy"
-                    :admiration="affectiveEmotions.admiration"
-                    :inspiration="affectiveEmotions.inspiration"
-                    :peace="affectiveEmotions.peace"
-                    :surprise="affectiveEmotions.surprise"
-                    :sympathy="affectiveEmotions.sympathy"
-                    :fear="affectiveEmotions.fear"
-                    :sadness="affectiveEmotions.sadness"
-                    :disgust="affectiveEmotions.disgust"
-                    :anger="affectiveEmotions.anger"
-                    @change="emotionsChangeHandler"
-                  />
-                  <others-input
-                    v-else-if="project.isOthersMode"
-                    :ironic="affectiveOthers.ironic"
-                    :embarrassing="affectiveOthers.embarrassing"
-                    :vulgar="affectiveOthers.vulgar"
-                    :politic="affectiveOthers.politic"
-                    :interesting="affectiveOthers.interesting"
-                    :comprehensible="affectiveOthers.comprehensible"
-                    :agreeable="affectiveOthers.agreeable"
-                    :believable="affectiveOthers.believable"
-                    :sympathy-to-author="affectiveOthers.sympathyToAuthor"
-                    :need-more-info="affectiveOthers.needMoreInfo"
-                    :wish-to-author="affectiveOthers.wishToAuthor"
-                    @change="othersChangeHandler"
-                    @nullifyCategoryValue="nullifyOthersValueHandler"
-                    @restoreCategoryValue="restoreOthersValueHandler"
-                    @remove:wishToAuthor="removeWishToAuthor"
-                    @update:wishToAuthor="updateWishToAuthor"
-                    @add:wishToAuthor="addWishToAuthor"
-                    @nullify:wishToAuthor="nullifyWishToAuthor"
-                    @restore:wishToAuthor="restoreWishToAuthor"
-                  />
-                  <offensive-input
-                    v-else-if="project.isOffensiveMode"
-                    v-model="affectiveTmp" />
-                  <humor-input
-                    v-else-if="project.isHumorMode"
-                    v-model="affectiveTmp" />
+                  v-if="project.isSummaryMode"
+                  :text="doc.text"
+                  :tags="affectiveSummaryTags"
+                  :impressions="affectiveSummaryImpressions"
+                  @remove:tag="removeTag"
+                  @update:tag="updateTag"
+                  @add:tag="addTag"
+                  @remove:impression="removeImpression"
+                  @update:impression="updateImpression"
+                  @add:impression="addImpression"
+                />
+                <emotions-input
+                  v-else-if="project.isEmotionsMode"
+                  :general-positivity="affectiveScalesValues.positive"
+                  :general-negativity="affectiveScalesValues.negative"
+                  :joy="affectiveScalesValues.joy"
+                  :admiration="affectiveScalesValues.admiration"
+                  :inspiration="affectiveScalesValues.inspiration"
+                  :peace="affectiveScalesValues.peace"
+                  :surprise="affectiveScalesValues.surprise"
+                  :sympathy="affectiveScalesValues.sympathy"
+                  :fear="affectiveScalesValues.fear"
+                  :sadness="affectiveScalesValues.sadness"
+                  :disgust="affectiveScalesValues.disgust"
+                  :anger="affectiveScalesValues.anger"
+                  @change="emotionsChangeHandler"
+                />
+                <others-input
+                  v-else-if="project.isOthersMode"
+                  :ironic="affectiveScalesValues.ironic"
+                  :embarrassing="affectiveScalesValues.embarrassing"
+                  :vulgar="affectiveScalesValues.vulgar"
+                  :politic="affectiveScalesValues.politic"
+                  :interesting="affectiveScalesValues.interesting"
+                  :comprehensible="affectiveScalesValues.comprehensible"
+                  :agreeable="affectiveScalesValues.agreeable"
+                  :believable="affectiveScalesValues.believable"
+                  :sympathy-to-author="affectiveScalesValues.sympathyToAuthor"
+                  :need-more-info="affectiveScalesValues.needMoreInfo"
+                  :wish-to-author="affectiveOthersWishToAuthor"
+                  @change="othersChangeHandler"
+                  @nullifyCategoryValue="nullifyOthersValueHandler"
+                  @restoreCategoryValue="restoreOthersValueHandler"
+                  @remove:wishToAuthor="removeWishToAuthor"
+                  @update:wishToAuthor="updateWishToAuthor"
+                  @add:wishToAuthor="addWishToAuthor"
+                  @nullify:wishToAuthor="nullifyWishToAuthor"
+                  @restore:wishToAuthor="restoreWishToAuthor"
+                />
+                <offensive-input
+                  v-else-if="project.isOffensiveMode"
+                  v-model="affectiveTmp" />
+                <humor-input
+                  v-else-if="project.isHumorMode"
+                  v-model="affectiveTmp" />
               </div>
             </v-card>
           </v-col>
@@ -206,7 +206,9 @@ import EntityEditor from '@/components/tasks/sequenceLabeling/EntityEditor.vue'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
 import SummaryInput from '@/components/tasks/affectiveAnnotation/summary/SummaryInput.vue'
 import EmotionsInput from '@/components/tasks/affectiveAnnotation/emotions/EmotionsInput.vue'
+import EmotionsScales from '@/static/formats/affective_annotation/affective_emotions_scales.json'
 import OthersInput from '@/components/tasks/affectiveAnnotation/others/OthersInput.vue'
+import OthersScales from '@/static/formats/affective_annotation/affective_others_scales.json'
 import OffensiveInput from '@/components/tasks/affectiveAnnotation/offensive/OffensiveInput.vue'
 import HumorInput from '@/components/tasks/affectiveAnnotation/humor/HumorInput.vue'
 
@@ -240,6 +242,9 @@ export default {
       mdiText,
       mdiFormatListBulleted,
       docs: [],
+      isScaleImported: true,
+      scaleTypesIdsTexts: {},
+      scaleTypesTextsIds: {},
       spans: [],
       spanTypes: [],
       relations: [],
@@ -258,36 +263,17 @@ export default {
       currentArticleId: "",
       currentWholeArticle: [],
       affectiveTmp: {},
+      affectiveScalesDict: {},
+      affectiveScalesValues: {},
+      affectiveTextlabelQuestions: {
+        summaryTag: "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.",
+        summaryImpression: "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów.",
+        othersWishToAuthor: "Czego życzę autorowi tego tekstu?"
+      },
       affectiveSummaryTags: [],
       affectiveSummaryImpressions: [],
-      affectiveEmotions: {
-        "positive": 0,
-        "negative": 0,
-        "joy": 0,
-        "admiration": 0,
-        "inspiration": 0,
-        "peace": 0,
-        "surprise": 0,
-        "sympathy": 0,
-        "fear": 0,
-        "sadness": 0,
-        "disgust": 0,
-        "anger": 0
-      },
-      affectiveOthers: {
-        "ironic": 0,
-        "embarrassing": 0,
-        "vulgar": 0,
-        "politic": 0,
-        "interesting": 0,
-        "comprehensible": 0,
-        "agreeable": 0,
-        "believable": 0,
-        "sympathyToAuthor": 0,
-        "needMoreInfo": 0,
-        "wishToAuthor": []
-      },
-      affectiveOthersTmp: {}
+      affectiveOthersWishToAuthor: [],
+      affectiveOthersTmp: {},
     }
   },
 
@@ -295,6 +281,9 @@ export default {
     await this.setDoc()
     this.$nextTick(()=> {
       this.setArticleData()
+    })
+    this.$nextTick(()=> {
+      this.loadLabels()
     })
   },
 
@@ -362,6 +351,32 @@ export default {
     this.relationTypes = await this.$services.relationType.list(this.projectId)
     this.project = await this.$services.project.findById(this.projectId)
     this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
+
+    let affectiveScaleLabelsJSON = []
+    if (this.project.isEmotionsMode) {
+      affectiveScaleLabelsJSON = EmotionsScales
+    } else if (this.project.isOthersMode) {
+      affectiveScaleLabelsJSON = OthersScales
+    }
+    const affectiveScalesDict = {}
+    affectiveScaleLabelsJSON.forEach(function(item) {
+      affectiveScalesDict[item.text] = item.varname
+    })
+    this.affectiveScalesDict = affectiveScalesDict
+
+    const scaleTypesRaw = await this.$services.scaleType.list(this.projectId)
+    if (scaleTypesRaw.length > 0) {
+      const scaleTypesIdsTexts = {}
+      const scaleTypesTextsIds = {}
+      scaleTypesRaw.forEach(function(item) {
+        scaleTypesIdsTexts[item.id] = item.text
+        scaleTypesTextsIds[item.text] = item.id
+      })
+      this.scaleTypesIdsTexts = scaleTypesIdsTexts
+      this.scaleTypesTextsIds = scaleTypesTextsIds
+    } else if (!this.project.isSummaryMode) {
+      this.isScaleImported = false
+    }
   },
 
   methods: {
@@ -417,6 +432,27 @@ export default {
       this.spans = spans
       this.relations = relations
       this.categories = await this.$services.textClassification.list(this.projectId, docId)
+
+      const affectiveTextlabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
+      this.affectiveSummaryTags = affectiveTextlabels.filter(
+        (item) => item.question === this.affectiveTextlabelQuestions.summaryTag
+      )
+      this.affectiveSummaryImpressions = affectiveTextlabels.filter(
+        (item) => item.question === this.affectiveTextlabelQuestions.summaryImpression
+      )
+      this.affectiveOthersWishToAuthor = affectiveTextlabels.filter(
+        (item) => item.question === this.affectiveTextlabelQuestions.othersWishToAuthor
+      )
+
+      const affectiveScales = await this.$services.affectiveScale.list(this.projectId, docId)
+      const affectiveScalesValues = {}
+      const affectiveScalesDict = this.affectiveScalesDict
+      const scaleTypesIdsTexts = this.scaleTypesIdsTexts
+      affectiveScales.forEach(function(item) {
+        const category = affectiveScalesDict[scaleTypesIdsTexts[item.label]]
+        affectiveScalesValues[category] = item.scale
+      })
+      this.affectiveScalesValues = affectiveScalesValues
     },
     async deleteSpan(id) {
       await this.$services.sequenceLabeling.delete(this.projectId, this.doc.id, id)
@@ -526,76 +562,107 @@ export default {
     changeSelectedLabel(event) {
       this.selectedLabelIndex = this.spanTypes.findIndex((item) => item.suffixKey === event.srcKey)
     },
-    removeTag(annotationId) {
-      // await this.$services.seq2seq.delete(this.projectId, this.doc.id, id)
-      // await this.list(this.doc.id)
-      const index = this.affectiveSummaryTags.findIndex((item) => item.id === annotationId)
-      this.affectiveSummaryTags.splice(index, 1)
+    async removeTag(annotationId) {
+      await this.$services.affectiveTextlabel.delete(this.projectId, this.doc.id, annotationId)
+      await this.list(this.doc.id)
     },
-    updateTag(annotationId, text) {
-      console.log(annotationId, text)
+    async updateTag(annotationId, text) {
+      await this.$services.affectiveTextlabel.changeText(this.projectId, this.doc.id, annotationId, text)
+      await this.list(this.doc.id)
     },
-    addTag(value) {
-      const item = {
-        "id": this.affectiveSummaryTags.length,
-        "text": value
-      }
-      this.affectiveSummaryTags.push(item)
+    async addTag(text) {
+      await this.$services.affectiveTextlabel.create(
+        this.projectId,
+        this.doc.id,
+        text,
+        this.affectiveTextlabelQuestions.summaryTag
+      )
+      await this.list(this.doc.id)
     },
-    removeImpression(annotationId) {
-      const index = this.affectiveSummaryImpressions.findIndex((item) => item.id === annotationId)
-      this.affectiveSummaryImpressions.splice(index, 1)
+    async removeImpression(annotationId) {
+      await this.$services.affectiveTextlabel.delete(this.projectId, this.doc.id, annotationId)
+      await this.list(this.doc.id)
     },
-    updateImpression(annotationId, text) {
-      console.log(annotationId, text)
+    async updateImpression(annotationId, text) {
+      await this.$services.affectiveTextlabel.changeText(this.projectId, this.doc.id, annotationId, text)
+      await this.list(this.doc.id)
     },
-    addImpression(value) {
-      const item = {
-        "id": this.affectiveSummaryImpressions.length,
-        "text": value
-      }
-      this.affectiveSummaryImpressions.push(item)
+    async addImpression(text) {
+      await this.$services.affectiveTextlabel.create(
+        this.projectId,
+        this.doc.id,
+        text,
+        this.affectiveTextlabelQuestions.summaryImpression
+      )
+      await this.list(this.doc.id)
     },
-    emotionsChangeHandler(value, category) {
-      this.affectiveEmotions[category] = value
-      console.log("new emotions value!", this.affectiveEmotions[category], category)
+    async emotionsChangeHandler(value, category) {
+      const affectiveEmotionsDict = Object.fromEntries(
+        Object.entries(this.affectiveScalesDict).map(([k, v]) => [v, k])
+      )
+      const label = affectiveEmotionsDict[category]
+      const labelId = this.scaleTypesTextsIds[label]
+      await this.$services.affectiveScale.create(
+        this.projectId,
+        this.doc.id,
+        labelId,
+        value
+      )
+      await this.list(this.doc.id)
     },
-    othersChangeHandler(value, category) {
-      this.affectiveOthers[category] = value
-      console.log("new others value!", this.affectiveOthers[category], category)
+    async othersChangeHandler(value, category) {
+      const affectiveOthersDict = Object.fromEntries(
+        Object.entries(this.affectiveScalesDict).map(([k, v]) => [v, k])
+      )
+      const label = affectiveOthersDict[category]
+      const labelId = this.scaleTypesTextsIds[label]
+      await this.$services.affectiveScale.create(
+        this.projectId,
+        this.doc.id,
+        labelId,
+        value
+      )
+      await this.list(this.doc.id)
     },
-    nullifyOthersValueHandler(category) {
-      this.affectiveOthersTmp[category] = this.affectiveOthers[category]
-      this.affectiveOthers[category] = -1
-      // don't forget to update data in BE too here
+    async nullifyOthersValueHandler(category) {
+      this.affectiveOthersTmp[category] = this.affectiveScalesValues[category]
+      await this.othersChangeHandler(-1, category)
     },
-    restoreOthersValueHandler(category) {
+    async restoreOthersValueHandler(category) {
       const previousValue = this.affectiveOthersTmp[category] || 0
-      this.affectiveOthers[category] = previousValue
-      // don't forget to update data in BE too here
+      await this.othersChangeHandler(previousValue, category)
     },
-    removeWishToAuthor() {
-      this.affectiveOthers.wishToAuthor = []
+    async removeWishToAuthor(annotationId) {
+      await this.$services.affectiveTextlabel.delete(this.projectId, this.doc.id, annotationId)
+      await this.list(this.doc.id)
     },
-    updateWishToAuthor(text) {
-      console.log(text)
+    async updateWishToAuthor(annotationId, text) {
+      await this.$services.affectiveTextlabel.changeText(this.projectId, this.doc.id, annotationId, text)
+      await this.list(this.doc.id)
     },
-    addWishToAuthor(value) {
-      const item = {
-        "id": 0,
-        "text": value
+    async addWishToAuthor(text) {
+      await this.$services.affectiveTextlabel.create(
+        this.projectId,
+        this.doc.id,
+        text,
+        this.affectiveTextlabelQuestions.othersWishToAuthor
+      )
+      await this.list(this.doc.id)
+    },
+    async nullifyWishToAuthor() {
+      this.affectiveOthersTmp.wishToAuthor = this.affectiveOthersWishToAuthor
+      if (this.affectiveOthersWishToAuthor.length > 0) {
+        const annotationId = this.affectiveOthersWishToAuthor[0].id
+        await this.removeWishToAuthor(annotationId)
+        await this.list(this.doc.id)
       }
-      this.affectiveOthers.wishToAuthor.push(item)
     },
-    nullifyWishToAuthor() {
-      this.affectiveOthersTmp.wishToAuthor = this.affectiveOthers.wishToAuthor
-      this.affectiveOthers.wishToAuthor = []
-      // don't forget to update data in BE too here
-    },
-    restoreWishToAuthor() {
-      const previousValue = this.affectiveOthersTmp.wishToAuthor || []
-      this.affectiveOthers.wishToAuthor = previousValue
-      // don't forget to update data in BE too here
+    async restoreWishToAuthor() {
+      if (this.affectiveOthersTmp.wishToAuthor.length > 0) {
+        const text = this.affectiveOthersTmp.wishToAuthor[0].text
+        await this.addWishToAuthor(text)
+        await this.list(this.doc.id)
+      }
     }
   }
 }

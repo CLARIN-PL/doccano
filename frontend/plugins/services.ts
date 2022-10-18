@@ -42,11 +42,16 @@ import { DownloadFormatApplicationService } from '~/services/application/downloa
 import { APITagRepository } from '~/repositories/tag/apiTagRepository'
 import { TagApplicationService } from '~/services/application/tag/tagApplicationService'
 import { ApiRelationRepository } from '~/repositories/tasks/sequenceLabeling/apiRelationRepository'
+import { APIAffectiveTextlabelRepository } from '~/repositories/tasks/affectiveAnnotation/apiAffectiveTextlabel'
+import { AffectiveTextlabelApplicationService } from '~/services/application/tasks/affectiveAnnotation/affectiveTextlabelApplicationService'
+import { APIAffectiveScaleRepository } from '~/repositories/tasks/affectiveAnnotation/apiAffectiveScale'
+import { AffectiveScaleApplicationService } from '~/services/application/tasks/affectiveAnnotation/affectiveScaleApplicationService'
 
 export interface Services {
   categoryType: LabelApplicationService
   spanType: LabelApplicationService
   relationType: LabelApplicationService
+  scaleType: LabelApplicationService
   member: MemberApplicationService
   user: UserApplicationService
   role: RoleApplicationService
@@ -67,6 +72,8 @@ export interface Services {
   downloadFormat: DownloadFormatApplicationService
   download: DownloadApplicationService
   tag: TagApplicationService
+  affectiveTextlabel: AffectiveTextlabelApplicationService
+  affectiveScale: AffectiveScaleApplicationService
 }
 
 declare module 'vue/types/vue' {
@@ -97,10 +104,13 @@ const plugin: Plugin = (_, inject) => {
   const taskStatusRepository = new APITaskStatusRepository()
   const downloadFormatRepository = new APIDownloadFormatRepository()
   const downloadRepository = new APIDownloadRepository()
+  const affectiveTextlabelRepository = new APIAffectiveTextlabelRepository()
+  const affectiveScaleRepository = new APIAffectiveScaleRepository()
 
   const categoryType = new LabelApplicationService(new APILabelRepository('category-type'))
   const spanType = new LabelApplicationService(new APILabelRepository('span-type'))
   const relationType = new LabelApplicationService(new APILabelRepository('relation-type'))
+  const scaleType = new LabelApplicationService(new APILabelRepository('scale-type'))
   const member = new MemberApplicationService(memberRepository)
   const user = new UserApplicationService(userRepository)
   const role = new RoleApplicationService(roleRepository)
@@ -124,11 +134,14 @@ const plugin: Plugin = (_, inject) => {
   const taskStatus = new TaskStatusApplicationService(taskStatusRepository)
   const downloadFormat = new DownloadFormatApplicationService(downloadFormatRepository)
   const download = new DownloadApplicationService(downloadRepository)
+  const affectiveTextlabel = new AffectiveTextlabelApplicationService(affectiveTextlabelRepository)
+  const affectiveScale = new AffectiveScaleApplicationService(affectiveScaleRepository)
 
   const services: Services = {
     categoryType,
     spanType,
     relationType,
+    scaleType,
     member,
     user,
     role,
@@ -148,7 +161,9 @@ const plugin: Plugin = (_, inject) => {
     taskStatus,
     downloadFormat,
     download,
-    tag
+    tag,
+    affectiveTextlabel,
+    affectiveScale
   }
   inject('services', services)
 }

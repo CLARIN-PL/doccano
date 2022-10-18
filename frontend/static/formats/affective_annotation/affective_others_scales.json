@@ -1,0 +1,72 @@
+[
+    {
+        "text":"Ironiczny",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "ironic"
+    },
+    {
+        "text":"Żenujący",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "embarrassing"
+    },
+    {
+        "text":"Wulgarny",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "vulgar"
+    },
+    {
+        "text":"Polityczny",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "politic"
+    },
+    {
+        "text":"Interesujący",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "interesting"
+    },
+    {
+        "text":"Zrozumiały",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "comprehensible"
+    },
+    {
+        "text":"Zgadzam się z tekstem",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "agreeable"
+    },
+    {
+        "text":"Wierzę w tę informację",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "believable"
+    },
+    {
+        "text":"Czuję sympatię do autora",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "sympathyToAuthor"
+    },
+    {
+        "text":"Potrzebuję więcej informacji, aby ocenić ten tekst",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "needMoreInfo"
+    }
+]
