@@ -160,8 +160,8 @@
                     :text-labels="textLabels"
                     @update:scale="updateScale"
                     @add:label="addLabel"
-                    @update:label="updateLabel"
-                    @remove:label="removeLabel"  />
+                    @update:label="updateTag"
+                    @remove:label="removeTag"  />
               </div>
             </v-card>
           </v-col>
@@ -258,6 +258,9 @@ export default {
       mdiText,
       mdiFormatListBulleted,
       docs: [],
+      textLabels: [],
+      scales: [],
+      scaleTypes: [],
       scaleTypesIdsTexts: {},
       scaleTypesTextsIds: {},
       spans: [],
@@ -275,14 +278,9 @@ export default {
       relationMode: false,
       articleTotal: 1,
       articleIndex: 1,
+      isScaleImported: true,
       currentArticleId: "",
       currentWholeArticle: [],
-      affectiveScalesValues: {},
-      affectiveTextlabelQuestions: {
-        summaryTag: "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.",
-        summaryImpression: "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów.",
-        othersWishToAuthor: "Czego życzę autorowi tego tekstu?"
-      },
       affectiveTmp: {},
       affectiveScalesValues: {},
       affectiveTextlabelQuestions: {
@@ -290,6 +288,7 @@ export default {
         summaryImpression: "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów.",
         othersWishToAuthor: "Czego życzę autorowi tego tekstu?"
       },
+      affectiveScalesDict: {},
       affectiveSummaryTags: [],
       affectiveSummaryImpressions: [],
       affectiveOthersWishToAuthor: [],
@@ -458,6 +457,8 @@ export default {
 
       const affectiveTextlabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
       const affectiveScales = await this.$services.affectiveScale.list(this.projectId, docId)
+      this.scales = affectiveScales
+      this.textLabels = affectiveTextlabels
 
       this.affectiveSummaryTags = affectiveTextlabels.filter(
         (item) => item.question === this.affectiveTextlabelQuestions.summaryTag
@@ -469,7 +470,6 @@ export default {
         (item) => item.question === this.affectiveTextlabelQuestions.othersWishToAuthor
       )
 
-      const affectiveScales = await this.$services.affectiveScale.list(this.projectId, docId)
       const affectiveScalesValues = {}
       const affectiveScalesDict = this.affectiveScalesDict
       const scaleTypesIdsTexts = this.scaleTypesIdsTexts
