@@ -29,8 +29,8 @@
       </v-col>
       <v-col v-if="withCheckbox" cols="3" class="widget-row__checkbox">
         <v-checkbox
+          v-model="checkboxValue"
           :label="checkboxLabel"
-          @change="checkboxChangeHandler"
         />
       </v-col>
     </v-row>
@@ -82,7 +82,8 @@ export default {
       sliderMinVal: 0,
       sliderMaxVal: 10,
       isClicked: false,
-      enableSlider: true
+      enableSlider: true,
+      checkboxValue: false
     }
   },
 
@@ -94,19 +95,33 @@ export default {
       return 12
     },
     sliderThumbColor() {
-      if (this.mustClick) {
-        if (!this.isClicked && this.value === 0) {
-          return "transparent"
-        }
-        if (this.isClicked && this.enableSlider) {
-          return this.color
-        }
-        if (this.isClicked && !this.enableSlider) {
-          return "grey"
-        }
-        return this.color
+      if (this.mustClick && !this.isClicked && this.value < 0) {
+        return "transparent"
+      }
+      if (this.mustClick && this.isClicked && this.value < 0) {
+        return "transparent"
       }
       return this.color
+    }
+  },
+
+  watch: {
+    value() {
+      if (this.hideSliderOnChecked && this.value === -1) {
+        this.checkboxValue = true
+      }
+    },
+    checkboxValue(isChecked) {
+      if (this.hideSliderOnChecked && isChecked) {
+        console.log("core input - checkbox is true")
+        this.$emit('markCheckbox', this.categoryLabel)
+        this.enableSlider = false
+      }
+      if (this.hideSliderOnChecked && !isChecked) {
+        console.log("core input - checkbox is false")
+        this.$emit('unmarkCheckbox', this.categoryLabel)
+        this.enableSlider = true
+      }
     }
   },
 
@@ -117,16 +132,6 @@ export default {
     valueChangeHandler(newValue) {
       this.markClicked()
       this.$emit('change', newValue, this.categoryLabel)
-    },
-    checkboxChangeHandler(checkboxValue) {
-      if (this.hideSliderOnChecked && checkboxValue) {
-        this.$emit('markCheckbox', this.categoryLabel)
-        this.enableSlider = false
-      }
-      if (this.hideSliderOnChecked && !checkboxValue) {
-        this.$emit('unmarkCheckbox', this.categoryLabel)
-        this.enableSlider = true
-      }
     }
   }
 }

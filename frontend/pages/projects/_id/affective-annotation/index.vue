@@ -651,10 +651,14 @@ export default {
       await this.list(this.doc.id)
     },
     async nullifyOthersValueHandler(category) {
-      this.affectiveOthersTmp[category] = this.affectiveScalesValues[category]
-      await this.othersChangeHandler(-1, category)
+      if (this.affectiveScalesValues[category] !== -1) {
+        console.log("index - nullify category")
+        this.affectiveOthersTmp[category] = this.affectiveScalesValues[category]
+        await this.othersChangeHandler(-1, category)
+      }
     },
     async restoreOthersValueHandler(category) {
+      console.log("index - restore category")
       const previousValue = this.affectiveOthersTmp[category] || 0
       await this.othersChangeHandler(previousValue, category)
     },
