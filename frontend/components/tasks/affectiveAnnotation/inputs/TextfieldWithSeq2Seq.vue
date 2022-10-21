@@ -138,12 +138,10 @@ export default {
     },
     checkboxValue(isChecked) {
       if (this.hideTextfieldOnChecked && isChecked) {
-        console.log("core input - checkbox is true")
         this.$emit('markCheckbox', this.categoryLabel)
         this.enableTextfield = false
       }
       if (this.hideTextfieldOnChecked && !isChecked) {
-        console.log("core input - checkbox is false")
         this.$emit('unmarkCheckbox', this.categoryLabel)
         this.enableTextfield = true
       }
@@ -233,13 +231,5 @@ export default {
     &__warning {
       color: red;
     }
-  }
-
-  .textfield-data-normal {
-    color: black !important;
-  }
-
-  .textfield-data-hidden {
-    color: red !important;
   }
 </style>

@@ -469,7 +469,6 @@ export default {
       this.affectiveOthersWishToAuthor = affectiveTextlabels.filter(
         (item) => item.question === this.affectiveTextlabelQuestions.othersWishToAuthor
       )
-      console.log(this.affectiveOthersWishToAuthor)
 
       const affectiveScalesValues = {}
       const affectiveScalesDict = this.affectiveScalesDict
@@ -652,13 +651,11 @@ export default {
     },
     async nullifyOthersValueHandler(category) {
       if (this.affectiveScalesValues[category] !== -1) {
-        console.log("index - nullify category")
         this.affectiveOthersTmp[category] = this.affectiveScalesValues[category]
         await this.othersChangeHandler(-1, category)
       }
     },
     async restoreOthersValueHandler(category) {
-      console.log("index - restore category")
       const previousValue = this.affectiveOthersTmp[category] || 0
       await this.othersChangeHandler(previousValue, category)
     },
@@ -667,7 +664,6 @@ export default {
       await this.list(this.doc.id)
     },
     async updateWishToAuthor(annotationId, text) {
-      console.log("index - update wish to author")
       await this.$services.affectiveTextlabel.changeText(this.projectId, this.doc.id, annotationId, text)
       await this.list(this.doc.id)
     },

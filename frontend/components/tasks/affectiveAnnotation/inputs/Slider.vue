@@ -113,12 +113,10 @@ export default {
     },
     checkboxValue(isChecked) {
       if (this.hideSliderOnChecked && isChecked) {
-        console.log("core input - checkbox is true")
         this.$emit('markCheckbox', this.categoryLabel)
         this.enableSlider = false
       }
       if (this.hideSliderOnChecked && !isChecked) {
-        console.log("core input - checkbox is false")
         this.$emit('unmarkCheckbox', this.categoryLabel)
         this.enableSlider = true
       }
