@@ -13,7 +13,7 @@ export default {
   key: '键',
   value: '值',
   newText: '下一条',
-  articleTitle: '文章标Question',
+  articleTitle: '文章标',
   articleId: '文章 ID',
   labelTypes: '标签类型',
   relation: '关系',

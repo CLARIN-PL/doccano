@@ -1,0 +1,16 @@
+[
+    {
+        "text":"Obraża mnie",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "offendsMe"
+    },
+    {
+        "text":"Może kogoś atakować / obrażać / lekceważyć",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "mayAttackOrOffendSomeone"
+    }
+]
