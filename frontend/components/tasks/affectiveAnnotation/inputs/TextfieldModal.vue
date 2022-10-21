@@ -2,6 +2,9 @@
   <v-container class="widget">
     <v-row v-if="question" class="widget__question">
       {{ question }}
+      <span  v-if="required" class="red--text">
+         *
+      </span>
     </v-row>
     <v-row class="widget__answer"  justify="center" align="center">
       <v-col
@@ -15,7 +18,7 @@
           dense
           outlined
           readonly
-          :value="value"
+          :value="showDialog ? '' : value"
           :rules="rulesTextfield"
           hide-details="auto"
         />
@@ -25,6 +28,7 @@
     <v-dialog
       v-model="showDialog"
       scrollable
+      persistent
       width="600"
       class="widget-dialog"
     >
@@ -69,6 +73,10 @@ export default {
       type: Boolean,
       default: false
     },
+    required: {
+      type: Boolean,
+      default: false
+    },
     question: {
       type: String,
       default: ""
@@ -109,8 +117,13 @@ export default {
 
   methods: {
     submitAnswer() {
+      const hasFilledText = this.required ? !!this.text : true
+      if(hasFilledText) {
         this.showDialog = false
         this.$emit("submit", this.text)
+      } else {
+        this.dialogErrorMessage = this.$t('rules.required')
+      }
     },
     textfieldClickHandler() {
       if (this.enableTextfield) {

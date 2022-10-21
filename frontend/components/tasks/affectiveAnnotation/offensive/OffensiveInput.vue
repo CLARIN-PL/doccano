@@ -79,6 +79,7 @@
                                     <textfield-modal
                                         v-if="substatement.isChecked"
                                         v-model="substatement.answer"
+                                        :required="true"
                                         :disabled="!hasFilledTopQuestions"
                                         :question="$t(`annotation.offensive.subquestion3.substatement${(idx+1)}Question`)"
                                         :full-question="`
@@ -163,6 +164,21 @@ export default Vue.extend({
                 required: (value : any) => !!value || this.$i18n.t('rules.required'),
             },
             formData: {
+                subquestion1: 0,
+                subquestion2: 0,
+                subquestion3: [
+                    {
+                        isChecked: false,
+                        answer: ''
+                    }
+                ],
+                subquestion4: [
+                    {
+                        isChecked: false,
+                    }
+                ]
+            },
+            originalFormData: {
                 subquestion1: 0,
                 subquestion2: 0,
                 subquestion3: [
@@ -264,17 +280,19 @@ export default Vue.extend({
         },
     },
     watch: {
+        doc() {
+            this.formData = _.cloneDeep(this.originalFormData)
+            this.$forceUpdate()
+        },
         scaleValues: {
             deep: true,
             handler(val) {
                 const keys = ['subquestion1', 'subquestion2']
                 keys.forEach((key)=> {
-                    // @ts-ignore
-                    const polishAnnotation : any = this.polishAnnotation.offensive[key]
+                    const polishAnnotation : any = _.get(this.polishAnnotation.offensive, key)
                     const scaleValue = val.find((scale: any)=> scale.text === polishAnnotation)
                     if(scaleValue) {
-                        // @ts-ignore
-                        this.formData[key] = scaleValue.scale
+                        _.set(this.formData, key, scaleValue.scale)
                     } 
                 })
             }
@@ -288,32 +306,30 @@ export default Vue.extend({
                     const formDataKey = `${subquestionIndex}[${parseInt(substatementIndex)-1}]`
                     const formData = _.get(this.formData, formDataKey)
                     if(formData) {
-                        // @ts-ignore
                         _.set(this.formData, `${formDataKey}.isChecked`, !!textLabel.text)
-                        // @ts-ignore
                         _.set(this.formData, `${formDataKey}.answer`, textLabel.text)
                      }
                 })                
             }
         }
     },
+    created() {
+        this.formData = _.cloneDeep(this.originalFormData)
+    },
     mounted() {
         this.isLoaded = true;
     },
     methods: {
-        onScaleChange() {
-             _.debounce((formDataKey: string) => {
-                // @ts-ignore
-                const value : number = this.formData[formDataKey] || 0
-                // @ts-ignore
-                const labelQuestion : string = this.polishAnnotation.offensive[formDataKey]
-                const scaleLabel : any = this.scaleTypes.find((scaleType: any)=> scaleType.text === labelQuestion)
-                if(scaleLabel && this.isLoaded) {
-                    this.$emit('update:scale', scaleLabel.id, value)
-                } 
-
-            }, 100)
-        },
+        onScaleChange: _.debounce(function (formDataKey: string) {
+            // @ts-ignore
+            const base = this as any
+            const value : number = _.get(base.formData, formDataKey) || 0
+            const labelQuestion : string = base.polishAnnotation.offensive[formDataKey]
+            const scaleLabel : any = base.scaleTypes.find((scaleType: any)=> scaleType.text === labelQuestion)
+            if(scaleLabel && base.isLoaded) {
+                base.$emit('update:scale', scaleLabel.id, value)
+            } 
+        }, 100),
         onLabelChange(substatement: any, key: string, index: number) {
             const formDataKey = `${key}[${index}]`
             const labelQuestionKey = `${key}.substatement${index+1}`
