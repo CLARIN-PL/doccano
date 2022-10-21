@@ -469,6 +469,7 @@ export default {
       this.affectiveOthersWishToAuthor = affectiveTextlabels.filter(
         (item) => item.question === this.affectiveTextlabelQuestions.othersWishToAuthor
       )
+      console.log(this.affectiveOthersWishToAuthor)
 
       const affectiveScalesValues = {}
       const affectiveScalesDict = this.affectiveScalesDict
@@ -662,6 +663,7 @@ export default {
       await this.list(this.doc.id)
     },
     async updateWishToAuthor(annotationId, text) {
+      console.log("index - update wish to author")
       await this.$services.affectiveTextlabel.changeText(this.projectId, this.doc.id, annotationId, text)
       await this.list(this.doc.id)
     },
@@ -678,15 +680,23 @@ export default {
       this.affectiveOthersTmp.wishToAuthor = this.affectiveOthersWishToAuthor
       if (this.affectiveOthersWishToAuthor.length > 0) {
         const annotationId = this.affectiveOthersWishToAuthor[0].id
-        await this.removeWishToAuthor(annotationId)
-        await this.list(this.doc.id)
+        const currentText = this.affectiveOthersWishToAuthor[0].text
+        if (currentText !== "-1") {
+          await this.removeWishToAuthor(annotationId)
+          await this.addWishToAuthor("-1")
+        }
       }
     },
     async restoreWishToAuthor() {
       if (this.affectiveOthersTmp.wishToAuthor.length > 0) {
+        if (this.affectiveOthersWishToAuthor.length > 0) {
+          const annotationId = this.affectiveOthersWishToAuthor[0].id
+          await this.removeWishToAuthor(annotationId)
+        }
         const text = this.affectiveOthersTmp.wishToAuthor[0].text
-        await this.addWishToAuthor(text)
-        await this.list(this.doc.id)
+        if (text !== "-1") {
+          await this.addWishToAuthor(text)
+        }
       }
     },
     async updateScale(labelId, value) {

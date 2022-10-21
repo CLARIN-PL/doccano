@@ -24,8 +24,8 @@
       </v-col>
       <v-col v-if="withCheckbox" cols="3" class="widget__checkbox">
         <v-checkbox
+          v-model="checkboxValue"
           :label="checkboxLabel"
-          @change="checkboxChangeHandler"
         />
       </v-col>
     </v-row>
@@ -104,6 +104,7 @@ export default {
 
   data() {
     return {
+      checkboxValue: false,
       enableTextfield: true,
       showDialog: false,
       dialogErrorMessage: "",
@@ -130,6 +131,22 @@ export default {
     answers() {
       const res = this.answers.map((value) => value.text)
       this.stringifiedAnswers = res.join(", ")
+
+      if (this.hideTextfieldOnChecked && this.stringifiedAnswers === "-1") {
+        this.checkboxValue = true
+      }
+    },
+    checkboxValue(isChecked) {
+      if (this.hideTextfieldOnChecked && isChecked) {
+        console.log("core input - checkbox is true")
+        this.$emit('markCheckbox', this.categoryLabel)
+        this.enableTextfield = false
+      }
+      if (this.hideTextfieldOnChecked && !isChecked) {
+        console.log("core input - checkbox is false")
+        this.$emit('unmarkCheckbox', this.categoryLabel)
+        this.enableTextfield = true
+      }
     }
   },
 
@@ -158,16 +175,6 @@ export default {
         this.$emit('add', text)
       } else {
         this.dialogErrorMessage = errorMessage
-      }
-    },
-    checkboxChangeHandler(checkboxValue) {
-      if (this.hideTextfieldOnChecked && checkboxValue) {
-        this.$emit('markCheckbox', this.categoryLabel)
-        this.enableTextfield = false
-      }
-      if (this.hideTextfieldOnChecked && !checkboxValue) {
-        this.$emit('unmarkCheckbox', this.categoryLabel)
-        this.enableTextfield = true
       }
     },
     textfieldClickHandler() {
@@ -227,4 +234,12 @@ export default {
       color: red;
     }
   }
-  </style>
+
+  .textfield-data-normal {
+    color: black !important;
+  }
+
+  .textfield-data-hidden {
+    color: red !important;
+  }
+</style>
