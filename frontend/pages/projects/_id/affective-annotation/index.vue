@@ -91,61 +91,77 @@
               <v-divider />
               <div v-if="isScaleImported" class="pa-4">
                 <summary-input
-                  v-if="project.isSummaryMode"
-                  :text="doc.text"
-                  :tags="affectiveSummaryTags"
-                  :impressions="affectiveSummaryImpressions"
-                  @remove:tag="removeTag"
-                  @update:tag="updateTag"
-                  @add:tag="addTag"
-                  @remove:impression="removeImpression"
-                  @update:impression="updateImpression"
-                  @add:impression="addImpression"
-                />
-                <emotions-input
-                  v-else-if="project.isEmotionsMode"
-                  :general-positivity="affectiveScalesValues.positive"
-                  :general-negativity="affectiveScalesValues.negative"
-                  :joy="affectiveScalesValues.joy"
-                  :admiration="affectiveScalesValues.admiration"
-                  :inspiration="affectiveScalesValues.inspiration"
-                  :peace="affectiveScalesValues.peace"
-                  :surprise="affectiveScalesValues.surprise"
-                  :sympathy="affectiveScalesValues.sympathy"
-                  :fear="affectiveScalesValues.fear"
-                  :sadness="affectiveScalesValues.sadness"
-                  :disgust="affectiveScalesValues.disgust"
-                  :anger="affectiveScalesValues.anger"
-                  @change="emotionsChangeHandler"
-                />
-                <others-input
-                  v-else-if="project.isOthersMode"
-                  :ironic="affectiveScalesValues.ironic"
-                  :embarrassing="affectiveScalesValues.embarrassing"
-                  :vulgar="affectiveScalesValues.vulgar"
-                  :politic="affectiveScalesValues.politic"
-                  :interesting="affectiveScalesValues.interesting"
-                  :comprehensible="affectiveScalesValues.comprehensible"
-                  :agreeable="affectiveScalesValues.agreeable"
-                  :believable="affectiveScalesValues.believable"
-                  :sympathy-to-author="affectiveScalesValues.sympathyToAuthor"
-                  :need-more-info="affectiveScalesValues.needMoreInfo"
-                  :wish-to-author="affectiveOthersWishToAuthor"
-                  @change="othersChangeHandler"
-                  @nullifyCategoryValue="nullifyOthersValueHandler"
-                  @restoreCategoryValue="restoreOthersValueHandler"
-                  @remove:wishToAuthor="removeWishToAuthor"
-                  @update:wishToAuthor="updateWishToAuthor"
-                  @add:wishToAuthor="addWishToAuthor"
-                  @nullify:wishToAuthor="nullifyWishToAuthor"
-                  @restore:wishToAuthor="restoreWishToAuthor"
-                />
-                <offensive-input
-                  v-else-if="project.isOffensiveMode"
-                  v-model="affectiveTmp" />
-                <humor-input
-                  v-else-if="project.isHumorMode"
-                  v-model="affectiveTmp" />
+                    v-if="project.isSummaryMode"
+                    :text="doc.text"
+                    :tags="affectiveSummaryTags"
+                    :impressions="affectiveSummaryImpressions"
+                    @remove:tag="removeTag"
+                    @update:tag="updateTag"
+                    @add:tag="addTag"
+                    @remove:impression="removeImpression"
+                    @update:impression="updateImpression"
+                    @add:impression="addImpression"
+                  />
+                  <emotions-input
+                    v-if="project.isEmotionsMode"
+                    :general-positivity="affectiveScalesValues.positive"
+                    :general-negativity="affectiveScalesValues.negative"
+                    :joy="affectiveScalesValues.joy"
+                    :admiration="affectiveScalesValues.admiration"
+                    :inspiration="affectiveScalesValues.inspiration"
+                    :peace="affectiveScalesValues.peace"
+                    :surprise="affectiveScalesValues.surprise"
+                    :sympathy="affectiveScalesValues.sympathy"
+                    :fear="affectiveScalesValues.fear"
+                    :sadness="affectiveScalesValues.sadness"
+                    :disgust="affectiveScalesValues.disgust"
+                    :anger="affectiveScalesValues.anger"
+                    @change="emotionsChangeHandler"
+                  />
+                  <others-input
+                    v-if="project.isOthersMode"
+                    :ironic="affectiveScalesValues.ironic"
+                    :embarrassing="affectiveScalesValues.embarrassing"
+                    :vulgar="affectiveScalesValues.vulgar"
+                    :politic="affectiveScalesValues.politic"
+                    :interesting="affectiveScalesValues.interesting"
+                    :comprehensible="affectiveScalesValues.comprehensible"
+                    :agreeable="affectiveScalesValues.agreeable"
+                    :believable="affectiveScalesValues.believable"
+                    :sympathy-to-author="affectiveScalesValues.sympathyToAuthor"
+                    :need-more-info="affectiveScalesValues.needMoreInfo"
+                    :wish-to-author="affectiveOthersWishToAuthor"
+                    @change="othersChangeHandler"
+                    @nullifyCategoryValue="nullifyOthersValueHandler"
+                    @restoreCategoryValue="restoreOthersValueHandler"
+                    @remove:wishToAuthor="removeWishToAuthor"
+                    @update:wishToAuthor="updateWishToAuthor"
+                    @add:wishToAuthor="addWishToAuthor"
+                    @nullify:wishToAuthor="nullifyWishToAuthor"
+                    @restore:wishToAuthor="restoreWishToAuthor"
+                  />
+                  <offensive-input
+                    v-if="project.isOffensiveMode"
+                    :project="project"
+                    :doc="doc"
+                    :scale-types="scaleTypes"
+                    :scales="scales"
+                    :text-labels="textLabels"
+                    @update:scale="updateScale"
+                    @add:label="addLabel"
+                    @update:label="updateTag"
+                    @remove:label="removeTag" />
+                  <humor-input
+                    v-if="project.isHumorMode"
+                    :project="project"
+                    :doc="doc"
+                    :scale-types="scaleTypes"
+                    :scales="scales"
+                    :text-labels="textLabels"
+                    @update:scale="updateScale"
+                    @add:label="addLabel"
+                    @update:label="updateTag"
+                    @remove:label="removeTag"  />
               </div>
             </v-card>
           </v-col>
@@ -242,7 +258,9 @@ export default {
       mdiText,
       mdiFormatListBulleted,
       docs: [],
-      isScaleImported: true,
+      textLabels: [],
+      scales: [],
+      scaleTypes: [],
       scaleTypesIdsTexts: {},
       scaleTypesTextsIds: {},
       spans: [],
@@ -260,16 +278,17 @@ export default {
       relationMode: false,
       articleTotal: 1,
       articleIndex: 1,
+      isScaleImported: true,
       currentArticleId: "",
       currentWholeArticle: [],
       affectiveTmp: {},
-      affectiveScalesDict: {},
       affectiveScalesValues: {},
       affectiveTextlabelQuestions: {
         summaryTag: "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.",
         summaryImpression: "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów.",
         othersWishToAuthor: "Czego życzę autorowi tego tekstu?"
       },
+      affectiveScalesDict: {},
       affectiveSummaryTags: [],
       affectiveSummaryImpressions: [],
       affectiveOthersWishToAuthor: [],
@@ -342,7 +361,7 @@ export default {
       if (val) {
         this.list(this.doc.id)
       }
-    }
+    },
   },
 
   async created() {
@@ -365,6 +384,7 @@ export default {
     this.affectiveScalesDict = affectiveScalesDict
 
     const scaleTypesRaw = await this.$services.scaleType.list(this.projectId)
+    this.scaleTypes = scaleTypesRaw
     if (scaleTypesRaw.length > 0) {
       const scaleTypesIdsTexts = {}
       const scaleTypesTextsIds = {}
@@ -377,6 +397,8 @@ export default {
     } else if (!this.project.isSummaryMode) {
       this.isScaleImported = false
     }
+
+    this.list(this.doc.id)
   },
 
   methods: {
@@ -434,6 +456,10 @@ export default {
       this.categories = await this.$services.textClassification.list(this.projectId, docId)
 
       const affectiveTextlabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
+      const affectiveScales = await this.$services.affectiveScale.list(this.projectId, docId)
+      this.scales = affectiveScales
+      this.textLabels = affectiveTextlabels
+
       this.affectiveSummaryTags = affectiveTextlabels.filter(
         (item) => item.question === this.affectiveTextlabelQuestions.summaryTag
       )
@@ -444,7 +470,6 @@ export default {
         (item) => item.question === this.affectiveTextlabelQuestions.othersWishToAuthor
       )
 
-      const affectiveScales = await this.$services.affectiveScale.list(this.projectId, docId)
       const affectiveScalesValues = {}
       const affectiveScalesDict = this.affectiveScalesDict
       const scaleTypesIdsTexts = this.scaleTypesIdsTexts
@@ -663,7 +688,29 @@ export default {
         await this.addWishToAuthor(text)
         await this.list(this.doc.id)
       }
-    }
+    },
+    async updateScale(labelId, value) {
+      if(labelId) {
+         await this.$services.affectiveScale.create(
+          this.projectId,
+          this.doc.id,
+          labelId,
+          value
+        )
+        await this.list(this.doc.id)
+      } 
+    },
+    async addLabel(question, answer) {
+      if(question && answer) {
+        await this.$services.affectiveTextlabel.create(
+          this.projectId,
+          this.doc.id,
+          answer,
+          question
+        )
+        await this.list(this.doc.id)
+      }
+    },
   }
 }
 </script>

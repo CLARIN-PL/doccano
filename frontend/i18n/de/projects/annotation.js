@@ -164,5 +164,6 @@ export default {
       substatement11: "Kontrast",
       substatement12: "Hat Merkmale eines Witzes"
     }
-  }
+  },
+  noScaleLabels: 'Keine Skalenbeschriftungen gefunden. Bitte wenden Sie sich an den Administrator.'
 }

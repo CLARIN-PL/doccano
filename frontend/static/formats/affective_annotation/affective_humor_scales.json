@@ -1,0 +1,16 @@
+[
+    {
+        "text":"Mnie bawi/śmieszy?",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "makesMeLaugh"
+    },
+    {
+        "text":"Może kogoś bawić?",
+        "suffix_key":"",
+        "background_color":"#FF0000",
+        "text_color":"#ffffff",
+        "varname": "makesSomeoneLaugh"
+    }
+]
