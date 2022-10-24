@@ -273,9 +273,20 @@ export default Vue.extend({
         },
         textLabelValues() : any[] {
             return this.textLabels.map((textLabel: any) => {
-                const substatements = textLabel.question.split('##')
-                const substatementQuestion = substatements.length > 1 ? substatements[1] : substatements[0]
-                const substatementKey = substatements.length > 1 ? substatements[0] : ''
+                const substatementQuestion = textLabel.question
+                const annotation = _.cloneDeep(this.polishAnnotation.humor) as any
+                let substatementKey = ''
+                Object.keys(annotation).forEach((subKey: string) => {
+                    if(typeof annotation[subKey] === 'object') {
+                        Object.keys(annotation[subKey]).every((subKey2: string) => {
+                            const isKey = annotation[subKey][subKey2] === textLabel.question
+                            if(isKey) {
+                                substatementKey = `${subKey}.${subKey2}`
+                            }
+                            return !isKey
+                        })
+                    }
+                })
                 return {
                     ...textLabel,
                     substatementQuestion,
@@ -347,7 +358,7 @@ export default Vue.extend({
             const labelQuestionKey = `${key}.substatement${index+1}`
             const formData = _.get(this.formData, formDataKey)
             const labelQuestion = _.get(this.polishAnnotation.humor, labelQuestionKey)
-            const question = `${labelQuestionKey}##${labelQuestion}`
+            const question = `${labelQuestion}`
 
             const textLabelValue = this.textLabelValues.find((textLabel : any) => textLabel.question === question)
             let eventName = textLabelValue ? 'update:label' : 'add:label'
