@@ -341,12 +341,12 @@ export default Vue.extend({
             let eventName = textLabelValue ? 'update:label' : 'add:label'
             eventName = substatement.isChecked ? eventName : 'remove:label'
             if(!_.isEmpty(formData) && labelQuestion) {
-                const answer = formData.answer === undefined ? `${labelQuestionKey}##1` : formData.answer
+                const answer = formData.answer === undefined ? labelQuestion : formData.answer
                 if(eventName === 'add:label' && answer) {
                     this.$emit(eventName, question, answer)
                 } else if(eventName === 'update:label' && textLabelValue) {
                     const substatementId = textLabelValue.id
-                    this.$emit(eventName, substatementId, formData.answer)
+                    this.$emit(eventName, substatementId, answer)
                 } else if(eventName === 'remove:label' && textLabelValue) {
                     const substatementId = textLabelValue.id
                     this.$emit(eventName, substatementId)
