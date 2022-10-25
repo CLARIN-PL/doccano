@@ -17,7 +17,7 @@
           small
           dense
           readonly
-          :value="stringifiedAnswers"
+          :value="stringifiedAnswers === '-1' ? '' : stringifiedAnswers"
           :rules="rulesTextfield"
           hide-details="auto"
         />
