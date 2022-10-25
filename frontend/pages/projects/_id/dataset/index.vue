@@ -14,9 +14,17 @@
         {{ $t('generic.delete') }}
       </v-btn>
       <v-spacer />
+      <action-menu-util
+        button-color=""
+        :items="annotationConfirmationOptions"
+        :text="$t('dataset.annotationConfirmationStatus')"
+        @view-all="isConfirmed = ''"
+        @view-confirmed="isConfirmed = true"
+        @view-not-confirmed="isConfirmed = false"
+      />
       <v-btn
         :disabled="!item.count"
-        class="text-capitalize"
+        class="text-capitalize ml-2"
         color="error"
         @click="dialogDeleteAll = true"
       >
@@ -82,6 +90,7 @@ import ArticleList from '@/components/example/ArticleList.vue'
 import DocumentList from '@/components/example/DocumentList.vue'
 import FormDelete from '@/components/example/FormDelete.vue'
 import FormDeleteBulk from '@/components/example/FormDeleteBulk.vue'
+import ActionMenuUtil from '~/components/utils/ActionMenu.vue'
 import ImageList from '~/components/example/ImageList.vue'
 import AudioList from '~/components/example/AudioList.vue'
 import { ExampleListDTO, ExampleDTO } from '~/services/application/example/exampleData'
@@ -91,6 +100,7 @@ import { ProjectDTO } from '~/services/application/project/projectData'
 export default Vue.extend({
   components: {
     ActionMenu,
+    ActionMenuUtil,
     AudioList,
     ArticleList,
     DocumentList,
@@ -114,17 +124,32 @@ export default Vue.extend({
       item: { items: [] as ExampleDTO[] } as ExampleListDTO,
       selected: [] as ExampleDTO[],
       isLoading: false,
-      isProjectAdmin: false
+      isProjectAdmin: false,
+      isConfirmed: '',
     }
   },
 
   async fetch() {
-    this.isLoading = true
-    this.item = await this.$services.example.list(this.projectId, this.$route.query)
-    this.isLoading = false
+    await this.loadData()
   },
 
   computed: {
+    annotationConfirmationOptions() : any[] {
+      return [
+        {
+          title: this.$t('dataset.viewAllStatus'),
+          event: 'view-all'
+        },
+        {
+          title: this.$t('dataset.viewConfirmedStatus'),
+          event: 'view-confirmed'
+        },
+        {
+          title: this.$t('dataset.viewNotConfirmedStatus'),
+          event: 'view-not-confirmed'
+        },
+      ]
+    },
     canDelete(): boolean {
       return this.selected.length > 0
     },
@@ -147,10 +172,13 @@ export default Vue.extend({
       } else {
         return 'text'
       }
-    }
+    },
   },
 
   watch: {
+    isConfirmed() {
+      this.loadData()
+    },
     '$route.query': _.debounce(function () {
       // @ts-ignore
       this.$fetch()
@@ -163,6 +191,14 @@ export default Vue.extend({
   },
 
   methods: {
+    async loadData() {
+      this.isLoading = true
+      const query = {...this.$route.query, ...{
+        isChecked: this.isConfirmed
+      }}
+      this.item = await this.$services.example.list(this.projectId, query)
+      this.isLoading = false
+    },
     async remove() {
       await this.$services.example.bulkDelete(this.projectId, this.selected)
       this.$fetch()

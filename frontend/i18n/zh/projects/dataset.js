@@ -1,6 +1,11 @@
 export default {
   dataset: '数据集',
   actions: '操作',
+  status: '状态',
+  annotationConfirmationStatus: '注释状态',
+  viewAllStatus: '全部',
+  viewConfirmedStatus: '已确认',
+  viewNotConfirmedStatus: '未确认',
   importDataset: '导入数据集',
   exportDataset: '导出数据集',
   text: '文本',
