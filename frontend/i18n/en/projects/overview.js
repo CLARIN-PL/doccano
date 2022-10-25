@@ -34,4 +34,6 @@ export default {
   enableOffensive: 'Enable user to measure offensiveness',
   enableEmotions: 'Enable user to measure emotions',
   enableOthers: 'Enable user to measure other parameters',
+  articleViewMode: 'View annotation as part of an article',
+  singleTextViewMode: 'View annotation as a single text',
 }

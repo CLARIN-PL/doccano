@@ -26,7 +26,8 @@ export class ProjectDTO {
   isSummaryMode: boolean
   isOffensiveMode: boolean
   isEmotionsMode: boolean
-  affectiveAnnotationMode?: string
+  affectiveProjectMode?: string
+  affectiveViewMode?: string
 
   constructor(item: ProjectReadItem) {
     this.id = item.id
@@ -70,7 +71,8 @@ export type ProjectWriteDTO = Pick<
   | 'allowOverlapping'
   | 'graphemeMode'
   | 'useRelation'
-  | 'affectiveAnnotationMode'
+  | 'affectiveProjectMode'
+  | 'affectiveViewMode'
   | 'isHumorMode'
   | 'isOthersMode'
   | 'isSummaryMode'

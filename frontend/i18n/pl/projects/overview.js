@@ -34,4 +34,6 @@ export default {
   enableOffensive: 'Umożliwić użytkownikowi mierzenie ofensywności',
   enableEmotions: 'Umożliw użytkownikowi pomiar emocji',
   enableOthers: 'Umożliwić użytkownikowi pomiar innych parametrów',
+  articleViewMode: 'Wyświetl adnotację jako część artykułu',
+  singleTextViewMode: 'Wyświetl adnotację jako pojedynczy tekst',
 }

@@ -26,4 +26,6 @@ export default {
   enableOffensive: '使用户能够测量冒犯性', 
   enableEmotions: '使用户能够测量情绪', 
   enableOthers: '使用户能够测量其他参数', 
+  articleViewMode: '查看注释作为文章的一部分',
+  singleTextViewMode: '查看注释为单个文本',
 }

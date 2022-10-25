@@ -34,4 +34,6 @@ export default {
   enableOffensive: 'Ermöglicht dem Benutzer die Messung der Beleidigung',
   enableEmotions: 'Ermöglicht dem Benutzer die Messung von Emotionen',
   enableOthers: 'Ermöglicht dem Benutzer die Messung anderer Parameter',
+  articleViewMode: 'Anmerkung als Teil eines Artikels anzeigen',
+  singleTextViewMode: 'Anmerkung als einzelnen Text anzeigen',
 }
