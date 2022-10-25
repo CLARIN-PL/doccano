@@ -202,6 +202,7 @@ class AffectiveAnnotationProject(Project):
     is_offensive_mode = models.BooleanField(default=False)
     is_humor_mode = models.BooleanField(default=False)
     is_others_mode = models.BooleanField(default=False)
+    is_single_ann_view = models.BooleanField(default=True)
 
     @property
     def is_text_project(self) -> bool:

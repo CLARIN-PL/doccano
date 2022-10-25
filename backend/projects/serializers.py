@@ -131,7 +131,7 @@ class ArticleAnnotationProjectSerializer(ProjectSerializer):
 class AffectiveAnnotationProjectSerializer(ProjectSerializer):
     class Meta(ProjectSerializer.Meta):
         model = AffectiveAnnotationProject
-        fields = ProjectSerializer.Meta.fields + ["allow_overlapping", "grapheme_mode", "use_relation", "is_summary_mode", "is_emotions_mode", "is_offensive_mode", "is_humor_mode", "is_others_mode"]
+        fields = ProjectSerializer.Meta.fields + ["allow_overlapping", "grapheme_mode", "use_relation", "is_summary_mode", "is_emotions_mode", "is_offensive_mode", "is_humor_mode", "is_others_mode", "is_single_ann_view"]
 
 
 class ProjectPolymorphicSerializer(PolymorphicSerializer):
