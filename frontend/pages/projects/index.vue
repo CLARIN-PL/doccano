@@ -80,15 +80,12 @@ export default Vue.extend({
   created() {
     const currentTime = new Date()
     const restingEndTime = this.getRestingEndTime()
-    console.log(restingEndTime)
 
     if (restingEndTime === null || currentTime >= restingEndTime) {
-      console.log("work!")
       this.showRestingMessage = false
       this.restingEndTime = currentTime
       this.clearRestingPeriod()
     } else {
-      console.log("rest time!")
       this.showRestingMessage = true
       this.restingEndTime = restingEndTime
     }

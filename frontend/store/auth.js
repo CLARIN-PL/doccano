@@ -47,7 +47,6 @@ export const getters = {
     return state.isStaff
   },
   getRestingEndTime(state) {
-    console.log(state.restingEndTime)
     if (state.restingEndTime !== null) {
       return moment(state.restingEndTime, 'ddd, DD-MM-YYYY HH:mm:ss').toDate()
     }
@@ -62,7 +61,6 @@ export const actions = {
     commit('setRestingPeriod', endTime)
   },
   clearRestingPeriod({ commit }) {
-    console.log("clearRestingPeriod")
     commit('clearRestingPeriod')
   },
   async authenticateUser({ commit }, authData) {

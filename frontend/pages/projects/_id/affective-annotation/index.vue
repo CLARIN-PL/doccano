@@ -375,7 +375,6 @@ export default {
     let hasRested = false
     const currentTime = new Date()
     const restingEndTime = this.getRestingEndTime()
-    console.log(restingEndTime)
 
     if (restingEndTime === null || currentTime >= restingEndTime) {
       hasRested = true
