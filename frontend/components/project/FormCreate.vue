@@ -129,7 +129,7 @@
               ></v-radio>
             </v-radio-group>
              <v-radio-group 
-              @change="updateValue('affectiveViewMode', $event)"
+              @change="updateValue('isSingleAnnView', $event)"
             >
               <v-radio
                 v-for="(affectiveViewOption, idx) in affectiveViewOptions"
@@ -209,9 +209,9 @@ export default Vue.extend({
       type: String,
       default: ''
     },
-    affectiveViewMode: {
-      type: String,
-      default: ''
+    isSingleAnnView: {
+      type: Boolean,
+      default: false
     },
     tags: {
       type: Array,
@@ -235,11 +235,11 @@ export default Vue.extend({
       return [
         {
           label: this.$t('overview.articleViewMode'),
-          value: 'isArticleViewMode'
+          value: false
         },
         {
           label: this.$t('overview.singleTextViewMode'),
-          value: 'isSingleTextViewMode'
+          value: true
         },
       ]
     },

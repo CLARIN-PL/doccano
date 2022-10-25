@@ -61,6 +61,9 @@ export class ProjectReadItem {
   @Expose({ name: 'is_offensive_mode' })
   isOffensiveMode: boolean
 
+  @Expose({ name: 'is_single_ann_view' })
+  isSingleAnnView: boolean
+
   @Expose({ name: 'is_text_project' })
   isTextProject: boolean
 
@@ -127,6 +130,7 @@ export class ProjectWriteItem {
     public is_summary_mode: boolean,
     public is_offensive_mode: boolean,
     public is_others_mode: boolean,
+    public is_single_ann_view: boolean,
     public tags: string[]
   ) {}
 
@@ -164,6 +168,7 @@ export class ProjectWriteItem {
       is_summary_mode: this.is_summary_mode,
       is_offensive_mode: this.is_offensive_mode,
       is_others_mode: this.is_others_mode,
+      is_single_ann_view: this.is_single_ann_view
     }
   }
 }

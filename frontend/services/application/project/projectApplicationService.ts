@@ -62,6 +62,7 @@ export class ProjectApplicationService {
       item.isSummaryMode,
       item.isOffensiveMode,
       item.isOthersMode,
+      item.isSingleAnnView,
       item.tags,
     )
   }

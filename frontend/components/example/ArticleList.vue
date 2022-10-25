@@ -169,6 +169,11 @@ export default Vue.extend({
                 sortable: false
             },
             {
+              text: this.$t('dataset.status'),
+              value: 'is_confirmed',
+              sortable: false
+            },
+            {
                 text: this.$t('dataset.action'),
                 value: 'action',
                 sortable: false
@@ -180,6 +185,11 @@ export default Vue.extend({
         {
           text: this.$t('dataset.title'),
           value: 'title',
+          sortable: false
+        },
+        {
+          text: this.$t('dataset.status'),
+          value: 'is_confirmed',
           sortable: false
         },
         {

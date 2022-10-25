@@ -30,7 +30,7 @@ export default Vue.extend({
         graphemeMode: false,
         useRelation: false,
         affectiveProjectMode: '',
-        affectiveViewMode: '',
+        isSingleAnnView: false,
         tags: [] as string[]
       } as ProjectWriteDTO,
       defaultItem: {
@@ -44,7 +44,7 @@ export default Vue.extend({
         graphemeMode: false,
         useRelation: false,
         affectiveProjectMode: '',
-        affectiveViewMode: '',
+        isSingleAnnView: false,
         tags: [] as string[]
       } as ProjectWriteDTO
     }

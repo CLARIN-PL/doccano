@@ -27,7 +27,7 @@ export class ProjectDTO {
   isOffensiveMode: boolean
   isEmotionsMode: boolean
   affectiveProjectMode?: string
-  affectiveViewMode?: string
+  isSingleAnnView: boolean
 
   constructor(item: ProjectReadItem) {
     this.id = item.id
@@ -55,6 +55,7 @@ export class ProjectDTO {
     this.isSummaryMode = item.isSummaryMode
     this.isOffensiveMode = item.isOffensiveMode
     this.isEmotionsMode = item.isEmotionsMode
+    this.isSingleAnnView = item.isSingleAnnView
   }
 }
 
@@ -72,12 +73,12 @@ export type ProjectWriteDTO = Pick<
   | 'graphemeMode'
   | 'useRelation'
   | 'affectiveProjectMode'
-  | 'affectiveViewMode'
   | 'isHumorMode'
   | 'isOthersMode'
   | 'isSummaryMode'
   | 'isOffensiveMode'
   | 'isEmotionsMode'
+  | 'isSingleAnnView'
 > & { tags: string[] }
 
 export class ProjectListDTO {
