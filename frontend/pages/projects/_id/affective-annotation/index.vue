@@ -685,17 +685,19 @@ export default {
           await this.removeWishToAuthor(annotationId)
           await this.addWishToAuthor("-1")
         }
+      } else {
+        await this.addWishToAuthor("-1")
       }
     },
     async restoreWishToAuthor() {
-      if (this.affectiveOthersTmp.wishToAuthor.length > 0) {
-        if (this.affectiveOthersWishToAuthor.length > 0) {
-          const annotationId = this.affectiveOthersWishToAuthor[0].id
-          await this.removeWishToAuthor(annotationId)
-        }
-        const text = this.affectiveOthersTmp.wishToAuthor[0].text
-        if (text !== "-1") {
-          await this.addWishToAuthor(text)
+      if (this.affectiveOthersWishToAuthor.length > 0) {
+        const annotationId = this.affectiveOthersWishToAuthor[0].id
+        await this.removeWishToAuthor(annotationId)
+        if (this.affectiveOthersTmp.wishToAuthor.length > 0) {
+          const text = this.affectiveOthersTmp.wishToAuthor[0].text
+          if (text !== "-1") {
+            await this.addWishToAuthor(text)
+          }
         }
       }
     },
