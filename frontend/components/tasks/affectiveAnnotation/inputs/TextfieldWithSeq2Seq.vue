@@ -17,7 +17,7 @@
           small
           dense
           readonly
-          :value="stringifiedAnswers === '-1' ? '' : stringifiedAnswers"
+          :value="stringifiedAnswers === nullFlag ? '' : stringifiedAnswers"
           :rules="rulesTextfield"
           hide-details="auto"
         />
@@ -108,7 +108,8 @@ export default {
       enableTextfield: true,
       showDialog: false,
       dialogErrorMessage: "",
-      stringifiedAnswers: ""
+      stringifiedAnswers: "",
+      nullFlag: "-1"
     }
   },
 
@@ -132,7 +133,7 @@ export default {
       const res = this.answers.map((value) => value.text)
       this.stringifiedAnswers = res.join(", ")
 
-      if (this.hideTextfieldOnChecked && this.stringifiedAnswers === "-1") {
+      if (this.hideTextfieldOnChecked && this.stringifiedAnswers === this.nullFlag) {
         this.checkboxValue = true
       }
     },

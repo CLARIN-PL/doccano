@@ -83,7 +83,8 @@ export default {
       sliderMaxVal: 10,
       isClicked: false,
       enableSlider: true,
-      checkboxValue: false
+      checkboxValue: false,
+      nullFlag: -1
     }
   },
 
@@ -107,7 +108,7 @@ export default {
 
   watch: {
     value() {
-      if (this.hideSliderOnChecked && this.value === -1) {
+      if (this.hideSliderOnChecked && this.value === this.nullFlag) {
         this.checkboxValue = true
       }
     },

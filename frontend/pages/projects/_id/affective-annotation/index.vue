@@ -289,6 +289,8 @@ export default {
         othersWishToAuthor: "Czego życzę autorowi tego tekstu?"
       },
       affectiveScalesDict: {},
+      intNullFlag: -1,
+      strNullFlag: "-1",
       affectiveSummaryTags: [],
       affectiveSummaryImpressions: [],
       affectiveOthersWishToAuthor: [],
@@ -650,9 +652,9 @@ export default {
       await this.list(this.doc.id)
     },
     async nullifyOthersValueHandler(category) {
-      if (this.affectiveScalesValues[category] !== -1) {
+      if (this.affectiveScalesValues[category] !== this.intNullFlag) {
         this.affectiveOthersTmp[category] = this.affectiveScalesValues[category]
-        await this.othersChangeHandler(-1, category)
+        await this.othersChangeHandler(this.intNullFlag, category)
       }
     },
     async restoreOthersValueHandler(category) {
@@ -681,12 +683,12 @@ export default {
       if (this.affectiveOthersWishToAuthor.length > 0) {
         const annotationId = this.affectiveOthersWishToAuthor[0].id
         const currentText = this.affectiveOthersWishToAuthor[0].text
-        if (currentText !== "-1") {
+        if (currentText !== this.strNullFlag) {
           await this.removeWishToAuthor(annotationId)
-          await this.addWishToAuthor("-1")
+          await this.addWishToAuthor(this.strNullFlag)
         }
       } else {
-        await this.addWishToAuthor("-1")
+        await this.addWishToAuthor(this.strNullFlag)
       }
     },
     async restoreWishToAuthor() {
@@ -695,7 +697,7 @@ export default {
         await this.removeWishToAuthor(annotationId)
         if (this.affectiveOthersTmp.wishToAuthor.length > 0) {
           const text = this.affectiveOthersTmp.wishToAuthor[0].text
-          if (text !== "-1") {
+          if (text !== this.strNullFlag) {
             await this.addWishToAuthor(text)
           }
         }
