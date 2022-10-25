@@ -1,3 +1,4 @@
+from click import confirm
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
@@ -29,4 +30,8 @@ class ExampleStateList(generics.ListCreateAPIView):
             queryset.delete()
         else:
             example = get_object_or_404(Example, pk=self.kwargs["example_id"])
-            serializer.save(example=example, confirmed_by=self.request.user)
+            serializer.save(example=example, started_at=self.request.data["started_at"])
+
+    def perform_update(self, serializer):
+        example = get_object_or_404(Example, pk=self.kwargs["example_id"])
+        serializer.save(example=example, confirmed_by=self.request.user)

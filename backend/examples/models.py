@@ -44,6 +44,7 @@ class ExampleState(models.Model):
     example = models.ForeignKey(to=Example, on_delete=models.CASCADE, related_name="states")
     confirmed_by = models.ForeignKey(to=User, on_delete=models.CASCADE)
     confirmed_at = models.DateTimeField(auto_now=True)
+    started_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     class Meta:
         unique_together = (("example", "confirmed_by"),)

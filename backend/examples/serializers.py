@@ -65,5 +65,5 @@ class ExampleArticleIdSerializer(serializers.ModelSerializer):
 class ExampleStateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExampleState
-        fields = ("id", "example", "confirmed_by", "confirmed_at")
-        read_only_fields = ("id", "example", "confirmed_by", "confirmed_at")
+        fields = ("id", "example", "confirmed_by", "confirmed_at", "started_at")
+        read_only_fields = ("id", "example", "confirmed_by", "confirmed_at", "started_at")
