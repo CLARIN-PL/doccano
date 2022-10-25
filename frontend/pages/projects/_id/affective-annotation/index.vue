@@ -289,6 +289,8 @@ export default {
         othersWishToAuthor: "Czego życzę autorowi tego tekstu?"
       },
       affectiveScalesDict: {},
+      intNullFlag: -1,
+      strNullFlag: "-1",
       affectiveSummaryTags: [],
       affectiveSummaryImpressions: [],
       affectiveOthersWishToAuthor: [],
@@ -650,8 +652,10 @@ export default {
       await this.list(this.doc.id)
     },
     async nullifyOthersValueHandler(category) {
-      this.affectiveOthersTmp[category] = this.affectiveScalesValues[category]
-      await this.othersChangeHandler(-1, category)
+      if (this.affectiveScalesValues[category] !== this.intNullFlag) {
+        this.affectiveOthersTmp[category] = this.affectiveScalesValues[category]
+        await this.othersChangeHandler(this.intNullFlag, category)
+      }
     },
     async restoreOthersValueHandler(category) {
       const previousValue = this.affectiveOthersTmp[category] || 0
@@ -678,15 +682,25 @@ export default {
       this.affectiveOthersTmp.wishToAuthor = this.affectiveOthersWishToAuthor
       if (this.affectiveOthersWishToAuthor.length > 0) {
         const annotationId = this.affectiveOthersWishToAuthor[0].id
-        await this.removeWishToAuthor(annotationId)
-        await this.list(this.doc.id)
+        const currentText = this.affectiveOthersWishToAuthor[0].text
+        if (currentText !== this.strNullFlag) {
+          await this.removeWishToAuthor(annotationId)
+          await this.addWishToAuthor(this.strNullFlag)
+        }
+      } else {
+        await this.addWishToAuthor(this.strNullFlag)
       }
     },
     async restoreWishToAuthor() {
-      if (this.affectiveOthersTmp.wishToAuthor.length > 0) {
-        const text = this.affectiveOthersTmp.wishToAuthor[0].text
-        await this.addWishToAuthor(text)
-        await this.list(this.doc.id)
+      if (this.affectiveOthersWishToAuthor.length > 0) {
+        const annotationId = this.affectiveOthersWishToAuthor[0].id
+        await this.removeWishToAuthor(annotationId)
+        if (this.affectiveOthersTmp.wishToAuthor.length > 0) {
+          const text = this.affectiveOthersTmp.wishToAuthor[0].text
+          if (text !== this.strNullFlag) {
+            await this.addWishToAuthor(text)
+          }
+        }
       }
     },
     async updateScale(labelId, value) {
