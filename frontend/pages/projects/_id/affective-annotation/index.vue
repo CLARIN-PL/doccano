@@ -204,12 +204,13 @@
       </v-card>
       <list-metadata :metadata="doc.meta" class="mt-4" />
     </template>
+    <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
   </layout-text>
 </template>
 
 <script>
 import _ from 'lodash'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { mdiText, mdiFormatListBulleted } from '@mdi/js'
 import LabelGroup from '@/components/tasks/textClassification/LabelGroup'
 import LabelSelect from '@/components/tasks/textClassification/LabelSelect'
@@ -227,6 +228,7 @@ import OthersInput from '@/components/tasks/affectiveAnnotation/others/OthersInp
 import OthersScales from '@/static/formats/affective_annotation/affective_others_scales.json'
 import OffensiveInput from '@/components/tasks/affectiveAnnotation/offensive/OffensiveInput.vue'
 import HumorInput from '@/components/tasks/affectiveAnnotation/humor/HumorInput.vue'
+import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
 
 
 export default {
@@ -244,7 +246,8 @@ export default {
     EmotionsInput,
     OthersInput,
     OffensiveInput,
-    HumorInput
+    HumorInput,
+    RestingPeriodModal
   },
 
   layout: 'workspace',
@@ -295,6 +298,8 @@ export default {
       affectiveSummaryImpressions: [],
       affectiveOthersWishToAuthor: [],
       affectiveOthersTmp: {},
+      showRestingMessage: false,
+      restingEndTime: new Date()
     }
   },
 
@@ -367,43 +372,65 @@ export default {
   },
 
   async created() {
-    this.categoryTypes = await this.$services.categoryType.list(this.projectId)
-    this.spanTypes = await this.$services.spanType.list(this.projectId)
-    this.relationTypes = await this.$services.relationType.list(this.projectId)
-    this.project = await this.$services.project.findById(this.projectId)
-    this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
+    let hasRested = false
+    const currentTime = new Date()
+    const restingEndTime = this.getRestingEndTime()
+    console.log(restingEndTime)
 
-    let affectiveScaleLabelsJSON = []
-    if (this.project.isEmotionsMode) {
-      affectiveScaleLabelsJSON = EmotionsScales
-    } else if (this.project.isOthersMode) {
-      affectiveScaleLabelsJSON = OthersScales
+    if (restingEndTime === null || currentTime >= restingEndTime) {
+      hasRested = true
+      this.showRestingMessage = false
+      this.restingEndTime = currentTime
+    } else {
+      hasRested = false
+      this.showRestingMessage = true
+      this.restingEndTime = restingEndTime
     }
-    const affectiveScalesDict = {}
-    affectiveScaleLabelsJSON.forEach(function(item) {
-      affectiveScalesDict[item.text] = item.varname
-    })
-    this.affectiveScalesDict = affectiveScalesDict
 
-    const scaleTypesRaw = await this.$services.scaleType.list(this.projectId)
-    this.scaleTypes = scaleTypesRaw
-    if (scaleTypesRaw.length > 0) {
-      const scaleTypesIdsTexts = {}
-      const scaleTypesTextsIds = {}
-      scaleTypesRaw.forEach(function(item) {
-        scaleTypesIdsTexts[item.id] = item.text
-        scaleTypesTextsIds[item.text] = item.id
+    if (hasRested) {
+      this.clearRestingPeriod()
+
+      this.categoryTypes = await this.$services.categoryType.list(this.projectId)
+      this.spanTypes = await this.$services.spanType.list(this.projectId)
+      this.relationTypes = await this.$services.relationType.list(this.projectId)
+      this.project = await this.$services.project.findById(this.projectId)
+      this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
+
+      let affectiveScaleLabelsJSON = []
+      if (this.project.isEmotionsMode) {
+        affectiveScaleLabelsJSON = EmotionsScales
+      } else if (this.project.isOthersMode) {
+        affectiveScaleLabelsJSON = OthersScales
+      }
+      const affectiveScalesDict = {}
+      affectiveScaleLabelsJSON.forEach(function(item) {
+        affectiveScalesDict[item.text] = item.varname
       })
-      this.scaleTypesIdsTexts = scaleTypesIdsTexts
-      this.scaleTypesTextsIds = scaleTypesTextsIds
-    } else if (!this.project.isSummaryMode) {
-      this.isScaleImported = false
-    }
+      this.affectiveScalesDict = affectiveScalesDict
 
-    this.list(this.doc.id)
+      const scaleTypesRaw = await this.$services.scaleType.list(this.projectId)
+      this.scaleTypes = scaleTypesRaw
+      if (scaleTypesRaw.length > 0) {
+        const scaleTypesIdsTexts = {}
+        const scaleTypesTextsIds = {}
+        scaleTypesRaw.forEach(function(item) {
+          scaleTypesIdsTexts[item.id] = item.text
+          scaleTypesTextsIds[item.text] = item.id
+        })
+        this.scaleTypesIdsTexts = scaleTypesIdsTexts
+        this.scaleTypesTextsIds = scaleTypesTextsIds
+      } else if (!this.project.isSummaryMode) {
+        this.isScaleImported = false
+      }
+
+      this.list(this.doc.id)
+    }
   },
 
   methods: {
+    ...mapGetters('auth', ['getRestingEndTime']),
+    ...mapActions('auth', ['setRestingPeriod', 'clearRestingPeriod']),
+
     async setDoc() {
       const query = this.$route.query.q || ''
       const isChecked = this.$route.query.isChecked || ''
@@ -580,6 +607,11 @@ export default {
     },
     async updateProgress() {
       this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
+
+      if (this.progress.complete === this.progress.total) {
+        this.setRestingPeriod()
+        this.$router.push(this.localePath('/projects'))
+      }
     },
     async confirm() {
       await this.$services.example.confirm(this.projectId, this.doc.id)

@@ -1,8 +1,11 @@
+import moment from 'moment'
+
 export const state = () => ({
   username: null,
   id: null,
   isAuthenticated: false,
-  isStaff: false
+  isStaff: false,
+  restingEndTime: null
 })
 
 export const mutations = {
@@ -20,6 +23,13 @@ export const mutations = {
   },
   setIsStaff(state, isStaff) {
     state.isStaff = isStaff
+  },
+  setRestingPeriod(state, endTime) {
+    const restingEndTime = moment(endTime).format('ddd, DD-MM-YYYY HH:mm:ss')
+    state.restingEndTime = restingEndTime
+  },
+  clearRestingPeriod(state) {
+    state.restingEndTime = null
   }
 }
 
@@ -35,10 +45,26 @@ export const getters = {
   },
   isStaff(state) {
     return state.isStaff
+  },
+  getRestingEndTime(state) {
+    console.log(state.restingEndTime)
+    if (state.restingEndTime !== null) {
+      return moment(state.restingEndTime, 'ddd, DD-MM-YYYY HH:mm:ss').toDate()
+    }
+    return null
   }
 }
 
 export const actions = {
+  setRestingPeriod({ commit }) {
+    const startTime = new Date()
+    const endTime = moment(startTime).add(5, 'm').toDate()
+    commit('setRestingPeriod', endTime)
+  },
+  clearRestingPeriod({ commit }) {
+    console.log("clearRestingPeriod")
+    commit('clearRestingPeriod')
+  },
   async authenticateUser({ commit }, authData) {
     try {
       await this.$services.auth.login(authData.username, authData.password)

@@ -46,7 +46,8 @@ export default {
     '~/plugins/vue-shortkey.js',
     '~/plugins/services.ts',
     '~/plugins/color.ts',
-    '~/plugins/role.ts'
+    '~/plugins/role.ts',
+    '~/plugins/persistedState.client.js'
   ],
   /*
    ** Nuxt.js modules
