@@ -4,7 +4,7 @@
       <v-row >
         <v-col cols="12" align="right" >
           <v-btn 
-            :disabled="!hasUnannotatedItem"
+            :disabled="!canAnnotate"
             color="ms-4 my-1 mb-2 primary text-capitalize" 
             @click="toLabeling">
             {{ $t('home.startAnnotation') }}
@@ -67,7 +67,7 @@
       />
       <v-spacer />
       <v-btn 
-        :disabled="!hasUnannotatedItem"
+        :disabled="!canAnnotate"
         color="ms-4 my-1 mb-2 primary text-capitalize" 
         @click="toLabeling">
         {{ $t('home.startAnnotation') }}
@@ -201,8 +201,11 @@ export default Vue.extend({
     isAudioTask(): boolean {
       return this.project.projectType === 'Speech2text'
     },
+    canAnnotate() : boolean {
+      return this.isProjectAdmin ? true : this.hasUnannotatedItem
+    },
     hasUnannotatedItem() : boolean {
-      return this.isProjectAdmin ? true : !!this.item.items.find((item: any) => !item.isConfirmed)
+      return !!this.item.items.find((item: any) => !item.isConfirmed)
     },
     itemKey(): string {
       if (this.isImageTask || this.isAudioTask) {
@@ -230,7 +233,7 @@ export default Vue.extend({
 
   methods: {
     toLabeling() {
-      if(this.hasUnannotatedItem) {
+      if(this.canAnnotate) {
         const isChecked = this.isProjectAdmin ? '': false
         this.movePage({ page: 1, q: this.search,  isChecked })
       } 
