@@ -18,4 +18,6 @@ export interface ExampleRepository {
   findById(projectId: string, exampleId: number): Promise<ExampleItem>
 
   confirm(projectId: string, exampleId: number): Promise<void>
+
+  annotateStartStates(projectId: string, exampleId: number): Promise<void>
 }

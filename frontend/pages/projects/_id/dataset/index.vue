@@ -232,11 +232,18 @@ export default Vue.extend({
   },
 
   methods: {
-    toLabeling() {
+    async toLabeling() {
       if(this.canAnnotate) {
+        await this.startAnnotation()
         const isChecked = this.isProjectAdmin ? '': false
         this.movePage({ page: 1, q: this.search,  isChecked })
       } 
+    },
+    startAnnotation() {
+      const item = this.isProjectAdmin? 
+        this.item.items[0] :
+        this.item.items.find((item: any) => !item.isConfirmed)
+      this.$services.example.annotateStartStates(this.projectId, item.id)
     },
     async loadData() {
       this.isLoading = true

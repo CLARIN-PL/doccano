@@ -18,5 +18,6 @@ export class AnnotationApplicationService<T extends AnnotationModel> {
 
   public async autoLabel(projectId: string, docId: number): Promise<void> {
     await this.repository.autoLabel(projectId, docId)
-  }
+  }  
+  
 }

@@ -53,4 +53,9 @@ export class APIExampleRepository implements ExampleRepository {
     const url = `/projects/${projectId}/examples/${exampleId}/states`
     await this.request.post(url, {})
   }
+
+  async annotateStartStates(projectId: string, exampleId: number): Promise<void> {
+    const url = `/projects/${projectId}/examples/${exampleId}/annotate_start_states`
+    await this.request.post(url, {})
+  }
 }
