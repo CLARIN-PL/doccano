@@ -78,22 +78,25 @@ export default Vue.extend({
   },
 
   created() {
-    const currentTime = new Date()
-    const restingEndTime = this.getRestingEndTime()
-
-    if (restingEndTime === null || currentTime >= restingEndTime) {
-      this.showRestingMessage = false
-      this.restingEndTime = currentTime
-      this.clearRestingPeriod()
-    } else {
-      this.showRestingMessage = true
-      this.restingEndTime = restingEndTime
-    }
+    this.checkRestingPeriod()
   },
 
   methods: {
     ...mapGetters('auth', ['getRestingEndTime']),
     ...mapActions('auth', ['setRestingPeriod', 'clearRestingPeriod']),
+
+    checkRestingPeriod() {
+      const currentTime = new Date()
+      const restingEndTime = this.getRestingEndTime()
+      if (restingEndTime === null || currentTime >= restingEndTime) {
+        this.showRestingMessage = false
+        this.restingEndTime = currentTime
+        this.clearRestingPeriod()
+      } else {
+        this.showRestingMessage = true
+        this.restingEndTime = restingEndTime
+      }
+    },
 
     async remove() {
       await this.$services.project.bulkDelete(this.selected)
