@@ -62,3 +62,12 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ["created_at"]
+
+
+class ExampleAnnotateStartState(models.Model):
+    example = models.ForeignKey(to=Example, on_delete=models.CASCADE, related_name="annotate_start_states")
+    started_by = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    started_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (("example", "started_by"),)
