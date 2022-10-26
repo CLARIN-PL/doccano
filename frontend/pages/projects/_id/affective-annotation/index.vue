@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="isLoaded">
     <layout-text v-if="doc.id" v-shortkey="shortKeysSpans" @shortkey="changeSelectedLabel">
       <template #header>
         <toolbar-laptop
@@ -14,11 +14,20 @@
             pagination: true
           }"
           :button-disabled="{
+            review: !isProjectAdmin && doc.isReviewd,
             pagination: {
               first: !canNavigate,
               prev: !canNavigate,
               next: !canNavigate,
               last: !canNavigate
+            }
+          }"
+          :button-tooltip="{
+            pagination: {
+              first: 'Please mark the text as checked before continuing',
+              prev: 'Please mark the text as checked before continuing',
+              next: 'Please mark the text as checked before continuing',
+              last: 'Please mark the text as checked before continuing'
             }
           }"
           :enable-auto-labeling.sync="enableAutoLabeling"
@@ -32,6 +41,7 @@
           @click:clear-label="clear"
           @click:review="confirm"
         >
+        <v-spacer />
           <v-btn-toggle 
             v-if="showToggleButton" 
             v-model="labelOption" 
@@ -284,6 +294,7 @@ export default {
     return {
       mdiText,
       mdiFormatListBulleted,
+      isLoaded: false,
       docs: [],
       textLabels: [],
       scales: [],

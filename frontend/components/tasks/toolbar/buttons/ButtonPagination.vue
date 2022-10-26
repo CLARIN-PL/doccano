@@ -23,9 +23,14 @@
         />
       </template>
     </v-edit-dialog>
+    <div 
+      class="button-wrapper"
+      :title="tooltip.first"
+    >
     <v-btn
       v-shortkey.once="['shift', 'arrowleft']"
       :disabled="isFirstPage || disabled.first"
+      :title="tooltip.first"
       text
       fab
       small
@@ -34,9 +39,15 @@
     >
       <v-icon>{{ mdiPageFirst }}</v-icon>
     </v-btn>
+    </div>
+    <div 
+      class="button-wrapper"
+      :title="tooltip.prev"
+    >
     <v-btn
       v-shortkey.once="['arrowleft']"
       :disabled="isFirstPage || disabled.prev"
+      :title="tooltip.prev"
       text
       fab
       small
@@ -45,9 +56,15 @@
     >
       <v-icon>{{ mdiChevronLeft }}</v-icon>
     </v-btn>
+    </div>
+    <div 
+      class="button-wrapper"
+      :title="tooltip.next"
+    >
     <v-btn
       v-shortkey.once="['arrowright']"
       :disabled="isLastPage || disabled.next"
+      :title="tooltip.next"
       text
       fab
       small
@@ -56,17 +73,23 @@
     >
       <v-icon>{{ mdiChevronRight }}</v-icon>
     </v-btn>
-    <v-btn
-      v-shortkey.once="['shift', 'arrowright']"
-      :disabled="isLastPage || disabled.last "
-      text
-      fab
-      small
-      @shortkey="lastPage"
-      @click="lastPage"
+    </div>
+    <div 
+      class="button-wrapper"
+      :title="tooltip.last"
     >
-      <v-icon>{{ mdiPageLast }}</v-icon>
-    </v-btn>
+      <v-btn
+        v-shortkey.once="['shift', 'arrowright']"
+        :disabled="isLastPage || disabled.last "
+        text
+        fab
+        small
+        @shortkey="lastPage"
+        @click="lastPage"
+      >
+        <v-icon>{{ mdiPageLast }}</v-icon>
+      </v-btn>
+    </div>
   </div>
 </template>
 
@@ -94,6 +117,17 @@ export default Vue.extend({
           prev: false,
           next: false,
           last: false,
+        }
+      }
+    },
+    tooltip: {
+      type: Object,
+      default: () => {
+        return {
+          first: '',
+          prev: '',
+          next: '',
+          last: ''
         }
       }
     },
@@ -169,3 +203,10 @@ export default Vue.extend({
   }
 })
 </script>
+<style lang="scss" scoped>
+.button-wrapper {
+  position: relative;
+  height: 40px;
+  width: 40px;
+}
+</style>

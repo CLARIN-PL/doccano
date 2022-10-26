@@ -59,7 +59,7 @@
                   <span class="d-none d-sm-flex">{{ articleItem.item.text | truncate(200) }}</span>
                 </template>
                 <template #[`item.isConfirmed`]="articleItem">
-                  {{ articleItem.item.isConfirmed ? 'checked' : 'unchecked' }}
+                  {{ articleItem.item.isConfirmed ? $t('dataset.viewConfirmedStatus') : $t('dataset.viewNotConfirmedStatus') }}
                 </template>
                 <template #[`item.action`]="articleItem">
                     <v-btn 
@@ -74,7 +74,7 @@
         </td>
     </template>
     <template #[`item.isConfirmed`]="{item}">
-      {{ item.isConfirmed ? 'checked' : 'unchecked' }}
+      {{ item.isConfirmed ? $t('dataset.viewConfirmedStatus') : $t('dataset.viewNotConfirmedStatus') }}
     </template>
     <template #[`item.action`]="{ item }">
       <v-btn 
@@ -169,13 +169,6 @@ export default Vue.extend({
         return articleList
     },
     childHeaders() {
-      const adminHeaders = [
-            {
-                text: this.$t('dataset.action'),
-                value: 'action',
-                sortable: false
-            }
-      ]
       const headers = [
             {
                 text: this.$t('dataset.text'),
@@ -200,19 +193,17 @@ export default Vue.extend({
             {
               text: this.$t('dataset.status'),
               value: 'isConfirmed',
-              sortable: false
+              sortable: true
             },
+            {
+                text: this.$t('dataset.action'),
+                value: 'action',
+                sortable: false
+            }
         ]
-        return this.isProjectAdmin ? headers.concat(adminHeaders) : headers
+        return headers
     },
     headers() {
-      const adminHeaders = [
-        {
-          text: this.$t('dataset.action'),
-          value: 'action',
-          sortable: false
-        }
-      ]
       const headers = [
         {
           text: this.$t('dataset.title'),
@@ -222,15 +213,20 @@ export default Vue.extend({
         {
           text: this.$t('dataset.status'),
           value: 'isConfirmed',
-          sortable: false
+          sortable: true
         },
         {
           text: this.$t('dataset.publishDatetime'),
           value: 'publishDatetime',
           sortable: false
         },
+        {
+          text: this.$t('dataset.action'),
+          value: 'action',
+          sortable: false
+        }
       ]
-      return this.isProjectAdmin ? headers.concat(adminHeaders) : headers
+      return headers
     }
   },
   async created() {

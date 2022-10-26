@@ -1,47 +1,60 @@
 <template>
   <v-card>
     <v-card-title v-if="isProjectAdmin">
-      <action-menu
-        @upload="$router.push('dataset/import')"
-        @download="$router.push('dataset/export')"
-      />
-      <v-btn
-        class="text-capitalize ms-2"
-        :disabled="!canDelete"
-        outlined
-        @click.stop="dialogDelete = true"
-      >
-        {{ $t('generic.delete') }}
-      </v-btn>
-      <v-spacer />
-      <action-menu-util
-        button-color=""
-        class="mr-2"
-        :items="annotationConfirmationOptions"
-        :text="$t('dataset.annotationConfirmationStatus')"
-        @view-all="isConfirmed = ''"
-        @view-confirmed="isConfirmed = true"
-        @view-not-confirmed="isConfirmed = false"
-      />
-      <v-btn
-        :disabled="!item.count"
-        class="text-capitalize"
-        color="error"
-        @click="dialogDeleteAll = true"
-      >
-        {{ $t('generic.deleteAll') }}
-      </v-btn>
-      <v-dialog v-model="dialogDelete">
-        <form-delete
-          :selected="selected"
-          :item-key="itemKey"
-          @cancel="dialogDelete = false"
-          @remove="remove"
-        />
-      </v-dialog>
-      <v-dialog v-model="dialogDeleteAll">
-        <form-delete-bulk @cancel="dialogDeleteAll = false" @remove="removeAll" />
-      </v-dialog>
+      <v-row >
+        <v-col cols="12" align="right" >
+          <v-btn 
+            :disabled="!hasUnannotatedItem"
+            color="ms-4 my-1 mb-2 primary text-capitalize" 
+            @click="toLabeling">
+            {{ $t('home.startAnnotation') }}
+          </v-btn>
+        </v-col>
+        <v-col cols="5">
+          <action-menu
+            @upload="$router.push('dataset/import')"
+            @download="$router.push('dataset/export')"
+          />
+          <v-btn
+            class="text-capitalize ms-2"
+            :disabled="!canDelete"
+            outlined
+            @click.stop="dialogDelete = true"
+          >
+            {{ $t('generic.delete') }}
+          </v-btn>
+        </v-col>
+        <v-col cols="7" align="right">
+          <action-menu-util
+            button-color=""
+            class="mr-2"
+            :items="annotationConfirmationOptions"
+            :text="$t('dataset.annotationConfirmationStatus')"
+            @view-all="isConfirmed = ''"
+            @view-confirmed="isConfirmed = true"
+            @view-not-confirmed="isConfirmed = false"
+          />
+          <v-btn
+            :disabled="!item.count"
+            class="text-capitalize"
+            color="error"
+            @click="dialogDeleteAll = true"
+          >
+            {{ $t('generic.deleteAll') }}
+          </v-btn>
+          <v-dialog v-model="dialogDelete">
+            <form-delete
+              :selected="selected"
+              :item-key="itemKey"
+              @cancel="dialogDelete = false"
+              @remove="remove"
+            />
+          </v-dialog>
+          <v-dialog v-model="dialogDeleteAll">
+            <form-delete-bulk @cancel="dialogDeleteAll = false" @remove="removeAll" />
+          </v-dialog>
+        </v-col>
+      </v-row>
     </v-card-title>
     <v-card-title v-else>
       <action-menu-util
@@ -56,11 +69,7 @@
       <v-btn 
         :disabled="!hasUnannotatedItem"
         color="ms-4 my-1 mb-2 primary text-capitalize" 
-        nuxt 
         @click="toLabeling">
-        <v-icon left>
-          {{ mdiPlayCircleOutline }}
-        </v-icon>
         {{ $t('home.startAnnotation') }}
       </v-btn>
     </v-card-title>
@@ -109,7 +118,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import _ from 'lodash'
-import mdiPlayCircleOutline from '@mdi/js'
 import ArticleList from '@/components/example/ArticleList.vue'
 import DocumentList from '@/components/example/DocumentList.vue'
 import FormDelete from '@/components/example/FormDelete.vue'
@@ -142,7 +150,6 @@ export default Vue.extend({
 
   data() {
     return {
-      mdiPlayCircleOutline,
       dialogDelete: false,
       dialogDeleteAll: false,
       project: {} as ProjectDTO,
@@ -195,7 +202,7 @@ export default Vue.extend({
       return this.project.projectType === 'Speech2text'
     },
     hasUnannotatedItem() : boolean {
-      return !!this.item.items.find((item: any) => !item.isConfirmed)
+      return this.isProjectAdmin ? true : !!this.item.items.find((item: any) => !item.isConfirmed)
     },
     itemKey(): string {
       if (this.isImageTask || this.isAudioTask) {
@@ -218,16 +225,14 @@ export default Vue.extend({
 
   async created() {
     this.project = await this.$services.project.findById(this.projectId)
-    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+    // this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
   },
 
   methods: {
     toLabeling() {
       if(this.hasUnannotatedItem) {
-        const item = this.item.items.find((item) => !item.isConfirmed)
-        const index = this.item.items.indexOf(item)
-        const page = ( index + 1).toString()
-        this.movePage({ page, q: this.search, isChecked: false })
+        const isChecked = this.isProjectAdmin ? '': false
+        this.movePage({ page: 1, q: this.search,  isChecked })
       } 
     },
     async loadData() {

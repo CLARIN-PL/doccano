@@ -4,6 +4,8 @@
       <v-btn-toggle>
         <button-review 
           v-if="buttonVisibility.review" 
+          text="Mark as checked"
+          :disabled="buttonDisabled.review"
           :is-reviewd="isReviewd" 
           @click:review="$emit('click:review')" />
 
@@ -58,6 +60,7 @@
         :disabled="buttonDisabled.pagination"
         :value="page"
         :total="total"
+        :tooltip="buttonTooltip.pagination"
         :is-article-project="isArticleProject"
         :article-index="articleIndex"
         :article-total="articleTotal"
@@ -124,10 +127,24 @@ export default Vue.extend({
         }
       },
     },
+    buttonTooltip: {
+      type: Object,
+      default: () => {
+        return {
+          pagination: {
+            first: '',
+            prev: '',
+            next: '',
+            last: '',
+          }
+        }
+      },
+    },
     buttonDisabled: {
       type: Object,
       default: () => {
         return {
+          review: false,
           pagination: {
             first: false,
             prev: false,

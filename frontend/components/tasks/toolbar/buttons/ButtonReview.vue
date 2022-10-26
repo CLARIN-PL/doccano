@@ -3,17 +3,16 @@
     <template #activator="{ on }">
       <v-btn
         v-shortkey.once="['enter']"
-        icon
+        :icon="!text"
+        :disabled="disabled"
         v-on="on"
         @shortkey="$emit('click:review')"
         @click="$emit('click:review')"
       >
         <v-icon v-if="isReviewd">
-          {{ mdiCheck }}
+          {{ isReviewd ? mdiCheck : mdiClose }}
         </v-icon>
-        <v-icon v-else>
-          {{ mdiClose }}
-        </v-icon>
+        {{ text }}
       </v-btn>
     </template>
     <span v-if="isReviewd">{{ $t('annotation.checkedTooltip') }}</span>
@@ -31,6 +30,14 @@ export default Vue.extend({
       type: Boolean,
       default: false,
       required: true
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    text: {
+      type: String,
+      default: ""
     }
   },
 
