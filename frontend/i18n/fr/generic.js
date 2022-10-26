@@ -16,5 +16,11 @@ export default {
   export: 'Exporter',
   description: 'Description',
   type: 'Type',
-  loading: 'Chargement... veuillez patienter'
+  loading: 'Chargement... veuillez patienter',
+  restingMessage: {
+    title: 'Temps de repos!',
+    message1: 'Merci pour votre travail! Prenez un café avant de continuer !',
+    message2: 'Vous pouvez continuer à annoter à :',
+    message3: 'Veuillez actualiser cette page lorsque le temps de repos est terminé.'
+  }
 }

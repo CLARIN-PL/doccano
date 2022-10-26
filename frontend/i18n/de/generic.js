@@ -16,5 +16,11 @@ export default {
   export: 'Exportieren',
   description: 'Beschreibung',
   type: 'Typ',
-  loading: 'Laden... bitte warten'
+  loading: 'Laden... bitte warten',
+  restingMessage: {
+    title: 'Zeit zum ausruhen!',
+    message1: 'Danke für deine Arbeit! Bitte trinken Sie einen Kaffee, bevor Sie fortfahren!',
+    message2: 'Sie können mit dem Kommentieren fortfahren:',
+    message3: 'Bitte aktualisieren Sie diese Seite, wenn die Ruhezeit abgelaufen ist.'
+  }
 }

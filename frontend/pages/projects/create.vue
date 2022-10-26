@@ -6,7 +6,7 @@
 import Vue from 'vue'
 import _ from 'lodash'
 import FormCreate from '~/components/project/FormCreate.vue'
-import { ProjectWriteDTO } from '~/services/application/project/projectData'
+import { ProjectDTO, ProjectWriteDTO } from '~/services/application/project/projectData'
 
 export default Vue.extend({
   components: {
@@ -52,6 +52,11 @@ export default Vue.extend({
     async create() {
       const projectItem = this.getProjectItem()
       const project = await this.$services.project.create(projectItem)
+
+      if (project.isEmotionsMode || project.isOthersMode || project.isOffensiveMode|| project.isHumorMode) {
+        await this.importScaleTypeFile(project)
+      }
+
       this.$router.push(`/projects/${project.id}`)
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
@@ -69,6 +74,32 @@ export default Vue.extend({
       })
       delete editedItem.affectiveAnnotationMode
       return editedItem
+    },
+    async importScaleTypeFile(project: ProjectDTO) {
+      const projectId = project.id.toString()
+      let selectedFile = ""
+      if (project.isEmotionsMode) {
+        selectedFile = '/formats/affective_annotation/affective_emotions_scales.json'
+      }
+      if (project.isOthersMode) {
+        selectedFile = '/formats/affective_annotation/affective_others_scales.json'
+      }
+      if (project.isOffensiveMode) {
+        selectedFile = '/formats/affective_annotation/affective_offensive_scales.json'
+      }
+      if (project.isHumorMode) {
+        selectedFile = '/formats/affective_annotation/affective_humor_scales.json'
+      }
+      const rawData = await fetch(selectedFile)
+      const fdata = await rawData.blob()
+      const fname = "scales.json"
+      const fmetadata = { type: "application/JSON" }
+      const file = new File([fdata], fname, fmetadata)
+      try {
+        await this.$services.scaleType.upload(projectId, file)
+      } catch (e) {
+        console.log(e.message)
+      }
     }
   }
 })

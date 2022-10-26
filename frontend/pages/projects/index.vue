@@ -23,21 +23,24 @@
       :total="projects.count"
       @update:query="updateQuery"
     />
+    <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
   </v-card>
 </template>
 
 <script lang="ts">
 import _ from 'lodash'
 import Vue from 'vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import ProjectList from '@/components/project/ProjectList.vue'
+import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
 import { ProjectDTO, ProjectListDTO } from '~/services/application/project/projectData'
 import FormDelete from '~/components/project/FormDelete.vue'
 
 export default Vue.extend({
   components: {
     FormDelete,
-    ProjectList
+    ProjectList,
+    RestingPeriodModal
   },
   layout: 'projects',
 
@@ -48,7 +51,9 @@ export default Vue.extend({
       dialogDelete: false,
       projects: {} as ProjectListDTO,
       selected: [] as ProjectDTO[],
-      isLoading: false
+      isLoading: false,
+      showRestingMessage: false,
+      restingEndTime: new Date()
     }
   },
 
@@ -72,7 +77,27 @@ export default Vue.extend({
     }, 1000)
   },
 
+  created() {
+    this.checkRestingPeriod()
+  },
+
   methods: {
+    ...mapGetters('auth', ['getRestingEndTime']),
+    ...mapActions('auth', ['setRestingPeriod', 'clearRestingPeriod']),
+
+    checkRestingPeriod() {
+      const currentTime = new Date()
+      const restingEndTime = this.getRestingEndTime()
+      if (restingEndTime === null || currentTime >= restingEndTime) {
+        this.showRestingMessage = false
+        this.restingEndTime = currentTime
+        this.clearRestingPeriod()
+      } else {
+        this.showRestingMessage = true
+        this.restingEndTime = restingEndTime
+      }
+    },
+
     async remove() {
       await this.$services.project.bulkDelete(this.selected)
       this.$fetch()
