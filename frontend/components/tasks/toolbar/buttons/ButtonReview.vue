@@ -9,10 +9,12 @@
         @shortkey="$emit('click:review')"
         @click="$emit('click:review')"
       >
-        <v-icon v-if="isReviewd">
+        <v-icon>
           {{ isReviewd ? mdiCheck : mdiClose }}
         </v-icon>
-        {{ text }}
+        <span v-if="showText">
+          {{ isReviewd ? text.checked : text.notChecked }}
+        </span>
       </v-btn>
     </template>
     <span v-if="isReviewd">{{ $t('annotation.checkedTooltip') }}</span>
@@ -35,9 +37,18 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+    showText: {
+      type: Boolean,
+      default: false,
+    },
     text: {
-      type: String,
-      default: ""
+      type: Object,
+      default:() => {
+        return {
+          checked: 'Mark as confirmed',
+          notChecked: 'Mark as not confirmed'
+        }
+      }
     }
   },
 

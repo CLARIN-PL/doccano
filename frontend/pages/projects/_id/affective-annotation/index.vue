@@ -22,6 +22,13 @@
               last: !canNavigate
             }
           }"
+          :button-text="{
+            review: {
+              hasText: true,
+              checked: 'Mark as checked',
+              notChecked: 'Mark as not checked'
+            }
+          }"
           :button-tooltip="{
             pagination: {
               first: 'Please mark the text as checked before continuing',

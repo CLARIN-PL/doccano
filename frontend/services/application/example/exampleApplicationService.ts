@@ -89,7 +89,7 @@ export class ExampleApplicationService {
   }
 
   public async annotateStartStates(projectId: string, exampleId: number): Promise<void> {
-    await this.repository.confirm(projectId, exampleId)
+    await this.repository.annotateStartStates(projectId, exampleId)
   }
 
   private toModel(item: ExampleDTO): ExampleItem {

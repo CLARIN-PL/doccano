@@ -4,8 +4,9 @@
       <v-btn-toggle>
         <button-review 
           v-if="buttonVisibility.review" 
-          text="Mark as checked"
           :disabled="buttonDisabled.review"
+          :show-text="buttonText.review.hasText"
+          :text="buttonText.review"
           :is-reviewd="isReviewd" 
           @click:review="$emit('click:review')" />
 
@@ -126,6 +127,19 @@ export default Vue.extend({
           pagination: true
         }
       },
+    },
+    buttonText: {
+      type: Object,
+      default: () => {
+        return {
+          review: {
+            hasText: false,
+            checked: '',
+            notChecked: ''
+          }
+        }
+      },
+
     },
     buttonTooltip: {
       type: Object,
