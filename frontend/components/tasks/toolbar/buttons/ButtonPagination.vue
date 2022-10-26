@@ -2,12 +2,13 @@
   <div class="v-data-footer">
     <v-edit-dialog large persistent @save="changePageNumber">
       <span v-if="isArticleProject">
-        {{ $t('annotation_toolbar.buttons.buttonPagination.textDescription', 
-          { value, total }) }},
         {{ $t('annotation_toolbar.buttons.buttonPagination.articleDescription', 
           { articleIndex, articleTotal }) }}
       </span>
-      <span v-else>{{ value }} of {{ total }}</span>
+      <span v-else>
+        {{ $t('annotation_toolbar.buttons.buttonPagination.textDescription', 
+          { value, total }) }}
+      </span>
       <template #input>
         <div class="mt-4 title">Move Page</div>
         <v-text-field

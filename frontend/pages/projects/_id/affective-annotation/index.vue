@@ -1,211 +1,227 @@
 <template>
-  <layout-text v-if="doc.id" v-shortkey="shortKeysSpans" @shortkey="changeSelectedLabel">
-    <template #header>
-      <toolbar-laptop
-        :doc-id="doc.id"
-        :enable-auto-labeling.sync="enableAutoLabeling"
-        :guideline-text="project.guideline"
-        :is-reviewd="doc.isConfirmed"
-        :total="docs.count"
-        :is-article-project="true"
-        :article-index="articleIndex"
-        :article-total="articleTotal"
-        class="d-none d-sm-block"
-        @click:clear-label="clear"
-        @click:review="confirm"
-      >
-        <v-btn-toggle v-model="labelOption" mandatory class="ms-2">
-          <v-btn icon>
-            <v-icon>{{ mdiFormatListBulleted }}</v-icon>
-          </v-btn>
-          <v-btn icon>
-            <v-icon>{{ mdiText }}</v-icon>
-          </v-btn>
-        </v-btn-toggle>
-      </toolbar-laptop>
-      <toolbar-mobile :total="docs.count" class="d-flex d-sm-none" />
-    </template>
-    <template #content>
-      <div>
-        <v-row>
-          <v-col cols="12">
-              <h3 class="mt-3"> 
-                {{ $t('annotation.articleTitle') }}: {{ doc.meta.meta.article_title }}
-              </h3>
-              <p class="mt-0 mb-0">{{ $t('annotation.articleId') }}: {{ currentArticleId }}</p>
-              <v-divider />
-          </v-col>
-        </v-row>
-        <v-row class="mt-3">
-          <v-col cols="5">
-            <div>
-              <toolbar-article 
-                :project="project"
-                :article-items="currentWholeArticle.items"
-                :current-article-item="doc"
-              />
-            </div>
-          </v-col>
-          <v-col cols="7">
-            <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
-              <v-card-title>
-                  <label-group
-                    v-if="labelOption === 0"
-                    :labels="categoryTypes"
-                    :annotations="categories"
-                    :single-label="project.singleClassClassification"
-                    @add="addCategory"
-                    @remove="removeCategory"
-                  />
-                  <label-select
-                    v-else
-                    :labels="categoryTypes"
-                    :annotations="categories"
-                    :single-label="project.singleClassClassification"
-                    @add="addCategory"
-                    @remove="removeCategory"
-                  />
-              </v-card-title>
-              <v-divider />
-              <div class="annotation-text pa-4">
-                <entity-editor
-                  :dark="$vuetify.theme.dark"
-                  :rtl="isRTL"
-                  :text="doc.text"
-                  :entities="spans"
-                  :entity-labels="spanTypes"
-                  :relations="relations"
-                  :relation-labels="relationTypes"
-                  :allow-overlapping="project.allowOverlapping"
-                  :grapheme-mode="project.graphemeMode"
-                  :selected-label="selectedLabel"
-                  :relation-mode="relationMode"
-                  @addEntity="addSpan"
-                  @addRelation="addRelation"
-                  @click:entity="updateSpan"
-                  @click:relation="updateRelation"
-                  @contextmenu:entity="deleteSpan"
-                  @contextmenu:relation="deleteRelation"
+  <div>
+    <layout-text v-if="doc.id" v-shortkey="shortKeysSpans" @shortkey="changeSelectedLabel">
+      <template #header>
+        <toolbar-laptop
+          :doc-id="doc.id"
+          :button-visibility="{
+            review: true,
+            filter: !hideUncheckedDocs,
+            guideline: true,
+            comment: true,
+            autoLabeling: !hideAutoLabeling,
+            clear: true,
+            pagination: true
+          }"
+          :enable-auto-labeling.sync="enableAutoLabeling"
+          :guideline-text="project.guideline"
+          :is-reviewd="doc.isConfirmed"
+          :total="docs.count"
+          :is-article-project="true"
+          :article-index="articleIndex"
+          :article-total="articleTotal"
+          class="d-none d-sm-block"
+          @click:clear-label="clear"
+          @click:review="confirm"
+        >
+          <v-btn-toggle 
+            v-if="!isSingleAnnView" 
+            v-model="labelOption" 
+            mandatory class="ms-2">
+            <v-btn icon>
+              <v-icon>{{ mdiFormatListBulleted }}</v-icon>
+            </v-btn>
+            <v-btn icon>
+              <v-icon>{{ mdiText }}</v-icon>
+            </v-btn>
+          </v-btn-toggle>
+        </toolbar-laptop>
+        <toolbar-mobile :total="docs.count" class="d-flex d-sm-none" />
+      </template>
+      <template #content>
+        <div>
+          <v-row>
+            <v-col cols="12">
+                <h3 class="mt-3 mb-2"> 
+                  {{ doc.meta.meta.article_title }}
+                </h3>
+                <v-divider />
+            </v-col>
+          </v-row>
+          <v-row class="mt-3">
+            <v-col cols="5" v-if="!isSingleAnnView">
+              <div>
+                <toolbar-article 
+                  :project="project"
+                  :article-items="currentWholeArticle.items"
+                  :current-article-item="doc"
                 />
               </div>
-              <v-divider />
-              <div v-if="isScaleImported" class="pa-4">
-                <summary-input
-                    v-if="project.isSummaryMode"
+            </v-col>
+            <v-col :cols="isSingleAnnView ? 12: 7" >
+              <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
+                <v-card-title>
+                    <label-group
+                      v-if="labelOption === 0"
+                      :labels="categoryTypes"
+                      :annotations="categories"
+                      :single-label="project.singleClassClassification"
+                      @add="addCategory"
+                      @remove="removeCategory"
+                    />
+                    <label-select
+                      v-else
+                      :labels="categoryTypes"
+                      :annotations="categories"
+                      :single-label="project.singleClassClassification"
+                      @add="addCategory"
+                      @remove="removeCategory"
+                    />
+                </v-card-title>
+                <v-divider />
+                <div class="annotation-text pa-4">
+                  <entity-editor
+                    :dark="$vuetify.theme.dark"
+                    :rtl="isRTL"
                     :text="doc.text"
-                    :tags="affectiveSummaryTags"
-                    :impressions="affectiveSummaryImpressions"
-                    @remove:tag="removeTag"
-                    @update:tag="updateTag"
-                    @add:tag="addTag"
-                    @remove:impression="removeImpression"
-                    @update:impression="updateImpression"
-                    @add:impression="addImpression"
+                    :entities="spans"
+                    :entity-labels="spanTypes"
+                    :relations="relations"
+                    :relation-labels="relationTypes"
+                    :allow-overlapping="project.allowOverlapping"
+                    :grapheme-mode="project.graphemeMode"
+                    :selected-label="selectedLabel"
+                    :relation-mode="relationMode"
+                    @addEntity="addSpan"
+                    @addRelation="addRelation"
+                    @click:entity="updateSpan"
+                    @click:relation="updateRelation"
+                    @contextmenu:entity="deleteSpan"
+                    @contextmenu:relation="deleteRelation"
                   />
-                  <emotions-input
-                    v-if="project.isEmotionsMode"
-                    :general-positivity="affectiveScalesValues.positive"
-                    :general-negativity="affectiveScalesValues.negative"
-                    :joy="affectiveScalesValues.joy"
-                    :admiration="affectiveScalesValues.admiration"
-                    :inspiration="affectiveScalesValues.inspiration"
-                    :peace="affectiveScalesValues.peace"
-                    :surprise="affectiveScalesValues.surprise"
-                    :sympathy="affectiveScalesValues.sympathy"
-                    :fear="affectiveScalesValues.fear"
-                    :sadness="affectiveScalesValues.sadness"
-                    :disgust="affectiveScalesValues.disgust"
-                    :anger="affectiveScalesValues.anger"
-                    @change="emotionsChangeHandler"
-                  />
-                  <others-input
-                    v-if="project.isOthersMode"
-                    :ironic="affectiveScalesValues.ironic"
-                    :embarrassing="affectiveScalesValues.embarrassing"
-                    :vulgar="affectiveScalesValues.vulgar"
-                    :politic="affectiveScalesValues.politic"
-                    :interesting="affectiveScalesValues.interesting"
-                    :comprehensible="affectiveScalesValues.comprehensible"
-                    :agreeable="affectiveScalesValues.agreeable"
-                    :believable="affectiveScalesValues.believable"
-                    :sympathy-to-author="affectiveScalesValues.sympathyToAuthor"
-                    :need-more-info="affectiveScalesValues.needMoreInfo"
-                    :wish-to-author="affectiveOthersWishToAuthor"
-                    @change="othersChangeHandler"
-                    @nullifyCategoryValue="nullifyOthersValueHandler"
-                    @restoreCategoryValue="restoreOthersValueHandler"
-                    @remove:wishToAuthor="removeWishToAuthor"
-                    @update:wishToAuthor="updateWishToAuthor"
-                    @add:wishToAuthor="addWishToAuthor"
-                    @nullify:wishToAuthor="nullifyWishToAuthor"
-                    @restore:wishToAuthor="restoreWishToAuthor"
-                  />
-                  <offensive-input
-                    v-if="project.isOffensiveMode"
-                    :project="project"
-                    :doc="doc"
-                    :scale-types="scaleTypes"
-                    :scales="scales"
-                    :text-labels="textLabels"
-                    @update:scale="updateScale"
-                    @add:label="addLabel"
-                    @update:label="updateTag"
-                    @remove:label="removeTag" />
-                  <humor-input
-                    v-if="project.isHumorMode"
-                    :project="project"
-                    :doc="doc"
-                    :scale-types="scaleTypes"
-                    :scales="scales"
-                    :text-labels="textLabels"
-                    @update:scale="updateScale"
-                    @add:label="addLabel"
-                    @update:label="updateTag"
-                    @remove:label="removeTag"  />
-              </div>
-            </v-card>
-          </v-col>
-        </v-row>
-      </div>
-    </template>
-    <template #sidebar>
-      <annotation-progress :progress="progress" />
-      <v-card class="mt-4">
-        <v-card-title>{{ $t('annotation.labelTypes') }}</v-card-title>
-        <v-card-text>
-          <v-switch v-if="useRelationLabeling" v-model="relationMode">
-            <template #label>
-              <span v-if="relationMode">{{ $t('annotation.relation') }}</span>
-              <span v-else>{{ $t('annotation.span') }}</span>
-            </template>
-          </v-switch>
-          <v-chip-group v-model="selectedLabelIndex" column>
-            <v-chip
-              v-for="(item, index) in labelTypes"
-              :key="item.id"
-              v-shortkey="[item.suffixKey]"
-              :color="item.backgroundColor"
-              filter
-              :text-color="$contrastColor(item.backgroundColor)"
-              @shortkey="selectedLabelIndex = index"
-            >
-              {{ item.text }}
-              <v-avatar
-                v-if="item.suffixKey"
-                right
-                color="white"
-                class="black--text font-weight-bold"
+                </div>
+                <v-divider />
+                <div v-if="isScaleImported" class="pa-4">
+                  <summary-input
+                      v-if="project.isSummaryMode"
+                      :text="doc.text"
+                      :tags="affectiveSummaryTags"
+                      :impressions="affectiveSummaryImpressions"
+                      @remove:tag="removeTag"
+                      @update:tag="updateTag"
+                      @add:tag="addTag"
+                      @remove:impression="removeImpression"
+                      @update:impression="updateImpression"
+                      @add:impression="addImpression"
+                    />
+                    <emotions-input
+                      v-if="project.isEmotionsMode"
+                      :general-positivity="affectiveScalesValues.positive"
+                      :general-negativity="affectiveScalesValues.negative"
+                      :joy="affectiveScalesValues.joy"
+                      :admiration="affectiveScalesValues.admiration"
+                      :inspiration="affectiveScalesValues.inspiration"
+                      :peace="affectiveScalesValues.peace"
+                      :surprise="affectiveScalesValues.surprise"
+                      :sympathy="affectiveScalesValues.sympathy"
+                      :fear="affectiveScalesValues.fear"
+                      :sadness="affectiveScalesValues.sadness"
+                      :disgust="affectiveScalesValues.disgust"
+                      :anger="affectiveScalesValues.anger"
+                      @change="emotionsChangeHandler"
+                    />
+                    <others-input
+                      v-if="project.isOthersMode"
+                      :ironic="affectiveScalesValues.ironic"
+                      :embarrassing="affectiveScalesValues.embarrassing"
+                      :vulgar="affectiveScalesValues.vulgar"
+                      :politic="affectiveScalesValues.politic"
+                      :interesting="affectiveScalesValues.interesting"
+                      :comprehensible="affectiveScalesValues.comprehensible"
+                      :agreeable="affectiveScalesValues.agreeable"
+                      :believable="affectiveScalesValues.believable"
+                      :sympathy-to-author="affectiveScalesValues.sympathyToAuthor"
+                      :need-more-info="affectiveScalesValues.needMoreInfo"
+                      :wish-to-author="affectiveOthersWishToAuthor"
+                      @change="othersChangeHandler"
+                      @nullifyCategoryValue="nullifyOthersValueHandler"
+                      @restoreCategoryValue="restoreOthersValueHandler"
+                      @remove:wishToAuthor="removeWishToAuthor"
+                      @update:wishToAuthor="updateWishToAuthor"
+                      @add:wishToAuthor="addWishToAuthor"
+                      @nullify:wishToAuthor="nullifyWishToAuthor"
+                      @restore:wishToAuthor="restoreWishToAuthor"
+                    />
+                    <offensive-input
+                      v-if="project.isOffensiveMode"
+                      :project="project"
+                      :doc="doc"
+                      :scale-types="scaleTypes"
+                      :scales="scales"
+                      :text-labels="textLabels"
+                      @update:scale="updateScale"
+                      @add:label="addLabel"
+                      @update:label="updateTag"
+                      @remove:label="removeTag" />
+                    <humor-input
+                      v-if="project.isHumorMode"
+                      :project="project"
+                      :doc="doc"
+                      :scale-types="scaleTypes"
+                      :scales="scales"
+                      :text-labels="textLabels"
+                      @update:scale="updateScale"
+                      @add:label="addLabel"
+                      @update:label="updateTag"
+                      @remove:label="removeTag"  />
+                </div>
+              </v-card>
+            </v-col>
+          </v-row>
+        </div>
+      </template>
+      <template #sidebar>
+        <annotation-progress :progress="progress" />
+        <v-card class="mt-4" v-if="!isSingleAnnView" >
+          <v-card-title>{{ $t('annotation.labelTypes') }}</v-card-title>
+          <v-card-text>
+            <v-switch v-if="useRelationLabeling" v-model="relationMode">
+              <template #label>
+                <span v-if="relationMode">{{ $t('annotation.relation') }}</span>
+                <span v-else>{{ $t('annotation.span') }}</span>
+              </template>
+            </v-switch>
+            <v-chip-group v-model="selectedLabelIndex" column>
+              <v-chip
+                v-for="(item, index) in labelTypes"
+                :key="item.id"
+                v-shortkey="[item.suffixKey]"
+                :color="item.backgroundColor"
+                filter
+                :text-color="$contrastColor(item.backgroundColor)"
+                @shortkey="selectedLabelIndex = index"
               >
-                {{ item.suffixKey }}
-              </v-avatar>
-            </v-chip>
-          </v-chip-group>
-        </v-card-text>
-      </v-card>
-      <list-metadata :metadata="doc.meta" class="mt-4" />
-      <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
-    </template>
-  </layout-text>
+                {{ item.text }}
+                <v-avatar
+                  v-if="item.suffixKey"
+                  right
+                  color="white"
+                  class="black--text font-weight-bold"
+                >
+                  {{ item.suffixKey }}
+                </v-avatar>
+              </v-chip>
+            </v-chip-group>
+          </v-card-text>
+        </v-card>
+        <list-metadata 
+          v-if="!isSingleAnnView"
+          :metadata="doc.meta" 
+          class="mt-4" />
+      </template>
+    </layout-text>
+    <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
+  </div>
 </template>
 
 <script>
@@ -307,8 +323,6 @@ export default {
     await this.setDoc()
     this.$nextTick(()=> {
       this.setArticleData()
-    })
-    this.$nextTick(()=> {
       this.loadLabels()
     })
   },
@@ -336,6 +350,16 @@ export default {
         return this.docs.items[0]
       }
     },
+    hideUncheckedDocs() {
+      return this.isSingleAnnView
+    },
+    hideAutoLabeling() {
+      return this.isSingleAnnView
+    },
+    isChecked() {
+      const isCheckedQuery = this.$route.query.isChecked || ''
+      return this.hideUncheckedDocs ? false : isCheckedQuery
+    },
 
     selectedLabel() {
       if (Number.isInteger(this.selectedLabelIndex)) {
@@ -351,6 +375,10 @@ export default {
 
     useRelationLabeling() {
       return !!this.project.useRelation
+    },
+
+    isSingleAnnView() {
+      return !!this.project?.isSingleAnnView
     },
 
     labelTypes() {
@@ -436,24 +464,51 @@ export default {
     },
     async setDoc() {
       const query = this.$route.query.q || ''
-      const isChecked = this.$route.query.isChecked || ''
       this.docs = await this.$services.example.fetchOne(
         this.projectId,
         this.$route.query.page,
         query,
-        isChecked
+        this.isChecked
       )
     },
+    setAffectiveProjectScaleDataDict() {
+      let affectiveScaleLabelsJSON = []
+      if (this.project.isEmotionsMode) {
+        affectiveScaleLabelsJSON = EmotionsScales
+      } else if (this.project.isOthersMode) {
+        affectiveScaleLabelsJSON = OthersScales
+      }
+      const affectiveScalesDict = {}
+      affectiveScaleLabelsJSON.forEach(function(item) {
+        affectiveScalesDict[item.text] = item.varname
+      })
+      this.affectiveScalesDict = affectiveScalesDict
+    },
+    setAffectiveProjectScaleData() {
+      const scaleTypesRaw = this.scaleTypes
+      if (scaleTypesRaw.length > 0) {
+        const scaleTypesIdsTexts = {}
+        const scaleTypesTextsIds = {}
+        scaleTypesRaw.forEach(function(item) {
+          scaleTypesIdsTexts[item.id] = item.text
+          scaleTypesTextsIds[item.text] = item.id
+        })
+        this.scaleTypesIdsTexts = scaleTypesIdsTexts
+        this.scaleTypesTextsIds = scaleTypesTextsIds
+      } else if (!this.project.isSummaryMode) {
+        this.isScaleImported = false
+      }
+    },
+
     async setArticleData() {
       if(this.docs.items && this.docs.items.length) {
         const doc = this.docs.items[0]
-        const isChecked = this.$route.query.isChecked || ''
         this.currentArticleId = doc.articleId
         this.currentWholeArticle = await this.$services.example.fetchByLimit(
           this.projectId,
           this.docs.count.toString(),
           this.currentArticleId,
-          isChecked
+          this.isChecked
         )
         this.currentWholeArticle.items = _.orderBy(this.currentWholeArticle.items, 'order')
         const allArticleIds = await this.$services.example.fetchArticleIds(
@@ -477,45 +532,43 @@ export default {
       await this.list(this.doc.id)
     },
     async list(docId) {
-      const spans = await this.$services.sequenceLabeling.list(this.projectId, docId)
-      const relations = await this.$services.sequenceLabeling.listRelations(this.projectId, docId)
-      // In colab mode, if someone add a new label and annotate data
-      // with the label during your work, it occurs exception
-      // because there is no corresponding label.
-      await this.maybeFetchSpanTypes(spans)
-      this.spans = spans
-      this.relations = relations
-      this.categories = await this.$services.textClassification.list(this.projectId, docId)
+      if(docId) {
+        const spans = await this.$services.sequenceLabeling.list(this.projectId, docId)
+        const relations = await this.$services.sequenceLabeling.listRelations(this.projectId, docId)
+        // In colab mode, if someone add a new label and annotate data
+        // with the label during your work, it occurs exception
+        // because there is no corresponding label.
+        await this.maybeFetchSpanTypes(spans)
+        this.spans = spans
+        this.relations = relations
+        this.categories = await this.$services.textClassification.list(this.projectId, docId)
+        this.textLabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
+        this.scales = await this.$services.affectiveScale.list(this.projectId, docId)
 
-      const affectiveTextlabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
-      const affectiveScales = await this.$services.affectiveScale.list(this.projectId, docId)
-      this.scales = affectiveScales
-      this.textLabels = affectiveTextlabels
-
-      this.affectiveSummaryTags = affectiveTextlabels.filter(
-        (item) => item.question === this.affectiveTextlabelQuestions.summaryTag
-      )
-      this.affectiveSummaryImpressions = affectiveTextlabels.filter(
-        (item) => item.question === this.affectiveTextlabelQuestions.summaryImpression
-      )
-      this.affectiveOthersWishToAuthor = affectiveTextlabels.filter(
-        (item) => item.question === this.affectiveTextlabelQuestions.othersWishToAuthor
-      )
-
-      const affectiveScalesValues = {}
-      const affectiveScalesDict = this.affectiveScalesDict
-      const scaleTypesIdsTexts = this.scaleTypesIdsTexts
-      affectiveScales.forEach(function(item) {
-        const category = affectiveScalesDict[scaleTypesIdsTexts[item.label]]
-        affectiveScalesValues[category] = item.scale
-      })
-      this.affectiveScalesValues = affectiveScalesValues
+        this.affectiveSummaryTags = this.textLabels.filter(
+          (item) => item.question === this.affectiveTextlabelQuestions.summaryTag
+        )
+        this.affectiveSummaryImpressions = this.textLabels.filter(
+          (item) => item.question === this.affectiveTextlabelQuestions.summaryImpression
+        )
+        this.affectiveOthersWishToAuthor = this.textLabels.filter(
+          (item) => item.question === this.affectiveTextlabelQuestions.othersWishToAuthor
+        )
+        
+        const affectiveScalesValues = {}
+        const affectiveScalesDict = this.affectiveScalesDict
+        const scaleTypesIdsTexts = this.scaleTypesIdsTexts
+        this.scales.forEach(function(item) {
+          const category = affectiveScalesDict[scaleTypesIdsTexts[item.label]]
+          affectiveScalesValues[category] = item.scale
+        })
+        this.affectiveScalesValues = affectiveScalesValues
+      } 
     },
     async deleteSpan(id) {
       await this.$services.sequenceLabeling.delete(this.projectId, this.doc.id, id)
       await this.list(this.doc.id)
     },
-
     async addSpan(startOffset, endOffset, labelId) {
       await this.$services.sequenceLabeling.create(
         this.projectId,
@@ -526,7 +579,6 @@ export default {
       )
       await this.list(this.doc.id)
     },
-
     async updateSpan(annotationId, labelId) {
       await this.$services.sequenceLabeling.changeLabel(
         this.projectId,
@@ -536,7 +588,6 @@ export default {
       )
       await this.list(this.doc.id)
     },
-
     async addRelation(fromId, toId, typeId) {
       await this.$services.sequenceLabeling.createRelation(
         this.projectId,
@@ -565,10 +616,12 @@ export default {
       await this.$services.textClassification.delete(this.projectId, this.doc.id, id)
       await this.list(this.doc.id)
     },
+
     async addCategory(labelId) {
       await this.$services.textClassification.create(this.projectId, this.doc.id, labelId)
       await this.list(this.doc.id)
     },
+
     async addOrRemoveCategory(event) {
       const labelId = parseInt(event.srcKey, 10)
       const annotation = this.spans.find((item) => item.label === labelId)
@@ -578,22 +631,36 @@ export default {
         await this.add(labelId)
       }
     },
+    
     async clear() {
       await this.clearSequenceLabels()
       await this.clearCategory()
+      await this.clearScales()
+      await this.clearTextLabels()
+      await this.list(this.doc.id)
     },
+
+    async clearScales() {
+      await this.$services.affectiveScale.clear(this.projectId, this.doc.id)
+    },
+
+    async clearTextLabels() {
+      await this.$services.affectiveTextlabel.clear(this.projectId, this.doc.id)
+    },
+
     async clearSequenceLabels() {
       await this.$services.sequenceLabeling.clear(this.projectId, this.doc.id)
-      await this.list(this.doc.id)
     },
+
     async clearCategory() {
       await this.$services.textClassification.clear(this.projectId, this.doc.id)
-      await this.list(this.doc.id)
     },
+
     async autoLabel(docId) {
       await this.autoLabelCategory(docId)
       await this.autoLabelSequences(docId)
     },
+    
     async autoLabelCategory(docId) {
       try {
         await this.$services.textClassification.autoLabel(this.projectId, docId)

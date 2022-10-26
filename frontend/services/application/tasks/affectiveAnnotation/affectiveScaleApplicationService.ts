@@ -12,4 +12,8 @@ export class AffectiveScaleApplicationService extends AnnotationApplicationServi
     const item = new ScaleItem(0, labelId, scale, 0)
     await this.repository.create(projectId, docId, item)
   }
+
+  public async clear(projectId: string, docId: number): Promise<void> {
+    await this.repository.clear(projectId, docId)
+  }
 }

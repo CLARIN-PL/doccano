@@ -2,21 +2,33 @@
   <v-toolbar class="toolbar-control" dense flat>
     <v-row no-gutters>
       <v-btn-toggle>
-        <button-review :is-reviewd="isReviewd" @click:review="$emit('click:review')" />
+        <button-review 
+          v-if="buttonVisibility.review" 
+          :is-reviewd="isReviewd" 
+          @click:review="$emit('click:review')" />
 
-        <button-filter :value="filterOption" @click:filter="changeFilter" />
+        <button-filter 
+          v-if="buttonVisibility.filter" 
+          :value="filterOption" 
+          @click:filter="changeFilter" />
 
-        <button-guideline @click:guideline="dialogGuideline = true" />
+        <button-guideline 
+          v-if="buttonVisibility.guideline" 
+          @click:guideline="dialogGuideline = true" />
         <v-dialog v-model="dialogGuideline">
           <form-guideline :guideline-text="guidelineText" @click:close="dialogGuideline = false" />
         </v-dialog>
 
-        <button-comment @click:comment="dialogComment = true" />
+        <button-comment 
+          v-if="buttonVisibility.comment" 
+          @click:comment="dialogComment = true" />
         <v-dialog v-model="dialogComment">
           <form-comment :example-id="docId" @click:cancel="dialogComment = false" />
         </v-dialog>
 
-        <button-auto-labeling @click:auto="dialogAutoLabeling = true" />
+        <button-auto-labeling 
+          v-if="buttonVisibility.autoLabeling" 
+          @click:auto="dialogAutoLabeling = true" />
         <v-dialog v-model="dialogAutoLabeling">
           <form-auto-labeling
             :is-enabled="enableAutoLabeling"
@@ -26,7 +38,9 @@
           />
         </v-dialog>
 
-        <button-clear @click:clear="dialogClear = true" />
+        <button-clear 
+          v-if="buttonVisibility.clear" 
+          @click:clear="dialogClear = true" />
         <v-dialog v-model="dialogClear">
           <form-clear-label
             @click:ok="
@@ -40,6 +54,7 @@
       <slot />
       <v-spacer />
       <button-pagination
+        v-if="buttonVisibility.pagination" 
         :value="page"
         :total="total"
         :is-article-project="isArticleProject"
@@ -93,6 +108,20 @@ export default Vue.extend({
       type: Boolean,
       default: false,
       required: true
+    },
+    buttonVisibility: {
+      type: Object,
+      default: () => {
+        return {
+          review: true,
+          filter: true,
+          guideline: true,
+          comment: true,
+          autoLabeling: true,
+          clear: true,
+          pagination: true
+        }
+      },
     },
     guidelineText: {
       type: String,

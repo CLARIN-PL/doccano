@@ -42,6 +42,20 @@
         <form-delete-bulk @cancel="dialogDeleteAll = false" @remove="removeAll" />
       </v-dialog>
     </v-card-title>
+    <v-card-title v-else>
+      <action-menu-util
+        button-color=""
+        :items="annotationConfirmationOptions"
+        :text="$t('dataset.annotationConfirmationStatus')"
+        @view-all="isConfirmed = ''"
+        @view-confirmed="isConfirmed = true"
+        @view-not-confirmed="isConfirmed = false"
+      />
+      <v-spacer />
+      <v-btn>
+        start annotation
+      </v-btn>
+    </v-card-title>
     <image-list
       v-if="isImageTask"
       v-model="selected"
@@ -66,6 +80,7 @@
       :project="project"
       :items="item.items"
       :is-loading="isLoading"
+      :show-annotation-button="showAnnotationButton"
       :total="item.count"
       @update:query="updateQuery"
       @click:labeling="movePage"
@@ -155,6 +170,9 @@ export default Vue.extend({
     },
     projectId(): string {
       return this.$route.params.id
+    },
+    showAnnotationButton() : boolean {
+      return this.isArticleTask && this.project.isSingleAnnView
     },
     isArticleTask(): boolean {
       const articleTasks = ['ArticleAnnotation', 'AffectiveAnnotation']

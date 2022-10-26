@@ -59,7 +59,10 @@
                   <span class="d-none d-sm-flex">{{ articleItem.item.text | truncate(200) }}</span>
                 </template>
                 <template #[`item.action`]="articleItem">
-                    <v-btn small color="primary text-capitalize mr-5" 
+                    <v-btn 
+                      small 
+                      v-if="showAnnotationButton"
+                      color="primary text-capitalize mr-5" 
                       @click="toLabeling(articleItem.item)">
                         {{ $t('dataset.annotate') }}
                     </v-btn>
@@ -68,7 +71,11 @@
         </td>
     </template>
     <template #[`item.action`]="{ item }">
-      <v-btn small color="primary text-capitalize mr-5" @click="toLabeling(item.data[0])">
+      <v-btn 
+        small
+        color="primary text-capitalize mr-5" 
+        v-if="showAnnotationButton"
+        @click="toLabeling(item.data[0])">
         {{ $t('dataset.startAnnotation') }}
       </v-btn>
     </template>
@@ -90,6 +97,10 @@ export default Vue.extend({
       type: Boolean,
       default: false,
       required: true
+    },
+    showAnnotationButton: {
+      type: Boolean,
+      default: true,
     },
     items: {
       type: Array as PropType<ExampleDTO[]>,
@@ -299,7 +310,7 @@ export default Vue.extend({
       const index = this.items.indexOf(item)
       const offset = (this.options.page - 1) * this.options.itemsPerPage
       const page = (offset + index + 1).toString()
-      this.$emit('click:labeling', { page, q: this.search })
+      this.$emit('click:labeling', { page, q: this.search, isChecked: false })
     }
   }
 })
