@@ -2,12 +2,14 @@
   <div class="v-data-footer">
     <v-edit-dialog large persistent @save="changePageNumber">
       <span v-if="isArticleProject">
-        {{ $t('annotation_toolbar.buttons.buttonPagination.articleDescription', 
-          { articleIndex, articleTotal }) }}
+        {{ $t('annotation_toolbar.buttons.buttonPagination.textDescription', 
+          { value, total }) }}
       </span>
       <span v-else>
         {{ $t('annotation_toolbar.buttons.buttonPagination.textDescription', 
-          { value, total }) }}
+          { value, total }) }},
+        {{ $t('annotation_toolbar.buttons.buttonPagination.articleDescription', 
+          { articleIndex, articleTotal }) }}
       </span>
       <template #input>
         <div class="mt-4 title">Move Page</div>
@@ -23,7 +25,7 @@
     </v-edit-dialog>
     <v-btn
       v-shortkey.once="['shift', 'arrowleft']"
-      :disabled="isFirstPage"
+      :disabled="isFirstPage || disabled.first"
       text
       fab
       small
@@ -34,7 +36,7 @@
     </v-btn>
     <v-btn
       v-shortkey.once="['arrowleft']"
-      :disabled="isFirstPage"
+      :disabled="isFirstPage || disabled.prev"
       text
       fab
       small
@@ -45,7 +47,7 @@
     </v-btn>
     <v-btn
       v-shortkey.once="['arrowright']"
-      :disabled="isLastPage"
+      :disabled="isLastPage || disabled.next"
       text
       fab
       small
@@ -56,7 +58,7 @@
     </v-btn>
     <v-btn
       v-shortkey.once="['shift', 'arrowright']"
-      :disabled="isLastPage"
+      :disabled="isLastPage || disabled.last "
       text
       fab
       small
@@ -83,6 +85,17 @@ export default Vue.extend({
       type: Number,
       default: 1,
       required: true
+    },
+    disabled: {
+      type: Object,
+      default: () => {
+        return {
+          first: false,
+          prev: false,
+          next: false,
+          last: false,
+        }
+      }
     },
     isArticleProject: {
       type: Boolean,

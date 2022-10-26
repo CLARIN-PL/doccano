@@ -6,12 +6,20 @@
           :doc-id="doc.id"
           :button-visibility="{
             review: true,
-            filter: !hideUncheckedDocs,
+            filter: showUncheckedDocs,
             guideline: true,
             comment: true,
-            autoLabeling: !hideAutoLabeling,
+            autoLabeling: showAutoLabeling,
             clear: true,
             pagination: true
+          }"
+          :button-disabled="{
+            pagination: {
+              first: !canNavigate,
+              prev: !canNavigate,
+              next: !canNavigate,
+              last: !canNavigate
+            }
           }"
           :enable-auto-labeling.sync="enableAutoLabeling"
           :guideline-text="project.guideline"
@@ -25,7 +33,7 @@
           @click:review="confirm"
         >
           <v-btn-toggle 
-            v-if="!isSingleAnnView" 
+            v-if="showToggleButton" 
             v-model="labelOption" 
             mandatory class="ms-2">
             <v-btn icon>
@@ -49,7 +57,7 @@
             </v-col>
           </v-row>
           <v-row class="mt-3">
-            <v-col cols="5" v-if="!isSingleAnnView">
+            <v-col cols="5" v-if="showArticleViewer">
               <div>
                 <toolbar-article 
                   :project="project"
@@ -58,7 +66,7 @@
                 />
               </div>
             </v-col>
-            <v-col :cols="isSingleAnnView ? 12: 7" >
+            <v-col :cols="showArticleViewer ? 7: 12" >
               <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
                 <v-card-title>
                     <label-group
@@ -182,7 +190,7 @@
       </template>
       <template #sidebar>
         <annotation-progress :progress="progress" />
-        <v-card class="mt-4" v-if="!isSingleAnnView" >
+        <v-card class="mt-4" v-if="showLabelTypes" >
           <v-card-title>{{ $t('annotation.labelTypes') }}</v-card-title>
           <v-card-text>
             <v-switch v-if="useRelationLabeling" v-model="relationMode">
@@ -215,7 +223,7 @@
           </v-card-text>
         </v-card>
         <list-metadata 
-          v-if="!isSingleAnnView"
+          v-if="showMetadata"
           :metadata="doc.meta" 
           class="mt-4" />
       </template>
@@ -295,6 +303,7 @@ export default {
       selectedLabelIndex: null,
       progress: {},
       relationMode: false,
+      isProjectAdmin: false,
       articleTotal: 1,
       articleIndex: 1,
       isScaleImported: true,
@@ -320,6 +329,8 @@ export default {
   },
 
   async fetch() {
+    // this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+    await this.setProjectData()
     await this.setDoc()
     this.$nextTick(()=> {
       this.setArticleData()
@@ -330,19 +341,15 @@ export default {
   computed: {
     ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId']),
     ...mapGetters('config', ['isRTL']),
-
     shortKeysSpans() {
       return Object.fromEntries(this.spanTypes.map((item) => [item.id, [item.suffixKey]]))
     },
-
     shortKeysCategory() {
       return Object.fromEntries(this.categoryTypes.map((item) => [item.id, [item.suffixKey]]))
     },
-
     projectId() {
       return this.$route.params.id
     },
-
     doc() {
       if (_.isEmpty(this.docs) || this.docs.items.length === 0) {
         return {}
@@ -350,17 +357,30 @@ export default {
         return this.docs.items[0]
       }
     },
-    hideUncheckedDocs() {
-      return this.isSingleAnnView
+    isSingleAnnView() {
+      return !!this.project?.isSingleAnnView
     },
-    hideAutoLabeling() {
-      return this.isSingleAnnView
+    showUncheckedDocs() {
+      return this.isSingleAnnView ? this.isProjectAdmin : true
     },
-    isChecked() {
-      const isCheckedQuery = this.$route.query.isChecked || ''
-      return this.hideUncheckedDocs ? false : isCheckedQuery
+    canNavigate() {
+      return this.showUncheckedDocs && this.doc.isConfirmed
     },
-
+    showToggleButton() {
+      return !this.isSingleAnnView
+    },
+    showAutoLabeling() {
+      return !this.isSingleAnnView
+    },
+    showMetadata() {
+      return !this.isSingleAnnView
+    },
+    showLabelTypes() {
+      return !this.isSingleAnnView
+    },
+    showArticleViewer() {
+      return !this.isSingleAnnView
+    },
     selectedLabel() {
       if (Number.isInteger(this.selectedLabelIndex)) {
         if (this.relationMode) {
@@ -372,15 +392,9 @@ export default {
         return null
       }
     },
-
     useRelationLabeling() {
       return !!this.project.useRelation
     },
-
-    isSingleAnnView() {
-      return !!this.project?.isSingleAnnView
-    },
-
     labelTypes() {
       if (this.relationMode) {
         return this.relationTypes
@@ -464,11 +478,13 @@ export default {
     },
     async setDoc() {
       const query = this.$route.query.q || ''
+      const isCheckedQuery = this.$route.query.isChecked || ''
+      const showUncheckedDocs =  this.project.isSingleAnnView && !this.isProjectAdmin ? false : isCheckedQuery
       this.docs = await this.$services.example.fetchOne(
         this.projectId,
         this.$route.query.page,
         query,
-        this.isChecked
+        showUncheckedDocs
       )
     },
     setAffectiveProjectScaleDataDict() {
@@ -499,16 +515,17 @@ export default {
         this.isScaleImported = false
       }
     },
-
     async setArticleData() {
       if(this.docs.items && this.docs.items.length) {
         const doc = this.docs.items[0]
+        const isCheckedQuery = this.$route.query.isChecked || ''
+        const showUncheckedDocs =  this.project.isSingleAnnView && !this.isProjectAdmin ? false : isCheckedQuery
         this.currentArticleId = doc.articleId
         this.currentWholeArticle = await this.$services.example.fetchByLimit(
           this.projectId,
           this.docs.count.toString(),
           this.currentArticleId,
-          this.isChecked
+          showUncheckedDocs
         )
         this.currentWholeArticle.items = _.orderBy(this.currentWholeArticle.items, 'order')
         const allArticleIds = await this.$services.example.fetchArticleIds(
@@ -544,26 +561,27 @@ export default {
         this.categories = await this.$services.textClassification.list(this.projectId, docId)
         this.textLabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
         this.scales = await this.$services.affectiveScale.list(this.projectId, docId)
-
-        this.affectiveSummaryTags = this.textLabels.filter(
-          (item) => item.question === this.affectiveTextlabelQuestions.summaryTag
-        )
-        this.affectiveSummaryImpressions = this.textLabels.filter(
-          (item) => item.question === this.affectiveTextlabelQuestions.summaryImpression
-        )
-        this.affectiveOthersWishToAuthor = this.textLabels.filter(
-          (item) => item.question === this.affectiveTextlabelQuestions.othersWishToAuthor
-        )
-        
-        const affectiveScalesValues = {}
-        const affectiveScalesDict = this.affectiveScalesDict
-        const scaleTypesIdsTexts = this.scaleTypesIdsTexts
-        this.scales.forEach(function(item) {
-          const category = affectiveScalesDict[scaleTypesIdsTexts[item.label]]
-          affectiveScalesValues[category] = item.scale
-        })
-        this.affectiveScalesValues = affectiveScalesValues
+        this.setAffectiveList()
       } 
+    },
+    setAffectiveList() {
+      this.affectiveSummaryTags = this.textLabels.filter(
+        (item) => item.question === this.affectiveTextlabelQuestions.summaryTag
+      )
+      this.affectiveSummaryImpressions = this.textLabels.filter(
+        (item) => item.question === this.affectiveTextlabelQuestions.summaryImpression
+      )
+      this.affectiveOthersWishToAuthor = this.textLabels.filter(
+        (item) => item.question === this.affectiveTextlabelQuestions.othersWishToAuthor
+      )
+      const affectiveScalesValues = {}
+      const affectiveScalesDict = this.affectiveScalesDict
+      const scaleTypesIdsTexts = this.scaleTypesIdsTexts
+      this.scales.forEach(function(item) {
+        const category = affectiveScalesDict[scaleTypesIdsTexts[item.label]]
+        affectiveScalesValues[category] = item.scale
+      })
+      this.affectiveScalesValues = affectiveScalesValues
     },
     async deleteSpan(id) {
       await this.$services.sequenceLabeling.delete(this.projectId, this.doc.id, id)
@@ -598,7 +616,6 @@ export default {
       )
       await this.list(this.doc.id)
     },
-
     async updateRelation(relationId, typeId) {
       await this.$services.sequenceLabeling.updateRelation(
         this.projectId,
@@ -616,12 +633,10 @@ export default {
       await this.$services.textClassification.delete(this.projectId, this.doc.id, id)
       await this.list(this.doc.id)
     },
-
     async addCategory(labelId) {
       await this.$services.textClassification.create(this.projectId, this.doc.id, labelId)
       await this.list(this.doc.id)
     },
-
     async addOrRemoveCategory(event) {
       const labelId = parseInt(event.srcKey, 10)
       const annotation = this.spans.find((item) => item.label === labelId)
@@ -631,7 +646,6 @@ export default {
         await this.add(labelId)
       }
     },
-    
     async clear() {
       await this.clearSequenceLabels()
       await this.clearCategory()
@@ -639,28 +653,22 @@ export default {
       await this.clearTextLabels()
       await this.list(this.doc.id)
     },
-
     async clearScales() {
       await this.$services.affectiveScale.clear(this.projectId, this.doc.id)
     },
-
     async clearTextLabels() {
       await this.$services.affectiveTextlabel.clear(this.projectId, this.doc.id)
     },
-
     async clearSequenceLabels() {
       await this.$services.sequenceLabeling.clear(this.projectId, this.doc.id)
     },
-
     async clearCategory() {
       await this.$services.textClassification.clear(this.projectId, this.doc.id)
     },
-
     async autoLabel(docId) {
       await this.autoLabelCategory(docId)
       await this.autoLabelSequences(docId)
     },
-    
     async autoLabelCategory(docId) {
       try {
         await this.$services.textClassification.autoLabel(this.projectId, docId)

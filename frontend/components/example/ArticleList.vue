@@ -20,7 +20,7 @@
       'page-text': $t('dataset.pageText')
     }"
     item-key="id"
-    show-select
+    :show-select="isProjectAdmin"
     show-expand
     @toggle-select-all="onSelectAllArticleItems"
     @item-selected="onSelectArticleItems"
@@ -50,13 +50,16 @@
                 :loading-text="$t('generic.loading')"
                 :no-data-text="$t('vuetify.noDataAvailable')"
                 item-key="id"
-                show-select
+                :show-select="isProjectAdmin"
                 show-expand
                 @item-selected="onSelectChildArticleItems"
             >
                 <template #[`item.text`]="articleItem">
                   <span class="d-flex d-sm-none">{{ articleItem.item.text | truncate(50) }}</span>
                   <span class="d-none d-sm-flex">{{ articleItem.item.text | truncate(200) }}</span>
+                </template>
+                <template #[`item.isConfirmed`]="articleItem">
+                  {{ articleItem.item.isConfirmed ? 'checked' : 'unchecked' }}
                 </template>
                 <template #[`item.action`]="articleItem">
                     <v-btn 
@@ -69,6 +72,9 @@
                 </template>
             </v-data-table>
         </td>
+    </template>
+    <template #[`item.isConfirmed`]="{item}">
+      {{ item.isConfirmed ? 'checked' : 'unchecked' }}
     </template>
     <template #[`item.action`]="{ item }">
       <v-btn 
@@ -126,11 +132,15 @@ export default Vue.extend({
       selectedChildArticleItems: [] as ExampleDTO[],
       expandedItems: [] as ExampleArticleDTO[],
       isExpanded: false,
+      isProjectAdmin: false,
       mdiMagnify
     }
   },
 
   computed: {
+    projectId() {
+      return this.$route.params.id
+    },
     groupedItems() {
         const groupsByArticleIdDict = _.groupBy(this.items, 'articleId') as ExampleGroupedDTO
         const groupsByArticleIdList = [] as ExampleArticleDTO[]
@@ -148,6 +158,7 @@ export default Vue.extend({
         })
         const articleList : ExampleArticleDTO[] = groupsByArticleIdList
           .map((group: ExampleArticleDTO)=> {
+            group.isConfirmed = group.data.every((data: ExampleDTO) => data.isConfirmed === true)
             group.data = group.data.map((data: ExampleDTO, index: number)=> {
                 data.itemId = `${data.articleId}_articleItem_${index}`
                 return data
@@ -158,7 +169,14 @@ export default Vue.extend({
         return articleList
     },
     childHeaders() {
-        return [
+      const adminHeaders = [
+            {
+                text: this.$t('dataset.action'),
+                value: 'action',
+                sortable: false
+            }
+      ]
+      const headers = [
             {
                 text: this.$t('dataset.text'),
                 value: 'text',
@@ -181,18 +199,21 @@ export default Vue.extend({
             },
             {
               text: this.$t('dataset.status'),
-              value: 'is_confirmed',
+              value: 'isConfirmed',
               sortable: false
             },
-            {
-                text: this.$t('dataset.action'),
-                value: 'action',
-                sortable: false
-            },
         ]
+        return this.isProjectAdmin ? headers.concat(adminHeaders) : headers
     },
     headers() {
-      return [
+      const adminHeaders = [
+        {
+          text: this.$t('dataset.action'),
+          value: 'action',
+          sortable: false
+        }
+      ]
+      const headers = [
         {
           text: this.$t('dataset.title'),
           value: 'title',
@@ -200,7 +221,7 @@ export default Vue.extend({
         },
         {
           text: this.$t('dataset.status'),
-          value: 'is_confirmed',
+          value: 'isConfirmed',
           sortable: false
         },
         {
@@ -208,15 +229,13 @@ export default Vue.extend({
           value: 'publishDatetime',
           sortable: false
         },
-        {
-          text: this.$t('dataset.action'),
-          value: 'action',
-          sortable: false
-        }
       ]
+      return this.isProjectAdmin ? headers.concat(adminHeaders) : headers
     }
   },
-
+  async created() {
+    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+  },
   watch: {
     items: {
       handler() {

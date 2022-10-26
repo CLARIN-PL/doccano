@@ -55,6 +55,7 @@
       <v-spacer />
       <button-pagination
         v-if="buttonVisibility.pagination" 
+        :disabled="buttonDisabled.pagination"
         :value="page"
         :total="total"
         :is-article-project="isArticleProject"
@@ -120,6 +121,19 @@ export default Vue.extend({
           autoLabeling: true,
           clear: true,
           pagination: true
+        }
+      },
+    },
+    buttonDisabled: {
+      type: Object,
+      default: () => {
+        return {
+          pagination: {
+            first: false,
+            prev: false,
+            next: false,
+            last: false,
+          }
         }
       },
     },

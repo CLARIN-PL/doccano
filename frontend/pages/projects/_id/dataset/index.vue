@@ -16,6 +16,7 @@
       <v-spacer />
       <action-menu-util
         button-color=""
+        class="mr-2"
         :items="annotationConfirmationOptions"
         :text="$t('dataset.annotationConfirmationStatus')"
         @view-all="isConfirmed = ''"
@@ -24,7 +25,7 @@
       />
       <v-btn
         :disabled="!item.count"
-        class="text-capitalize ml-2"
+        class="text-capitalize"
         color="error"
         @click="dialogDeleteAll = true"
       >
@@ -52,8 +53,15 @@
         @view-not-confirmed="isConfirmed = false"
       />
       <v-spacer />
-      <v-btn>
-        start annotation
+      <v-btn 
+        :disabled="!hasUnannotatedItem"
+        color="ms-4 my-1 mb-2 primary text-capitalize" 
+        nuxt 
+        @click="toLabeling">
+        <v-icon left>
+          {{ mdiPlayCircleOutline }}
+        </v-icon>
+        {{ $t('home.startAnnotation') }}
       </v-btn>
     </v-card-title>
     <image-list
@@ -101,6 +109,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import _ from 'lodash'
+import mdiPlayCircleOutline from '@mdi/js'
 import ArticleList from '@/components/example/ArticleList.vue'
 import DocumentList from '@/components/example/DocumentList.vue'
 import FormDelete from '@/components/example/FormDelete.vue'
@@ -133,6 +142,7 @@ export default Vue.extend({
 
   data() {
     return {
+      mdiPlayCircleOutline,
       dialogDelete: false,
       dialogDeleteAll: false,
       project: {} as ProjectDTO,
@@ -172,7 +182,7 @@ export default Vue.extend({
       return this.$route.params.id
     },
     showAnnotationButton() : boolean {
-      return this.isArticleTask && this.project.isSingleAnnView
+      return this.isArticleTask && this.isProjectAdmin && !this.project.isSingleAnnView
     },
     isArticleTask(): boolean {
       const articleTasks = ['ArticleAnnotation', 'AffectiveAnnotation']
@@ -183,6 +193,9 @@ export default Vue.extend({
     },
     isAudioTask(): boolean {
       return this.project.projectType === 'Speech2text'
+    },
+    hasUnannotatedItem() : boolean {
+      return !!this.item.items.find((item: any) => !item.isConfirmed)
     },
     itemKey(): string {
       if (this.isImageTask || this.isAudioTask) {
@@ -209,6 +222,14 @@ export default Vue.extend({
   },
 
   methods: {
+    toLabeling() {
+      if(this.hasUnannotatedItem) {
+        const item = this.item.items.find((item) => !item.isConfirmed)
+        const index = this.item.items.indexOf(item)
+        const page = ( index + 1).toString()
+        this.movePage({ page, q: this.search, isChecked: false })
+      } 
+    },
     async loadData() {
       this.isLoading = true
       const query = {...this.$route.query, ...{
