@@ -203,8 +203,8 @@
         </v-card-text>
       </v-card>
       <list-metadata :metadata="doc.meta" class="mt-4" />
+      <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
     </template>
-    <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
   </layout-text>
 </template>
 
@@ -372,19 +372,7 @@ export default {
   },
 
   async created() {
-    let hasRested = false
-    const currentTime = new Date()
-    const restingEndTime = this.getRestingEndTime()
-
-    if (restingEndTime === null || currentTime >= restingEndTime) {
-      hasRested = true
-      this.showRestingMessage = false
-      this.restingEndTime = currentTime
-    } else {
-      hasRested = false
-      this.showRestingMessage = true
-      this.restingEndTime = restingEndTime
-    }
+    const hasRested = this.checkRestingPeriod()
 
     if (hasRested) {
       this.clearRestingPeriod()
@@ -430,6 +418,22 @@ export default {
     ...mapGetters('auth', ['getRestingEndTime']),
     ...mapActions('auth', ['setRestingPeriod', 'clearRestingPeriod']),
 
+    checkRestingPeriod() {
+      const currentTime = new Date()
+      const restingEndTime = this.getRestingEndTime()
+
+      if (restingEndTime === null || currentTime >= restingEndTime) {
+        this.showRestingMessage = false
+        this.restingEndTime = currentTime
+
+        return true
+      } else {
+        this.showRestingMessage = true
+        this.restingEndTime = restingEndTime
+
+        return false
+      }
+    },
     async setDoc() {
       const query = this.$route.query.q || ''
       const isChecked = this.$route.query.isChecked || ''
