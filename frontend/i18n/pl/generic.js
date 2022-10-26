@@ -17,5 +17,11 @@ export default {
   export: 'Eksport',
   description: 'Opis',
   type: 'Typ',
-  loading: 'Wczytywanie... Proszę czekać'
+  loading: 'Wczytywanie... Proszę czekać',
+  restingMessage: {
+    title: 'Czas na odpoczynek!',
+    message1: 'Dziękujemy za Twoją pracę! Proszę napić się kawy, zanim przejdziesz dalej!',
+    message2: 'Możesz kontynuować anotację od:',
+    message3: 'Odśwież tę stronę, gdy czas na odpoczynek się skończy.'
+  }
 }

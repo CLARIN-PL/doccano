@@ -16,5 +16,11 @@ export default {
   export: '导出',
   description: '描述',
   type: '类型',
-  loading: '加载中... 请等待'
+  loading: '加载中... 请等待',
+  restingMessage: {
+    title: '休息时间!',
+    message1: '感谢您的工作! 请先喝杯咖啡再继续!',
+    message2: '您可以在此日期继续注释:',
+    message3: '请在休息时间结束后刷新此页面.'
+  }
 }
