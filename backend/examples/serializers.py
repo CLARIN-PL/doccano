@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Comment, Example, ExampleState
+from .models import Comment, Example, ExampleState, ExampleAnnotateStartState
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -65,5 +65,12 @@ class ExampleArticleIdSerializer(serializers.ModelSerializer):
 class ExampleStateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExampleState
-        fields = ("id", "example", "confirmed_by", "confirmed_at", "started_at")
-        read_only_fields = ("id", "example", "confirmed_by", "confirmed_at", "started_at")
+        fields = ("id", "example", "confirmed_by", "confirmed_at")
+        read_only_fields = ("id", "example", "confirmed_by", "confirmed_at")
+
+
+class ExampleAnnotateStartStateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExampleAnnotateStartState
+        fields = ("id", "example", "started_by", "started_at")
+        read_only_fields = ("id", "example", "started_by", "started_at")

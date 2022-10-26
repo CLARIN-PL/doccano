@@ -1,10 +1,9 @@
-from click import confirm
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from examples.models import Example, ExampleState
-from examples.serializers import ExampleStateSerializer
+from examples.models import Example, ExampleState, ExampleAnnotateStartState
+from examples.serializers import ExampleStateSerializer, ExampleAnnotateStartStateSerializer
 from projects.models import Project
 from projects.permissions import IsProjectMember
 
@@ -30,8 +29,20 @@ class ExampleStateList(generics.ListCreateAPIView):
             queryset.delete()
         else:
             example = get_object_or_404(Example, pk=self.kwargs["example_id"])
-            serializer.save(example=example, started_at=self.request.data["started_at"])
+            serializer.save(example=example, confirmed_by=self.request.user)
 
-    def perform_update(self, serializer):
-        example = get_object_or_404(Example, pk=self.kwargs["example_id"])
-        serializer.save(example=example, confirmed_by=self.request.user)
+
+class ExampleAnnotateStartStateList(generics.ListCreateAPIView):
+    serializer_class = ExampleAnnotateStartStateSerializer
+    permission_classes = [IsAuthenticated & IsProjectMember]
+
+    def get_queryset(self):
+        return ExampleAnnotateStartState.objects.filter(example=self.kwargs["example_id"])
+
+    def perform_create(self, serializer):
+        queryset = self.get_queryset()
+        if queryset.exists():
+            queryset.delete()
+        else:
+            example = get_object_or_404(Example, pk=self.kwargs["example_id"])
+            serializer.save(example=example, started_by=self.request.user)
