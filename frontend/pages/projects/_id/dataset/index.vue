@@ -228,7 +228,7 @@ export default Vue.extend({
 
   async created() {
     this.project = await this.$services.project.findById(this.projectId)
-    // this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
   },
 
   methods: {
