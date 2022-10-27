@@ -180,10 +180,11 @@ export default Vue.extend({
   },
 
   methods: {
+    // @ts-ignore
     updatePage({name, destination}) {
       // @ts-ignore
       const base = this as any
-      const page = {
+      const page : any = {
         prev: base.page - 1,
         next: base.page + 1,
         first: 1,

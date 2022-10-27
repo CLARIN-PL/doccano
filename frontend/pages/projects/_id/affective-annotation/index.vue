@@ -12,7 +12,7 @@
                 checked: $t('annotation.checkedTooltip'),
                 notChecked: $t('annotation.notCheckedTooltip')
               },
-              disabled: !canEditAfterConfirming,
+              disabled: !canEdit,
             },
             filter: {
               visible: showFilterButton
@@ -100,6 +100,7 @@
                 <v-card-title>
                     <label-group
                       v-if="labelOption === 0"
+                      :read-only="!canEdit"
                       :labels="categoryTypes"
                       :annotations="categories"
                       :single-label="project.singleClassClassification"
@@ -108,6 +109,7 @@
                     />
                     <label-select
                       v-else
+                      :read-only="!canEdit"
                       :labels="categoryTypes"
                       :annotations="categories"
                       :single-label="project.singleClassClassification"
@@ -120,7 +122,7 @@
                   <entity-editor
                     :dark="$vuetify.theme.dark"
                     :rtl="isRTL"
-                    :read-only="!canEditAfterConfirming"
+                    :read-only="!canEdit"
                     :text="doc.text"
                     :entities="spans"
                     :entity-labels="spanTypes"
@@ -145,7 +147,7 @@
                       :text="doc.text"
                       :tags="affectiveSummaryTags"
                       :impressions="affectiveSummaryImpressions"
-                      :read-only="!canEditAfterConfirming"
+                      :read-only="!canEdit"
                       @remove:tag="removeTag"
                       @update:tag="updateTag"
                       @add:tag="addTag"
@@ -155,7 +157,7 @@
                     />
                     <emotions-input
                       v-if="project.isEmotionsMode"
-                      :read-only="!canEditAfterConfirming"
+                      :read-only="!canEdit"
                       :general-positivity="affectiveScalesValues.positive"
                       :general-negativity="affectiveScalesValues.negative"
                       :joy="affectiveScalesValues.joy"
@@ -172,7 +174,7 @@
                     />
                     <others-input
                       v-if="project.isOthersMode"
-                      :read-only="!canEditAfterConfirming"
+                      :read-only="!canEdit"
                       :ironic="affectiveScalesValues.ironic"
                       :embarrassing="affectiveScalesValues.embarrassing"
                       :vulgar="affectiveScalesValues.vulgar"
@@ -200,7 +202,7 @@
                       :scale-types="scaleTypes"
                       :scales="scales"
                       :text-labels="textLabels"
-                      :read-only="!canEditAfterConfirming"
+                      :read-only="!canEdit"
                       @update:scale="updateScale"
                       @add:label="addLabel"
                       @update:label="updateTag"
@@ -212,7 +214,7 @@
                       :scale-types="scaleTypes"
                       :scales="scales"
                       :text-labels="textLabels"
-                      :read-only="!canEditAfterConfirming"
+                      :read-only="!canEdit"
                       @update:scale="updateScale"
                       @add:label="addLabel"
                       @update:label="updateTag"
@@ -365,7 +367,7 @@ export default {
   },
 
   async fetch() {
-    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+    // this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
     await this.setProjectData()
     await this.setDoc()
     this.$nextTick(()=> {
@@ -399,11 +401,12 @@ export default {
     showFilterButton() {
       return this.isSingleAnnView ? this.isProjectAdmin : true
     },
-    canEditAfterConfirming() {
-      return this.isSingleAnnView && this.doc.isConfirmed ?  this.isProjectAdmin : true
+    canEdit() {
+      return this.isSingleAnnView && this.doc.isConfirmed ? this.isProjectAdmin : true
     },
     canNavigate() {
-      return this.hasRightsToEdit ? true : this.doc.isConfirmed
+      const canNavigate = this.isProjectAdmin ? true : this.doc.isConfirmed
+      return this.isSingleAnnView ? canNavigate : true
     },
     showToggleButton() {
       return !this.isSingleAnnView
@@ -452,49 +455,19 @@ export default {
     },
   },
 
-  methods: {
-    async annotateStartStates() {
-      await this.setDoc()
-      this.$nextTick(()=> {
-        !this.doc.isConfirmed && this.$services.example.annotateStartStates(this.projectId, this.doc.id)
-      })
-    },
-    async setLabelData() {
-      this.categoryTypes = await this.$services.categoryType.list(this.projectId)
-      this.spanTypes = await this.$services.spanType.list(this.projectId)
-      this.relationTypes = await this.$services.relationType.list(this.projectId)
-      this.project = await this.$services.project.findById(this.projectId)
-      this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
-
-      let affectiveScaleLabelsJSON = []
-      if (this.project.isEmotionsMode) {
-        affectiveScaleLabelsJSON = EmotionsScales
-      } else if (this.project.isOthersMode) {
-        affectiveScaleLabelsJSON = OthersScales
-      }
-      const affectiveScalesDict = {}
-      affectiveScaleLabelsJSON.forEach(function(item) {
-        affectiveScalesDict[item.text] = item.varname
-      })
-      this.affectiveScalesDict = affectiveScalesDict
-
-      const scaleTypesRaw = await this.$services.scaleType.list(this.projectId)
-      this.scaleTypes = scaleTypesRaw
-      if (scaleTypesRaw.length > 0) {
-        const scaleTypesIdsTexts = {}
-        const scaleTypesTextsIds = {}
-        scaleTypesRaw.forEach(function(item) {
-          scaleTypesIdsTexts[item.id] = item.text
-          scaleTypesTextsIds[item.text] = item.id
-        })
-        this.scaleTypesIdsTexts = scaleTypesIdsTexts
-        this.scaleTypesTextsIds = scaleTypesTextsIds
-      } else if (!this.project.isSummaryMode) {
-        this.isScaleImported = false
-      }
-
-      this.list(this.doc.id)
+  async created() {
+    const hasRested = this.checkRestingPeriod()
+    if (hasRested) {
+      await this.clearRestingPeriod()
+      await this.setLabelData()
+      this.setAffectiveProjectScaleDataDict()
+      this.setAffectiveProjectScaleData()
+      await this.list(this.doc.id)
     }
+  },
+
+  mounted() {
+    this.isLoaded = true
   },
 
   methods: {
@@ -516,6 +489,22 @@ export default {
 
         return false
       }
+    },
+    async annotateStartStates() {
+      await this.setDoc()
+      this.$nextTick(()=> {
+        !this.doc.isConfirmed && this.$services.example.annotateStartStates(this.projectId, this.doc.id)
+      })
+    },
+    async setLabelData() {
+      this.categoryTypes = await this.$services.categoryType.list(this.projectId)
+      this.spanTypes = await this.$services.spanType.list(this.projectId)
+      this.relationTypes = await this.$services.relationType.list(this.projectId)
+      this.scaleTypes = await this.$services.scaleType.list(this.projectId)
+    },
+    async setProjectData() {
+      this.project = await this.$services.project.findById(this.projectId)
+      this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
     },
     async setDoc() {
       const query = this.$route.query.q || ''
@@ -600,6 +589,7 @@ export default {
         this.categories = await this.$services.textClassification.list(this.projectId, docId)
         this.textLabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
         this.scales = await this.$services.affectiveScale.list(this.projectId, docId)
+        
         this.setAffectiveList()
       } 
     },

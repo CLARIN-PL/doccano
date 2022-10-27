@@ -4,8 +4,8 @@
       <v-row >
         <v-col cols="12" align="right" >
           <v-btn 
-            color="ms-4 my-1 mb-2 primary text-capitalize" 
             v-if="!showTableAnnButton"
+            color="ms-4 my-1 mb-2 primary text-capitalize" 
             @click="toLabeling">
             {{ $t('home.startAnnotation') }}
           </v-btn>
@@ -67,8 +67,8 @@
       />
       <v-spacer />
       <v-btn 
-        color="ms-4 my-1 mb-2 primary text-capitalize" 
         v-if="!showTableAnnButton"
+        color="ms-4 my-1 mb-2 primary text-capitalize" 
         @click="toLabeling">
         {{ $t('home.startAnnotation') }}
       </v-btn>
@@ -242,7 +242,9 @@ export default Vue.extend({
       const item = this.hasUnannotatedItem ? 
         this.item.items.find((item: any) => !item.isConfirmed)
         : this.item.items[0]
-      !item.isConfirmed && this.$services.example.annotateStartStates(this.projectId, item.id)
+      if(item && !item.isConfirmed) {
+        this.$services.example.annotateStartStates(this.projectId, item.id)
+      }
     },
     async loadData() {
       this.isLoading = true

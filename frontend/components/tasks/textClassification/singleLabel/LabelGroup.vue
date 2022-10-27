@@ -3,6 +3,7 @@
     <v-chip
       v-for="item in labels"
       :key="item.id"
+      :disabled="readOnly"
       :color="item.backgroundColor"
       filter
       :text-color="$contrastColor(item.backgroundColor)"
@@ -27,6 +28,10 @@ export default {
       type: Array,
       default: () => [],
       required: true
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
     }
   },
 
