@@ -43,6 +43,7 @@
 
         <button-clear 
           v-if="buttonOptions.clear.visible" 
+          :disabled="buttonOptions.clear.disabled"
           @click:clear="dialogClear = true" />
         <v-dialog v-model="dialogClear">
           <form-clear-label

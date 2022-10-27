@@ -27,7 +27,8 @@
               visible: showAutoLabeling
             },
             clear: {
-              visible: true
+              visible: true,
+              disabled: !canEdit
             },
             pagination: {
               visible: true,
@@ -367,7 +368,7 @@ export default {
   },
 
   async fetch() {
-    // this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
     await this.setProjectData()
     await this.setDoc()
     this.$nextTick(()=> {
