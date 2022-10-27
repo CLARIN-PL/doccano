@@ -1,6 +1,11 @@
 <template>
   <v-list dense>
-    <v-btn color="ms-4 my-1 mb-2 primary text-capitalize" nuxt @click="toLabeling">
+    <v-btn 
+      v-if="showAnnotationButton"
+      color="ms-4 my-1 mb-2 primary text-capitalize" 
+      nuxt 
+      @click="toLabeling"
+    >
       <v-icon left>
         {{ mdiPlayCircleOutline }}
       </v-icon>
@@ -67,6 +72,9 @@ export default {
   },
 
   computed: {
+    showAnnotationButton() {
+      return this.project.isSingleAnnView ? this.isProjectAdmin : true
+    },
     filteredItems() {
       const items = [
         {

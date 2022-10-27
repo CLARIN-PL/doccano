@@ -80,7 +80,7 @@
           <v-row>
             <v-col cols="12">
                 <h3 class="mt-3 mb-2"> 
-                  {{ doc.meta.meta.article_title }} {{ doc.id }}
+                  {{ doc.meta.meta.article_title }}
                 </h3>
                 <v-divider />
             </v-col>
