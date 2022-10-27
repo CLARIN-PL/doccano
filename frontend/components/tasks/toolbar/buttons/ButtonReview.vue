@@ -10,15 +10,15 @@
         @click="$emit('click:review')"
       >
         <v-icon>
-          {{ isReviewd ? mdiCheck : mdiClose }}
+          {{ isReviewd ? mdiClose : mdiCheck }}
         </v-icon>
         <span v-if="showText">
-          {{ isReviewd ? text.checked : text.notChecked }}
+          {{ isReviewd ? text.notChecked : text.checked }}
         </span>
       </v-btn>
     </template>
-    <span v-if="isReviewd">{{ $t('annotation.checkedTooltip') }}</span>
-    <span v-else>{{ $t('annotation.notCheckedTooltip') }}</span>
+    <span v-if="isReviewd">{{ $t('annotation.notCheckedTooltip') }}</span>
+    <span v-else>{{ $t('annotation.checkedTooltip') }}</span>
   </v-tooltip>
 </template>
 

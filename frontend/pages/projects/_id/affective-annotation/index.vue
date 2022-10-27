@@ -31,10 +31,10 @@
           }"
           :button-tooltip="{
             pagination: {
-              first: 'Please mark the text as checked before continuing',
-              prev: 'Please mark the text as checked before continuing',
-              next: 'Please mark the text as checked before continuing',
-              last: 'Please mark the text as checked before continuing'
+              first: canNavigate ? '' :'Please mark the text as checked before continuing',
+              prev: canNavigate ? '' : 'Please mark the text as checked before continuing',
+              next: canNavigate? '' : 'Please mark the text as checked before continuing',
+              last: canNavigate ? '' : 'Please mark the text as checked before continuing'
             }
           }"
           :enable-auto-labeling.sync="enableAutoLabeling"
@@ -382,7 +382,7 @@ export default {
       return this.isSingleAnnView ? this.isProjectAdmin : true
     },
     canNavigate() {
-      return this.showUncheckedDocs && this.doc.isConfirmed
+      return this.showUncheckedDocs ? true : this.doc.isConfirmed
     },
     showToggleButton() {
       return !this.isSingleAnnView
