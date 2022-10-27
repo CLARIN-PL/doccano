@@ -50,6 +50,7 @@ export class ExampleArticleDTO {
   data: ExampleDTO[]
   itemId: string 
   articleId: string
+  isConfirmed: boolean
   
   @Expose({ name: 'publish_datetime' })
   publishDatetime: string 

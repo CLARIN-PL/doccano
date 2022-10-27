@@ -3,34 +3,34 @@
     <v-row no-gutters>
       <v-btn-toggle>
         <button-review 
-          v-if="buttonVisibility.review" 
-          :disabled="buttonDisabled.review"
-          :show-text="buttonText.review.hasText"
-          :text="buttonText.review"
+          v-if="buttonOptions.review.visible" 
+          :disabled="buttonOptions.review.disabled"
+          :show-text="buttonOptions.review.hasText"
+          :text="buttonOptions.review.text"
           :is-reviewd="isReviewd" 
           @click:review="$emit('click:review')" />
 
         <button-filter 
-          v-if="buttonVisibility.filter" 
+          v-if="buttonOptions.filter.visible" 
           :value="filterOption" 
           @click:filter="changeFilter" />
 
         <button-guideline 
-          v-if="buttonVisibility.guideline" 
+          v-if="buttonOptions.guideline.visible" 
           @click:guideline="dialogGuideline = true" />
         <v-dialog v-model="dialogGuideline">
           <form-guideline :guideline-text="guidelineText" @click:close="dialogGuideline = false" />
         </v-dialog>
 
         <button-comment 
-          v-if="buttonVisibility.comment" 
+          v-if="buttonOptions.comment.visible" 
           @click:comment="dialogComment = true" />
         <v-dialog v-model="dialogComment">
           <form-comment :example-id="docId" @click:cancel="dialogComment = false" />
         </v-dialog>
 
         <button-auto-labeling 
-          v-if="buttonVisibility.autoLabeling" 
+          v-if="buttonOptions.autoLabeling.visible" 
           @click:auto="dialogAutoLabeling = true" />
         <v-dialog v-model="dialogAutoLabeling">
           <form-auto-labeling
@@ -42,7 +42,7 @@
         </v-dialog>
 
         <button-clear 
-          v-if="buttonVisibility.clear" 
+          v-if="buttonOptions.clear.visible" 
           @click:clear="dialogClear = true" />
         <v-dialog v-model="dialogClear">
           <form-clear-label
@@ -57,11 +57,11 @@
       <slot />
       <v-spacer />
       <button-pagination
-        v-if="buttonVisibility.pagination" 
-        :disabled="buttonDisabled.pagination"
+        v-if="buttonOptions.pagination.visible" 
+        :disabled="buttonOptions.pagination.disabled"
         :value="page"
         :total="total"
-        :tooltip="buttonTooltip.pagination"
+        :tooltip="buttonOptions.pagination.tooltip"
         :is-article-project="isArticleProject"
         :article-index="articleIndex"
         :article-total="articleTotal"
@@ -114,57 +114,17 @@ export default Vue.extend({
       default: false,
       required: true
     },
-    buttonVisibility: {
+    buttonOptions: {
       type: Object,
       default: () => {
         return {
-          review: true,
-          filter: true,
-          guideline: true,
-          comment: true,
-          autoLabeling: true,
-          clear: true,
-          pagination: true
-        }
-      },
-    },
-    buttonText: {
-      type: Object,
-      default: () => {
-        return {
-          review: {
-            hasText: false,
-            checked: '',
-            notChecked: ''
-          }
-        }
-      },
-
-    },
-    buttonTooltip: {
-      type: Object,
-      default: () => {
-        return {
-          pagination: {
-            first: '',
-            prev: '',
-            next: '',
-            last: '',
-          }
-        }
-      },
-    },
-    buttonDisabled: {
-      type: Object,
-      default: () => {
-        return {
-          review: false,
-          pagination: {
-            first: false,
-            prev: false,
-            next: false,
-            last: false,
-          }
+          review: { visible: true },
+          filter: { visible: true },
+          guideline:  { visible: true },
+          comment: { visible: true },
+          autoLabeling: { visible: true },
+          clear: { visible: true },
+          pagination: { visible: true },
         }
       },
     },

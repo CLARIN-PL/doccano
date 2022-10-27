@@ -77,6 +77,10 @@ export default {
       type: Boolean,
       default: false
     },
+    readOnly: {
+      type: Boolean,
+      default: false
+    },
     question: {
       type: String,
       default: ""
@@ -127,7 +131,7 @@ export default {
     },
     textfieldClickHandler() {
       if (this.enableTextfield) {
-        this.showDialog = true
+        this.showDialog = !this.readOnly
       } else {
         this.showDialog = false
       }

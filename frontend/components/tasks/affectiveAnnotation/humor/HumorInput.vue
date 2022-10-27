@@ -19,6 +19,7 @@
                                     class="slider"
                                     :class="{'--has-filled': formData.subquestion1 }"
                                     ticks="always"
+                                    :readonly="readOnly"
                                     min="0" 
                                     max="10" 
                                     :disabled="!scaleTypes.length"
@@ -48,6 +49,7 @@
                                     ticks="always"
                                     min="0" 
                                     max="10" 
+                                    :readonly="readOnly"
                                     :disabled="!scaleTypes.length"
                                     :tick-labels="zeroToTenLabels"
                                     step="1"  
@@ -72,6 +74,7 @@
                                     class="subquestions__item" >
                                     <v-checkbox 
                                         v-model="substatement.isChecked" 
+                                        :readonly="readOnly"
                                         :disabled="!hasFilledTopQuestions"
                                         :label="$t(`annotation.humor.subquestion3.substatement${(idx+1)}`)"
                                         class="subquestions-item__checkbox"
@@ -81,6 +84,7 @@
                                         v-if="substatement.isChecked"
                                         v-model="substatement.answer"
                                         :required="true"
+                                        :readonly="readOnly"
                                         :disabled="!hasFilledTopQuestions"
                                         :question="$t(`annotation.humor.subquestion3.substatement${(idx+1)}Question`)"
                                         :full-question="`
@@ -107,6 +111,7 @@
                                     <p>
                                         <v-checkbox 
                                             v-model="substatement.isChecked" 
+                                            :readonly="readOnly"
                                             :disabled="!hasFilledTopQuestions"
                                             :label="$t(`annotation.humor.subquestion4.substatement${(idx+1)}`)" 
                                             class="subquestions-item__checkbox"

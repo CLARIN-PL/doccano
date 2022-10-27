@@ -63,8 +63,8 @@
                 </template>
                 <template #[`item.action`]="articleItem">
                     <v-btn 
-                      small 
                       v-if="showAnnotationButton"
+                      small 
                       color="primary text-capitalize mr-5" 
                       @click="toLabeling(articleItem.item)">
                         {{ $t('dataset.annotate') }}
@@ -78,9 +78,9 @@
     </template>
     <template #[`item.action`]="{ item }">
       <v-btn 
+        v-if="showAnnotationButton"
         small
         color="primary text-capitalize mr-5" 
-        v-if="showAnnotationButton"
         @click="toLabeling(item.data[0])">
         {{ $t('dataset.startAnnotation') }}
       </v-btn>
@@ -151,6 +151,7 @@ export default Vue.extend({
                 itemId: `${key}_article_${index}`,
                 id: index,
                 articleId: key,
+                isConfirmed: groupsByArticleIdDict[key].every((data: ExampleDTO) => data.isConfirmed === true),
                 title: firstItem.meta.meta.article_title,
                 publishDatetime: firstItem.meta.meta.publish_datetime,
                 data: groupsByArticleIdDict[key] as ExampleDTO[]
@@ -158,7 +159,6 @@ export default Vue.extend({
         })
         const articleList : ExampleArticleDTO[] = groupsByArticleIdList
           .map((group: ExampleArticleDTO)=> {
-            group.isConfirmed = group.data.every((data: ExampleDTO) => data.isConfirmed === true)
             group.data = group.data.map((data: ExampleDTO, index: number)=> {
                 data.itemId = `${data.articleId}_articleItem_${index}`
                 return data
@@ -229,9 +229,6 @@ export default Vue.extend({
       return headers
     }
   },
-  async created() {
-    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
-  },
   watch: {
     items: {
       handler() {
@@ -266,6 +263,9 @@ export default Vue.extend({
       })
       this.options.page = 1
     }
+  },
+  async created() {
+    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
   },
   methods: {
     onSelectArticleItems({item, value} : DatatableSelectArticleEventData) {

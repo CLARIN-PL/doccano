@@ -5,6 +5,7 @@
     <p class="emotions-input__subheader">{{ $t('annotation.affectiveEmotions.titleWhat') }}</p>
     <div class="emotions-input__content">
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.positiveCategory')"
         color="green"
         :hint="$t('annotation.affectiveEmotions.positiveHint')"
@@ -13,6 +14,7 @@
         @change="updateEmotions"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.negativeCategory')"
         color="red"
         :hint="$t('annotation.affectiveEmotions.negativeHint')"
@@ -25,6 +27,7 @@
     <p class="emotions-input__subheader">{{ $t('annotation.affectiveEmotions.titleEmotions') }}</p>
     <div class="emotions-input__content">
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.joyCategory')"
         color="pink"
         :hint="$t('annotation.affectiveEmotions.joyHint')"
@@ -33,6 +36,7 @@
         @change="updateEmotions"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.admirationCategory')"
         color="purple"
         :hint="$t('annotation.affectiveEmotions.admirationHint')"
@@ -41,6 +45,7 @@
         @change="updateEmotions"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.inspirationCategory')"
         color="indigo"
         :hint="$t('annotation.affectiveEmotions.inspirationHint')"
@@ -49,6 +54,7 @@
         @change="updateEmotions"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.peaceCategory')"
         color="teal"
         :hint="$t('annotation.affectiveEmotions.peaceHint')"
@@ -57,6 +63,7 @@
         @change="updateEmotions"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.surpriseCategory')"
         color="amber"
         :hint="$t('annotation.affectiveEmotions.surpriseHint')"
@@ -65,6 +72,7 @@
         @change="updateEmotions"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.sympathyCategory')"
         color="cyan"
         :hint="$t('annotation.affectiveEmotions.sympathyHint')"
@@ -73,6 +81,7 @@
         @change="updateEmotions"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.fearCategory')"
         color="brown"
         :hint="$t('annotation.affectiveEmotions.fearHint')"
@@ -81,6 +90,7 @@
         @change="updateEmotions"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.sadnessCategory')"
         color="blue-grey darken-4"
         :hint="$t('annotation.affectiveEmotions.sadnessHint')"
@@ -89,6 +99,7 @@
         @change="updateEmotions"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.disgustCategory')"
         color="lime darken-4"
         :hint="$t('annotation.affectiveEmotions.disgustHint')"
@@ -97,6 +108,7 @@
         @change="updateEmotions"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.angerCategory')"
         color="red darken-4"
         :hint="$t('annotation.affectiveEmotions.angerHint')"
@@ -117,6 +129,10 @@ export default {
   },
 
   props: {
+    readOnly: {
+      type: Boolean,
+      default: false
+    },
     generalPositivity: {
       type: Number,
       default: 0

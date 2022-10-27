@@ -4,38 +4,46 @@
       <template #header>
         <toolbar-laptop
           :doc-id="doc.id"
-          :button-visibility="{
-            review: true,
-            filter: showUncheckedDocs,
-            guideline: true,
-            comment: true,
-            autoLabeling: showAutoLabeling,
-            clear: true,
-            pagination: true
-          }"
-          :button-disabled="{
-            review: !isProjectAdmin && doc.isReviewd,
-            pagination: {
-              first: !canNavigate,
-              prev: !canNavigate,
-              next: !canNavigate,
-              last: !canNavigate
-            }
-          }"
-          :button-text="{
+          :button-options="{
             review: {
+              visible: true,
               hasText: true,
-              checked: 'Mark as checked',
-              notChecked: 'Mark as not checked'
-            }
-          }"
-          :button-tooltip="{
+              text: {
+                checked: 'Mark as checked',
+                notChecked: 'Mark as not checked'
+              },
+              disabled: !canEditAfterConfirming,
+            },
+            filter: {
+              visible: showFilterButton
+            },
+            guideline: {
+              visible: true
+            },
+            comment: {
+              visible: true
+            },
+            autoLabeling: {
+              visible: showAutoLabeling
+            },
+            clear: {
+              visible: true
+            },
             pagination: {
-              first: canNavigate ? '' :'Please mark the text as checked before continuing',
-              prev: canNavigate ? '' : 'Please mark the text as checked before continuing',
-              next: canNavigate? '' : 'Please mark the text as checked before continuing',
-              last: canNavigate ? '' : 'Please mark the text as checked before continuing'
-            }
+              visible: true,
+              disabled: {
+                first: false,
+                prev: false,
+                next: !canNavigate,
+                last: !canNavigate
+              },
+              tooltip: {
+                first: '',
+                prev: '',
+                next: canNavigate? '' : 'Please mark the text as checked before continuing',
+                last: canNavigate ? '' : 'Please mark the text as checked before continuing'
+              }
+            },
           }"
           :enable-auto-labeling.sync="enableAutoLabeling"
           :guideline-text="project.guideline"
@@ -74,7 +82,7 @@
             </v-col>
           </v-row>
           <v-row class="mt-3">
-            <v-col cols="5" v-if="showArticleViewer">
+            <v-col v-if="showArticleViewer" cols="5">
               <div>
                 <toolbar-article 
                   :project="project"
@@ -108,6 +116,7 @@
                   <entity-editor
                     :dark="$vuetify.theme.dark"
                     :rtl="isRTL"
+                    :read-only="!canEditAfterConfirming"
                     :text="doc.text"
                     :entities="spans"
                     :entity-labels="spanTypes"
@@ -132,6 +141,7 @@
                       :text="doc.text"
                       :tags="affectiveSummaryTags"
                       :impressions="affectiveSummaryImpressions"
+                      :read-only="!canEditAfterConfirming"
                       @remove:tag="removeTag"
                       @update:tag="updateTag"
                       @add:tag="addTag"
@@ -141,6 +151,7 @@
                     />
                     <emotions-input
                       v-if="project.isEmotionsMode"
+                      :read-only="!canEditAfterConfirming"
                       :general-positivity="affectiveScalesValues.positive"
                       :general-negativity="affectiveScalesValues.negative"
                       :joy="affectiveScalesValues.joy"
@@ -157,6 +168,7 @@
                     />
                     <others-input
                       v-if="project.isOthersMode"
+                      :read-only="!canEditAfterConfirming"
                       :ironic="affectiveScalesValues.ironic"
                       :embarrassing="affectiveScalesValues.embarrassing"
                       :vulgar="affectiveScalesValues.vulgar"
@@ -184,6 +196,7 @@
                       :scale-types="scaleTypes"
                       :scales="scales"
                       :text-labels="textLabels"
+                      :read-only="!canEditAfterConfirming"
                       @update:scale="updateScale"
                       @add:label="addLabel"
                       @update:label="updateTag"
@@ -195,6 +208,7 @@
                       :scale-types="scaleTypes"
                       :scales="scales"
                       :text-labels="textLabels"
+                      :read-only="!canEditAfterConfirming"
                       @update:scale="updateScale"
                       @add:label="addLabel"
                       @update:label="updateTag"
@@ -207,7 +221,7 @@
       </template>
       <template #sidebar>
         <annotation-progress :progress="progress" />
-        <v-card class="mt-4" v-if="showLabelTypes" >
+        <v-card v-if="showLabelTypes" class="mt-4" >
           <v-card-title>{{ $t('annotation.labelTypes') }}</v-card-title>
           <v-card-text>
             <v-switch v-if="useRelationLabeling" v-model="relationMode">
@@ -378,11 +392,14 @@ export default {
     isSingleAnnView() {
       return !!this.project?.isSingleAnnView
     },
-    showUncheckedDocs() {
+    showFilterButton() {
       return this.isSingleAnnView ? this.isProjectAdmin : true
     },
+    canEditAfterConfirming() {
+      return this.isSingleAnnView && this.doc.isConfirmed ?  this.isProjectAdmin : true
+    },
     canNavigate() {
-      return this.showUncheckedDocs ? true : this.doc.isConfirmed
+      return this.hasRightsToEdit ? true : this.doc.isConfirmed
     },
     showToggleButton() {
       return !this.isSingleAnnView
@@ -497,12 +514,11 @@ export default {
     async setDoc() {
       const query = this.$route.query.q || ''
       const isCheckedQuery = this.$route.query.isChecked || ''
-      const showUncheckedDocs =  this.project.isSingleAnnView && !this.isProjectAdmin ? false : isCheckedQuery
       this.docs = await this.$services.example.fetchOne(
         this.projectId,
         this.$route.query.page,
         query,
-        showUncheckedDocs
+        isCheckedQuery
       )
     },
     setAffectiveProjectScaleDataDict() {
@@ -537,13 +553,12 @@ export default {
       if(this.docs.items && this.docs.items.length) {
         const doc = this.docs.items[0]
         const isCheckedQuery = this.$route.query.isChecked || ''
-        const showUncheckedDocs =  this.project.isSingleAnnView && !this.isProjectAdmin ? false : isCheckedQuery
         this.currentArticleId = doc.articleId
         this.currentWholeArticle = await this.$services.example.fetchByLimit(
           this.projectId,
           this.docs.count.toString(),
           this.currentArticleId,
-          showUncheckedDocs
+          isCheckedQuery
         )
         this.currentWholeArticle.items = _.orderBy(this.currentWholeArticle.items, 'order')
         const allArticleIds = await this.$services.example.fetchArticleIds(

@@ -4,7 +4,6 @@
       <v-row >
         <v-col cols="12" align="right" >
           <v-btn 
-            :disabled="!canAnnotate"
             color="ms-4 my-1 mb-2 primary text-capitalize" 
             @click="toLabeling">
             {{ $t('home.startAnnotation') }}
@@ -67,7 +66,6 @@
       />
       <v-spacer />
       <v-btn 
-        :disabled="!canAnnotate"
         color="ms-4 my-1 mb-2 primary text-capitalize" 
         @click="toLabeling">
         {{ $t('home.startAnnotation') }}
@@ -201,9 +199,6 @@ export default Vue.extend({
     isAudioTask(): boolean {
       return this.project.projectType === 'Speech2text'
     },
-    canAnnotate() : boolean {
-      return this.isProjectAdmin ? true : this.hasUnannotatedItem
-    },
     hasUnannotatedItem() : boolean {
       return !!this.item.items.find((item: any) => !item.isConfirmed)
     },
@@ -233,17 +228,19 @@ export default Vue.extend({
 
   methods: {
     async toLabeling() {
-      if(this.canAnnotate) {
-        await this.startAnnotation()
-        const isChecked = this.isProjectAdmin ? '': false
-        this.movePage({ page: 1, q: this.search,  isChecked })
-      } 
+      const item : undefined | ExampleDTO = this.hasUnannotatedItem ? 
+        this.item.items.find((item: any) => !item.isConfirmed)
+        : this.item.items[0]
+      const index = item ? this.item.items.indexOf(item) : 0
+      const page = ( index + 1).toString()
+      await this.startAnnotation()
+      this.movePage({ page })
     },
     startAnnotation() {
-      const item = this.isProjectAdmin? 
-        this.item.items[0] :
+      const item = this.hasUnannotatedItem ? 
         this.item.items.find((item: any) => !item.isConfirmed)
-      this.$services.example.annotateStartStates(this.projectId, item.id)
+        : this.item.items[0]
+      item && this.$services.example.annotateStartStates(this.projectId, item.id)
     },
     async loadData() {
       this.isLoading = true

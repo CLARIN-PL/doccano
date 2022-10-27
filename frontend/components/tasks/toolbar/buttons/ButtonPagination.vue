@@ -25,7 +25,7 @@
     </v-edit-dialog>
     <div 
       class="button-wrapper"
-      :title="tooltip.first"
+      :title="isFirstPage ? '' : tooltip.first"
     >
     <v-btn
       v-shortkey.once="['shift', 'arrowleft']"
@@ -42,7 +42,7 @@
     </div>
     <div 
       class="button-wrapper"
-      :title="tooltip.prev"
+      :title="isFirstPage ? '' : tooltip.prev"
     >
     <v-btn
       v-shortkey.once="['arrowleft']"
@@ -59,7 +59,7 @@
     </div>
     <div 
       class="button-wrapper"
-      :title="tooltip.next"
+      :title="isLastPage ? '' : tooltip.next"
     >
     <v-btn
       v-shortkey.once="['arrowright']"
@@ -76,7 +76,7 @@
     </div>
     <div 
       class="button-wrapper"
-      :title="tooltip.last"
+      :title="isLastPage ? '' : tooltip.last"
     >
       <v-btn
         v-shortkey.once="['shift', 'arrowright']"
