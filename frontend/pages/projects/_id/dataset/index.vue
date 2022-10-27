@@ -5,6 +5,7 @@
         <v-col cols="12" align="right" >
           <v-btn 
             color="ms-4 my-1 mb-2 primary text-capitalize" 
+            v-if="!showTableAnnButton"
             @click="toLabeling">
             {{ $t('home.startAnnotation') }}
           </v-btn>
@@ -67,6 +68,7 @@
       <v-spacer />
       <v-btn 
         color="ms-4 my-1 mb-2 primary text-capitalize" 
+        v-if="!showTableAnnButton"
         @click="toLabeling">
         {{ $t('home.startAnnotation') }}
       </v-btn>
@@ -95,7 +97,7 @@
       :project="project"
       :items="item.items"
       :is-loading="isLoading"
-      :show-annotation-button="showAnnotationButton"
+      :show-annotation-button="showTableAnnButton"
       :total="item.count"
       @update:query="updateQuery"
       @click:labeling="movePage"
@@ -186,7 +188,7 @@ export default Vue.extend({
     projectId(): string {
       return this.$route.params.id
     },
-    showAnnotationButton() : boolean {
+    showTableAnnButton() : boolean {
       return this.isArticleTask && this.isProjectAdmin && !this.project.isSingleAnnView
     },
     isArticleTask(): boolean {

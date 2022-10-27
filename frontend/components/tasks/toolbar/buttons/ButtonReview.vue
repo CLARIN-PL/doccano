@@ -10,15 +10,15 @@
         @click="$emit('click:review')"
       >
         <v-icon>
-          {{ isReviewd ? mdiClose : mdiCheck }}
+          {{ isReviewd ? mdiCheck : mdiClose }}
         </v-icon>
         <span v-if="showText">
-          {{ isReviewd ? text.notChecked : text.checked }}
+          {{ isReviewd ? text.checked : text.notChecked }}
         </span>
       </v-btn>
     </template>
-    <span v-if="isReviewd">{{ $t('annotation.notCheckedTooltip') }}</span>
-    <span v-else>{{ $t('annotation.checkedTooltip') }}</span>
+    <span v-if="isReviewd">{{ $t('annotation.checkedTooltip') }}</span>
+    <span v-else>{{ $t('annotation.notCheckedTooltip') }}</span>
   </v-tooltip>
 </template>
 
@@ -45,8 +45,8 @@ export default Vue.extend({
       type: Object,
       default:() => {
         return {
-          checked: 'Mark as confirmed',
-          notChecked: 'Mark as not confirmed'
+          checked: '',
+          notChecked: ''
         }
       }
     }

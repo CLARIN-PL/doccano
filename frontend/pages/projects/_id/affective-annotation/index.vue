@@ -9,8 +9,8 @@
               visible: true,
               hasText: true,
               text: {
-                checked: 'Mark as checked',
-                notChecked: 'Mark as not checked'
+                checked: $t('annotation.checkedTooltip'),
+                notChecked: $t('annotation.notCheckedTooltip')
               },
               disabled: !canEditAfterConfirming,
             },
@@ -40,8 +40,8 @@
               tooltip: {
                 first: '',
                 prev: '',
-                next: canNavigate? '' : 'Please mark the text as checked before continuing',
-                last: canNavigate ? '' : 'Please mark the text as checked before continuing'
+                next: canNavigate? '' : $t('annotation.warningCheckedNavigation'),
+                last: canNavigate ? '' : $t('annotation.warningCheckedNavigation')
               }
             },
           }"

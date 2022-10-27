@@ -186,19 +186,19 @@ export default Vue.extend({
       if (this.value === 1) {
         return
       }
-      this.$emit('click:prev')
+      this.$emit('click:prev', {event: 'prev'})
     },
     nextPage() {
       if (this.value === this.total) {
         return
       }
-      this.$emit('click:next')
+      this.$emit('click:next', {event: 'next'})
     },
     firstPage() {
-      this.$emit('click:first')
+      this.$emit('click:first', {event: 'first'})
     },
     lastPage() {
-      this.$emit('click:last')
+      this.$emit('click:last', {event: 'last'})
     }
   }
 })

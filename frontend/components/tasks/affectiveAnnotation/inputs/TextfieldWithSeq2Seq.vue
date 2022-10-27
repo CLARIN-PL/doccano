@@ -18,7 +18,7 @@
           dense
           readonly
           :value="stringifiedAnswers === nullFlag ? '' : stringifiedAnswers"
-          :rules="rulesTextfield"
+          :rules="readOnly ? [] : rulesTextfield"
           hide-details="auto"
         />
       </v-col>

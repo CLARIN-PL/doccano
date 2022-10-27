@@ -59,7 +59,7 @@
                   <span class="d-none d-sm-flex">{{ articleItem.item.text | truncate(200) }}</span>
                 </template>
                 <template #[`item.isConfirmed`]="articleItem">
-                  {{ articleItem.item.isConfirmed ? $t('dataset.viewConfirmedStatus') : $t('dataset.viewNotConfirmedStatus') }}
+                  {{ articleItem.item.isConfirmed ? $t('annotation.checkedTooltip') : $t('annotation.notCheckedTooltip') }}
                 </template>
                 <template #[`item.action`]="articleItem">
                     <v-btn 
@@ -74,7 +74,7 @@
         </td>
     </template>
     <template #[`item.isConfirmed`]="{item}">
-      {{ item.isConfirmed ? $t('dataset.viewConfirmedStatus') : $t('dataset.viewNotConfirmedStatus') }}
+      {{ item.isConfirmed ? $t('annotation.checkedTooltip') : $t('annotation.notCheckedTooltip') }}
     </template>
     <template #[`item.action`]="{ item }">
       <v-btn 
