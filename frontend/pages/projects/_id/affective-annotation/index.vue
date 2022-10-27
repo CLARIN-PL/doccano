@@ -42,6 +42,10 @@
                 prev: '',
                 next: canNavigate? '' : $t('annotation.warningCheckedNavigation'),
                 last: canNavigate ? '' : $t('annotation.warningCheckedNavigation')
+              },
+              callback: {
+                next: annotateStartStates,
+                last: annotateStartStates
               }
             },
           }"
@@ -76,7 +80,7 @@
           <v-row>
             <v-col cols="12">
                 <h3 class="mt-3 mb-2"> 
-                  {{ doc.meta.meta.article_title }}
+                  {{ doc.meta.meta.article_title }} {{ doc.id }}
                 </h3>
                 <v-divider />
             </v-col>
@@ -448,12 +452,14 @@ export default {
     },
   },
 
-  async created() {
-    const hasRested = this.checkRestingPeriod()
-
-    if (hasRested) {
-      this.clearRestingPeriod()
-
+  methods: {
+    async annotateStartStates() {
+      await this.setDoc()
+      this.$nextTick(()=> {
+        !this.doc.isConfirmed && this.$services.example.annotateStartStates(this.projectId, this.doc.id)
+      })
+    },
+    async setLabelData() {
       this.categoryTypes = await this.$services.categoryType.list(this.projectId)
       this.spanTypes = await this.$services.spanType.list(this.projectId)
       this.relationTypes = await this.$services.relationType.list(this.projectId)

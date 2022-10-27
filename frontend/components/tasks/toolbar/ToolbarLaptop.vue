@@ -65,11 +65,11 @@
         :is-article-project="isArticleProject"
         :article-index="articleIndex"
         :article-total="articleTotal"
-        @click:prev="updatePage(page - 1)"
-        @click:next="updatePage(page + 1)"
-        @click:first="updatePage(1)"
-        @click:last="updatePage(total)"
-        @click:jump="updatePage($event)"
+        @click:prev="updatePage"
+        @click:next="updatePage"
+        @click:first="updatePage"
+        @click:last="updatePage"
+        @click:jump="updatePage"
       />
     </v-row>
   </v-toolbar>
@@ -180,14 +180,39 @@ export default Vue.extend({
   },
 
   methods: {
-    updatePage(page: number) {
-      this.$router.push({
+    updatePage({name, destination}) {
+      // @ts-ignore
+      const base = this as any
+      const page = {
+        prev: base.page - 1,
+        next: base.page + 1,
+        first: 1,
+        last: base.total, 
+        jump: destination
+      }
+      base.$router.push({
         query: {
-          page: page.toString(),
-          isChecked: this.filterOption,
-          q: this.$route.query.q || ''
+          page: page[name].toString(),
+          isChecked: base.filterOption,
+          q: base.$route.query.q || ''
         }
       })
+      setTimeout(()=> {
+        if(base.buttonOptions.pagination.callback) {
+          if(name === 'prev' && base.buttonOptions.pagination.callback.prev) {
+            base.buttonOptions.pagination.callback.prev()
+          }
+          if(name === 'next' && base.buttonOptions.pagination.callback.next) {
+            base.buttonOptions.pagination.callback.next()
+          }
+          if(name === 'first' && base.buttonOptions.pagination.callback.first) {
+            base.buttonOptions.pagination.callback.first()
+          }
+          if(name === 'last' && base.buttonOptions.pagination.callback.last) {
+            base.buttonOptions.pagination.callback.last()
+          }
+        }
+      }, 300)
     },
 
     changeFilter(isChecked: string) {

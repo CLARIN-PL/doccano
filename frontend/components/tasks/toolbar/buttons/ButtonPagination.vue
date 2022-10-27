@@ -180,25 +180,25 @@ export default Vue.extend({
       if (page < 0 || page > this.total) {
         return
       }
-      this.$emit('click:jump', page)
+      this.$emit('click:jump', {name: 'jump', destination: page})
     },
     prevPage() {
       if (this.value === 1) {
         return
       }
-      this.$emit('click:prev', {event: 'prev'})
+      this.$emit('click:prev', {name: 'prev'})
     },
     nextPage() {
       if (this.value === this.total) {
         return
       }
-      this.$emit('click:next', {event: 'next'})
+      this.$emit('click:next', {name: 'next'})
     },
     firstPage() {
-      this.$emit('click:first', {event: 'first'})
+      this.$emit('click:first', {name: 'first'})
     },
     lastPage() {
-      this.$emit('click:last', {event: 'last'})
+      this.$emit('click:last', {name: 'last'})
     }
   }
 })

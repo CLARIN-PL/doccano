@@ -242,7 +242,7 @@ export default Vue.extend({
       const item = this.hasUnannotatedItem ? 
         this.item.items.find((item: any) => !item.isConfirmed)
         : this.item.items[0]
-      item && this.$services.example.annotateStartStates(this.projectId, item.id)
+      !item.isConfirmed && this.$services.example.annotateStartStates(this.projectId, item.id)
     },
     async loadData() {
       this.isLoading = true
