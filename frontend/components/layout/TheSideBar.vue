@@ -1,7 +1,6 @@
 <template>
   <v-list dense>
     <v-btn 
-      v-if="showAnnotationButton"
       color="ms-4 my-1 mb-2 primary text-capitalize" 
       nuxt 
       @click="toLabeling"
@@ -72,9 +71,6 @@ export default {
   },
 
   computed: {
-    showAnnotationButton() {
-      return this.project.isSingleAnnView ? this.isProjectAdmin : true
-    },
     filteredItems() {
       const items = [
         {

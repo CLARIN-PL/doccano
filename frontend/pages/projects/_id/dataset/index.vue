@@ -173,11 +173,11 @@ export default Vue.extend({
           event: 'view-all'
         },
         {
-          title: this.$t('dataset.viewConfirmedStatus'),
+          title: this.$t('annotation.checkedTooltip'),
           event: 'view-confirmed'
         },
         {
-          title: this.$t('dataset.viewNotConfirmedStatus'),
+          title: this.$t('annotation.notCheckedTooltip'),
           event: 'view-not-confirmed'
         },
       ]

@@ -325,7 +325,7 @@ export default Vue.extend({
       const index = this.items.indexOf(item)
       const offset = (this.options.page - 1) * this.options.itemsPerPage
       const page = (offset + index + 1).toString()
-      this.$emit('click:labeling', { page, q: this.search, isChecked: false })
+      this.$emit('click:labeling', { page, q: this.search })
     }
   }
 })
