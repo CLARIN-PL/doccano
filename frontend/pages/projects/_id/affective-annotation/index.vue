@@ -485,7 +485,7 @@ export default {
 
         return true
       } else {
-        this.showRestingMessage = true
+        this.showRestingMessage = !this.isProjectAdmin
         this.restingEndTime = restingEndTime
 
         return false
