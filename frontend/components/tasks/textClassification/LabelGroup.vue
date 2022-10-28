@@ -1,6 +1,7 @@
 <template>
   <label-group-single
     v-if="singleLabel"
+    :read-only="readOnly"
     :annotations="annotations"
     :labels="labels"
     @add="$emit('add', $event)"
@@ -8,6 +9,7 @@
   />
   <label-group-multi
     v-else
+    :read-only="readOnly"
     :annotations="annotations"
     :labels="labels"
     @add="$emit('add', $event)"
@@ -40,6 +42,10 @@ export default {
       type: Boolean,
       default: false,
       required: true
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
     }
   }
 }

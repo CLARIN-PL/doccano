@@ -18,6 +18,10 @@ export class AffectiveTextlabelApplicationService extends AnnotationApplicationS
     await this.repository.create(projectId, docId, item)
   }
 
+  public async clear(projectId: string, docId: number): Promise<void> {
+    await this.repository.clear(projectId, docId)
+  }
+
   public async changeText(
     projectId: string,
     docId: number,

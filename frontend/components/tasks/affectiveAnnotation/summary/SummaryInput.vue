@@ -1,6 +1,7 @@
 <template>
   <div>
     <textfield-with-seq-2-seq
+      :read-only="readOnly"
       :text="text"
       :question="$t('annotation.affectiveSummary.tagsQuestion')"
       :answers="tags"
@@ -11,6 +12,7 @@
       @add="addTag"
     />
     <textfield-with-seq-2-seq
+      :read-only="readOnly"
       :text="text"
       :question="$t('annotation.affectiveSummary.impressionsQuestion')"
       :answers="impressions"
@@ -35,6 +37,10 @@ export default {
     text: {
       type: String,
       default: ""
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
     },
     tags: {
       type: Array,

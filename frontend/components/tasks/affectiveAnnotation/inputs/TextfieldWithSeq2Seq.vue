@@ -18,13 +18,14 @@
           dense
           readonly
           :value="stringifiedAnswers === nullFlag ? '' : stringifiedAnswers"
-          :rules="rulesTextfield"
+          :rules="readOnly ? [] : rulesTextfield"
           hide-details="auto"
         />
       </v-col>
       <v-col v-if="withCheckbox" cols="3" class="widget__checkbox">
         <v-checkbox
           v-model="checkboxValue"
+          :readonly="readOnly"
           :label="checkboxLabel"
         />
       </v-col>
@@ -97,6 +98,10 @@ export default {
       default: ""
     },
     hideTextfieldOnChecked: {
+      type: Boolean,
+      default: false
+    },
+    readOnly: {
       type: Boolean,
       default: false
     }
@@ -178,7 +183,7 @@ export default {
     },
     textfieldClickHandler() {
       if (this.enableTextfield) {
-        this.showDialog = true
+        this.showDialog = !this.readOnly
       } else {
         this.showDialog = false
       }

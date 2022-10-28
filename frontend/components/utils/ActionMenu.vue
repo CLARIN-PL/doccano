@@ -1,14 +1,14 @@
 <template>
   <v-menu offset-y open-on-hover>
     <template #activator="{ on }">
-      <v-btn color="primary text-capitalize" v-on="on">
+      <v-btn :color="`${buttonColor} text-capitalize`" v-on="on">
         {{ text }}
         <v-icon>{{ mdiMenuDown }}</v-icon>
       </v-btn>
     </template>
     <v-list>
       <v-list-item v-for="(item, index) in items" :key="index" @click="$emit(item.event)">
-        <v-list-item-icon>
+        <v-list-item-icon v-if="item.icon">
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
@@ -25,6 +25,10 @@ import { mdiMenuDown } from '@mdi/js'
 
 export default Vue.extend({
   props: {
+    buttonColor: {
+      type: String,
+      default: 'primary'
+    },
     text: {
       type: String,
       default: 'Actions'

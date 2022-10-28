@@ -29,7 +29,8 @@ export default Vue.extend({
         allowOverlapping: false,
         graphemeMode: false,
         useRelation: false,
-        affectiveAnnotationMode: '',
+        affectiveProjectMode: '',
+        isSingleAnnView: false,
         tags: [] as string[]
       } as ProjectWriteDTO,
       defaultItem: {
@@ -42,7 +43,8 @@ export default Vue.extend({
         allowOverlapping: false,
         graphemeMode: false,
         useRelation: false,
-        affectiveAnnotationMode: '',
+        affectiveProjectMode: '',
+        isSingleAnnView: false,
         tags: [] as string[]
       } as ProjectWriteDTO
     }
@@ -64,15 +66,15 @@ export default Vue.extend({
     },
     getProjectItem() : ProjectWriteDTO {
       const editedItem : any = _.cloneDeep(this.editedItem)
-      if(this.editedItem.affectiveAnnotationMode) {
-        editedItem[this.editedItem.affectiveAnnotationMode] = true
+      if(this.editedItem.affectiveProjectMode) {
+        editedItem[this.editedItem.affectiveProjectMode] = true
       }
-      const affectiveAnnotationModes = ['isHumorMode', 'isSummaryMode', 'isEmotionsMode',
+      const affectiveProjectModes = ['isHumorMode', 'isSummaryMode', 'isEmotionsMode',
         'isOthersMode', 'isOffensiveMode']
-      affectiveAnnotationModes.forEach((key: string) => {
+      affectiveProjectModes.forEach((key: string) => {
         editedItem[key] = editedItem[key] ? editedItem[key] : false
       })
-      delete editedItem.affectiveAnnotationMode
+      delete editedItem.affectiveProjectMode
       return editedItem
     },
     async importScaleTypeFile(project: ProjectDTO) {

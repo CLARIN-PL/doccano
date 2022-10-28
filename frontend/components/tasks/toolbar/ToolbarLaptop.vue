@@ -2,21 +2,36 @@
   <v-toolbar class="toolbar-control" dense flat>
     <v-row no-gutters>
       <v-btn-toggle>
-        <button-review :is-reviewd="isReviewd" @click:review="$emit('click:review')" />
+        <button-review 
+          v-if="buttonOptions.review.visible" 
+          :disabled="buttonOptions.review.disabled"
+          :show-text="buttonOptions.review.hasText"
+          :text="buttonOptions.review.text"
+          :is-reviewd="isReviewd" 
+          @click:review="$emit('click:review')" />
 
-        <button-filter :value="filterOption" @click:filter="changeFilter" />
+        <button-filter 
+          v-if="buttonOptions.filter.visible" 
+          :value="filterOption" 
+          @click:filter="changeFilter" />
 
-        <button-guideline @click:guideline="dialogGuideline = true" />
+        <button-guideline 
+          v-if="buttonOptions.guideline.visible" 
+          @click:guideline="dialogGuideline = true" />
         <v-dialog v-model="dialogGuideline">
           <form-guideline :guideline-text="guidelineText" @click:close="dialogGuideline = false" />
         </v-dialog>
 
-        <button-comment @click:comment="dialogComment = true" />
+        <button-comment 
+          v-if="buttonOptions.comment.visible" 
+          @click:comment="dialogComment = true" />
         <v-dialog v-model="dialogComment">
           <form-comment :example-id="docId" @click:cancel="dialogComment = false" />
         </v-dialog>
 
-        <button-auto-labeling @click:auto="dialogAutoLabeling = true" />
+        <button-auto-labeling 
+          v-if="buttonOptions.autoLabeling.visible" 
+          @click:auto="dialogAutoLabeling = true" />
         <v-dialog v-model="dialogAutoLabeling">
           <form-auto-labeling
             :is-enabled="enableAutoLabeling"
@@ -26,7 +41,10 @@
           />
         </v-dialog>
 
-        <button-clear @click:clear="dialogClear = true" />
+        <button-clear 
+          v-if="buttonOptions.clear.visible" 
+          :disabled="buttonOptions.clear.disabled"
+          @click:clear="dialogClear = true" />
         <v-dialog v-model="dialogClear">
           <form-clear-label
             @click:ok="
@@ -40,16 +58,19 @@
       <slot />
       <v-spacer />
       <button-pagination
+        v-if="buttonOptions.pagination.visible" 
+        :disabled="buttonOptions.pagination.disabled"
         :value="page"
         :total="total"
+        :tooltip="buttonOptions.pagination.tooltip"
         :is-article-project="isArticleProject"
         :article-index="articleIndex"
         :article-total="articleTotal"
-        @click:prev="updatePage(page - 1)"
-        @click:next="updatePage(page + 1)"
-        @click:first="updatePage(1)"
-        @click:last="updatePage(total)"
-        @click:jump="updatePage($event)"
+        @click:prev="updatePage"
+        @click:next="updatePage"
+        @click:first="updatePage"
+        @click:last="updatePage"
+        @click:jump="updatePage"
       />
     </v-row>
   </v-toolbar>
@@ -93,6 +114,20 @@ export default Vue.extend({
       type: Boolean,
       default: false,
       required: true
+    },
+    buttonOptions: {
+      type: Object,
+      default: () => {
+        return {
+          review: { visible: true },
+          filter: { visible: true },
+          guideline:  { visible: true },
+          comment: { visible: true },
+          autoLabeling: { visible: true },
+          clear: { visible: true },
+          pagination: { visible: true },
+        }
+      },
     },
     guidelineText: {
       type: String,
@@ -146,14 +181,40 @@ export default Vue.extend({
   },
 
   methods: {
-    updatePage(page: number) {
-      this.$router.push({
+    // @ts-ignore
+    updatePage({name, destination}) {
+      // @ts-ignore
+      const base = this as any
+      const page : any = {
+        prev: base.page - 1,
+        next: base.page + 1,
+        first: 1,
+        last: base.total, 
+        jump: destination
+      }
+      base.$router.push({
         query: {
-          page: page.toString(),
-          isChecked: this.filterOption,
-          q: this.$route.query.q || ''
+          page: page[name].toString(),
+          isChecked: base.filterOption,
+          q: base.$route.query.q || ''
         }
       })
+      setTimeout(()=> {
+        if(base.buttonOptions.pagination.callback) {
+          if(name === 'prev' && base.buttonOptions.pagination.callback.prev) {
+            base.buttonOptions.pagination.callback.prev()
+          }
+          if(name === 'next' && base.buttonOptions.pagination.callback.next) {
+            base.buttonOptions.pagination.callback.next()
+          }
+          if(name === 'first' && base.buttonOptions.pagination.callback.first) {
+            base.buttonOptions.pagination.callback.first()
+          }
+          if(name === 'last' && base.buttonOptions.pagination.callback.last) {
+            base.buttonOptions.pagination.callback.last()
+          }
+        }
+      }, 300)
     },
 
     changeFilter(isChecked: string) {

@@ -1,7 +1,7 @@
 <template>
   <v-tooltip bottom>
     <template #activator="{ on }">
-      <v-btn icon v-on="on" @click="$emit('click:clear')">
+      <v-btn icon v-on="on" :disabled="disabled" @click="$emit('click:clear')">
         <v-icon>
           {{ mdiDeleteOutline }}
         </v-icon>
@@ -15,6 +15,12 @@
 import { mdiDeleteOutline } from '@mdi/js'
 
 export default {
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       mdiDeleteOutline

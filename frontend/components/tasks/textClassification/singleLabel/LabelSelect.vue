@@ -14,6 +14,7 @@
       <v-chip
         v-if="item.backgroundColor"
         v-bind="attrs"
+        :disabled="readOnly"
         :input-value="selected"
         :color="item.backgroundColor"
         :text-color="$contrastColor(item.backgroundColor)"
@@ -50,6 +51,10 @@ export default {
       type: Array,
       default: () => [],
       required: true
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
     }
   },
 

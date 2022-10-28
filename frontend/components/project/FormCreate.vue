@@ -119,13 +119,23 @@
           </v-col>
           <v-col v-if="isAffectiveAnnotationProject" col="5">
             <v-radio-group 
-              @change="updateValue('affectiveAnnotationMode', $event)"
+              @change="updateValue('affectiveProjectMode', $event)"
             >
               <v-radio
                 v-for="(affectiveAnnotationOption, idx) in affectiveAnnotationOptions"
                 :key="idx"
                 :label="affectiveAnnotationOption.label"
                 :value="affectiveAnnotationOption.value"
+              ></v-radio>
+            </v-radio-group>
+             <v-radio-group 
+              @change="updateValue('isSingleAnnView', $event)"
+            >
+              <v-radio
+                v-for="(affectiveViewOption, idx) in affectiveViewOptions"
+                :key="idx"
+                :label="affectiveViewOption.label"
+                :value="affectiveViewOption.value"
               ></v-radio>
             </v-radio-group>
           </v-col>
@@ -195,9 +205,13 @@ export default Vue.extend({
       type: Boolean,
       default: false
     },
-    affectiveAnnotationMode: {
+    affectiveProjectMode: {
       type: String,
       default: ''
+    },
+    isSingleAnnView: {
+      type: Boolean,
+      default: false
     },
     tags: {
       type: Array,
@@ -217,6 +231,18 @@ export default Vue.extend({
   },
 
   computed: {
+    affectiveViewOptions() {
+      return [
+        {
+          label: this.$t('overview.articleViewMode'),
+          value: false
+        },
+        {
+          label: this.$t('overview.singleTextViewMode'),
+          value: true
+        },
+      ]
+    },
     affectiveAnnotationOptions() {
       return [
         {

@@ -7,6 +7,7 @@
       <v-col :cols="(withCheckbox) ? 6 : 8" class="widget-row__slider">
         <v-slider
           :value="value"
+          :readonly="readOnly"
           :disabled="!enableSlider"
           :min="sliderMinVal"
           :max="sliderMaxVal"
@@ -30,6 +31,7 @@
       <v-col v-if="withCheckbox" cols="3" class="widget-row__checkbox">
         <v-checkbox
           v-model="checkboxValue"
+          :readonly="readOnly"
           :label="checkboxLabel"
         />
       </v-col>
@@ -59,6 +61,10 @@ export default {
       default: 0
     },
     mustClick: {
+      type: Boolean,
+      default: false
+    },
+    readOnly: {
       type: Boolean,
       default: false
     },

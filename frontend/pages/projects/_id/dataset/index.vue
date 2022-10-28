@@ -1,38 +1,79 @@
 <template>
   <v-card>
     <v-card-title v-if="isProjectAdmin">
-      <action-menu
-        @upload="$router.push('dataset/import')"
-        @download="$router.push('dataset/export')"
+      <v-row >
+        <v-col cols="12" align="right" >
+          <v-btn 
+            v-if="!showTableAnnButton"
+            :disabled="isProjectAdmin ? false : !hasUnannotatedItem"
+            color="ms-4 my-1 mb-2 primary text-capitalize" 
+            @click="toLabeling">
+            {{ $t('home.startAnnotation') }}
+          </v-btn>
+        </v-col>
+        <v-col cols="5">
+          <action-menu
+            @upload="$router.push('dataset/import')"
+            @download="$router.push('dataset/export')"
+          />
+          <v-btn
+            class="text-capitalize ms-2"
+            :disabled="!canDelete"
+            outlined
+            @click.stop="dialogDelete = true"
+          >
+            {{ $t('generic.delete') }}
+          </v-btn>
+        </v-col>
+        <v-col cols="7" align="right">
+          <action-menu-util
+            button-color=""
+            class="mr-2"
+            :items="annotationConfirmationOptions"
+            :text="$t('dataset.annotationConfirmationStatus')"
+            @view-all="isConfirmed = ''"
+            @view-confirmed="isConfirmed = true"
+            @view-not-confirmed="isConfirmed = false"
+          />
+          <v-btn
+            :disabled="!item.count"
+            class="text-capitalize"
+            color="error"
+            @click="dialogDeleteAll = true"
+          >
+            {{ $t('generic.deleteAll') }}
+          </v-btn>
+          <v-dialog v-model="dialogDelete">
+            <form-delete
+              :selected="selected"
+              :item-key="itemKey"
+              @cancel="dialogDelete = false"
+              @remove="remove"
+            />
+          </v-dialog>
+          <v-dialog v-model="dialogDeleteAll">
+            <form-delete-bulk @cancel="dialogDeleteAll = false" @remove="removeAll" />
+          </v-dialog>
+        </v-col>
+      </v-row>
+    </v-card-title>
+    <v-card-title v-else>
+      <action-menu-util
+        button-color=""
+        :items="annotationConfirmationOptions"
+        :text="$t('dataset.annotationConfirmationStatus')"
+        @view-all="isConfirmed = ''"
+        @view-confirmed="isConfirmed = true"
+        @view-not-confirmed="isConfirmed = false"
       />
-      <v-btn
-        class="text-capitalize ms-2"
-        :disabled="!canDelete"
-        outlined
-        @click.stop="dialogDelete = true"
-      >
-        {{ $t('generic.delete') }}
-      </v-btn>
       <v-spacer />
-      <v-btn
-        :disabled="!item.count"
-        class="text-capitalize"
-        color="error"
-        @click="dialogDeleteAll = true"
-      >
-        {{ $t('generic.deleteAll') }}
+      <v-btn 
+        v-if="!showTableAnnButton"
+        :disabled="isProjectAdmin ? false : !hasUnannotatedItem"
+        color="ms-4 my-1 mb-2 primary text-capitalize" 
+        @click="toLabeling">
+        {{ $t('home.startAnnotation') }}
       </v-btn>
-      <v-dialog v-model="dialogDelete">
-        <form-delete
-          :selected="selected"
-          :item-key="itemKey"
-          @cancel="dialogDelete = false"
-          @remove="remove"
-        />
-      </v-dialog>
-      <v-dialog v-model="dialogDeleteAll">
-        <form-delete-bulk @cancel="dialogDeleteAll = false" @remove="removeAll" />
-      </v-dialog>
     </v-card-title>
     <image-list
       v-if="isImageTask"
@@ -58,6 +99,7 @@
       :project="project"
       :items="item.items"
       :is-loading="isLoading"
+      :show-annotation-button="showTableAnnButton"
       :total="item.count"
       @update:query="updateQuery"
       @click:labeling="movePage"
@@ -82,6 +124,7 @@ import ArticleList from '@/components/example/ArticleList.vue'
 import DocumentList from '@/components/example/DocumentList.vue'
 import FormDelete from '@/components/example/FormDelete.vue'
 import FormDeleteBulk from '@/components/example/FormDeleteBulk.vue'
+import ActionMenuUtil from '~/components/utils/ActionMenu.vue'
 import ImageList from '~/components/example/ImageList.vue'
 import AudioList from '~/components/example/AudioList.vue'
 import { ExampleListDTO, ExampleDTO } from '~/services/application/example/exampleData'
@@ -91,6 +134,7 @@ import { ProjectDTO } from '~/services/application/project/projectData'
 export default Vue.extend({
   components: {
     ActionMenu,
+    ActionMenuUtil,
     AudioList,
     ArticleList,
     DocumentList,
@@ -114,22 +158,40 @@ export default Vue.extend({
       item: { items: [] as ExampleDTO[] } as ExampleListDTO,
       selected: [] as ExampleDTO[],
       isLoading: false,
-      isProjectAdmin: false
+      isProjectAdmin: false,
+      isConfirmed: '',
     }
   },
 
   async fetch() {
-    this.isLoading = true
-    this.item = await this.$services.example.list(this.projectId, this.$route.query)
-    this.isLoading = false
+    await this.loadData()
   },
 
   computed: {
+    annotationConfirmationOptions() : any[] {
+      return [
+        {
+          title: this.$t('dataset.viewAllStatus'),
+          event: 'view-all'
+        },
+        {
+          title: this.$t('annotation.checkedTooltip'),
+          event: 'view-confirmed'
+        },
+        {
+          title: this.$t('annotation.notCheckedTooltip'),
+          event: 'view-not-confirmed'
+        },
+      ]
+    },
     canDelete(): boolean {
       return this.selected.length > 0
     },
     projectId(): string {
       return this.$route.params.id
+    },
+    showTableAnnButton() : boolean {
+      return this.isArticleTask && this.isProjectAdmin && !this.project.isSingleAnnView
     },
     isArticleTask(): boolean {
       const articleTasks = ['ArticleAnnotation', 'AffectiveAnnotation']
@@ -141,16 +203,22 @@ export default Vue.extend({
     isAudioTask(): boolean {
       return this.project.projectType === 'Speech2text'
     },
+    hasUnannotatedItem() : boolean {
+      return !!this.item.items.find((item: any) => !item.isConfirmed)
+    },
     itemKey(): string {
       if (this.isImageTask || this.isAudioTask) {
         return 'filename'
       } else {
         return 'text'
       }
-    }
+    },
   },
 
   watch: {
+    isConfirmed() {
+      this.loadData()
+    },
     '$route.query': _.debounce(function () {
       // @ts-ignore
       this.$fetch()
@@ -163,6 +231,31 @@ export default Vue.extend({
   },
 
   methods: {
+    async toLabeling() {
+      const item : undefined | ExampleDTO = this.hasUnannotatedItem ? 
+        this.item.items.find((item: any) => !item.isConfirmed)
+        : this.item.items[0]
+      const index = item ? this.item.items.indexOf(item) : 0
+      const page = ( index + 1).toString()
+      await this.startAnnotation()
+      this.movePage({ page })
+    },
+    startAnnotation() {
+      const item = this.hasUnannotatedItem ? 
+        this.item.items.find((item: any) => !item.isConfirmed)
+        : this.item.items[0]
+      if(item && !item.isConfirmed) {
+        this.$services.example.annotateStartStates(this.projectId, item.id)
+      }
+    },
+    async loadData() {
+      this.isLoading = true
+      const query = {...this.$route.query, ...{
+        isChecked: this.isConfirmed
+      }}
+      this.item = await this.$services.example.list(this.projectId, query)
+      this.isLoading = false
+    },
     async remove() {
       await this.$services.example.bulkDelete(this.projectId, this.selected)
       this.$fetch()

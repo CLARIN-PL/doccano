@@ -1,6 +1,11 @@
 export default {
   dataset: 'Dataset',
   actions: 'Actions',
+  status: 'Status',
+  annotationConfirmationStatus: 'Annotation Status',
+  viewAllStatus: 'All',
+  viewConfirmedStatus: 'Confirmed',
+  viewNotConfirmedStatus: 'Not confirmed',
   importDataset: 'Import Dataset',
   exportDataset: 'Export Dataset',
   type: 'Type',

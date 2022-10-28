@@ -20,7 +20,7 @@
       'page-text': $t('dataset.pageText')
     }"
     item-key="id"
-    show-select
+    :show-select="isProjectAdmin"
     show-expand
     @toggle-select-all="onSelectAllArticleItems"
     @item-selected="onSelectArticleItems"
@@ -50,7 +50,7 @@
                 :loading-text="$t('generic.loading')"
                 :no-data-text="$t('vuetify.noDataAvailable')"
                 item-key="id"
-                show-select
+                :show-select="isProjectAdmin"
                 show-expand
                 @item-selected="onSelectChildArticleItems"
             >
@@ -58,8 +58,14 @@
                   <span class="d-flex d-sm-none">{{ articleItem.item.text | truncate(50) }}</span>
                   <span class="d-none d-sm-flex">{{ articleItem.item.text | truncate(200) }}</span>
                 </template>
+                <template #[`item.isConfirmed`]="articleItem">
+                  {{ articleItem.item.isConfirmed ? $t('annotation.checkedTooltip') : $t('annotation.notCheckedTooltip') }}
+                </template>
                 <template #[`item.action`]="articleItem">
-                    <v-btn small color="primary text-capitalize mr-5" 
+                    <v-btn 
+                      v-if="showAnnotationButton"
+                      small 
+                      color="primary text-capitalize mr-5" 
                       @click="toLabeling(articleItem.item)">
                         {{ $t('dataset.annotate') }}
                     </v-btn>
@@ -67,8 +73,15 @@
             </v-data-table>
         </td>
     </template>
+    <template #[`item.isConfirmed`]="{item}">
+      {{ item.isConfirmed ? $t('annotation.checkedTooltip') : $t('annotation.notCheckedTooltip') }}
+    </template>
     <template #[`item.action`]="{ item }">
-      <v-btn small color="primary text-capitalize mr-5" @click="toLabeling(item.data[0])">
+      <v-btn 
+        v-if="showAnnotationButton"
+        small
+        color="primary text-capitalize mr-5" 
+        @click="toLabeling(item.data[0])">
         {{ $t('dataset.startAnnotation') }}
       </v-btn>
     </template>
@@ -90,6 +103,10 @@ export default Vue.extend({
       type: Boolean,
       default: false,
       required: true
+    },
+    showAnnotationButton: {
+      type: Boolean,
+      default: true,
     },
     items: {
       type: Array as PropType<ExampleDTO[]>,
@@ -115,11 +132,15 @@ export default Vue.extend({
       selectedChildArticleItems: [] as ExampleDTO[],
       expandedItems: [] as ExampleArticleDTO[],
       isExpanded: false,
+      isProjectAdmin: false,
       mdiMagnify
     }
   },
 
   computed: {
+    projectId() {
+      return this.$route.params.id
+    },
     groupedItems() {
         const groupsByArticleIdDict = _.groupBy(this.items, 'articleId') as ExampleGroupedDTO
         const groupsByArticleIdList = [] as ExampleArticleDTO[]
@@ -130,6 +151,7 @@ export default Vue.extend({
                 itemId: `${key}_article_${index}`,
                 id: index,
                 articleId: key,
+                isConfirmed: groupsByArticleIdDict[key].every((data: ExampleDTO) => data.isConfirmed === true),
                 title: firstItem.meta.meta.article_title,
                 publishDatetime: firstItem.meta.meta.publish_datetime,
                 data: groupsByArticleIdDict[key] as ExampleDTO[]
@@ -147,7 +169,7 @@ export default Vue.extend({
         return articleList
     },
     childHeaders() {
-        return [
+      const headers = [
             {
                 text: this.$t('dataset.text'),
                 value: 'text',
@@ -169,18 +191,29 @@ export default Vue.extend({
                 sortable: false
             },
             {
+              text: this.$t('dataset.status'),
+              value: 'isConfirmed',
+              sortable: true
+            },
+            {
                 text: this.$t('dataset.action'),
                 value: 'action',
                 sortable: false
-            },
+            }
         ]
+        return headers
     },
     headers() {
-      return [
+      const headers = [
         {
           text: this.$t('dataset.title'),
           value: 'title',
           sortable: false
+        },
+        {
+          text: this.$t('dataset.status'),
+          value: 'isConfirmed',
+          sortable: true
         },
         {
           text: this.$t('dataset.publishDatetime'),
@@ -193,9 +226,9 @@ export default Vue.extend({
           sortable: false
         }
       ]
+      return headers
     }
   },
-
   watch: {
     items: {
       handler() {
@@ -230,6 +263,9 @@ export default Vue.extend({
       })
       this.options.page = 1
     }
+  },
+  async created() {
+    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
   },
   methods: {
     onSelectArticleItems({item, value} : DatatableSelectArticleEventData) {

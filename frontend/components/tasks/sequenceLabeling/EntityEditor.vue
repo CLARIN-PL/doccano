@@ -100,6 +100,10 @@ export default Vue.extend({
     relationMode: {
       type: Boolean,
       default: false
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -239,15 +243,15 @@ export default Vue.extend({
     },
 
     addEntity(labelId: number) {
-      this.$emit('addEntity', this.startOffset, this.endOffset, labelId)
+      !this.readOnly && this.$emit('addEntity', this.startOffset, this.endOffset, labelId)
     },
 
     updateEntity(labelId: number) {
-      this.$emit('click:entity', this.entity!.id, labelId)
+      !this.readOnly && this.$emit('click:entity', this.entity!.id, labelId)
     },
 
     deleteEntity(entity: any) {
-      this.$emit('contextmenu:entity', entity.id)
+      !this.readOnly && this.$emit('contextmenu:entity', entity.id)
       this.cleanUp()
     },
 
@@ -263,15 +267,15 @@ export default Vue.extend({
 
     addRelation(labelId: number) {
       const [fromEntity, toEntity] = this.selectedEntities
-      this.$emit('addRelation', fromEntity.id, toEntity.id, labelId)
+      !this.readOnly && this.$emit('addRelation', fromEntity.id, toEntity.id, labelId)
     },
 
     updateRelation(labelId: number) {
-      this.$emit('click:relation', this.relation.id, labelId)
+      !this.readOnly && this.$emit('click:relation', this.relation.id, labelId)
     },
 
     deleteRelation(relation: any) {
-      this.$emit('contextmenu:relation', relation.id)
+      !this.readOnly && this.$emit('contextmenu:relation', relation.id)
     }
   }
 })

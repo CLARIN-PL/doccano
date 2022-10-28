@@ -3,6 +3,7 @@
     <p class="others-input__title">{{ $t('annotation.affectiveOthers.titleQuestion') }}</p>
     <div class="others-input__content">
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.ironicCategory')"
         color="blue"
         :hint="$t('annotation.affectiveOthers.ironicHint')"
@@ -16,6 +17,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.embarrassingCategory')"
         color="blue"
         :hint="$t('annotation.affectiveOthers.embarrassingHint')"
@@ -29,6 +31,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.vulgarCategory')"
         color="blue"
         :hint="$t('annotation.affectiveOthers.vulgarHint')"
@@ -42,6 +45,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.politicCategory')"
         color="blue"
         :hint="$t('annotation.affectiveOthers.politicHint')"
@@ -55,6 +59,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.interestingCategory')"
         color="blue"
         :hint="$t('annotation.affectiveOthers.interestingHint')"
@@ -68,6 +73,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.comprehensibleCategory')"
         color="blue"
         :hint="$t('annotation.affectiveOthers.comprehensibleHint')"
@@ -81,6 +87,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.agreeableCategory')"
         color="blue"
         :hint="$t('annotation.affectiveOthers.agreeableHint')"
@@ -94,6 +101,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.believableCategory')"
         color="blue"
         :hint="$t('annotation.affectiveOthers.believableHint')"
@@ -107,6 +115,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.needMoreInfoCategory')"
         color="blue"
         :hint="$t('annotation.affectiveOthers.needMoreInfoHint')"
@@ -120,6 +129,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.sympathyToAuthorCategory')"
         color="blue"
         :hint="$t('annotation.affectiveOthers.sympathyToAuthorHint')"
@@ -133,6 +143,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <textfield-with-seq-2-seq
+        :read-only="readOnly"
         :text="$t('annotation.affectiveOthers.wishToAuthorCategory')"
         :category-label="$t('annotation.affectiveOthers.wishToAuthorCategory')"
         :answers="wishToAuthor"
@@ -162,6 +173,10 @@ export default {
   },
 
   props: {
+    readOnly: {
+      type: Boolean,
+      default: false
+    },
     ironic: {
       type: Number,
       default: 0

@@ -53,7 +53,7 @@ export default Vue.extend({
       selected: [] as ProjectDTO[],
       isLoading: false,
       showRestingMessage: false,
-      restingEndTime: new Date()
+      restingEndTime: new Date(),
     }
   },
 
@@ -82,7 +82,7 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapGetters('auth', ['getRestingEndTime']),
+    ...mapGetters('auth', ['getRestingEndTime', 'getUserId']),
     ...mapActions('auth', ['setRestingPeriod', 'clearRestingPeriod']),
 
     checkRestingPeriod() {
@@ -93,7 +93,7 @@ export default Vue.extend({
         this.restingEndTime = currentTime
         this.clearRestingPeriod()
       } else {
-        this.showRestingMessage = true
+        this.showRestingMessage = !this.isStaff
         this.restingEndTime = restingEndTime
       }
     },

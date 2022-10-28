@@ -88,6 +88,10 @@ export class ExampleApplicationService {
     await this.repository.confirm(projectId, exampleId)
   }
 
+  public async annotateStartStates(projectId: string, exampleId: number): Promise<void> {
+    await this.repository.annotateStartStates(projectId, exampleId)
+  }
+
   private toModel(item: ExampleDTO): ExampleItem {
     // Todo: annotationApprover, commentCount, fileUrl and isConfirmed
     // is not copied correctly.

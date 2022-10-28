@@ -1,8 +1,9 @@
 <template>
     <v-container class="humor-input widget">
         <v-row >
-            <v-col v-if="scaleTypes.length">
+            <v-col v-if="scaleTypes.length && hasProperScaleTypes">
                 <h3 class="widget__title">{{ $t('annotation.humor.question')}}</h3>
+                <v-divider />
                 <ol class="widget__questions">
                     <li class="widget-questions__item questions-item --visible">
                         <p class="questions-item__text">
@@ -18,6 +19,7 @@
                                     class="slider"
                                     :class="{'--has-filled': formData.subquestion1 }"
                                     ticks="always"
+                                    :readonly="readOnly"
                                     min="0" 
                                     max="10" 
                                     :disabled="!scaleTypes.length"
@@ -47,6 +49,7 @@
                                     ticks="always"
                                     min="0" 
                                     max="10" 
+                                    :readonly="readOnly"
                                     :disabled="!scaleTypes.length"
                                     :tick-labels="zeroToTenLabels"
                                     step="1"  
@@ -71,6 +74,7 @@
                                     class="subquestions__item" >
                                     <v-checkbox 
                                         v-model="substatement.isChecked" 
+                                        :readonly="readOnly"
                                         :disabled="!hasFilledTopQuestions"
                                         :label="$t(`annotation.humor.subquestion3.substatement${(idx+1)}`)"
                                         class="subquestions-item__checkbox"
@@ -80,6 +84,7 @@
                                         v-if="substatement.isChecked"
                                         v-model="substatement.answer"
                                         :required="true"
+                                        :readonly="readOnly"
                                         :disabled="!hasFilledTopQuestions"
                                         :question="$t(`annotation.humor.subquestion3.substatement${(idx+1)}Question`)"
                                         :full-question="`
@@ -106,6 +111,7 @@
                                     <p>
                                         <v-checkbox 
                                             v-model="substatement.isChecked" 
+                                            :readonly="readOnly"
                                             :disabled="!hasFilledTopQuestions"
                                             :label="$t(`annotation.humor.subquestion4.substatement${(idx+1)}`)" 
                                             class="subquestions-item__checkbox"
@@ -142,6 +148,10 @@ export default Vue.extend({
     doc: {
         type: Object,
         default: () => {}
+    },
+    readOnly: {
+        type: Boolean,
+        default: false
     },
     scales: {
         type: Array,
@@ -261,6 +271,11 @@ export default Vue.extend({
         }
     },
     computed: {
+        hasProperScaleTypes() : boolean {
+            const scaleLabels = [this.polishAnnotation.humor.subquestion1, this.polishAnnotation.humor.subquestion2]
+            const scaleTypeTexts = _.flatMap(this.scaleTypes, 'text')
+            return _.intersectionBy(scaleLabels, scaleTypeTexts).length > 0
+        },
         scaleValues() : any[] {
             return this.scales.map((scale: any) => {
                 const scaleType : any = this.scaleTypes.find((scaleType: any) => scaleType.id === scale.label) || {}
@@ -310,29 +325,50 @@ export default Vue.extend({
         scaleValues: {
             deep: true,
             handler(val) {
-                const keys = ['subquestion1', 'subquestion2']
-                keys.forEach((key)=> {
-                    const polishAnnotation : any = _.get(this.polishAnnotation.humor, key)
-                    const scaleValue = val.find((scale: any)=> scale.text === polishAnnotation)
-                    if(scaleValue) {
-                        _.set(this.formData, key, scaleValue.scale)
-                    } 
-                })
+                if(val.length) {
+                    const keys = ['subquestion1', 'subquestion2']
+                    keys.forEach((key)=> {
+                        const polishAnnotation : any = _.get(this.polishAnnotation.humor, key)
+                        const scaleValue = val.find((scale: any)=> scale.text === polishAnnotation)
+                        if(scaleValue) {
+                            _.set(this.formData, key, scaleValue.scale)
+                        } 
+                    })
+                } else {
+                    this.formData = {
+                        ...this.formData, 
+                        ...{
+                            subquestion1: 0,
+                            subquestion2: 0
+                        }
+                    }
+                }
             }
         },
         textLabelValues: {
             deep: true,
             handler(val) {
-                val.forEach((textLabel : any) => {
-                    const substatementIndex = textLabel.substatementKey.split('.substatement')[1]
-                    const subquestionIndex = textLabel.substatementKey.split(".")[0]
-                    const formDataKey = `${subquestionIndex}[${parseInt(substatementIndex)-1}]`
-                    const formData = _.get(this.formData, formDataKey)
-                    if(formData) {
-                        _.set(this.formData, `${formDataKey}.isChecked`, !!textLabel.text)
-                        _.set(this.formData, `${formDataKey}.answer`, textLabel.text)
-                     }
-                })                
+                if(val.length) {
+                    val.forEach((textLabel : any) => {
+                        const substatementIndex = textLabel.substatementKey.split('.substatement')[1]
+                        const subquestionIndex = textLabel.substatementKey.split(".")[0]
+                        const formDataKey = `${subquestionIndex}[${parseInt(substatementIndex)-1}]`
+                        const formData = _.get(this.formData, formDataKey)
+                        if(formData) {
+                            _.set(this.formData, `${formDataKey}.isChecked`, !!textLabel.text)
+                            _.set(this.formData, `${formDataKey}.answer`, textLabel.text)
+                        }
+                    }) 
+                } else {
+                    this.formData = {
+                        ...this.formData, 
+                        ...{
+                            subquestion3: _.cloneDeep(this.originalFormData.subquestion3),
+                            subquestion4: _.cloneDeep(this.originalFormData.subquestion4)
+                        }
+                    }
+                }            
+
             }
         }
     },

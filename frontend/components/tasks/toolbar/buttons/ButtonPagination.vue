@@ -1,28 +1,50 @@
 <template>
   <div class="v-data-footer">
-    <v-edit-dialog large persistent @save="changePageNumber">
+    <span v-if="disabled.jump">
       <span v-if="isArticleProject">
+        {{ $t('annotation_toolbar.buttons.buttonPagination.textDescription', 
+          { value, total }) }}
+      </span>
+      <span v-else>
         {{ $t('annotation_toolbar.buttons.buttonPagination.textDescription', 
           { value, total }) }},
         {{ $t('annotation_toolbar.buttons.buttonPagination.articleDescription', 
           { articleIndex, articleTotal }) }}
       </span>
-      <span v-else>{{ value }} of {{ total }}</span>
-      <template #input>
-        <div class="mt-4 title">Move Page</div>
-        <v-text-field
-          v-model="editedPage"
-          :rules="rules"
-          :label="$t('generic.edit')"
-          single-line
-          counter
-          autofocus
-        />
-      </template>
-    </v-edit-dialog>
+    </span>
+    <div v-else>
+      <v-edit-dialog large persistent @save="changePageNumber">
+        <span v-if="isArticleProject">
+          {{ $t('annotation_toolbar.buttons.buttonPagination.textDescription', 
+            { value, total }) }}
+        </span>
+        <span v-else>
+          {{ $t('annotation_toolbar.buttons.buttonPagination.textDescription', 
+            { value, total }) }},
+          {{ $t('annotation_toolbar.buttons.buttonPagination.articleDescription', 
+            { articleIndex, articleTotal }) }}
+        </span>
+        <template #input>
+          <div class="mt-4 title">Move Page</div>
+          <v-text-field
+            v-model="editedPage"
+            :rules="rules"
+            :label="$t('generic.edit')"
+            single-line
+            counter
+            autofocus
+          />
+        </template>
+      </v-edit-dialog>
+    </div>
+    <div 
+      class="button-wrapper"
+      :title="isFirstPage ? '' : tooltip.first"
+    >
     <v-btn
       v-shortkey.once="['shift', 'arrowleft']"
-      :disabled="isFirstPage"
+      :disabled="isFirstPage || disabled.first"
+      :title="tooltip.first"
       text
       fab
       small
@@ -31,9 +53,15 @@
     >
       <v-icon>{{ mdiPageFirst }}</v-icon>
     </v-btn>
+    </div>
+    <div 
+      class="button-wrapper"
+      :title="isFirstPage ? '' : tooltip.prev"
+    >
     <v-btn
       v-shortkey.once="['arrowleft']"
-      :disabled="isFirstPage"
+      :disabled="isFirstPage || disabled.prev"
+      :title="tooltip.prev"
       text
       fab
       small
@@ -42,9 +70,15 @@
     >
       <v-icon>{{ mdiChevronLeft }}</v-icon>
     </v-btn>
+    </div>
+    <div 
+      class="button-wrapper"
+      :title="isLastPage ? '' : tooltip.next"
+    >
     <v-btn
       v-shortkey.once="['arrowright']"
-      :disabled="isLastPage"
+      :disabled="isLastPage || disabled.next"
+      :title="tooltip.next"
       text
       fab
       small
@@ -53,17 +87,23 @@
     >
       <v-icon>{{ mdiChevronRight }}</v-icon>
     </v-btn>
-    <v-btn
-      v-shortkey.once="['shift', 'arrowright']"
-      :disabled="isLastPage"
-      text
-      fab
-      small
-      @shortkey="lastPage"
-      @click="lastPage"
+    </div>
+    <div 
+      class="button-wrapper"
+      :title="isLastPage ? '' : tooltip.last"
     >
-      <v-icon>{{ mdiPageLast }}</v-icon>
-    </v-btn>
+      <v-btn
+        v-shortkey.once="['shift', 'arrowright']"
+        :disabled="isLastPage || disabled.last "
+        text
+        fab
+        small
+        @shortkey="lastPage"
+        @click="lastPage"
+      >
+        <v-icon>{{ mdiPageLast }}</v-icon>
+      </v-btn>
+    </div>
   </div>
 </template>
 
@@ -82,6 +122,30 @@ export default Vue.extend({
       type: Number,
       default: 1,
       required: true
+    },
+    disabled: {
+      type: Object,
+      default: () => {
+        return {
+          first: false,
+          prev: false,
+          next: false,
+          last: false,
+          jump: false
+        }
+      }
+    },
+    tooltip: {
+      type: Object,
+      default: () => {
+        return {
+          first: '',
+          prev: '',
+          next: '',
+          last: '',
+          jump: ''
+        }
+      }
     },
     isArticleProject: {
       type: Boolean,
@@ -132,26 +196,33 @@ export default Vue.extend({
       if (page < 0 || page > this.total) {
         return
       }
-      this.$emit('click:jump', page)
+      this.$emit('click:jump', {name: 'jump', destination: page})
     },
     prevPage() {
       if (this.value === 1) {
         return
       }
-      this.$emit('click:prev')
+      this.$emit('click:prev', {name: 'prev'})
     },
     nextPage() {
       if (this.value === this.total) {
         return
       }
-      this.$emit('click:next')
+      this.$emit('click:next', {name: 'next'})
     },
     firstPage() {
-      this.$emit('click:first')
+      this.$emit('click:first', {name: 'first'})
     },
     lastPage() {
-      this.$emit('click:last')
+      this.$emit('click:last', {name: 'last'})
     }
   }
 })
 </script>
+<style lang="scss" scoped>
+.button-wrapper {
+  position: relative;
+  height: 40px;
+  width: 40px;
+}
+</style>

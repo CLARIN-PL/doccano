@@ -1,6 +1,10 @@
 export default {
   checkedTooltip: 'Checked',
   notCheckedTooltip: 'Not Checked',
+  markAsChecked: "Mark as checked",
+  markAsNotChecked: "Mark as not checked",
+  warningCheckedNavigation: "Please mark the text as checked before continuing to the next text.",
+  warningBackNavigation: "Sorry, you cannot go to previously annotated text",
   selectFilterTooltip: 'Select a Filter',
   filterOption1: 'All',
   filterOption2: 'Done',

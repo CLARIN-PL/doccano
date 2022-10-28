@@ -47,7 +47,7 @@ export default {
     '~/plugins/services.ts',
     '~/plugins/color.ts',
     '~/plugins/role.ts',
-    '~/plugins/persistedState.client.js'
+    // '~/plugins/persistedState.client.js'
   ],
   /*
    ** Nuxt.js modules

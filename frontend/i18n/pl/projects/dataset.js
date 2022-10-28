@@ -1,6 +1,11 @@
 export default {
   dataset: 'Zbiór danych',
   actions: 'Akcje',
+  status: 'Status',
+  annotationConfirmationStatus: 'Stan adnotacji',
+  viewAllStatus: 'Wszystkie',
+  viewConfirmedStatus: 'Potwierdzony',
+  viewNotConfirmedStatus: 'Niepotwierdzone',
   importDataset: 'Importuj zbiór danych',
   exportDataset: 'Eksportuj zbiór danych',
   type: 'Typ',
