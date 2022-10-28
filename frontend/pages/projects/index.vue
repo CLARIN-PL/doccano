@@ -82,7 +82,7 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapGetters('auth', ['getRestingEndTime']),
+    ...mapGetters('auth', ['getRestingEndTime', 'getUserId']),
     ...mapActions('auth', ['setRestingPeriod', 'clearRestingPeriod']),
 
     checkRestingPeriod() {

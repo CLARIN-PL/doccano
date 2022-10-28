@@ -1,6 +1,6 @@
 <template>
   <div class="v-data-footer">
-    <v-edit-dialog large persistent @save="changePageNumber">
+    <span v-if="disabled.jump">
       <span v-if="isArticleProject">
         {{ $t('annotation_toolbar.buttons.buttonPagination.textDescription', 
           { value, total }) }}
@@ -11,18 +11,32 @@
         {{ $t('annotation_toolbar.buttons.buttonPagination.articleDescription', 
           { articleIndex, articleTotal }) }}
       </span>
-      <template #input>
-        <div class="mt-4 title">Move Page</div>
-        <v-text-field
-          v-model="editedPage"
-          :rules="rules"
-          :label="$t('generic.edit')"
-          single-line
-          counter
-          autofocus
-        />
-      </template>
-    </v-edit-dialog>
+    </span>
+    <div v-else>
+      <v-edit-dialog large persistent @save="changePageNumber">
+        <span v-if="isArticleProject">
+          {{ $t('annotation_toolbar.buttons.buttonPagination.textDescription', 
+            { value, total }) }}
+        </span>
+        <span v-else>
+          {{ $t('annotation_toolbar.buttons.buttonPagination.textDescription', 
+            { value, total }) }},
+          {{ $t('annotation_toolbar.buttons.buttonPagination.articleDescription', 
+            { articleIndex, articleTotal }) }}
+        </span>
+        <template #input>
+          <div class="mt-4 title">Move Page</div>
+          <v-text-field
+            v-model="editedPage"
+            :rules="rules"
+            :label="$t('generic.edit')"
+            single-line
+            counter
+            autofocus
+          />
+        </template>
+      </v-edit-dialog>
+    </div>
     <div 
       class="button-wrapper"
       :title="isFirstPage ? '' : tooltip.first"
@@ -117,6 +131,7 @@ export default Vue.extend({
           prev: false,
           next: false,
           last: false,
+          jump: false
         }
       }
     },
@@ -127,7 +142,8 @@ export default Vue.extend({
           first: '',
           prev: '',
           next: '',
-          last: ''
+          last: '',
+          jump: ''
         }
       }
     },

@@ -36,13 +36,15 @@
                 first: !canNavigateBackward,
                 prev: !canNavigateBackward,
                 next: !canNavigateForward,
-                last: !canNavigateForward
+                last: !canNavigateForward || !canSkipForward,
+                jump: !canSkipForward
               },
               tooltip: {
                 first: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
                 prev: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
                 next: canNavigateForward? '' : $t('annotation.warningCheckedNavigation'),
-                last: canNavigateForward ? '' : $t('annotation.warningCheckedNavigation')
+                prev: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
+                jump: canNavigateForward && canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
               },
               callback: {
                 next: annotateStartStates,
@@ -363,7 +365,8 @@ export default {
       affectiveOthersWishToAuthor: [],
       affectiveOthersTmp: {},
       showRestingMessage: false,
-      restingEndTime: new Date()
+      restingEndTime: new Date(),
+      hasCheckedPreviousDoc: false
     }
   },
 
@@ -371,6 +374,7 @@ export default {
     this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
     await this.setProjectData()
     await this.setDoc()
+    await this.checkHasCheckedPreviousDoc()
     this.$nextTick(()=> {
       this.setArticleData()
       this.loadLabels()
@@ -406,11 +410,15 @@ export default {
       return this.isSingleAnnView && this.doc.isConfirmed ? this.isProjectAdmin : true
     },
     canNavigateBackward() {
-      return this.isSingleAnnView ? this.isProjectAdmin : true
+      const canNavigateBackward = this.isProjectAdmin || !this.hasCheckedPreviousDoc
+      return this.isSingleAnnView ? canNavigateBackward : true
     },
     canNavigateForward() {
       const canNavigateForward = this.isProjectAdmin ? true : this.doc.isConfirmed
       return this.isSingleAnnView ? canNavigateForward : true
+    },
+    canSkipForward() {
+      return this.isSingleAnnView ? this.isProjectAdmin : true
     },
     showToggleButton() {
       return !this.isSingleAnnView
@@ -493,6 +501,20 @@ export default {
 
         return false
       }
+    },
+    async checkHasCheckedPreviousDoc() {
+      const query = this.$route.query.q || ''
+      const isCheckedQuery = this.$route.query.isChecked || ''
+      const page = parseInt(this.$route.query.page) 
+      const prevPage = page > 1 ? page - 1 : page
+      const docs = await this.$services.example.fetchOne(
+        this.projectId,
+        prevPage,
+        query,
+        isCheckedQuery
+      )
+      const doc = docs.items[0]
+      this.hasCheckedPreviousDoc =  !!doc.isConfirmed
     },
     async annotateStartStates() {
       await this.setDoc()
