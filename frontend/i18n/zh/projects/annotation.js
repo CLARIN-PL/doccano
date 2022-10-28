@@ -5,6 +5,7 @@ export default {
   markAsChecked: "标记为选中",
   markAsNotChecked: "标记为未选中",
   warningCheckedNavigation: "请在继续下一个文本之前将文本标记为已检查。",
+  warningBackNavigation: "抱歉，您不能转到以前注释的文本",
   filterOption1: '全部',
   filterOption2: '已标注',
   filterOption3: '未标注',

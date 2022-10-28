@@ -5,6 +5,7 @@ export default {
   markAsChecked: "Als geprüft markieren",
   markAsNotChecked: "Als nicht geprüft markieren",
   warningCheckedNavigation: "Bitte markieren Sie den Text als markiert, bevor Sie mit dem nächsten Text fortfahren.",
+  warningBackNavigation: "Entschuldigung, Sie können nicht zu zuvor kommentiertem Text wechseln",
   filterOption1: 'Alle',
   filterOption2: 'Erledigt',
   filterOption3: 'Unerledigt',

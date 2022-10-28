@@ -5,6 +5,7 @@
         <v-col cols="12" align="right" >
           <v-btn 
             v-if="!showTableAnnButton"
+            :disabled="isProjectAdmin ? false : !hasUnannotatedItem"
             color="ms-4 my-1 mb-2 primary text-capitalize" 
             @click="toLabeling">
             {{ $t('home.startAnnotation') }}
@@ -68,6 +69,7 @@
       <v-spacer />
       <v-btn 
         v-if="!showTableAnnButton"
+        :disabled="isProjectAdmin ? false : !hasUnannotatedItem"
         color="ms-4 my-1 mb-2 primary text-capitalize" 
         @click="toLabeling">
         {{ $t('home.startAnnotation') }}

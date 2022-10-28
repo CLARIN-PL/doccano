@@ -33,16 +33,16 @@
             pagination: {
               visible: true,
               disabled: {
-                first: false,
-                prev: false,
-                next: !canNavigate,
-                last: !canNavigate
+                first: !canNavigateBackward,
+                prev: !canNavigateBackward,
+                next: !canNavigateForward,
+                last: !canNavigateForward
               },
               tooltip: {
-                first: '',
-                prev: '',
-                next: canNavigate? '' : $t('annotation.warningCheckedNavigation'),
-                last: canNavigate ? '' : $t('annotation.warningCheckedNavigation')
+                first: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
+                prev: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
+                next: canNavigateForward? '' : $t('annotation.warningCheckedNavigation'),
+                last: canNavigateForward ? '' : $t('annotation.warningCheckedNavigation')
               },
               callback: {
                 next: annotateStartStates,
@@ -405,9 +405,12 @@ export default {
     canEdit() {
       return this.isSingleAnnView && this.doc.isConfirmed ? this.isProjectAdmin : true
     },
-    canNavigate() {
-      const canNavigate = this.isProjectAdmin ? true : this.doc.isConfirmed
-      return this.isSingleAnnView ? canNavigate : true
+    canNavigateBackward() {
+      return this.isSingleAnnView ? this.isProjectAdmin : true
+    },
+    canNavigateForward() {
+      const canNavigateForward = this.isProjectAdmin ? true : this.doc.isConfirmed
+      return this.isSingleAnnView ? canNavigateForward : true
     },
     showToggleButton() {
       return !this.isSingleAnnView
@@ -681,6 +684,7 @@ export default {
       await this.clearCategory()
       await this.clearScales()
       await this.clearTextLabels()
+
       await this.list(this.doc.id)
     },
     async clearScales() {

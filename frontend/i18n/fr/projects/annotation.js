@@ -5,6 +5,7 @@ export default {
   markAsChecked: "Marquer comme coché",
   markAsNotChecked: "Marquer comme non coché",
   warningCheckedNavigation: "Veuillez marquer le texte comme coché avant de passer au texte suivant.",
+  warningBackNavigation: "Désolé, vous ne pouvez pas accéder au texte précédemment annoté",
   filterOption1: 'Tous',
   filterOption2: 'Terminé',
   filterOption3: 'Non terminé',

@@ -4,6 +4,7 @@ export default {
   markAsChecked: "Oznacz jako zaznaczone",
   markAsNotChecked: "Oznacz jako niezaznaczone",
   warningCheckedNavigation: "Proszę oznaczyć tekst jako zaznaczony przed przejściem do następnego tekstu.",
+  warningBackNavigation: "Przepraszamy, nie możesz przejść do wcześniej opisanego tekstu",
   selectFilterTooltip: 'Wybierz filtr',
   filterOption1: 'Wszystko',
   filterOption2: 'Gotowe',
