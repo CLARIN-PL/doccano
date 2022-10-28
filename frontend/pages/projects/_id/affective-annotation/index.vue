@@ -470,7 +470,6 @@ export default {
   async created() {
     const hasRested = this.checkRestingPeriod()
     if (hasRested) {
-      await this.clearRestingPeriod()
       await this.setLabelData()
       this.setAffectiveProjectScaleDataDict()
       this.setAffectiveProjectScaleData()
@@ -483,22 +482,16 @@ export default {
   },
 
   methods: {
-    ...mapGetters('auth', ['getRestingEndTime']),
-    ...mapActions('auth', ['setRestingPeriod', 'clearRestingPeriod']),
+    ...mapActions('auth', ['setRestingPeriod', 'getRestingPeriod']),
 
-    checkRestingPeriod() {
-      const currentTime = new Date()
-      const restingEndTime = this.getRestingEndTime()
-
-      if (restingEndTime === null || currentTime >= restingEndTime) {
+    async checkRestingPeriod() {
+      const restingEndTime = await this.getRestingPeriod()
+      if (restingEndTime === null) {
         this.showRestingMessage = false
-        this.restingEndTime = currentTime
-
         return true
       } else {
         this.showRestingMessage = !this.isProjectAdmin
         this.restingEndTime = restingEndTime
-
         return false
       }
     },

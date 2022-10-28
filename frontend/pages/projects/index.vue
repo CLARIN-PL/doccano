@@ -82,16 +82,12 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapGetters('auth', ['getRestingEndTime', 'getUserId']),
-    ...mapActions('auth', ['setRestingPeriod', 'clearRestingPeriod']),
+    ...mapActions('auth', ['setRestingPeriod', 'getRestingPeriod']),
 
-    checkRestingPeriod() {
-      const currentTime = new Date()
-      const restingEndTime = this.getRestingEndTime()
-      if (restingEndTime === null || currentTime >= restingEndTime) {
+    async checkRestingPeriod() {
+      const restingEndTime = await this.getRestingPeriod()
+      if (restingEndTime === null) {
         this.showRestingMessage = false
-        this.restingEndTime = currentTime
-        this.clearRestingPeriod()
       } else {
         this.showRestingMessage = !this.isStaff
         this.restingEndTime = restingEndTime
