@@ -140,6 +140,8 @@ export default {
 
       if (this.hideTextfieldOnChecked && this.stringifiedAnswers === this.nullFlag) {
         this.checkboxValue = true
+      } else {
+        this.checkboxValue = false
       }
     },
     checkboxValue(isChecked) {

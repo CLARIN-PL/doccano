@@ -116,6 +116,8 @@ export default {
     value() {
       if (this.hideSliderOnChecked && this.value === this.nullFlag) {
         this.checkboxValue = true
+      } else {
+        this.checkboxValue = false
       }
     },
     checkboxValue(isChecked) {
