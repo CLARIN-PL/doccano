@@ -18,16 +18,16 @@ class TestTextLabeling(abc.ABC, TestCase):
         cls.example = mommy.make("Example", project=cls.project.item)
         cls.user = cls.project.admin
         cls.another_user = cls.project.approver
-        cls.text_label = TextLabel(example=cls.example, user=cls.user, text="foo")
+        cls.text_label = TextLabel(example=cls.example, user=cls.user, text="foo", question='None')
 
     def test_can_annotate_category_to_unannotated_data(self):
         can_annotate = TextLabel.objects.can_annotate(self.text_label, self.project.item)
         self.assertTrue(can_annotate)
 
     def test_uniqueness(self):
-        a = mommy.make("TextLabel")
+        a = mommy.make("TextLabel", question='None')
         with self.assertRaises(IntegrityError):
-            TextLabel(example=a.example, user=a.user, text=a.text).save()
+            TextLabel(example=a.example, user=a.user, text=a.text, question='None').save()
 
 
 class TestNonCollaborativeTextLabeling(TestTextLabeling):
