@@ -64,14 +64,18 @@ export const actions = {
   },
   getRestingPeriod({ commit, getters }) {
     const currentTime = new Date()
-    const restingEndTime = getters('getRestingEndTime')
+    const restingEndTime = getters.getRestingEndTime
 
     if (currentTime >= restingEndTime) {
       commit('clearRestingPeriod')
     }
 
-    const currentUserId = getters('getUserId')
-    const restingUserId = getters('getRestingUserId')
+    const currentUserId = getters.getUserId
+    const restingUserId = getters.getRestingUserId
+
+    console.log(restingEndTime)
+    console.log(currentUserId)
+    console.log(restingUserId)
 
     if (restingUserId !== null && currentUserId === restingUserId) {
       return moment(restingEndTime, 'ddd, DD-MM-YYYY HH:mm:ss').toDate()
