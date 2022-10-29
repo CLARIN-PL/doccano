@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
@@ -37,12 +38,12 @@ class ExampleAnnotateStartStateList(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated & IsProjectMember]
 
     def get_queryset(self):
-        return ExampleAnnotateStartState.objects.filter(example=self.kwargs["example_id"])
+        return ExampleAnnotateStartState.objects.filter(example=self.kwargs["example_id"], started_by=self.request.user)
 
     def perform_create(self, serializer):
         queryset = self.get_queryset()
         if queryset.exists():
-            queryset.delete()
+            queryset.update(started_at=timezone.now())
         else:
             example = get_object_or_404(Example, pk=self.kwargs["example_id"])
             serializer.save(example=example, started_by=self.request.user)
