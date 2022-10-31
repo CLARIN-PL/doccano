@@ -470,7 +470,6 @@ export default {
   async created() {
     const hasRested = this.checkRestingPeriod()
     if (hasRested) {
-      await this.clearRestingPeriod()
       await this.setLabelData()
       this.setAffectiveProjectScaleDataDict()
       this.setAffectiveProjectScaleData()
@@ -483,22 +482,16 @@ export default {
   },
 
   methods: {
-    ...mapGetters('auth', ['getRestingEndTime']),
-    ...mapActions('auth', ['setRestingPeriod', 'clearRestingPeriod']),
+    ...mapActions('auth', ['setRestingPeriod', 'getRestingPeriod']),
 
-    checkRestingPeriod() {
-      const currentTime = new Date()
-      const restingEndTime = this.getRestingEndTime()
-
-      if (restingEndTime === null || currentTime >= restingEndTime) {
+    async checkRestingPeriod() {
+      const restingEndTime = await this.getRestingPeriod()
+      if (restingEndTime === null) {
         this.showRestingMessage = false
-        this.restingEndTime = currentTime
-
         return true
       } else {
         this.showRestingMessage = !this.isProjectAdmin
         this.restingEndTime = restingEndTime
-
         return false
       }
     },
@@ -850,8 +843,7 @@ export default {
         const annotationId = this.affectiveOthersWishToAuthor[0].id
         const currentText = this.affectiveOthersWishToAuthor[0].text
         if (currentText !== this.strNullFlag) {
-          await this.removeWishToAuthor(annotationId)
-          await this.addWishToAuthor(this.strNullFlag)
+          await this.updateWishToAuthor(annotationId, this.strNullFlag)
         }
       } else {
         await this.addWishToAuthor(this.strNullFlag)

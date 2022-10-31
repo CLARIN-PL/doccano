@@ -118,6 +118,7 @@
             />
           </v-col>
           <v-col v-if="isAffectiveAnnotationProject" col="5">
+            <p class="font-weight-bold mb-0">Mode</p>
             <v-radio-group 
               @change="updateValue('affectiveProjectMode', $event)"
             >
@@ -128,7 +129,8 @@
                 :value="affectiveAnnotationOption.value"
               ></v-radio>
             </v-radio-group>
-             <v-radio-group 
+            <p class="font-weight-bold mb-0">View</p>
+            <v-radio-group
               @change="updateValue('isSingleAnnView', $event)"
             >
               <v-radio

@@ -5,6 +5,7 @@ export const state = () => ({
   id: null,
   isAuthenticated: false,
   isStaff: false,
+  restingUserId: null,
   restingEndTime: null
 })
 
@@ -25,10 +26,11 @@ export const mutations = {
     state.isStaff = isStaff
   },
   setRestingPeriod(state, endTime) {
-    const restingEndTime = moment(endTime).format('ddd, DD-MM-YYYY HH:mm:ss')
-    state.restingEndTime = restingEndTime
+    state.restingUserId = state.id
+    state.restingEndTime = endTime
   },
   clearRestingPeriod(state) {
+    state.restingUserId = null
     state.restingEndTime = null
   }
 }
@@ -46,22 +48,35 @@ export const getters = {
   isStaff(state) {
     return state.isStaff
   },
+  getRestingUserId(state) {
+    return state.restingUserId
+  },
   getRestingEndTime(state) {
-    if (state.restingEndTime !== null) {
-      return moment(state.restingEndTime, 'ddd, DD-MM-YYYY HH:mm:ss').toDate()
-    }
-    return null
+    return state.restingEndTime
   }
 }
 
 export const actions = {
   setRestingPeriod({ commit }) {
     const startTime = new Date()
-    const endTime = moment(startTime).add(5, 'm').toDate()
+    const endTime = moment(startTime).add(5, 'm').format('ddd, DD-MM-YYYY HH:mm:ss')
     commit('setRestingPeriod', endTime)
   },
-  clearRestingPeriod({ commit }) {
-    commit('clearRestingPeriod')
+  getRestingPeriod({ commit, getters }) {
+    const currentTime = new Date()
+    const restingEndTime = getters.getRestingEndTime
+
+    if (currentTime >= restingEndTime) {
+      commit('clearRestingPeriod')
+    }
+
+    const currentUserId = getters.getUserId
+    const restingUserId = getters.getRestingUserId
+
+    if (restingUserId !== null && currentUserId === restingUserId) {
+      return moment(restingEndTime, 'ddd, DD-MM-YYYY HH:mm:ss').toDate()
+    }
+    return null
   },
   async authenticateUser({ commit }, authData) {
     try {
