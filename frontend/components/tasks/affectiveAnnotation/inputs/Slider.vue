@@ -114,11 +114,7 @@ export default {
 
   watch: {
     value() {
-      if (this.hideSliderOnChecked && this.value === this.nullFlag) {
-        this.checkboxValue = true
-      } else {
-        this.checkboxValue = false
-      }
+      this.checkboxValue = this.hideSliderOnChecked && this.value === this.nullFlag
     },
     checkboxValue(isChecked) {
       if (this.hideSliderOnChecked && isChecked) {

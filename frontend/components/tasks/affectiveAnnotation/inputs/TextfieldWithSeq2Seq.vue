@@ -138,11 +138,7 @@ export default {
       const res = this.answers.map((value) => value.text)
       this.stringifiedAnswers = res.join(", ")
 
-      if (this.hideTextfieldOnChecked && this.stringifiedAnswers === this.nullFlag) {
-        this.checkboxValue = true
-      } else {
-        this.checkboxValue = false
-      }
+      this.checkboxValue = this.hideTextfieldOnChecked && this.stringifiedAnswers === this.nullFlag
     },
     checkboxValue(isChecked) {
       if (this.hideTextfieldOnChecked && isChecked) {
