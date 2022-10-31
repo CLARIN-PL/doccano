@@ -843,8 +843,7 @@ export default {
         const annotationId = this.affectiveOthersWishToAuthor[0].id
         const currentText = this.affectiveOthersWishToAuthor[0].text
         if (currentText !== this.strNullFlag) {
-          await this.removeWishToAuthor(annotationId)
-          await this.addWishToAuthor(this.strNullFlag)
+          await this.updateWishToAuthor(annotationId, this.strNullFlag)
         }
       } else {
         await this.addWishToAuthor(this.strNullFlag)
