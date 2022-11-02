@@ -16,7 +16,7 @@
       'page-text': $t('dataset.pageText')
     }"
     item-key="id"
-    show-select
+    :show-select="showSelect"
     @input="$emit('input', $event)"
   >
     <template #top>
@@ -76,6 +76,10 @@ export default Vue.extend({
       type: Number,
       default: 0,
       required: true
+    },
+    showSelect: {
+      type: Boolean,
+      default: false
     },
     footerProps: {
       type: Object,

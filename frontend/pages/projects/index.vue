@@ -21,6 +21,7 @@
       :items="projects.items"
       :is-loading="isLoading"
       :total="projects.count"
+      :show-select="isStaff"
       :footer-props="projectListFooterProps"
       @update:query="updateQuery"
     />
