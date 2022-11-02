@@ -21,6 +21,7 @@
       :items="projects.items"
       :is-loading="isLoading"
       :total="projects.count"
+      :footer-props="projectListFooterProps"
       @update:query="updateQuery"
     />
     <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
@@ -58,15 +59,22 @@ export default Vue.extend({
   },
 
   async fetch() {
-    this.isLoading = true
-    this.projects = await this.$services.project.list(this.$route.query)
-    this.isLoading = false
+    await this.getProjectData()
   },
 
   computed: {
     ...mapGetters('auth', ['isStaff']),
     canDelete(): boolean {
       return this.selected.length > 0
+    },
+    projectListFooterProps() : any {
+      return this.isStaff ? {
+        showFirstLastPage: true,
+        itemsPerPageOptions: [10, 50, 100]
+      } : {
+        showFirstLastPage: true,
+        itemsPerPageOptions: [100]
+      } 
     }
   },
 
@@ -92,6 +100,26 @@ export default Vue.extend({
         this.showRestingMessage = !this.isStaff
         this.restingEndTime = restingEndTime
       }
+    },
+
+    async getProjectData() {
+      this.isLoading = true
+      const projects = await this.$services.project.list(this.$route.query)
+      if(this.isStaff) {
+        this.projects = _.cloneDeep(projects)
+      } else {
+        const projectIds = _.flatMap(projects.items, 'id')
+        const promises = projectIds.map((projectId)=> this.$services.metrics.fetchMyProgress(projectId))
+        await Promise.all(promises).then((results) => {
+          results.forEach((result, key)=> {
+            projects.items[key].isCompleted = result.complete === result.total
+          })
+        })
+        this.projects = {...projects, ...{
+          items: projects.items.filter((projectItem)=> !projectItem.isCompleted)
+        }}
+      }
+      this.isLoading = false
     },
 
     async remove() {
