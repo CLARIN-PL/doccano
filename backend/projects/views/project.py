@@ -8,6 +8,8 @@ from projects.models import Project
 from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly
 from projects.serializers import ProjectPolymorphicSerializer
 
+from examples.models import Example, ExampleState
+
 
 class ProjectList(generics.ListCreateAPIView):
     serializer_class = ProjectPolymorphicSerializer
@@ -50,3 +52,22 @@ class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectPolymorphicSerializer
     lookup_url_kwarg = "project_id"
     permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
+
+
+class ProjectProgressDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
+
+    def get(self, request, *args, **kwargs):
+        all_projects = Project.objects.filter(role_mappings__user=self.request.user)
+        all_project_data = []
+        for project in all_projects:
+            examples = Example.objects.filter(project=project.id).values("id")
+            total = examples.count()
+            if project.collaborative_annotation:
+                complete = ExampleState.objects.count_done(examples)
+            else:
+                complete = ExampleState.objects.count_done(examples, user=self.request.user)
+            data = {"project_id": project.id, "total": total, "remaining": total - complete, "complete": complete}
+            all_project_data.append(data)
+        final_data = {"count": len(all_project_data), "results": all_project_data}
+        return Response(data=final_data, status=status.HTTP_200_OK)
