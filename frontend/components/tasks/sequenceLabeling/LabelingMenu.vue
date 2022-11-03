@@ -63,6 +63,10 @@ export default Vue.extend({
       type: Number,
       default: 0,
       required: true
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
     }
   },
 

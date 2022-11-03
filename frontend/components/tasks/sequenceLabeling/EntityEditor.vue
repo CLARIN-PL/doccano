@@ -18,6 +18,7 @@
       @contextmenu:relation="deleteRelation"
     />
     <labeling-menu
+      :read-only="readOnly"
       :opened="entityMenuOpened"
       :x="x"
       :y="y"
@@ -27,6 +28,7 @@
       @click:label="addOrUpdateEntity"
     />
     <labeling-menu
+      :read-only="readOnly"
       :opened="relationMenuOpened"
       :x="x"
       :y="y"
@@ -179,7 +181,7 @@ export default Vue.extend({
       this.x = e.clientX || e.changedTouches[0].clientX
       this.y = e.clientY || e.changedTouches[0].clientY
       this.$nextTick(() => {
-        this.entityMenuOpened = true
+        this.entityMenuOpened = !this.readOnly 
       })
     },
 
