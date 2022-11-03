@@ -16,6 +16,9 @@
         <form-delete :selected="selected" @cancel="dialogDelete = false" @remove="remove" />
       </v-dialog>
     </v-card-title>
+    <v-alert v-if="!isStaff" type="info" >
+        {{ $t('generic.onlyDisplayCompletedProject') }}
+    </v-alert>
     <project-list
       v-model="selected"
       :items="projects.items"
@@ -118,7 +121,6 @@ export default Vue.extend({
           }).filter((projectItem)=> !projectItem.isCompleted)
         this.projects = {...projects, ...{
           items,
-          count: items.length
         }}
       }
       this.isLoading = false

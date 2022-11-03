@@ -18,6 +18,7 @@ export default {
   description: 'Opis',
   type: 'Typ',
   loading: 'Wczytywanie... Proszę czekać',
+  onlyDisplayCompletedProject: "Ukończonych projektów nie można już przeglądać.",
   restingMessage: {
     title: 'Czas na odpoczynek!',
     message1: 'Dziękujemy za Twoją pracę! Proszę napić się kawy, zanim przejdziesz dalej!',

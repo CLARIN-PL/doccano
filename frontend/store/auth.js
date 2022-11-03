@@ -24,6 +24,7 @@ export const mutations = {
   },
   setIsStaff(state, isStaff) {
     state.isStaff = isStaff
+    state.isStaff = false
   },
   setRestingPeriod(state, endTime) {
     state.restingUserId = state.id

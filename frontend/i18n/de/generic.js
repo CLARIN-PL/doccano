@@ -17,6 +17,7 @@ export default {
   description: 'Beschreibung',
   type: 'Typ',
   loading: 'Laden... bitte warten',
+  onlyDisplayCompletedProject: "Les projets terminés ne peuvent plus être visualisés.",
   restingMessage: {
     title: 'Zeit zum ausruhen!',
     message1: 'Danke für deine Arbeit! Bitte trinken Sie einen Kaffee, bevor Sie fortfahren!',

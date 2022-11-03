@@ -17,6 +17,7 @@ export default {
   description: 'Description',
   type: 'Type',
   loading: 'Chargement... veuillez patienter',
+  onlyDisplayCompletedProject: "Les projets terminés ne peuvent plus être visualisés.",
   restingMessage: {
     title: 'Temps de repos!',
     message1: 'Merci pour votre travail! Prenez un café avant de continuer !',
