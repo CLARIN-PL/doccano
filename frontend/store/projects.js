@@ -1,5 +1,5 @@
 export const state = () => ({
-  current: {},
+  current: {}
 })
 
 export const getters = {
@@ -21,23 +21,14 @@ export const getters = {
 export const mutations = {
   setCurrent(state, payload) {
     state.current = payload
-  },
+  }
 }
 
 export const actions = {
   async setCurrentProject({ commit }, projectId) {
     try {
       const response = await this.$services.project.findById(projectId)
-      const progResponse = await this.$services.metrics.fetchMyProgress(projectId)
-      if(progResponse) {
-        progResponse && commit('setCurrent', {
-          ...response, 
-          ...{
-            isCompleted: progResponse.total > 0 ? progResponse.remaining === 0 : true
-        }})
-      } else {
-        commit('setCurrent', response)
-      }
+      commit('setCurrent', response)
     } catch (error) {
       throw new Error(error)
     }
