@@ -35,6 +35,7 @@ import Vue from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 import ProjectList from '@/components/project/ProjectList.vue'
 import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
+import { MyProgress } from '~/domain/models/metrics/metrics'
 import { ProjectDTO, ProjectListDTO } from '~/services/application/project/projectData'
 import FormDelete from '~/components/project/FormDelete.vue'
 
@@ -74,7 +75,7 @@ export default Vue.extend({
         itemsPerPageOptions: [10, 50, 100]
       } : {
         showFirstLastPage: true,
-        itemsPerPageOptions: [100]
+        itemsPerPageOptions: [50, 100]
       } 
     }
   },
@@ -109,15 +110,15 @@ export default Vue.extend({
       if(this.isStaff) {
         this.projects = _.cloneDeep(projects)
       } else {
-        const projectIds = _.flatMap(projects.items, 'id')
-        const promises = projectIds.map((projectId)=> this.$services.metrics.fetchMyProgress(projectId))
-        await Promise.all(promises).then((results) => {
-          results.forEach((result, key)=> {
-            projects.items[key].isCompleted = result.complete === result.total
-          })
-        })
+        const progresses = await this.$services.metrics.fetchMyProgresses()
+        const items = projects.items.map((projectItem: ProjectDTO)=> {
+            const progress = progresses.results.find((prog: MyProgress)=> prog.project_id === projectItem.id)
+            projectItem.isCompleted = progress && progress.total > 0  ?  progress.remaining === 0 : true
+            return projectItem
+          }).filter((projectItem)=> !projectItem.isCompleted)
         this.projects = {...projects, ...{
-          items: projects.items.filter((projectItem)=> !projectItem.isCompleted)
+          items,
+          count: items.length
         }}
       }
       this.isLoading = false
