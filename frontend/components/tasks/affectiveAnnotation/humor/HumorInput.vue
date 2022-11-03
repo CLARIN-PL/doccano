@@ -170,6 +170,7 @@ export default Vue.extend({
         return {
             polishAnnotation,
             isLoaded: false,
+            nullFlag: '-1',
             rules: {
                 required: (value : any) => !!value || this.$i18n.t('rules.required'),
             },
@@ -400,7 +401,8 @@ export default Vue.extend({
             let eventName = textLabelValue ? 'update:label' : 'add:label'
             eventName = substatement.isChecked ? eventName : 'remove:label'
             if(!_.isEmpty(formData) && labelQuestion) {
-                const answer = formData.answer === undefined ? labelQuestion : formData.answer
+                let answer = formData.answer === undefined ? labelQuestion : formData.answer
+                answer = answer || this.nullFlag
                 if(eventName === 'add:label' && answer) {
                     this.$emit(eventName, question, answer)
                 } else if(eventName === 'update:label' && textLabelValue) {

@@ -18,7 +18,7 @@
           dense
           outlined
           readonly
-          :value="showDialog ? '' : value"
+          :value="showDialog  || value === nullFlag ? '' : value"
           :rules="rulesTextfield"
           hide-details="auto"
         />
@@ -105,13 +105,14 @@ export default {
       enableTextfield: true,
       showDialog: false,
       dialogErrorMessage: "",
+      nullFlag: '-1'
     }
   },
 
   computed: {
     text: {
         get() {
-            return this.value
+            return this.value === this.nullFlag ? '' : this.value
         },
         set(val) {
             this.$emit('input', val)
