@@ -2,6 +2,14 @@
   <div v-show="isLoaded">
     <layout-text v-if="doc.id" v-shortkey="shortKeysSpans" @shortkey="changeSelectedLabel">
       <template #header>
+        <v-alert
+          :value="cannotConfirmAlert"
+          color="error"
+          dark
+          transition="scale-transition"
+        >
+          {{ $t('errors.incompleteAffectiveAnnotation') }}
+        </v-alert>
         <toolbar-laptop
           :doc-id="doc.id"
           :button-options="{
@@ -366,7 +374,8 @@ export default {
       affectiveOthersTmp: {},
       showRestingMessage: false,
       restingEndTime: new Date(),
-      hasCheckedPreviousDoc: false
+      hasCheckedPreviousDoc: false,
+      cannotConfirmAlert: false
     }
   },
 
@@ -741,9 +750,30 @@ export default {
       }
     },
     async confirm() {
-      await this.$services.example.confirm(this.projectId, this.doc.id)
-      await this.$fetch()
-      this.updateProgress()
+      const canConfirm = this.isAllAffectiveDataAdded()
+      if (canConfirm || this.isProjectAdmin) {
+        this.cannotConfirmAlert = false
+        await this.$services.example.confirm(this.projectId, this.doc.id)
+        await this.$fetch()
+        this.updateProgress()
+      } else {
+        this.cannotConfirmAlert = true
+      }
+    },
+    isAllAffectiveDataAdded() {
+      if (this.project.isSummaryMode) {
+        return this.affectiveSummaryTags.length >= 2 && this.affectiveSummaryImpressions.length >= 2
+      }
+      if (this.project.isEmotionsMode) {
+        return _.keys(this.scaleTypesTextsIds).length === _.keys(this.affectiveScalesValues).length
+      }
+      if (this.project.isOthersMode) {
+        return (
+          _.keys(this.scaleTypesTextsIds).length === _.keys(this.affectiveScalesValues).length &&
+          this.affectiveOthersWishToAuthor.length > 0
+        )
+      }
+      return true
     },
     changeSelectedLabel(event) {
       this.selectedLabelIndex = this.spanTypes.findIndex((item) => item.suffixKey === event.srcKey)
