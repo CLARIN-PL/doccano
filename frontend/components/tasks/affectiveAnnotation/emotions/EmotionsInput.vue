@@ -135,51 +135,51 @@ export default {
     },
     generalPositivity: {
       type: Number,
-      default: 0
+      default: -99
     },
     generalNegativity: {
       type: Number,
-      default: 0
+      default: -99
     },
     joy: {
       type: Number,
-      default: 0
+      default: -99
     },
     admiration: {
       type: Number,
-      default: 0
+      default: -99
     },
     inspiration: {
       type: Number,
-      default: 0
+      default: -99
     },
     peace: {
       type: Number,
-      default: 0
+      default: -99
     },
     surprise: {
       type: Number,
-      default: 0
+      default: -99
     },
     sympathy: {
       type: Number,
-      default: 0
+      default: -99
     },
     fear: {
       type: Number,
-      default: 0
+      default: -99
     },
     sadness: {
       type: Number,
-      default: 0
+      default: -99
     },
     disgust: {
       type: Number,
-      default: 0
+      default: -99
     },
     anger: {
       type: Number,
-      default: 0
+      default: -99
     }
   },
 

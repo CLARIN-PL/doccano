@@ -33,6 +33,7 @@
           v-model="checkboxValue"
           :readonly="readOnly"
           :label="checkboxLabel"
+          @click="markClicked"
         />
       </v-col>
     </v-row>
@@ -58,7 +59,7 @@ export default {
     },
     value: {
       type: Number,
-      default: 0
+      default: -99
     },
     mustClick: {
       type: Boolean,
@@ -87,25 +88,18 @@ export default {
       mdiCheck,
       sliderMinVal: 0,
       sliderMaxVal: 10,
+      sliderThumbSize: 12,
       isClicked: false,
       enableSlider: true,
       checkboxValue: false,
-      nullFlag: -1
+      nullFlag: -1,
+      unclickedFlag: -99
     }
   },
 
   computed: {
-    sliderThumbSize() {
-      if (this.mustClick && this.value === 0) {
-        return (this.isClicked)? 12 : 0
-      }
-      return 12
-    },
     sliderThumbColor() {
-      if (this.mustClick && !this.isClicked && this.value < 0) {
-        return "transparent"
-      }
-      if (this.mustClick && this.isClicked && this.value < 0) {
+      if (this.mustClick && this.value < 0) {
         return "transparent"
       }
       return this.color
@@ -115,14 +109,21 @@ export default {
   watch: {
     value() {
       this.checkboxValue = this.hideSliderOnChecked && this.value === this.nullFlag
+      if (this.value === this.unclickedFlag) {
+        this.isClicked = false
+      }
     },
     checkboxValue(isChecked) {
       if (this.hideSliderOnChecked && isChecked) {
-        this.$emit('markCheckbox', this.categoryLabel)
+        if (this.isClicked) {
+          this.$emit('markCheckbox', this.categoryLabel)
+        }
         this.enableSlider = false
       }
       if (this.hideSliderOnChecked && !isChecked) {
-        this.$emit('unmarkCheckbox', this.categoryLabel)
+        if (this.isClicked) {
+          this.$emit('unmarkCheckbox', this.categoryLabel)
+        }
         this.enableSlider = true
       }
     }
@@ -133,7 +134,6 @@ export default {
       this.isClicked = true
     },
     valueChangeHandler(newValue) {
-      this.markClicked()
       this.$emit('change', newValue, this.categoryLabel)
     }
   }

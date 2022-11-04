@@ -179,43 +179,43 @@ export default {
     },
     ironic: {
       type: Number,
-      default: 0
+      default: -99
     },
     embarrassing: {
       type: Number,
-      default: 0
+      default: -99
     },
     vulgar: {
       type: Number,
-      default: 0
+      default: -99
     },
     politic: {
       type: Number,
-      default: 0
+      default: -99
     },
     interesting: {
       type: Number,
-      default: 0
+      default: -99
     },
     comprehensible: {
       type: Number,
-      default: 0
+      default: -99
     },
     agreeable: {
       type: Number,
-      default: 0
+      default: -99
     },
     believable: {
       type: Number,
-      default: 0
+      default: -99
     },
     sympathyToAuthor: {
       type: Number,
-      default: 0
+      default: -99
     },
     needMoreInfo: {
       type: Number,
-      default: 0
+      default: -99
     },
     wishToAuthor: {
       type: Array,
