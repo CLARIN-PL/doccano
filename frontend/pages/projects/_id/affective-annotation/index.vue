@@ -3,10 +3,12 @@
     <layout-text v-if="doc.id" v-shortkey="shortKeysSpans" @shortkey="changeSelectedLabel">
       <template #header>
         <v-alert
-          :value="cannotConfirmAlert"
+          :value="(!canConfirm && hasClickedConfirmButton)"
           color="error"
           dark
           transition="scale-transition"
+          dismissible
+          @input="onConfirmationAlertClose"
         >
           {{ $t('errors.incompleteAffectiveAnnotation') }}
         </v-alert>
@@ -375,7 +377,8 @@ export default {
       showRestingMessage: false,
       restingEndTime: new Date(),
       hasCheckedPreviousDoc: false,
-      cannotConfirmAlert: false
+      canConfirm: false,
+      hasClickedConfirmButton: false
     }
   },
 
@@ -750,14 +753,12 @@ export default {
       }
     },
     async confirm() {
-      const canConfirm = this.isAllAffectiveDataAdded()
-      if (canConfirm || this.isProjectAdmin) {
-        this.cannotConfirmAlert = false
+      this.canConfirm = this.isAllAffectiveDataAdded()
+      this.hasClickedConfirmButton = true
+      if (this.canConfirm || this.isProjectAdmin) {
         await this.$services.example.confirm(this.projectId, this.doc.id)
         await this.$fetch()
         this.updateProgress()
-      } else {
-        this.cannotConfirmAlert = true
       }
     },
     isAllAffectiveDataAdded() {
@@ -765,15 +766,19 @@ export default {
         return this.affectiveSummaryTags.length >= 2 && this.affectiveSummaryImpressions.length >= 2
       }
       if (this.project.isEmotionsMode) {
-        return _.keys(this.scaleTypesTextsIds).length === _.keys(this.affectiveScalesValues).length
+        return _.keys(this.affectiveScalesDict).length === _.keys(this.affectiveScalesValues).length
       }
       if (this.project.isOthersMode) {
         return (
-          _.keys(this.scaleTypesTextsIds).length === _.keys(this.affectiveScalesValues).length &&
+          _.keys(this.affectiveScalesDict).length === _.keys(this.affectiveScalesValues).length &&
           this.affectiveOthersWishToAuthor.length > 0
         )
       }
       return true
+    },
+    onConfirmationAlertClose() {
+      this.canConfirm = false
+      this.hasClickedConfirmButton = false
     },
     changeSelectedLabel(event) {
       this.selectedLabelIndex = this.spanTypes.findIndex((item) => item.suffixKey === event.srcKey)
