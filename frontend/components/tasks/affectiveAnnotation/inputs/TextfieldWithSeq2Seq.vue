@@ -42,6 +42,7 @@
           {{ question }}
         </v-card-title>
         <v-card-text  class="widget-dialog__text">
+          <p class="widget-dialog__hint">{{ $t('annotation.affectiveTextlabelHint') }}</p>
           <p class="widget-dialog__warning">{{ dialogErrorMessage }}</p>
           <seq2seq-box
             :text="text"

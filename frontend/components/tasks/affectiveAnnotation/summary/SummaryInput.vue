@@ -74,7 +74,7 @@ export default {
   methods: {
     textValidation(value, arrayToCheck) {
       let errorMessage = ""
-      const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
+      const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż -]+$/
       if (!pattern.test(value)) {
         errorMessage = this.$i18n.t('annotation.warningInvalidChar')
       }
