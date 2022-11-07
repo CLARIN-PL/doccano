@@ -26,6 +26,7 @@ export default {
   warningInvalidChar: "Ungültiges Zeichen.",
   warningMaxCount: "Die maximale Anzahl wurde erreicht.",
   warningAlreadyWritten: "Wort ist bereits eingegeben.",
+  affectiveTextlabelHint: 'Bitte geben Sie jedes Schlüsselwort einzeln ein, indem Sie auf Ihrer Tastatur die Eingabetaste drücken. Erlaubte Zeichen: A-Z, a-z, polnische Buchstaben, 0-9, Leerzeichen (" ") und Bindestrich ("-").',
   affectiveSummary: {
     tagsQuestion: "Mit welchen Worten würden Sie diesen Text (Tags, Keywords) beschreiben? Bitte geben Sie 2-10 Wörter ein.",
     impressionsQuestion: "Welche Eindrücke/Emotionen/Gefühle löst dieser Text in Ihnen aus? Bitte geben Sie 2-10 Wörter ein."

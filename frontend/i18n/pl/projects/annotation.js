@@ -27,6 +27,7 @@ export default {
   warningInvalidChar: "Nieprawidłowy znak.",
   warningMaxCount: "Osiągnięto maksymalną liczbę.",
   warningAlreadyWritten: "Słowo zostało już napisane.",
+  affectiveTextlabelHint: 'Wprowadź każde słowo kluczowe jedno po drugim, naciskając „enter” na klawiaturze. Dozwolone znaki: A-Z, a-z, polskie litery, 0-9, spacja (" ") i myślnik ("-").',
   affectiveSummary: {
     tagsQuestion: "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.",
     impressionsQuestion: "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów."

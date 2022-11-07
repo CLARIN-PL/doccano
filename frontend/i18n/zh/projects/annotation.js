@@ -27,6 +27,7 @@ export default {
   warningInvalidChar: "无效字符, ",
   warningMaxCount: "已达到最大计数, ",
   warningAlreadyWritten: "单词已经输入, ",
+  affectiveTextlabelHint: '请按键盘上的“回车”键一一输入每个关键字. 允许的字符: A-Z, a-z, 波兰字母, 0-9, 空格 (" ") 和连字符 ("-").',
   affectiveSummary: {
     tagsQuestion: "你会用什么词来描述这个文本 (标签、关键词)? 请输入2-10个字",
     impressionsQuestion: "这段文字唤起了你什么印象/情感/感受? 请输入2-10个字"

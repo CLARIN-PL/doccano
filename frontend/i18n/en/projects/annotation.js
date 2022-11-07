@@ -27,6 +27,7 @@ export default {
   warningInvalidChar: "Invalid character",
   warningMaxCount: "Maximum count has been reached",
   warningAlreadyWritten: "Word is already entered",
+  affectiveTextlabelHint: 'Please enter each keyword one by one by pressing "enter" on your keyboard. Allowed characters: A-Z, a-z, polish letters, 0-9, space (" "), and hyphen ("-").',
   affectiveSummary: {
     tagsQuestion: "What words would you describe this text (tags, keywords) with? Please enter 2-10 words",
     impressionsQuestion: "What impressions/emotions/feelings does this text evoke in you? Please enter 2-10 words",

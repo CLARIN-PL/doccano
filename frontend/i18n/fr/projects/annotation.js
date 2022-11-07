@@ -26,6 +26,7 @@ export default {
   warningInvalidChar: "Caractère non valide.",
   warningMaxCount: "Le nombre maximum a été atteint.",
   warningAlreadyWritten: "Le mot est déjà entré.",
+  affectiveTextlabelHint: 'Veuillez entrer chaque mot-clé un par un en appuyant sur "entrée" sur votre clavier. Caractères autorisés : A-Z, a-z, lettres polonaises, 0-9, espace (" ") et trait d\'union ("-").',
   affectiveSummary: {
     tagsQuestion: "Avec quels mots décririez-vous ce texte (tags, mots-clés)? Veuillez entrer 2 à 10 mots.",
     impressionsQuestion: "Quelles impressions/émotions/sentiments ce texte évoque-t-il en vous? Veuillez entrer 2 à 10 mots."
