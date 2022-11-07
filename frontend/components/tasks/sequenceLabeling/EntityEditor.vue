@@ -18,7 +18,6 @@
       @contextmenu:relation="deleteRelation"
     />
     <labeling-menu
-      :read-only="readOnly"
       :opened="entityMenuOpened"
       :x="x"
       :y="y"
@@ -28,7 +27,6 @@
       @click:label="addOrUpdateEntity"
     />
     <labeling-menu
-      :read-only="readOnly"
       :opened="relationMenuOpened"
       :x="x"
       :y="y"
