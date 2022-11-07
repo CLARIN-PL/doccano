@@ -7,8 +7,14 @@ export interface Progress {
   progress: { user: string; done: number }[]
 }
 
+export interface MyProgressList {
+  total: number
+  results: MyProgress[]
+}
+
 export interface MyProgress {
   total: number
   complete: number
   remaining: number
+  project_id?: number
 }

@@ -171,5 +171,8 @@ export default {
         }
       })
     }
+  },
+  router: {
+    middleware: ['check-project']
   }
 }

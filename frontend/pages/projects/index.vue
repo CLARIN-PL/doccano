@@ -21,8 +21,12 @@
       :items="projects.items"
       :is-loading="isLoading"
       :total="projects.count"
+      :show-select="isStaff"
       @update:query="updateQuery"
     />
+    <p v-if="!isStaff" class="warning-text" >
+        {{ $t('generic.onlyDisplayCompletedProject', { number: projects.items.length }) }}
+    </p>
     <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
   </v-card>
 </template>
@@ -33,6 +37,7 @@ import Vue from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 import ProjectList from '@/components/project/ProjectList.vue'
 import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
+import { MyProgress } from '~/domain/models/metrics/metrics'
 import { ProjectDTO, ProjectListDTO } from '~/services/application/project/projectData'
 import FormDelete from '~/components/project/FormDelete.vue'
 
@@ -49,7 +54,9 @@ export default Vue.extend({
   data() {
     return {
       dialogDelete: false,
-      projects: {} as ProjectListDTO,
+      projects: {
+        items: [] as ProjectDTO[]
+      } as ProjectListDTO,
       selected: [] as ProjectDTO[],
       isLoading: false,
       showRestingMessage: false,
@@ -58,16 +65,14 @@ export default Vue.extend({
   },
 
   async fetch() {
-    this.isLoading = true
-    this.projects = await this.$services.project.list(this.$route.query)
-    this.isLoading = false
+    await this.getProjectData()
   },
 
   computed: {
     ...mapGetters('auth', ['isStaff']),
     canDelete(): boolean {
       return this.selected.length > 0
-    }
+    },
   },
 
   watch: {
@@ -94,6 +99,25 @@ export default Vue.extend({
       }
     },
 
+    async getProjectData() {
+      this.isLoading = true
+      const projects = await this.$services.project.list(this.$route.query)
+      if(this.isStaff) {
+        this.projects = _.cloneDeep(projects)
+      } else {
+        const progresses = await this.$services.metrics.fetchMyProgresses()
+        const items = projects.items.map((projectItem: ProjectDTO)=> {
+            const progress = progresses.results.find((prog: MyProgress)=> prog.project_id === projectItem.id)
+            projectItem.isCompleted = progress && progress.total > 0  ?  progress.remaining === 0 : true
+            return projectItem
+          }).filter((projectItem)=> !projectItem.isCompleted)
+        this.projects = {...projects, ...{
+          items,
+        }}
+      }
+      this.isLoading = false
+    },
+
     async remove() {
       await this.$services.project.bulkDelete(this.selected)
       this.$fetch()
@@ -111,5 +135,13 @@ export default Vue.extend({
 <style scoped>
 ::v-deep .v-dialog {
   width: 800px;
+}
+
+.warning-text {
+  padding: 10px 10px 20px;
+  text-align: right;
+  color: red;
+  font-size: .7rem;
+  word-break: break-word;
 }
 </style>
