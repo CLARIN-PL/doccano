@@ -22,7 +22,7 @@
                 checked: $t('annotation.checkedTooltip'),
                 notChecked: $t('annotation.notCheckedTooltip')
               },
-              disabled: !canEdit,
+              disabled: !canEdit || !canConfirm,
             },
             filter: {
               visible: showFilterButton
@@ -199,6 +199,7 @@
                     />
                     <offensive-input
                       v-if="project.isOffensiveMode"
+                      v-model="canConfirm"
                       :project="project"
                       :doc="doc"
                       :scale-types="scaleTypes"
@@ -211,6 +212,7 @@
                       @remove:label="removeTag" />
                     <humor-input
                       v-if="project.isHumorMode"
+                      v-model="canConfirm"
                       :project="project"
                       :doc="doc"
                       :scale-types="scaleTypes"

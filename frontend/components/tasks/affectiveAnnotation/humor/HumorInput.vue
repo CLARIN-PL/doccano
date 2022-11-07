@@ -15,11 +15,11 @@
                                 {{ $t('annotation.slider.zero')}}
                             </span>
                                 <v-slider 
-                                    v-model="formData.subquestion1"
+                                    v-model="formData.subquestion1.value"
                                     class="slider"
-                                    :class="{'--has-filled': formData.subquestion1 }"
+                                    :class="{'--has-filled': formData.subquestion1.value }"
                                     ticks="always"
-                                    :readonly="readOnly"
+                                    :readonly="readOnly || formData.subquestion1.isSubmitting"
                                     min="0" 
                                     max="10" 
                                     :disabled="!scaleTypes.length"
@@ -43,13 +43,13 @@
                                 {{ $t('annotation.slider.zero')}}
                             </span>
                                 <v-slider 
-                                    v-model="formData.subquestion2"
+                                    v-model="formData.subquestion2.value"
                                     class="slider"
-                                    :class="{'--has-filled': formData.subquestion2 }"
+                                    :class="{'--has-filled': formData.subquestion2.value }"
                                     ticks="always"
                                     min="0" 
                                     max="10" 
-                                    :readonly="readOnly"
+                                    :readonly="readOnly || formData.subquestion2.isSubmitting"
                                     :disabled="!scaleTypes.length"
                                     :tick-labels="zeroToTenLabels"
                                     step="1"  
@@ -145,6 +145,10 @@ export default Vue.extend({
         type: Object,
         default: () => {}
     },
+    value: {
+        type: Boolean,
+        default: false
+    },
     doc: {
         type: Object,
         default: () => {}
@@ -174,8 +178,16 @@ export default Vue.extend({
                 required: (value : any) => !!value || this.$i18n.t('rules.required'),
             },
             formData: {
-                subquestion1: 0,
-                subquestion2: 0,
+                subquestion1: {
+                    value: 0,
+                    isChanged: false,
+                    isSubmitting: false,
+                },
+                subquestion2: {
+                    value: 0,
+                    isChanged: false,
+                    isSubmitting: false,
+                },
                 subquestion3: [
                     {
                         isChecked: false,
@@ -189,8 +201,16 @@ export default Vue.extend({
                 ]
             },
             originalFormData: {
-                subquestion1: 0,
-                subquestion2: 0,
+                subquestion1: {
+                    value: 0,
+                    isChanged: false,
+                    isSubmitting: false,
+                },
+                subquestion2: {
+                    value: 0,
+                    isChanged: false,
+                    isSubmitting: false,
+                },
                 subquestion3: [
                     {
                         isChecked: false,
@@ -313,14 +333,32 @@ export default Vue.extend({
             return Array.from(Array(11).keys())
         },
         hasFilledTopQuestions() : boolean {
-            return !!this.formData.subquestion1 || 
-                !!this.formData.subquestion2; 
+            return !!this.formData.subquestion1.value || 
+                !!this.formData.subquestion2.value; 
         },
     },
     watch: {
         doc() {
             this.formData = _.cloneDeep(this.originalFormData)
             this.$forceUpdate()
+        },
+        formData: {
+            deep: true,
+            handler(val: any) {
+                const scaleKeys = ['subquestion1', 'subquestion2']
+                const hasFilledScales = scaleKeys.some((scaleKey)=> {
+                    return val[scaleKey].isChanged
+                })
+                const hasFilledAllScalesZeros = scaleKeys.every((scaleKey)=> {
+                    return val[scaleKey].value === 0
+                })
+                const hasFilledCheckedTextboxes = val.subquestion3.every((substatement: any) => {
+                    const hasCheckedAndFilled = substatement.isChecked ? substatement.isChecked && !!substatement.answer : true
+                    return hasCheckedAndFilled
+                })
+                const canConfirm = hasFilledAllScalesZeros ? hasFilledScales : hasFilledScales && hasFilledCheckedTextboxes
+                this.isLoaded && this.$emit('input', canConfirm)
+            }
         },
         scaleValues: {
             deep: true,
@@ -331,15 +369,17 @@ export default Vue.extend({
                         const polishAnnotation : any = _.get(this.polishAnnotation.humor, key)
                         const scaleValue = val.find((scale: any)=> scale.text === polishAnnotation)
                         if(scaleValue) {
-                            _.set(this.formData, key, scaleValue.scale)
+                            _.set(this.formData, `${key}.value`, scaleValue.scale)
+                            _.set(this.formData, `${key}.isChanged`, true)
+                            _.set(this.formData, `${key}.isSubmitting`, false)
                         } 
                     })
                 } else {
                     this.formData = {
                         ...this.formData, 
                         ...{
-                            subquestion1: 0,
-                            subquestion2: 0
+                            subquestion1: _.cloneDeep(this.originalFormData.subquestion1),
+                            subquestion2: _.cloneDeep(this.originalFormData.subquestion2),
                         }
                     }
                 }
@@ -382,11 +422,12 @@ export default Vue.extend({
         onScaleChange: _.debounce(function (formDataKey: string) {
             // @ts-ignore
             const base = this as any
-            const value : number = _.get(base.formData, formDataKey) || 0
+            const formData : any = _.get(base.formData, formDataKey) || 0
             const labelQuestion : string = base.polishAnnotation.humor[formDataKey]
             const scaleLabel : any = base.scaleTypes.find((scaleType: any)=> scaleType.text === labelQuestion)
-            if(scaleLabel && base.isLoaded) {
-                base.$emit('update:scale', scaleLabel.id, value)
+            if(scaleLabel && base.isLoaded && !formData.isSubmitting) {
+                _.set(base.formData, `${formData.isSubmitting}`, true)
+                base.$emit('update:scale', scaleLabel.id, formData.value)
             } 
         }, 100),
         onLabelChange(substatement: any, key: string, index: number) {
