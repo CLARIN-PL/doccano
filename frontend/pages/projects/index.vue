@@ -55,7 +55,7 @@ export default Vue.extend({
     return {
       dialogDelete: false,
       projects: {
-        items: []
+        items: [] as ProjectDTO[]
       } as ProjectListDTO,
       selected: [] as ProjectDTO[],
       isLoading: false,
