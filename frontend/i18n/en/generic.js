@@ -18,7 +18,7 @@ export default {
   description: 'Description',
   type: 'Type',
   loading: 'Loading... Please wait',
-  onlyDisplayCompletedProject: "Completed projects can no longer be viewed.",
+  onlyDisplayCompletedProject: "Currently showing {number} uncompleted projects. Completed projects are not visible in the list.",
   restingMessage: {
     title: 'Time to rest!',
     message1: 'Thank you for your work! Please have some coffee before continuing!',

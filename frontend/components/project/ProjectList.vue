@@ -10,8 +10,8 @@
     :loading-text="$t('generic.loading')"
     :no-data-text="$t('vuetify.noDataAvailable')"
     :footer-props="{
-      showFirstLastPage: footerProps.showFirstLastPage,
-      'items-per-page-options': footerProps.itemsPerPageOptions,
+      showFirstLastPage: true,
+      'items-per-page-options': [10, 50, 100],
       'items-per-page-text': $t('vuetify.itemsPerPageText'),
       'page-text': $t('dataset.pageText')
     }"
@@ -81,15 +81,6 @@ export default Vue.extend({
       type: Boolean,
       default: false
     },
-    footerProps: {
-      type: Object,
-      default() {
-        return {
-          showFirstLastPage: true,
-          itemsPerPageOptions: [10, 50, 100]
-        }
-      }
-    }
   },
 
   data() {

@@ -16,18 +16,17 @@
         <form-delete :selected="selected" @cancel="dialogDelete = false" @remove="remove" />
       </v-dialog>
     </v-card-title>
-    <v-alert v-if="!isStaff" type="info" >
-        {{ $t('generic.onlyDisplayCompletedProject') }}
-    </v-alert>
     <project-list
       v-model="selected"
       :items="projects.items"
       :is-loading="isLoading"
       :total="projects.count"
       :show-select="isStaff"
-      :footer-props="projectListFooterProps"
       @update:query="updateQuery"
     />
+    <p v-if="!isStaff" class="warning-text" >
+        {{ $t('generic.onlyDisplayCompletedProject', { number: projects.items.length }) }}
+    </p>
     <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
   </v-card>
 </template>
@@ -55,7 +54,9 @@ export default Vue.extend({
   data() {
     return {
       dialogDelete: false,
-      projects: {} as ProjectListDTO,
+      projects: {
+        items: []
+      } as ProjectListDTO,
       selected: [] as ProjectDTO[],
       isLoading: false,
       showRestingMessage: false,
@@ -72,15 +73,6 @@ export default Vue.extend({
     canDelete(): boolean {
       return this.selected.length > 0
     },
-    projectListFooterProps() : any {
-      return this.isStaff ? {
-        showFirstLastPage: true,
-        itemsPerPageOptions: [10, 50, 100]
-      } : {
-        showFirstLastPage: true,
-        itemsPerPageOptions: [50, 100]
-      } 
-    }
   },
 
   watch: {
@@ -143,5 +135,13 @@ export default Vue.extend({
 <style scoped>
 ::v-deep .v-dialog {
   width: 800px;
+}
+
+.warning-text {
+  padding: 10px 10px 20px;
+  text-align: right;
+  color: red;
+  font-size: .7rem;
+  word-break: break-word;
 }
 </style>
