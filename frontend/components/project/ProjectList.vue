@@ -18,6 +18,7 @@
     item-key="id"
     :show-select="showSelect"
     @input="$emit('input', $event)"
+    @update:page="updateCurrentPage"
   >
     <template #top>
       <v-text-field
@@ -30,9 +31,10 @@
       />
     </template>
     <template #[`item.name`]="{ item }">
-      <nuxt-link :to="localePath(`/projects/${item.id}`)">
+      <nuxt-link v-if="isFirstProject(item.id)" :to="localePath(`/projects/${item.id}`)">
         <span>{{ item.name }}</span>
       </nuxt-link>
+      <span v-else>{{ item.name }}</span>
     </template>
     <template #[`item.updatedAt`]="{ item }">
       <span>{{
@@ -87,7 +89,9 @@ export default Vue.extend({
     return {
       search: this.$route.query.q,
       options: {} as DataOptions,
-      mdiMagnify
+      mdiMagnify,
+      projects: this.items,
+      currentPage: 1
     }
   },
 
@@ -131,6 +135,20 @@ export default Vue.extend({
   },
 
   methods: {
+    isFirstProject(projectId: number) {
+      const firstItemId = (this.items.length > 0) ? this.items[0].id : -1
+      if (!this.showSelect && !this.isLoading && this.currentPage === 1 && projectId === firstItemId) {
+        return true
+      }
+      return false
+    },
+    async updateCurrentPage(newPage: number) {
+      await this.awaitTimeout(500)
+      this.currentPage = newPage
+    },
+    awaitTimeout(ms: number) {
+      return new Promise(resolve => setTimeout(resolve, ms))
+    },
     updateQuery(payload: any) {
       this.$emit('update:query', payload)
     }
