@@ -49,6 +49,9 @@ class JsonArticleWriter(Writer):
 
     @staticmethod
     def write(file, dataset: pd.DataFrame):
-        dataset = dataset.groupby('article_id').apply(lambda x: x.drop('article_id',axis=1).to_json(orient='records')).reset_index(name='data')
-        dataset.data = dataset.data.apply(json.loads)
-        dataset.to_json(file, orient="records", force_ascii=False, lines=True)
+        if dataset.empty:
+            dataset.to_json(file, orient="records", force_ascii=False, lines=True)
+        else:
+            dataset = dataset.groupby('article_id').apply(lambda x: x.drop('article_id',axis=1).to_json(orient='records')).reset_index(name='data')
+            dataset.data = dataset.data.apply(json.loads)
+            dataset.to_json(file, orient="records", force_ascii=False, lines=True)
