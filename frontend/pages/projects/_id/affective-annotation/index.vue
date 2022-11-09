@@ -22,7 +22,7 @@
                 checked: $t('annotation.checkedTooltip'),
                 notChecked: $t('annotation.notCheckedTooltip')
               },
-              disabled: !canEdit || !canConfirm,
+              disabled: !canEdit,
             },
             filter: {
               visible: showFilterButton
@@ -700,12 +700,15 @@ export default {
       }
     },
     async confirm() {
-      this.canConfirm = this.isAllAffectiveDataAdded()
-      this.hasClickedConfirmButton = true
+      if(this.project.isSummaryMode || this.project.isOthersMode || this.project.isEmotionsMode) {
+        this.canConfirm = this.isAllAffectiveDataAdded()
+      }
+      this.hasClickedConfirmButton = this.canConfirm ? false : !this.isProjectAdmin
       if (this.canConfirm || this.isProjectAdmin) {
         await this.$services.example.confirm(this.projectId, this.doc.id)
         await this.$fetch()
         this.updateProgress()
+        this.hasClickedConfirmButton = false
       }
     },
     isAllAffectiveDataAdded() {

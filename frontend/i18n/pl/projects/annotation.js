@@ -168,7 +168,11 @@ export default {
       substatement9: "Wyolbrzymienie",
       substatement10: "Niecenzuralne słowa",
       substatement11: "Kontrast",
-      substatement12: "Ma charakter dowcipu, kawału, żartu"
+      substatement12: "Ma charakter dowcipu, kawału, żartu",
+      substatement13: "absurd",
+      substatement14: "humor sytuacyjny",
+      substatement15: "humor patetyczny",
+
     }
   },
   noScaleLabels: 'Nie znaleziono etykiet skali. Prosimy o kontakt z administratorem.'
