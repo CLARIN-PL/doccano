@@ -118,12 +118,6 @@
             />
           </v-col>
           <v-col v-if="isAffectiveAnnotationProject" col="5">
-            <p class="font-weight-bold mb-0">Mode combination</p>
-            <v-checkbox
-              :value="isCombinationMode"
-              :label="$t('overview.combinationMode')"
-              @change="updateValue('isCombinationMode', $event === true)"
-            />
             <p class="font-weight-bold mb-0">Mode options</p>
             <v-radio-group 
               :value="isCombinationMode ? '' : affectiveProjectMode"
@@ -131,14 +125,21 @@
             >
               <v-radio
                 v-for="(affectiveAnnotationOption, idx) in affectiveAnnotationOptions"
-                :disabled="isCombinationMode"
                 :key="idx"
+                :disabled="isCombinationMode"
                 :label="affectiveAnnotationOption.label"
                 :value="affectiveAnnotationOption.value"
               ></v-radio>
             </v-radio-group>
+            <p class="font-weight-bold mb-0">Mode settings</p>
+            <v-checkbox
+              :value="isCombinationMode"
+              :label="$t('overview.combinationMode')"
+              @change="updateValue('isCombinationMode', $event === true)"
+            />
             <p class="font-weight-bold mb-0">View</p>
             <v-radio-group
+              :value="isSingleAnnView"
               @change="updateValue('isSingleAnnView', $event)"
             >
               <v-radio

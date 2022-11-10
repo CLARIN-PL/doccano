@@ -21,6 +21,7 @@
                                     :color="formData.subquestion1.isClicked ? 'primary' : 'grey'"
                                     :thumb-size="formData.subquestion1.isClicked ? 12 : 0"
                                     :thumb-color="formData.subquestion1.isClicked ? 'primary' : 'transparent'"
+                                    :track-color="formData.subquestion1.isClicked ? '' : 'grey'"
                                     ticks="always"
                                     ticks-size="3"
                                     :readonly="readOnly || formData.subquestion1.isSubmitting"
@@ -53,6 +54,7 @@
                                     :color="formData.subquestion2.isClicked ? 'primary' : 'grey'"
                                     :thumb-size="formData.subquestion2.isClicked ? 12 : 0"
                                     :thumb-color="formData.subquestion2.isClicked ? 'primary' : 'transparent'"
+                                    :track-color="formData.subquestion2.isClicked ? '' : 'grey'"
                                     ticks="always"
                                     min="0" 
                                     max="10" 
@@ -82,7 +84,7 @@
                                     <v-checkbox 
                                         v-model="substatement.isChecked" 
                                         :readonly="readOnly"
-                                        :disabled="!hasFilledTopQuestions"
+                                        :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
                                         :label="$t(`annotation.offensive.subquestion3.substatement${(idx+1)}`)"
                                         class="subquestions-item__checkbox"
                                         @change="onLabelChange(substatement, `subquestion3`, idx)" />
@@ -92,7 +94,7 @@
                                         v-model="substatement.answer"
                                         :required="true"
                                         :readonly="readOnly"
-                                        :disabled="!hasFilledTopQuestions"
+                                        :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
                                         :question="$t(`annotation.offensive.subquestion3.substatement${(idx+1)}Question`)"
                                         :full-question="`
                                             ${$t(`annotation.offensive.subquestion3.substatement${(idx+1)}Question`)}
@@ -119,7 +121,7 @@
                                         <v-checkbox 
                                             v-model="substatement.isChecked" 
                                             :readonly="readOnly"
-                                            :disabled="!hasFilledTopQuestions"
+                                            :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
                                             :label="$t(`annotation.offensive.subquestion4.substatement${(idx+1)}`)" 
                                             class="subquestions-item__checkbox"
                                             @change="onLabelChange(substatement, `subquestion4`, idx)"
@@ -187,105 +189,30 @@ export default Vue.extend({
             formData: {
                 subquestion1: {
                     value: 0,
-                    isChanged: false,
                     isClicked: false,
                     isSubmitting: false,
                 },
                 subquestion2: {
                     value: 0,
-                    isChanged: false,
                     isClicked: false,
                     isSubmitting: false,
                 },
-                subquestion3: [
-                    {
-                        isChecked: false,
-                        answer: ''
-                    }
-                ],
-                subquestion4: [
-                    {
-                        isChecked: false,
-                    }
-                ]
+                subquestion3: [],
+                subquestion4: []
             },
             originalFormData: {
                 subquestion1: {
                     value: 0,
-                    isChanged: false,
                     isClicked: false,
                     isSubmitting: false,
                 },
                 subquestion2: {
                     value: 0,
-                    isChanged: false,
                     isClicked: false,
                     isSubmitting: false,
                 },
-                subquestion3: [
-                    {
-                        isChecked: false,
-                        answer: ''
-                    },
-                    {
-                        isChecked: false,
-                        answer: ''
-                    },
-                    {
-                        isChecked: false,
-                        answer: ''
-                    },
-                    {
-                        isChecked: false,
-                        answer: ''
-                    },
-                    {
-                        isChecked: false,
-                        answer: ''
-                    },
-                    {
-                        isChecked: false,
-                        answer: ''
-                    },
-                    {
-                        isChecked: false,
-                        answer: ''
-                    },
-                    {
-                        isChecked: false,
-                        answer: ''
-                    },
-                    {
-                        isChecked: false,
-                        answer: ''
-                    }
-                ],
-                subquestion4: [
-                    {
-                        isChecked: false,
-                    },
-                    {
-                        isChecked: false,
-                    },
-                    {
-                        isChecked: false,
-                    },
-                    {
-                        isChecked: false,
-                    },
-                    {
-                        isChecked: false,
-                    },
-                    {
-                        isChecked: false,
-                    },
-                    {
-                        isChecked: false,
-                    },
-                    {
-                        isChecked: false,
-                    },
-                ]
+                subquestion3: [],
+                subquestion4: []
             }
         }
     },
@@ -313,7 +240,13 @@ export default Vue.extend({
                 Object.keys(annotation).forEach((subKey: string) => {
                     if(typeof annotation[subKey] === 'object') {
                         Object.keys(annotation[subKey]).every((subKey2: string) => {
-                            const isKey = annotation[subKey][subKey2] === textLabel.question
+                            let isKey = annotation[subKey][subKey2] === textLabel.question
+                            if(textLabel.question.includes(" - ")) {
+                                const questions = textLabel.question.split(" - ")
+                                isKey =
+                                    annotation[subKey].question === questions[0]
+                                    && annotation[subKey][subKey2] === questions[1]
+                            }
                             if(isKey) {
                                 substatementKey = `${subKey}.${subKey2}`
                             }
@@ -347,7 +280,7 @@ export default Vue.extend({
                 const scaleKeys = ['subquestion1', 'subquestion2']
                 const labelKeys = ['subquestion3', 'subquestion4']
                 const hasFilledScales = scaleKeys.some((scaleKey)=> {
-                    return val[scaleKey].isChanged
+                    return val[scaleKey].isClicked
                 })
                 const hasFilledAllScalesZeros = scaleKeys.every((scaleKey)=> {
                     return val[scaleKey].value === 0
@@ -378,7 +311,6 @@ export default Vue.extend({
                         const scaleValue = val.find((scale: any)=> scale.text === polishAnnotation)
                         if(scaleValue) {
                             _.set(this.formData, `${key}.value`, scaleValue.scale)
-                            _.set(this.formData, `${key}.isChanged`, true)
                             _.set(this.formData, `${key}.isClicked`, true)
                             _.set(this.formData, `${key}.isSubmitting`, false)
                         } 
@@ -398,6 +330,7 @@ export default Vue.extend({
             deep: true,
             handler(val) {
                 if(val.length) {
+                    const keys = ['subquestion3', 'subquestion4']
                     val.forEach((textLabel : any) => {
                         const substatementIndex = textLabel.substatementKey.split('.substatement')[1]
                         const subquestionIndex = textLabel.substatementKey.split(".")[0]
@@ -405,9 +338,24 @@ export default Vue.extend({
                         const formData = _.get(this.formData, formDataKey)
                         if(formData) {
                             _.set(this.formData, `${formDataKey}.isChecked`, !!textLabel.text)
+                            _.set(this.formData, `${formDataKey}.isSubmitting`, false)
                             _.set(this.formData, `${formDataKey}.answer`, textLabel.text)
-                        }
+                        } 
                     }) 
+                    keys.forEach((key)=> {
+                        // @ts-ignore
+                        const subquestionLength = this.formData[key].length
+                        for(let i : number= 0; i < subquestionLength; i++) {
+                            const substatementKey = `${key}.substatement${i+1}`
+                            const isStored = val.find((textLabel: any)=> textLabel.substatementKey === substatementKey)
+                            if(!isStored) {
+                                // @ts-ignore
+                                this.formData[key][i].answer = ''
+                                // @ts-ignore
+                                this.formData[key][i].isSubmitting = false
+                            }
+                        }
+                    })
                 } else {
                     this.formData = {
                         ...this.formData, 
@@ -421,18 +369,42 @@ export default Vue.extend({
             }
         }
     },
-    created() {
-        this.formData = _.cloneDeep(this.originalFormData)
+    async created() {
+        await this.setOriginalFormData()
+        this.$nextTick(()=> {
+            this.formData = _.cloneDeep(this.originalFormData)
+        })
     },
     mounted() {
         this.isLoaded = true;
     },
     methods: {
+        setOriginalFormData() {
+            const keys = ['subquestion3', 'subquestion4']
+            const annotation : any = this.polishAnnotation.offensive
+            keys.forEach((key)=> {
+                let subquestionLength = 0
+                const substatement = Object.keys(annotation[key])
+                    .reverse()
+                    .find((annKey)=> annKey.includes('substatement'))
+                if(substatement) {
+                    subquestionLength = parseInt(substatement.replace( /^\D+/g, ''))
+                }
+                for(let i = 0; i < subquestionLength; i++) {
+                    // @ts-ignore
+                    this.originalFormData[key].push({
+                        isSubmitting: false,
+                        isChecked: false,
+                        answer: key === 'subquestion4' ? undefined : ""
+                    })
+                }
+            })
+        },
         onScaleChange: _.debounce(function (formDataKey: string) {
             // @ts-ignore
             const base = this as any
             _.set(base.formData, `${formDataKey}.isClicked`, true)
-            const formData : any = _.get(base.formData, formDataKey) || 0
+            const formData : any = _.get(base.formData, formDataKey) 
             const labelQuestion : string = base.polishAnnotation.offensive[formDataKey]
             const scaleLabel : any = base.scaleTypes.find((scaleType: any)=> scaleType.text === labelQuestion)
             if(scaleLabel && base.isLoaded && !formData.isSubmitting) {
@@ -445,7 +417,8 @@ export default Vue.extend({
             const labelQuestionKey = `${key}.substatement${index+1}`
             const formData = _.get(this.formData, formDataKey)
             const labelQuestion = _.get(this.polishAnnotation.offensive, labelQuestionKey)
-            const question = `${labelQuestion}`
+            const parentQuestion = _.get(this.polishAnnotation.offensive, key+'.question')
+            const question = `${parentQuestion} - ${labelQuestion}`
 
             const textLabelValue = this.textLabelValues.find((textLabel : any) => textLabel.question === question)
             let eventName = textLabelValue ? 'update:label' : 'add:label'
@@ -461,6 +434,7 @@ export default Vue.extend({
                     const substatementId = textLabelValue.id
                     this.$emit(eventName, substatementId)
                 }
+                _.set(this.formData, formDataKey+".isSubmitting", !!answer)
             } 
         }
     }
@@ -492,23 +466,6 @@ export default Vue.extend({
     &.--visible {
         opacity: 1;
     }
-
-    .slider {
-        .v-slider__thumb {
-            opacity: .8;
-            background-color: white !important;
-            border: 1px solid #ddd !important; 
-        }
-
-        &.--has-filled {
-            .v-slider__thumb {
-                opacity: 1;
-                background-color: #1976d2 !important;
-                border-color: #1976d2 !important;
-            }
-        }
-    }
-
 
     &__slider {
         display: flex;

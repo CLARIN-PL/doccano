@@ -145,7 +145,7 @@
                 <v-divider />
                 <div v-if="isScaleImported" class="pa-4">
                   <summary-input
-                      v-if="project.isSummaryMode"
+                      v-if="project.isSummaryMode || project.isCombinationMode"
                       :text="doc.text"
                       :tags="affectiveSummaryTags"
                       :impressions="affectiveSummaryImpressions"
@@ -158,7 +158,7 @@
                       @add:impression="addImpression"
                     />
                     <emotions-input
-                      v-if="project.isEmotionsMode"
+                      v-if="project.isEmotionsMode || project.isCombinationMode"
                       :read-only="!canEdit"
                       :general-positivity="affectiveScalesValues.positive"
                       :general-negativity="affectiveScalesValues.negative"
@@ -175,7 +175,7 @@
                       @change="emotionsChangeHandler"
                     />
                     <others-input
-                      v-if="project.isOthersMode"
+                      v-if="project.isOthersMode || project.isCombinationMode"
                       :read-only="!canEdit"
                       :ironic="affectiveScalesValues.ironic"
                       :embarrassing="affectiveScalesValues.embarrassing"
@@ -198,7 +198,7 @@
                       @restore:wishToAuthor="restoreWishToAuthor"
                     />
                     <offensive-input
-                      v-if="project.isOffensiveMode"
+                      v-if="project.isOffensiveMode || project.isCombinationMode"
                       v-model="canConfirm"
                       :project="project"
                       :doc="doc"
@@ -211,7 +211,7 @@
                       @update:label="updateTag"
                       @remove:label="removeTag" />
                     <humor-input
-                      v-if="project.isHumorMode"
+                      v-if="project.isHumorMode || project.isCombinationMode"
                       v-model="canConfirm"
                       :project="project"
                       :doc="doc"
@@ -700,7 +700,9 @@ export default {
       }
     },
     async confirm() {
-      if(this.project.isSummaryMode || this.project.isOthersMode || this.project.isEmotionsMode) {
+      if(this.project.isCombinationMode) {
+        this.canConfirm = this.canConfirm && this.isAllAffectiveDataAdded()
+      } else if(this.project.isSummaryMode || this.project.isOthersMode || this.project.isEmotionsMode) {
         this.canConfirm = this.isAllAffectiveDataAdded()
       }
       this.hasClickedConfirmButton = this.canConfirm ? false : !this.isProjectAdmin

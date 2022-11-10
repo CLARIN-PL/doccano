@@ -29,7 +29,7 @@ export default Vue.extend({
         allowOverlapping: false,
         graphemeMode: false,
         useRelation: false,
-        affectiveProjectMode: '',
+        affectiveProjectMode: 'isSummaryMode',
         isSingleAnnView: false,
         isCombinationMode: false,
         tags: [] as string[]
@@ -44,7 +44,7 @@ export default Vue.extend({
         allowOverlapping: false,
         graphemeMode: false,
         useRelation: false,
-        affectiveProjectMode: '',
+        affectiveProjectMode: 'isSummaryMode',
         isSingleAnnView: false,
         isCombinationMode: false,
         tags: [] as string[]
@@ -60,12 +60,11 @@ export default Vue.extend({
         if (!project.isSummaryMode) {
           await this.uploadScaleTypeFile(project)
         }
-      } /*
+      } 
       this.$router.push(`/projects/${project.id}`)
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
       })
-      */
     },
     getProjectItem() : ProjectWriteDTO {
       const editedItem : any = _.cloneDeep(this.editedItem)
@@ -82,21 +81,19 @@ export default Vue.extend({
       return editedItem
     },
     async getBlobScaleData(project: ProjectDTO) {
-      let fdata: Blob = new Blob([], {type: 'text/JSON'})
+      let fdata = []
       if(project.isCombinationMode) {
         const paths = {
           isEmotionsMode: '/formats/affective_annotation/affective_emotions_scales.json',
-          isOthersMode: '/formats/affective_annotation/affective_emotions_scales.json',
+          isOthersMode: '/formats/affective_annotation/affective_others_scales.json',
           isHumorMode: '/formats/affective_annotation/affective_humor_scales.json',
           isOffensiveMode: '/formats/affective_annotation/affective_offensive_scales.json'
         }
         const requests = Object.values(paths).map((path)=> fetch(path))
         const responses = await Promise.all(requests)
-        const jsonPromises = responses.map(async (response) => await response.json())
-        const labels = await Promise.all(jsonPromises)
-        const combinedLabels = [...labels.flat()]
-        fdata = new Blob([new Uint8Array(combinedLabels)], { type: "application/JSON" })
-        console.log(fdata)
+        const blobPromises = responses.map(async (response) => await response.blob())
+        const blobs = await Promise.all(blobPromises)
+        return [...blobs.flat()]
       } else {
         let selectedFile = ""
         if (project.isEmotionsMode) {
@@ -112,22 +109,23 @@ export default Vue.extend({
           selectedFile = '/formats/affective_annotation/affective_humor_scales.json'
         }
         const rawData = await fetch(selectedFile)
-        fdata = await rawData.blob()
-        console.log(fdata)
+        fdata = [await rawData.blob()]
       }
       return fdata
     },
     async uploadScaleTypeFile(project: ProjectDTO) {
-      const fdata : Blob = await this.getBlobScaleData(project)
-      const fname = "scales.json"
-      const fmetadata = { type: "application/JSON" }
-      const file = new File([fdata], fname, fmetadata)
-      try {
-        const projectId = project.id.toString()
-        await this.$services.scaleType.upload(projectId, file)
-      } catch (e) {
-        console.log(e.message)
-      }
+      const fdatas : Blob[] = await this.getBlobScaleData(project)
+      fdatas.forEach(async (fdata, index)=> {
+        const fname = `scales_${index}.json`
+        const fmetadata = { type: "application/JSON" }
+        const file = new File([fdata], fname, fmetadata)
+        try {
+          const projectId = project.id.toString()
+          await this.$services.scaleType.upload(projectId, file)
+        } catch (e) {
+          console.log(e.message)
+        }
+      })
     }
   }
 })
