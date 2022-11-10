@@ -3,6 +3,14 @@
     <layout-text v-if="doc.id" v-shortkey="shortKeysSpans" @shortkey="changeSelectedLabel">
       <template #header>
         <v-alert
+          :value="!isAllowed"
+          color="error"
+          dark
+          transition="scale-transition"
+        >
+          Not allowed to annotate this project!
+        </v-alert>
+        <v-alert
           :value="(!canConfirm && hasClickedConfirmButton)"
           color="error"
           dark
@@ -331,14 +339,15 @@ export default {
       restingEndTime: new Date(),
       hasCheckedPreviousDoc: false,
       canConfirm: false,
-      hasClickedConfirmButton: false
+      hasClickedConfirmButton: false,
+      isAllowed: true
     }
   },
 
   async fetch() {
     this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
-    const isAllowed = this.isAllowedToAnnotate()
-    if (isAllowed) {
+    this.isAllowed = this.isAllowedToAnnotate()
+    if (this.isAllowed) {
       await this.setProjectData()
       await this.setDoc()
       await this.checkHasCheckedPreviousDoc()
@@ -452,8 +461,7 @@ export default {
         return true
       } else {
         const currentlyAllowedProjectId = this.getCurrentlyAllowedProjectId()
-        const isAllowed = this.projectId === currentlyAllowedProjectId.toString()
-        return isAllowed
+        return this.projectId === currentlyAllowedProjectId.toString()
       }
     },
     async checkRestingPeriod() {
