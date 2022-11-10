@@ -31,7 +31,7 @@
       />
     </template>
     <template #[`item.name`]="{ item }">
-      <nuxt-link v-if="isFirstProject(item.id)" :to="localePath(`/projects/${item.id}`)">
+      <nuxt-link v-if="enableProjectLink(item.id)" :to="localePath(`/projects/${item.id}`)">
         <span>{{ item.name }}</span>
       </nuxt-link>
       <span v-else>{{ item.name }}</span>
@@ -49,6 +49,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
+import { mapGetters } from 'vuex'
 import { mdiMagnify } from '@mdi/js'
 import { DataOptions } from 'vuetify/types'
 import VueFilterDateFormat from '@vuejs-community/vue-filter-date-format'
@@ -135,19 +136,21 @@ export default Vue.extend({
   },
 
   methods: {
-    isFirstProject(projectId: number) {
-      const firstItemId = (this.items.length > 0) ? this.items[0].id : -1
-      if (!this.showSelect && !this.isLoading && this.currentPage === 1 && projectId === firstItemId) {
-        return true
+    ...mapGetters('userState', ['getCurrentlyAllowedProjectId']),
+
+    enableProjectLink(projectId: Number) {
+      if (this.showSelect) {
+        return true // this.showSelect is true if current user is staff
+      } else {
+        const firstProjectId = this.getCurrentlyAllowedProjectId()
+        if (!this.isLoading && this.currentPage === 1 && projectId === firstProjectId) {
+          return true
+        }
+        return false
       }
-      return false
     },
-    async updateCurrentPage(newPage: number) {
-      await this.awaitTimeout(500)
+    updateCurrentPage(newPage: number) {
       this.currentPage = newPage
-    },
-    awaitTimeout(ms: number) {
-      return new Promise(resolve => setTimeout(resolve, ms))
     },
     updateQuery(payload: any) {
       this.$emit('update:query', payload)

@@ -337,13 +337,16 @@ export default {
 
   async fetch() {
     this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
-    await this.setProjectData()
-    await this.setDoc()
-    await this.setHasCheckedPreviousDoc()
-    this.$nextTick(()=> {
-      this.setArticleData()
-      this.loadLabels()
-    })
+    const isAllowed = this.isAllowedToAnnotate()
+    if (isAllowed) {
+      await this.setProjectData()
+      await this.setDoc()
+      await this.checkHasCheckedPreviousDoc()
+      this.$nextTick(()=> {
+        this.setArticleData()
+        this.loadLabels()
+      })
+    }
   },
 
   computed: {
@@ -441,8 +444,18 @@ export default {
   },
 
   methods: {
-    ...mapActions('auth', ['setRestingPeriod', 'getRestingPeriod']),
+    ...mapGetters('userState', ['getCurrentlyAllowedProjectId']),
+    ...mapActions('userState', ['setRestingPeriod', 'getRestingPeriod']),
 
+    isAllowedToAnnotate() {
+      if (this.isProjectAdmin) {
+        return true
+      } else {
+        const currentlyAllowedProjectId = this.getCurrentlyAllowedProjectId()
+        const isAllowed = this.projectId === currentlyAllowedProjectId.toString()
+        return isAllowed
+      }
+    },
     async checkRestingPeriod() {
       const restingEndTime = await this.getRestingPeriod()
       if (restingEndTime === null) {

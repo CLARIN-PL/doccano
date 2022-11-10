@@ -66,6 +66,7 @@ export default Vue.extend({
 
   async fetch() {
     await this.getProjectData()
+    this.checkNextProjectIdToAnnotate()
   },
 
   computed: {
@@ -87,7 +88,7 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapActions('auth', ['setRestingPeriod', 'getRestingPeriod']),
+    ...mapActions('userState', ['setRestingPeriod', 'getRestingPeriod', 'allowProjectId']),
 
     async checkRestingPeriod() {
       const restingEndTime = await this.getRestingPeriod()
@@ -96,6 +97,18 @@ export default Vue.extend({
       } else {
         this.showRestingMessage = !this.isStaff
         this.restingEndTime = restingEndTime
+      }
+    },
+
+    checkNextProjectIdToAnnotate() {
+      try {
+        if (this.$route.query.offset === '0') {
+          const nextProjectIdToAnnotate = (this.projects.items.length > 0) ? this.projects.items[0].id : null
+          this.allowProjectId(nextProjectIdToAnnotate)
+        }
+      } catch {
+        console.log("error in checking project annotation order")
+        this.allowProjectId(-1)
       }
     },
 
