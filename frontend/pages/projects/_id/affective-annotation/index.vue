@@ -54,7 +54,7 @@
                 prev: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
                 next: canNavigateForward? '' : $t('annotation.warningCheckedNavigation'),
                 prev: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
-                jump: canNavigateForward && canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
+                jump: '',
               },
               callback: {
                 next: annotateStartStates,
@@ -74,17 +74,6 @@
           @click:review="confirm"
         >
         <v-spacer />
-          <v-btn-toggle 
-            v-if="showToggleButton" 
-            v-model="labelOption" 
-            mandatory class="ms-2">
-            <v-btn icon>
-              <v-icon>{{ mdiFormatListBulleted }}</v-icon>
-            </v-btn>
-            <v-btn icon>
-              <v-icon>{{ mdiText }}</v-icon>
-            </v-btn>
-          </v-btn-toggle>
         </toolbar-laptop>
         <toolbar-mobile :total="docs.count" class="d-flex d-sm-none" />
       </template>
@@ -210,6 +199,7 @@
                     />
                     <offensive-input
                       v-if="project.isOffensiveMode"
+                      v-model="canConfirm"
                       :project="project"
                       :doc="doc"
                       :scale-types="scaleTypes"
@@ -222,6 +212,7 @@
                       @remove:label="removeTag" />
                     <humor-input
                       v-if="project.isHumorMode"
+                      v-model="canConfirm"
                       :project="project"
                       :doc="doc"
                       :scale-types="scaleTypes"
@@ -240,42 +231,6 @@
       </template>
       <template #sidebar>
         <annotation-progress :progress="progress" />
-        <v-card v-if="showLabelTypes" class="mt-4" >
-          <v-card-title>{{ $t('annotation.labelTypes') }}</v-card-title>
-          <v-card-text>
-            <v-switch v-if="useRelationLabeling" v-model="relationMode">
-              <template #label>
-                <span v-if="relationMode">{{ $t('annotation.relation') }}</span>
-                <span v-else>{{ $t('annotation.span') }}</span>
-              </template>
-            </v-switch>
-            <v-chip-group v-model="selectedLabelIndex" column>
-              <v-chip
-                v-for="(item, index) in labelTypes"
-                :key="item.id"
-                v-shortkey="[item.suffixKey]"
-                :color="item.backgroundColor"
-                filter
-                :text-color="$contrastColor(item.backgroundColor)"
-                @shortkey="selectedLabelIndex = index"
-              >
-                {{ item.text }}
-                <v-avatar
-                  v-if="item.suffixKey"
-                  right
-                  color="white"
-                  class="black--text font-weight-bold"
-                >
-                  {{ item.suffixKey }}
-                </v-avatar>
-              </v-chip>
-            </v-chip-group>
-          </v-card-text>
-        </v-card>
-        <list-metadata 
-          v-if="showMetadata"
-          :metadata="doc.meta" 
-          class="mt-4" />
       </template>
     </layout-text>
     <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
@@ -289,7 +244,6 @@ import { mdiText, mdiFormatListBulleted } from '@mdi/js'
 import LabelGroup from '@/components/tasks/textClassification/LabelGroup'
 import LabelSelect from '@/components/tasks/textClassification/LabelSelect'
 import LayoutText from '@/components/tasks/layout/LayoutText'
-import ListMetadata from '@/components/tasks/metadata/ListMetadata'
 import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
 import ToolbarArticle from '@/components/tasks/toolbar/ToolbarArticle'
@@ -310,7 +264,6 @@ export default {
     AnnotationProgress,
     EntityEditor,
     LayoutText,
-    ListMetadata,
     ToolbarLaptop,
     ToolbarMobile,
     ToolbarArticle,
@@ -386,7 +339,7 @@ export default {
     this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
     await this.setProjectData()
     await this.setDoc()
-    await this.checkHasCheckedPreviousDoc()
+    await this.setHasCheckedPreviousDoc()
     this.$nextTick(()=> {
       this.setArticleData()
       this.loadLabels()
@@ -412,37 +365,31 @@ export default {
         return this.docs.items[0]
       }
     },
+    isAffectiveAnnotation() {
+      return this.project.projectType === 'AffectiveAnnotation'
+    },
     isSingleAnnView() {
       return !!this.project?.isSingleAnnView
     },
     showFilterButton() {
-      return this.isSingleAnnView ? this.isProjectAdmin : true
+      return this.isAffectiveAnnotation ? this.isProjectAdmin : true
     },
     canEdit() {
-      return this.isSingleAnnView && this.doc.isConfirmed ? this.isProjectAdmin : true
+      return this.isAffectiveAnnotation && this.doc.isConfirmed ? this.isProjectAdmin : true
     },
     canNavigateBackward() {
       const canNavigateBackward = this.isProjectAdmin || !this.hasCheckedPreviousDoc
-      return this.isSingleAnnView ? canNavigateBackward : true
+      return this.isAffectiveAnnotation ? canNavigateBackward : true
     },
     canNavigateForward() {
       const canNavigateForward = this.isProjectAdmin ? true : this.doc.isConfirmed
-      return this.isSingleAnnView ? canNavigateForward : true
+      return this.isAffectiveAnnotation ? canNavigateForward : true
     },
     canSkipForward() {
-      return this.isSingleAnnView ? this.isProjectAdmin : true
-    },
-    showToggleButton() {
-      return !this.isSingleAnnView
+      return this.isAffectiveAnnotation ? this.isProjectAdmin : true
     },
     showAutoLabeling() {
-      return !this.isSingleAnnView
-    },
-    showMetadata() {
-      return !this.isSingleAnnView
-    },
-    showLabelTypes() {
-      return !this.isSingleAnnView
+      return !this.isAffectiveAnnotation
     },
     showArticleViewer() {
       return !this.isSingleAnnView
@@ -507,7 +454,7 @@ export default {
         return false
       }
     },
-    async checkHasCheckedPreviousDoc() {
+    async setHasCheckedPreviousDoc() {
       const query = this.$route.query.q || ''
       const isCheckedQuery = this.$route.query.isChecked || ''
       const page = parseInt(this.$route.query.page) 
@@ -753,12 +700,15 @@ export default {
       }
     },
     async confirm() {
-      this.canConfirm = this.isAllAffectiveDataAdded()
-      this.hasClickedConfirmButton = true
+      if(this.project.isSummaryMode || this.project.isOthersMode || this.project.isEmotionsMode) {
+        this.canConfirm = this.isAllAffectiveDataAdded()
+      }
+      this.hasClickedConfirmButton = this.canConfirm ? false : !this.isProjectAdmin
       if (this.canConfirm || this.isProjectAdmin) {
         await this.$services.example.confirm(this.projectId, this.doc.id)
         await this.$fetch()
         this.updateProgress()
+        this.hasClickedConfirmButton = false
       }
     },
     isAllAffectiveDataAdded() {

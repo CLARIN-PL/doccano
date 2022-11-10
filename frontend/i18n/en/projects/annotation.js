@@ -168,7 +168,10 @@ export default {
       substatement9: "Exaggeration",
       substatement10: "Uncensored words",
       substatement11: "Contrast",
-      substatement12: "Has characteristics of a joke"
+      substatement12: "Has characteristics of a joke",
+      substatement13: "absurd",
+      substatement14: "situational humor",
+      substatement15: "pathetic humor",
     }
   },
   noScaleLabels: 'No scale labels found. Please contact the administrator.'

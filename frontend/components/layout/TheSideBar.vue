@@ -73,7 +73,10 @@ export default {
 
   computed: {
     showAnnotationButton() {
-      return !this.project.isSingleAnnView
+      return !this.isAffectiveAnnotation
+    },
+    isAffectiveAnnotation() {
+      return this.project.projectType === 'AffectiveAnnotation'
     },
     filteredItems() {
       const items = [

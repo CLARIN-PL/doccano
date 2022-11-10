@@ -143,7 +143,6 @@ export default Vue.extend({
           prev: '',
           next: '',
           last: '',
-          jump: ''
         }
       }
     },

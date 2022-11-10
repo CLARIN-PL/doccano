@@ -167,7 +167,10 @@ export default {
       substatement9: "Exagération",
       substatement10: " Mots non censurés ",
       substatement11: " Contraste ",
-      substatement12: "Présente les caractéristiques d'une blague"
+      substatement12: "Présente les caractéristiques d'une blague",
+      substatement13: "absurde",
+      substatement14: "humour situationnel",
+      substatement15: "humour pathétique",
     }
   },
   noScaleLabels : "Aucune étiquette d'échelle n'a été trouvée. Veuillez contacter l'administrateur."

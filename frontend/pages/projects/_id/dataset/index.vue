@@ -5,7 +5,7 @@
         <v-col cols="12" align="right" >
           <v-btn 
             v-if="!showTableAnnButton"
-            :disabled="isProjectAdmin ? false : !hasUnannotatedItem"
+            :disabled="!enableTableAnnButton"
             color="ms-4 my-1 mb-2 primary text-capitalize" 
             @click="toLabeling">
             {{ $t('home.startAnnotation') }}
@@ -69,7 +69,7 @@
       <v-spacer />
       <v-btn 
         v-if="!showTableAnnButton"
-        :disabled="isProjectAdmin ? false : !hasUnannotatedItem"
+        :disabled="!enableTableAnnButton"
         color="ms-4 my-1 mb-2 primary text-capitalize" 
         @click="toLabeling">
         {{ $t('home.startAnnotation') }}
@@ -190,18 +190,27 @@ export default Vue.extend({
     projectId(): string {
       return this.$route.params.id
     },
+    enableTableAnnButton() : boolean {
+      return this.isProjectAdmin ? this.hasItems : (this.hasItems && this.hasUnannotatedItem)
+    },
     showTableAnnButton() : boolean {
-      return this.isArticleTask && this.isProjectAdmin && !this.project.isSingleAnnView
+      return this.isArticleTask && this.isProjectAdmin && !this.isAffectiveAnnotation
     },
     isArticleTask(): boolean {
       const articleTasks = ['ArticleAnnotation', 'AffectiveAnnotation']
       return articleTasks.includes(this.project.projectType)
+    },
+    isAffectiveAnnotation() : boolean {
+      return this.project.projectType === 'AffectiveAnnotation'
     },
     isImageTask(): boolean {
       return this.project.projectType === 'ImageClassification'
     },
     isAudioTask(): boolean {
       return this.project.projectType === 'Speech2text'
+    },
+    hasItems() : boolean {
+      return !!this.item.items.length
     },
     hasUnannotatedItem() : boolean {
       return !!this.item.items.find((item: any) => !item.isConfirmed)

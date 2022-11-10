@@ -179,7 +179,7 @@ export default Vue.extend({
       this.x = e.clientX || e.changedTouches[0].clientX
       this.y = e.clientY || e.changedTouches[0].clientY
       this.$nextTick(() => {
-        this.entityMenuOpened = true
+        this.entityMenuOpened = !this.readOnly 
       })
     },
 
