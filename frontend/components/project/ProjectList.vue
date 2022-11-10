@@ -18,7 +18,6 @@
     item-key="id"
     :show-select="showSelect"
     @input="$emit('input', $event)"
-    @update:page="updateCurrentPage"
   >
     <template #top>
       <v-text-field
@@ -91,8 +90,7 @@ export default Vue.extend({
       search: this.$route.query.q,
       options: {} as DataOptions,
       mdiMagnify,
-      projects: this.items,
-      currentPage: 1
+      projects: this.items
     }
   },
 
@@ -145,14 +143,8 @@ export default Vue.extend({
         return true
       } else {
         const firstProjectId = this.getCurrentlyAllowedProjectId()
-        if (!this.isLoading && this.currentPage === 1 && projectId === firstProjectId) {
-          return true
-        }
-        return false
+        return !this.isLoading && projectId === firstProjectId
       }
-    },
-    updateCurrentPage(newPage: number) {
-      this.currentPage = newPage
     },
     updateQuery(payload: any) {
       this.$emit('update:query', payload)

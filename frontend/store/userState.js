@@ -40,7 +40,7 @@ export const getters = {
 }
 
 export const actions = {
-  allowProjectId({ commit }, projectId) {
+  setCurrentlyAllowedProjectId({ commit }, projectId) {
     commit('setCurrentlyAllowedProjectId', projectId)
   },
   setRestingPeriod({ commit }) {

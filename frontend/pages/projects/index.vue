@@ -88,7 +88,7 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapActions('userState', ['setRestingPeriod', 'getRestingPeriod', 'allowProjectId']),
+    ...mapActions('userState', ['setRestingPeriod', 'getRestingPeriod', 'setCurrentlyAllowedProjectId']),
 
     async checkRestingPeriod() {
       const restingEndTime = await this.getRestingPeriod()
@@ -104,11 +104,11 @@ export default Vue.extend({
       try {
         if (this.$route.query.offset === '0') {
           const nextProjectIdToAnnotate = (this.projects.items.length > 0) ? this.projects.items[0].id : null
-          this.allowProjectId(nextProjectIdToAnnotate)
+          this.setCurrentlyAllowedProjectId(nextProjectIdToAnnotate)
         }
       } catch {
         console.log("error in checking project annotation order")
-        this.allowProjectId(-1)
+        this.setCurrentlyAllowedProjectId(-1)
       }
     },
 
