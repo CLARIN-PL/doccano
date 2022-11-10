@@ -136,11 +136,13 @@ export default Vue.extend({
   },
 
   methods: {
+    ...mapGetters('auth', ['isStaff']),
     ...mapGetters('userState', ['getCurrentlyAllowedProjectId']),
 
     enableProjectLink(projectId: Number) {
-      if (this.showSelect) {
-        return true // this.showSelect is true if current user is staff
+      const isStaff = this.isStaff()
+      if (isStaff) {
+        return true
       } else {
         const firstProjectId = this.getCurrentlyAllowedProjectId()
         if (!this.isLoading && this.currentPage === 1 && projectId === firstProjectId) {
