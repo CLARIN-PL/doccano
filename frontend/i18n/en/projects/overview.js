@@ -36,4 +36,5 @@ export default {
   enableOthers: 'Enable user to measure other parameters',
   articleViewMode: 'View annotation as part of an article',
   singleTextViewMode: 'View annotation as a single text',
+  combinationMode: 'Combine all annotation modes'
 }

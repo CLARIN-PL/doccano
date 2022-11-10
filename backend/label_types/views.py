@@ -93,6 +93,7 @@ class LabelUploadAPI(APIView):
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
+        print(request.data)
         if "file" not in request.data:
             raise ParseError("Empty content")
         try:
