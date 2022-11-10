@@ -37,7 +37,7 @@ import Vue from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 import ProjectList from '@/components/project/ProjectList.vue'
 import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
-import { MyProgress } from '~/domain/models/metrics/metrics'
+import { MyProgress, MyProgressList } from '~/domain/models/metrics/metrics'
 import { ProjectDTO, ProjectListDTO } from '~/services/application/project/projectData'
 import FormDelete from '~/components/project/FormDelete.vue'
 
@@ -66,7 +66,6 @@ export default Vue.extend({
 
   async fetch() {
     await this.getProjectData()
-    this.checkNextProjectIdToAnnotate()
   },
 
   computed: {
@@ -100,12 +99,12 @@ export default Vue.extend({
       }
     },
 
-    checkNextProjectIdToAnnotate() {
+    findNextProjectIdToAnnotate(progressList: MyProgressList) {
       try {
-        if (this.$route.query.offset === '0') {
-          const nextProjectIdToAnnotate = (this.projects.items.length > 0) ? this.projects.items[0].id : null
-          this.setCurrentlyAllowedProjectId(nextProjectIdToAnnotate)
-        }
+        const progresses = _.cloneDeep(progressList)
+        const progress = progresses.results.find((projectProgress: MyProgress)=> projectProgress.remaining > 0)
+        const nextProjectIdToAnnotate = progress?.project_id || -1
+        this.setCurrentlyAllowedProjectId(nextProjectIdToAnnotate)
       } catch {
         console.log("error in checking project annotation order")
         this.setCurrentlyAllowedProjectId(-1)
@@ -119,6 +118,7 @@ export default Vue.extend({
         this.projects = _.cloneDeep(projects)
       } else {
         const progresses = await this.$services.metrics.fetchMyProgresses()
+        this.findNextProjectIdToAnnotate(progresses)
         const items = projects.items.map((projectItem: ProjectDTO)=> {
             const progress = progresses.results.find((prog: MyProgress)=> prog.project_id === projectItem.id)
             projectItem.isCompleted = progress && progress.total > 0  ?  progress.remaining === 0 : true
