@@ -1,15 +1,15 @@
 <template>
   <div v-show="isLoaded">
+    <v-alert
+      :value="(!doc.id && !isAllowed)"
+      color="error"
+      dark
+      transition="scale-transition"
+    >
+      {{ $t('errors.forbiddenProject') }}
+    </v-alert>
     <layout-text v-if="doc.id" v-shortkey="shortKeysSpans" @shortkey="changeSelectedLabel">
       <template #header>
-        <v-alert
-          :value="!isAllowed"
-          color="error"
-          dark
-          transition="scale-transition"
-        >
-          Not allowed to annotate this project!
-        </v-alert>
         <v-alert
           :value="(!canConfirm && hasClickedConfirmButton)"
           color="error"
@@ -350,7 +350,7 @@ export default {
     if (this.isAllowed) {
       await this.setProjectData()
       await this.setDoc()
-      await this.checkHasCheckedPreviousDoc()
+      await this.setHasCheckedPreviousDoc()
       this.$nextTick(()=> {
         this.setArticleData()
         this.loadLabels()
