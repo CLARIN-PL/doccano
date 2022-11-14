@@ -202,8 +202,8 @@
                     />
                     <offensive-input
                       v-if="project.isOffensiveMode || project.isCombinationMode"
-                      class="mb-10"
                       v-model="hasValidEntries.isOffensiveMode"
+                      class="mb-10"
                       :show-borders="project.isCombinationMode"
                       :show-errors="hasClickedConfirmButton"
                       :project="project"
@@ -218,8 +218,8 @@
                       @remove:label="removeTag" />
                     <humor-input
                       v-if="project.isHumorMode || project.isCombinationMode"
-                      class="mb-10"
                       v-model="hasValidEntries.isHumorMode"
+                      class="mb-10"
                       :show-borders="project.isCombinationMode"
                       :show-errors="hasClickedConfirmButton"
                       :project="project"
@@ -351,7 +351,7 @@ export default {
   },
 
   async fetch() {
-    // this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
     await this.setProjectData()
     await this.setDoc()
     await this.setHasCheckedPreviousDoc()

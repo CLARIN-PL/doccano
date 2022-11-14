@@ -28,4 +28,5 @@ export default {
   enableOthers: '使用户能够测量其他参数', 
   articleViewMode: '查看注释作为文章的一部分',
   singleTextViewMode: '查看注释为单个文本',
+  combinationMode: '结合所有注释模式'
 }

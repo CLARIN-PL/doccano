@@ -34,4 +34,5 @@ export default {
   enableOthers: "Permet à l'utilisateur de mesurer d'autres paramètres",
   articleViewMode: "Afficher l'annotation dans le cadre d'un article",
   singleTextViewMode: "Afficher l'annotation comme un seul texte",
+  combinationMode: "Combiner tous les modes d'annotation"
 }
