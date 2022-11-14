@@ -1,5 +1,6 @@
 <template>
-    <v-container class="humor-input widget">
+    <v-container class="humor-input widget" 
+        :class="{'--has-error': !value && showErrors, '--bordered': showBorders }">
         <v-row >
             <v-col v-if="scaleTypes.length && hasProperScaleTypes">
                 <h3 class="widget__title">{{ $t('annotation.humor.question')}}</h3>
@@ -163,6 +164,14 @@ export default Vue.extend({
         default: () => {}
     },
     readOnly: {
+        type: Boolean,
+        default: false
+    },
+    showErrors: {
+        type: Boolean,
+        default: false
+    },
+    showBorders: {
         type: Boolean,
         default: false
     },
@@ -444,6 +453,16 @@ export default Vue.extend({
 .humor-input {
     max-height: 400px;
     overflow-y: auto;
+
+    &.--bordered {
+        border: 2px solid #f0f0f0;
+        border-radius: 2px;  
+
+        &.--has-error {
+            border: 2px solid red;
+        }
+    }
+
 }
 
 .widget {

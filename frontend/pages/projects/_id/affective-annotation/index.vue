@@ -146,6 +146,7 @@
                 <div v-if="isScaleImported" class="pa-4">
                   <summary-input
                       v-if="project.isSummaryMode || project.isCombinationMode"
+                      class="mb-10"
                       :text="doc.text"
                       :tags="affectiveSummaryTags"
                       :impressions="affectiveSummaryImpressions"
@@ -159,6 +160,7 @@
                     />
                     <emotions-input
                       v-if="project.isEmotionsMode || project.isCombinationMode"
+                      class="mb-10"
                       :read-only="!canEdit"
                       :general-positivity="affectiveScalesValues.positive"
                       :general-negativity="affectiveScalesValues.negative"
@@ -176,6 +178,7 @@
                     />
                     <others-input
                       v-if="project.isOthersMode || project.isCombinationMode"
+                      class="mb-10"
                       :read-only="!canEdit"
                       :ironic="affectiveScalesValues.ironic"
                       :embarrassing="affectiveScalesValues.embarrassing"
@@ -199,7 +202,10 @@
                     />
                     <offensive-input
                       v-if="project.isOffensiveMode || project.isCombinationMode"
-                      v-model="canConfirm"
+                      class="mb-10"
+                      v-model="hasValidEntries.isOffensiveMode"
+                      :show-borders="project.isCombinationMode"
+                      :show-errors="hasClickedConfirmButton"
                       :project="project"
                       :doc="doc"
                       :scale-types="scaleTypes"
@@ -212,7 +218,10 @@
                       @remove:label="removeTag" />
                     <humor-input
                       v-if="project.isHumorMode || project.isCombinationMode"
-                      v-model="canConfirm"
+                      class="mb-10"
+                      v-model="hasValidEntries.isHumorMode"
+                      :show-borders="project.isCombinationMode"
+                      :show-errors="hasClickedConfirmButton"
                       :project="project"
                       :doc="doc"
                       :scale-types="scaleTypes"
@@ -330,13 +339,19 @@ export default {
       showRestingMessage: false,
       restingEndTime: new Date(),
       hasCheckedPreviousDoc: false,
-      canConfirm: false,
+      hasValidEntries: {
+        isSummaryMode: false,
+        isHumorMode: false,
+        isOffensiveMode: false,
+        isEmotionsMode: false,
+        isOthersMode: false
+      },
       hasClickedConfirmButton: false
     }
   },
 
   async fetch() {
-    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+    // this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
     await this.setProjectData()
     await this.setDoc()
     await this.setHasCheckedPreviousDoc()
@@ -393,6 +408,23 @@ export default {
     },
     showArticleViewer() {
       return !this.isSingleAnnView
+    },
+    canConfirm() {
+      let canConfirm = false
+      if(this.project.isCombinationMode) {
+        canConfirm = Object.values(this.hasValidEntries).every((value)=> value === true)
+      } else if(this.project.isSummaryMode) {
+        canConfirm = this.hasValidEntries.isSummaryMode
+      } else if(this.project.isEmotionsMode) {
+        canConfirm = this.hasValidEntries.isEmotionsMode
+      } else if(this.project.isOthersMode) {
+        canConfirm = this.hasValidEntries.isOthersMode
+      } else if(this.project.isHumorMode) {
+        canConfirm = this.hasValidEntries.isHumorMode
+      } else if(project.isOffensiveMode) {
+        canConfirm = this.hasValidEntries.isOffensiveMode
+      } 
+      return canConfirm
     },
     selectedLabel() {
       if (Number.isInteger(this.selectedLabelIndex)) {
@@ -701,10 +733,17 @@ export default {
     },
     async confirm() {
       if(this.project.isCombinationMode) {
-        this.canConfirm = this.canConfirm && this.isAllAffectiveDataAdded()
-      } else if(this.project.isSummaryMode || this.project.isOthersMode || this.project.isEmotionsMode) {
-        this.canConfirm = this.isAllAffectiveDataAdded()
-      }
+        // should be refactored
+        this.hasValidEntries.isSummaryMode = this.isAllAffectiveDataAdded()
+        this.hasValidEntries.isOthersMode = this.isAllAffectiveDataAdded()
+        this.hasValidEntries.isEmotionsMode = this.isAllAffectiveDataAdded()
+      } else if(this.project.isSummaryMode) {
+        this.hasValidEntries.isSummaryMode = this.isAllAffectiveDataAdded()
+      } else if(this.project.isOthersMode) {
+        this.hasValidEntries.isOthersMode = this.isAllAffectiveDataAdded()
+      } else if(this.project.isEmotionsMode) {
+        this.hasValidEntries.isEmotionsMode = this.isAllAffectiveDataAdded()
+      } 
       this.hasClickedConfirmButton = this.canConfirm ? false : !this.isProjectAdmin
       if (this.canConfirm || this.isProjectAdmin) {
         await this.$services.example.confirm(this.projectId, this.doc.id)
@@ -729,7 +768,6 @@ export default {
       return true
     },
     onConfirmationAlertClose() {
-      this.canConfirm = false
       this.hasClickedConfirmButton = false
     },
     changeSelectedLabel(event) {
