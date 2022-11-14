@@ -1,13 +1,5 @@
 <template>
   <div v-show="isLoaded">
-    <v-alert
-      :value="(!doc.id && !isAllowed)"
-      color="error"
-      dark
-      transition="scale-transition"
-    >
-      {{ $t('errors.forbiddenProject') }}
-    </v-alert>
     <layout-text v-if="doc.id" v-shortkey="shortKeysSpans" @shortkey="changeSelectedLabel">
       <template #header>
         <v-alert
@@ -339,23 +331,19 @@ export default {
       restingEndTime: new Date(),
       hasCheckedPreviousDoc: false,
       canConfirm: false,
-      hasClickedConfirmButton: false,
-      isAllowed: true
+      hasClickedConfirmButton: false
     }
   },
 
   async fetch() {
     this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
-    this.isAllowed = this.isAllowedToAnnotate()
-    if (this.isAllowed) {
-      await this.setProjectData()
-      await this.setDoc()
-      await this.setHasCheckedPreviousDoc()
-      this.$nextTick(()=> {
-        this.setArticleData()
-        this.loadLabels()
-      })
-    }
+    await this.setProjectData()
+    await this.setDoc()
+    await this.setHasCheckedPreviousDoc()
+    this.$nextTick(()=> {
+      this.setArticleData()
+      this.loadLabels()
+    })
   },
 
   computed: {
@@ -453,17 +441,8 @@ export default {
   },
 
   methods: {
-    ...mapGetters('user', ['getCurrentlyAllowedProjectId']),
     ...mapActions('user', ['setRestingPeriod', 'getRestingPeriod']),
 
-    isAllowedToAnnotate() {
-      if (this.isProjectAdmin) {
-        return true
-      } else {
-        const currentlyAllowedProjectId = this.getCurrentlyAllowedProjectId()
-        return this.projectId === currentlyAllowedProjectId.toString()
-      }
-    },
     async checkRestingPeriod() {
       const restingEndTime = await this.getRestingPeriod()
       if (restingEndTime === null) {
