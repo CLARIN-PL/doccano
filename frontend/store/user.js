@@ -63,7 +63,7 @@ export const actions = {
     const restingUserId = getters.getRestingUserId
 
     if (restingUserId !== null && currentUserId === restingUserId) {
-      return moment(restingEndTime, 'ddd, DD-MM-YYYY HH:mm:ss').toDate()
+      return restingEndTime
     }
     return null
   },
