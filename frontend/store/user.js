@@ -35,7 +35,10 @@ export const getters = {
     return state.restingUserId
   },
   getRestingEndTime(state) {
-    return state.restingEndTime
+    if (state.restingEndTime !== null) {
+      return moment(state.restingEndTime, 'ddd, DD-MM-YYYY HH:mm:ss').toDate()
+    }
+    return null
   }
 }
 
