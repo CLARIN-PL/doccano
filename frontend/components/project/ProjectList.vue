@@ -135,7 +135,7 @@ export default Vue.extend({
 
   methods: {
     ...mapGetters('auth', ['isStaff']),
-    ...mapGetters('userState', ['getCurrentlyAllowedProjectId']),
+    ...mapGetters('user', ['getCurrentlyAllowedProjectId']),
 
     enableProjectLink(projectId: Number) {
       const isStaff = this.isStaff()

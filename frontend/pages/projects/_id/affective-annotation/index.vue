@@ -453,8 +453,8 @@ export default {
   },
 
   methods: {
-    ...mapGetters('userState', ['getCurrentlyAllowedProjectId']),
-    ...mapActions('userState', ['setRestingPeriod', 'getRestingPeriod']),
+    ...mapGetters('user', ['getCurrentlyAllowedProjectId']),
+    ...mapActions('user', ['setRestingPeriod', 'getRestingPeriod']),
 
     isAllowedToAnnotate() {
       if (this.isProjectAdmin) {
