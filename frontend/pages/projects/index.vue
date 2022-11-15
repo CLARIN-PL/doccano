@@ -101,12 +101,10 @@ export default Vue.extend({
 
     findNextProjectIdToAnnotate(progressList: MyProgressList) {
       try {
-        const progresses = _.cloneDeep(progressList)
-        const progress = progresses.results.find((projectProgress: MyProgress)=> projectProgress.remaining > 0)
+        const progress = progressList.results.find((projectProgress: MyProgress)=> projectProgress.remaining > 0)
         const nextProjectIdToAnnotate = progress?.project_id || -1
         this.setCurrentlyAllowedProjectId(nextProjectIdToAnnotate)
       } catch {
-        console.log("error in checking project annotation order")
         this.setCurrentlyAllowedProjectId(-1)
       }
     },

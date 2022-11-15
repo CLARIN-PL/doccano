@@ -89,8 +89,7 @@ export default Vue.extend({
     return {
       search: this.$route.query.q,
       options: {} as DataOptions,
-      mdiMagnify,
-      projects: this.items
+      mdiMagnify
     }
   },
 
