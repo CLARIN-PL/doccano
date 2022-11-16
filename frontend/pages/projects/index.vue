@@ -37,7 +37,7 @@ import Vue from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 import ProjectList from '@/components/project/ProjectList.vue'
 import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
-import { MyProgress } from '~/domain/models/metrics/metrics'
+import { MyProgress, MyProgressList } from '~/domain/models/metrics/metrics'
 import { ProjectDTO, ProjectListDTO } from '~/services/application/project/projectData'
 import FormDelete from '~/components/project/FormDelete.vue'
 
@@ -87,15 +87,25 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapActions('auth', ['setRestingPeriod', 'getRestingPeriod']),
+    ...mapActions('user', ['setRestingPeriod', 'calculateRestingPeriod', 'setCurrentlyAllowedProjectId']),
 
     async checkRestingPeriod() {
-      const restingEndTime = await this.getRestingPeriod()
+      const restingEndTime = await this.calculateRestingPeriod()
       if (restingEndTime === null) {
         this.showRestingMessage = false
       } else {
         this.showRestingMessage = !this.isStaff
         this.restingEndTime = restingEndTime
+      }
+    },
+
+    findNextProjectIdToAnnotate(progressList: MyProgressList) {
+      try {
+        const progress = progressList.results.find((projectProgress: MyProgress)=> projectProgress.remaining > 0)
+        const nextProjectIdToAnnotate = progress?.project_id || -1
+        this.setCurrentlyAllowedProjectId(nextProjectIdToAnnotate)
+      } catch {
+        this.setCurrentlyAllowedProjectId(-1)
       }
     },
 
@@ -106,6 +116,7 @@ export default Vue.extend({
         this.projects = _.cloneDeep(projects)
       } else {
         const progresses = await this.$services.metrics.fetchMyProgresses()
+        this.findNextProjectIdToAnnotate(progresses)
         const items = projects.items.map((projectItem: ProjectDTO)=> {
             const progress = progresses.results.find((prog: MyProgress)=> prog.project_id === projectItem.id)
             projectItem.isCompleted = progress && progress.total > 0  ?  progress.remaining === 0 : true

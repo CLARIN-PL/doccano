@@ -30,9 +30,10 @@
       />
     </template>
     <template #[`item.name`]="{ item }">
-      <nuxt-link :to="localePath(`/projects/${item.id}`)">
+      <nuxt-link v-if="enableProjectLink(item.id)" :to="localePath(`/projects/${item.id}`)">
         <span>{{ item.name }}</span>
       </nuxt-link>
+      <span v-else>{{ item.name }}</span>
     </template>
     <template #[`item.updatedAt`]="{ item }">
       <span>{{
@@ -47,6 +48,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
+import { mapGetters } from 'vuex'
 import { mdiMagnify } from '@mdi/js'
 import { DataOptions } from 'vuetify/types'
 import VueFilterDateFormat from '@vuejs-community/vue-filter-date-format'
@@ -131,6 +133,18 @@ export default Vue.extend({
   },
 
   methods: {
+    ...mapGetters('auth', ['isStaff']),
+    ...mapGetters('user', ['getCurrentlyAllowedProjectId']),
+
+    enableProjectLink(projectId: Number) {
+      const isStaff = this.isStaff()
+      if (isStaff) {
+        return true
+      } else {
+        const firstProjectId = this.getCurrentlyAllowedProjectId()
+        return !this.isLoading && projectId === firstProjectId
+      }
+    },
     updateQuery(payload: any) {
       this.$emit('update:query', payload)
     }
