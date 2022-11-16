@@ -51,18 +51,18 @@ export const actions = {
     const endTime = moment(startTime).add(5, 'm').format('ddd, DD-MM-YYYY HH:mm:ss')
     commit('setRestingPeriod', endTime)
   },
-  getRestingPeriod({ commit, getters }) {
+  calculateRestingPeriod({ commit, getters }) {
     const currentTime = new Date()
     const restingEndTime = getters.getRestingEndTime
+    const currentUserId = getters.getUserId
+    const restingUserId = getters.getRestingUserId
+    let isRestingPeriodCleared = false
 
     if (currentTime >= restingEndTime) {
       commit('clearRestingPeriod')
+      isRestingPeriodCleared = true
     }
-
-    const currentUserId = getters.getUserId
-    const restingUserId = getters.getRestingUserId
-
-    if (restingUserId !== null && currentUserId === restingUserId) {
+    if (restingUserId !== null && currentUserId === restingUserId && !isRestingPeriodCleared) {
       return restingEndTime
     }
     return null

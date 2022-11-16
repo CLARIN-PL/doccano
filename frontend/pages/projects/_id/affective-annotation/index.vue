@@ -441,10 +441,10 @@ export default {
   },
 
   methods: {
-    ...mapActions('user', ['setRestingPeriod', 'getRestingPeriod']),
+    ...mapActions('user', ['setRestingPeriod', 'calculateRestingPeriod']),
 
     async checkRestingPeriod() {
-      const restingEndTime = await this.getRestingPeriod()
+      const restingEndTime = await this.calculateRestingPeriod()
       if (restingEndTime === null) {
         this.showRestingMessage = false
         return true

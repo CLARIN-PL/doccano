@@ -87,10 +87,10 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapActions('user', ['setRestingPeriod', 'getRestingPeriod', 'setCurrentlyAllowedProjectId']),
+    ...mapActions('user', ['setRestingPeriod', 'calculateRestingPeriod', 'setCurrentlyAllowedProjectId']),
 
     async checkRestingPeriod() {
-      const restingEndTime = await this.getRestingPeriod()
+      const restingEndTime = await this.calculateRestingPeriod()
       if (restingEndTime === null) {
         this.showRestingMessage = false
       } else {
