@@ -532,6 +532,9 @@ export default {
         affectiveScaleLabelsJSON = EmotionsScales
       } else if (this.project.isOthersMode) {
         affectiveScaleLabelsJSON = OthersScales
+      } else if (this.project.isCombinationMode) {
+        affectiveScaleLabelsJSON.push(...EmotionsScales)
+        affectiveScaleLabelsJSON.push(...OthersScales)
       }
       const affectiveScalesDict = {}
       affectiveScaleLabelsJSON.forEach(function(item) {
@@ -764,6 +767,24 @@ export default {
           _.keys(this.affectiveScalesDict).length === _.keys(this.affectiveScalesValues).length &&
           this.affectiveOthersWishToAuthor.length > 0
         )
+      }
+      if (this.project.isCombinationMode) {
+        const affectiveEmotionsDict = Object.fromEntries(
+          Object.entries(this.affectiveScalesDict).map(([k, v]) => [v, k])
+        )
+        const keysMustExist = _.keys(this.affectiveScalesDict)
+        const keysAnswered = []
+        _.keys(this.affectiveScalesValues).forEach((key) => {
+          if (key !== "undefined") {
+            keysAnswered.push(affectiveEmotionsDict[key])
+          }
+        })
+        const output = (
+          keysMustExist.sort().join(',') === keysAnswered.sort().join(',') &&
+          this.affectiveSummaryTags.length >= 2 && this.affectiveSummaryImpressions.length >= 2 &&
+          this.affectiveOthersWishToAuthor.length > 0
+        )
+        return output
       }
       return true
     },
