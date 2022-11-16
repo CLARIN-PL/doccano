@@ -17,7 +17,6 @@ from labels.models import Span as SpanModel
 from labels.models import TextLabel as TextModel
 from projects.models import DOCUMENT_CLASSIFICATION, SEQ2SEQ, SEQUENCE_LABELING
 from projects.tests.utils import prepare_project
-from questions.models import Question
 
 
 class TestLabel(TestCase):
