@@ -8,10 +8,3 @@ class Migration(migrations.Migration):
     dependencies = [
         ('labels', '0020_alter_textlabel_question'),
     ]
-
-    operations = [
-        migrations.RemoveField(
-            model_name='category',
-            name='question',
-        ),
-    ]

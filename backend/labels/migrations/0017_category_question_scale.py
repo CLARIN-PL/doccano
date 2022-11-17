@@ -9,7 +9,6 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('questions', '0002_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('examples', '0014_alter_example_article_id'),
         ('label_types', '0008_scaletype_scaletype_label_types_scaletype_is_unique'),
@@ -17,11 +16,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='category',
-            name='question',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='questions.question'),
-        ),
         migrations.CreateModel(
             name='Scale',
             fields=[
@@ -33,7 +27,6 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('example', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='scales', to='examples.example')),
                 ('label', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='label_types.scaletype')),
-                ('question', models.ForeignKey(default=19, on_delete=django.db.models.deletion.CASCADE, to='questions.question')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={

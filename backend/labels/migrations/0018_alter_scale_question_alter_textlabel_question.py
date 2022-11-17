@@ -7,19 +7,5 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('questions', '0002_initial'),
         ('labels', '0017_category_question_scale'),
-    ]
-
-    operations = [
-        migrations.AlterField(
-            model_name='scale',
-            name='question',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='questions.question'),
-        ),
-        migrations.AlterField(
-            model_name='textlabel',
-            name='question',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='questions.question'),
-        ),
     ]
