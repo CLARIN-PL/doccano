@@ -733,7 +733,6 @@ export default {
     },
     async confirm() {
       if(this.project.isCombinationMode) {
-        // should be refactored
         this.hasValidEntries.isSummaryMode = this.isAllAffectiveDataAdded()
         this.hasValidEntries.isOthersMode = this.isAllAffectiveDataAdded()
         this.hasValidEntries.isEmotionsMode = this.isAllAffectiveDataAdded()

@@ -455,7 +455,7 @@ export default Vue.extend({
     overflow-y: auto;
 
     &.--bordered {
-        border: 2px solid #f0f0f0;
+        border: 2px solid #ddd;
         border-radius: 2px;  
 
         &.--has-error {
