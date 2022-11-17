@@ -49,7 +49,7 @@ export default Vue.extend({
   },
   layout: 'projects',
 
-  middleware: ['check-auth', 'auth'],
+  middleware: ['check-auth', 'auth', 'check-questionnaire'],
 
   data() {
     return {

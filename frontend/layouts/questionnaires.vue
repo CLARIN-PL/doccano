@@ -6,10 +6,6 @@
       </template>
     </the-header>
 
-    <v-navigation-drawer v-model="drawerLeft" app clipped color="">
-      <the-side-bar :link="getLink" :is-project-admin="isProjectAdmin" :project="currentProject" />
-    </v-navigation-drawer>
-
     <v-main>
       <v-container fluid fill-height>
         <v-layout justify-center>
@@ -24,12 +20,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import TheSideBar from '~/components/layout/TheSideBar'
 import TheHeader from '~/components/layout/TheHeader'
 
 export default {
   components: {
-    TheSideBar,
     TheHeader
   },
   middleware: ['check-auth', 'auth', 'check-admin', 'check-questionnaire'],
