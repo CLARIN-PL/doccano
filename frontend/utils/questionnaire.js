@@ -1,0 +1,196 @@
+import moment from 'moment'
+import _ from 'lodash'
+
+/*
+    Questionnaire types: 
+    1. Przed badaniem:
+        one time, before annotating any texts, after first sign in, 
+        user can’t annotate texts until they fill those questionnaires
+    2. Przed i po badaniu:
+        first time before annotating any texts and then second time after 2-3 months, 
+        when the annotation procedure will ultimately end
+    3. Po pierwszym tygodniu i na końcu badań:
+        first time one week after the beginning of the annotation procedure 
+        and second time after 2-3 months, 
+        when the annotation procedure will ultimately end
+    4. Codziennie w trakcie badania: 
+        every day and depending on the additional clarification word
+            xiii) Sen (rano) (before annotating any texts during the current day)
+            xiv) Stres (rano) (before annotating any texts during the current day)
+            xv) Stres (wieczorem) (after annotating all of the texts for the current day)
+            xvi) Zdrowie (wieczorem) (after annotating all of the texts for the current day)
+            xvii) Emocje (w przerwie) (between annotating batches (packs) of 20 texts, multiple times during the day)
+    5. Ankieta na koniec badania
+    6. Ankieta po 2 tygodniach badania
+*/ 
+
+const RESEARCH_TIME_IN_MONTHS = 3
+const TEXT_BATCH_COUNT = 20
+const DATE_FORMAT = "DD-MM-YYYY HH:mm:ss"
+export const questionnaires = [
+    {
+        id: "1",
+        name: "Przed badaniem",
+        key: "przed_badaniem",
+        types: [
+            {
+                id: "1.1",
+                name: "Przed badaniem",
+            }
+        ]
+    },
+    {
+        id: "2",
+        name: "Przed i po badaniu",
+        key: "przed_i_po_badaniu",
+        types: [
+            {
+                id: "2.1",
+                name: "Przed badaniem",
+            },
+            {
+                id: "2.2",
+                name: "Po badaniu",
+            }
+        ]
+    },
+    {
+        id: "3",
+        name: "Po pierwszym tygodniu i na końcu badań",
+        key: "po_1_tygodniu_i_na_koncu",
+        types: [
+            {
+                id: "3.1",
+                name: "Po pierwszym tygodniu",
+            },
+            {
+                id: "3.2",
+                name: "Na końcu badań"
+            }
+        ]
+    }, 
+    {
+        id: "4",
+        name: "Codziennie w trakcie badania",
+        key: "codziennie_w_trakcie",
+        types: [
+            {
+                id: "4.1",
+                name: "Sen (rano)"
+            },
+            {
+                id: "4.2",
+                name: "Stres (rano)"
+            },
+            {
+                id: "4.3",
+                name: "Stres (wieczorem)"
+            },
+            {
+                id: "4.4",
+                name: "Zdrowie (wieczorem)"
+            },
+            {
+                id: "4.5",
+                name: "Emocje (w przerwie)",
+            }
+        ]
+    },
+    {
+        id: "5",
+        name: "Ankieta na koniec badania",
+        key: "na_koniec",
+        types: [
+            {
+                id: "5.1",
+                name: "Ankieta na koniec badania",
+            }
+        ]
+    },
+    {
+        id: "6",
+        name: "Ankieta po 2 tygodniach badania",
+        key: "po_2_tygodniach",
+        types: [
+            {
+                id: "6.1",
+                name: "Ankieta po 2 tygodniach badania",
+            }
+        ]
+    }
+]
+
+export function hasStore() {
+    return !!window.$nuxt && !!window.$nuxt.$store
+}
+
+export function getQuestionnairesToShow() {
+    const questionnaireTypes =  _.flatMap(questionnaires, 'types')
+    const todayTime = new Date()
+    let getters = null
+    let toShow = []
+    if(hasStore()) {
+        getters = window.$nuxt.$store.getters
+        toShow = getters['user/getQuestionnaire'].toShow || []
+    }
+    try {
+        if(getters) {
+            questionnaireTypes.forEach((questionnaireType) => {
+            const isFilled = getters['user/getQuestionnaire'].filled.includes(questionnaireType.id)
+            const monthDiff = moment(getters['user/getFirstLoginTime'], DATE_FORMAT)
+                                .diff(moment(todayTime), 'months')
+            const hasPassedResearchTime = monthDiff >= RESEARCH_TIME_IN_MONTHS
+            let isShowing = false
+            if(questionnaireType.id === '1.1') {
+                const hourDiff = moment(getters['user/getFirstLoginTime'], DATE_FORMAT)
+                                    .diff(moment(todayTime), 'hours')
+                const isFirstSignIn = hourDiff < 1
+                isShowing = !isFilled && isFirstSignIn
+            } else if(questionnaireType.id === "2.1") {
+                isShowing = !isFilled && !getters['user/getHasAnnotated']
+            } else if(questionnaireType.id === "2.2") {
+                isShowing = !isFilled 
+                            && getters['user/getHasFinishedAllProjects'] 
+                            && hasPassedResearchTime
+            } else if(questionnaireType.id === "3.1") {
+                const weekDiff = moment(getters['user/getFirstLoginTime'], DATE_FORMAT)
+                                .diff(moment(todayTime), 'weeks')
+                const hasPassedOneWeek = weekDiff >= 1
+                isShowing = !isFilled && hasPassedOneWeek && getters['user/getHasAnnotated']
+            } else if(questionnaireType.id === "3.2") {
+                isShowing = !isFilled && hasPassedResearchTime && getters['user/getHasAnnotated']
+            } else if(questionnaireType.id === "4.1") {
+                isShowing = !isFilled && !getters['user/getHasAnnotatedToday']
+            } else if(questionnaireType.id === "4.2") {
+                isShowing = !isFilled && !getters['user/getHasAnnotatedToday']
+            } else if(questionnaireType.id === "4.3") {
+                isShowing = !isFilled && getters['user/getHasFinishedAllProjects']
+            } else if(questionnaireType.id === "4.4") {
+                isShowing = !isFilled && getters['user/getHasFinishedAllProjects']
+            } else if(questionnaireType.id === "4.5") {
+                const hasAnnotatedBatch = getters['user/getAnnotatedTextCount'] > 0 
+                                        && getters['user/getAnnotatedTextCount']%TEXT_BATCH_COUNT === 0
+                isShowing = !isFilled && hasAnnotatedBatch
+            } else if(questionnaireType.id === "5.1") {
+                isShowing = !isFilled 
+                            && getters['user/getHasFinishedAllProjects'] 
+                            && hasPassedResearchTime
+            } else if(questionnaireType.id === "6.1") {
+                const weekDiff = moment(getters['user/getFirstLoginTime'], DATE_FORMAT)
+                                .diff(moment(todayTime), 'weeks')
+                const hasPassedTwoWeeks = weekDiff >= 2
+                isShowing = !isFilled && hasPassedTwoWeeks
+            }
+
+            if(isShowing && !toShow.includes(questionnaireType.id)) {
+                toShow = toShow.concat(questionnaireType.id)
+            }
+            })
+        }
+    }
+    catch(error) {
+        console.error(error)
+    }
+    return toShow
+}
+

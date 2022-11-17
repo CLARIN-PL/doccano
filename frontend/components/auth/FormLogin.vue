@@ -37,7 +37,9 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import moment from 'moment'
 import { mdiAccount, mdiLock } from '@mdi/js'
+import { mapGetters, mapActions } from 'vuex'
 import { userNameRules, passwordRules } from '@/rules/index'
 import BaseCard from '@/components/utils/BaseCard.vue'
 
@@ -66,12 +68,30 @@ export default Vue.extend({
   },
 
   methods: {
+    ...mapGetters('user', ['getFirstLoginTime']),
+    ...mapActions('user', ['setFirstLoginTime', 'setIsFirstLogin', 'checkQuestionnaire']),
+    setUserData() {
+      try {
+        const loginTime = moment().format('DD-MM-YYYY HH:mm:ss')
+        if(!this.getFirstLoginTime) {         
+          this.setFirstLoginTime(loginTime)
+          this.setIsFirstLogin(true)
+        } else {
+          this.setIsFirstLogin(false)
+        }
+        this.checkQuestionnaire()
+      }
+      catch(error) {
+        console.error(error)
+      }
+    },
     async tryLogin() {
       try {
         await this.login({
           username: this.username,
           password: this.password
         })
+        this.setUserData()
         this.$router.push(this.localePath('/projects'))
       } catch {
         this.showError = true

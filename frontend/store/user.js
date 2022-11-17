@@ -1,10 +1,25 @@
 import moment from 'moment'
+import { 
+  hasStore, 
+  getQuestionnairesToShow } 
+from "@/utils/questionnaire"
 
 export const state = () => ({
   id: null,
   currentlyAllowedProjectId: -1,
   restingUserId: null,
-  restingEndTime: null
+  restingEndTime: null,
+  firstLoginTime: "",
+  lastAnnotationTime: "",
+  isFirstLogin: false,
+  hasAnnotated: false,
+  hasAnnotatedToday: false,
+  hasFinishedAllProjects: false,
+  annotatedTextCount: 0,
+  questionnaire: {
+    filled: [],
+    toShow: []
+  }
 })
 
 export const mutations = {
@@ -21,12 +36,39 @@ export const mutations = {
   clearRestingPeriod(state) {
     state.restingUserId = null
     state.restingEndTime = null
+  },
+  setAnnotatedTextCount(state, annotatedTextCount) {
+    state.annotatedTextCount = annotatedTextCount
+  },
+  setHasFinishedAllProjects(state, hasFinishedAllProjects) {
+    state.hasFinishedAllProjects = hasFinishedAllProjects
+  },
+  setFirstLoginTime(state, firstLoginTime) {
+    state.firstLoginTime = firstLoginTime
+  },
+  setLastAnnotationTime(state, lastAnnotationTime) {
+    state.lastAnnotationTime = lastAnnotationTime
+  },
+  setHasAnnotated(state, hasAnnotated) {
+    state.hasAnnotated = hasAnnotated
+  },
+  setHasAnnotatedToday(state, hasAnnotatedToday) {
+    state.hasAnnotatedToday = hasAnnotatedToday
+  },
+  setIsFirstLogin(state, isFirstLogin) {
+    state.isFirstLogin = isFirstLogin
+  },
+  setQuestionnaire(state, questionnaire) {
+    state.questionnaire = {...state.questionnaire, ...questionnaire}
   }
 }
 
 export const getters = {
   getUserId(state) {
     return state.id
+  },
+  getAnnotatedTextCount(state) {
+    return state.annotatedTextCount
   },
   getCurrentlyAllowedProjectId(state) {
     return state.currentlyAllowedProjectId
@@ -39,6 +81,27 @@ export const getters = {
       return moment(state.restingEndTime, 'DD-MM-YYYY HH:mm:ss').toDate()
     }
     return null
+  },
+  getHasFinishedAllProjects(state) {
+    return state.hasFinishedAllProjects
+  },
+  getFirstLoginTime(state) {
+    return state.firstLoginTime
+  },
+  getIsFirstLogin(state) {
+    return state.isFirstLogin
+  },
+  getLastAnnotationTime(state) {
+    return state.lastAnnotationTime
+  },
+  getQuestionnaire(state) {
+    return state.questionnaire
+  },
+  getHasAnnotated(state) {
+    return state.hasAnnotated
+  },
+  getHasAnnotatedToday(state) {
+    return state.hasAnnotatedToday
   }
 }
 
@@ -46,10 +109,40 @@ export const actions = {
   setCurrentlyAllowedProjectId({ commit }, projectId) {
     commit('setCurrentlyAllowedProjectId', projectId)
   },
+  setHasFinishedAllProjects({ commit }, hasFinishedAllProjects) {
+    commit('setHasFinishedAllProjects', hasFinishedAllProjects)
+  },
+  setFirstLoginTime({ commit }, firstLoginTime) {
+    commit('setFirstLoginTime', firstLoginTime)
+  },
+  setAnnotatedTextCount({ commit }, annotatedTextCount) {
+    commit('setAnnotatedTextCount', annotatedTextCount)
+  },
+  setIsFirstLogin({ commit }, isFirstLogin) {
+    commit('setIsFirstLogin', isFirstLogin)
+  },
+  setHasAnnotated({commit}, hasAnnotated) {
+    commit('setHasAnnotated', hasAnnotated)
+  },
+  setLastAnnotationTime({commit}, lastAnnotationTime) {
+    commit('setLastAnnotationTime', lastAnnotationTime)
+  },
+  setHasAnnotatedToday({commit}, hasAnnotatedToday) {
+    commit('setHasAnnotatedToday', hasAnnotatedToday)
+  },
+  setQuestionnaire({ commit }, questionnaire) {
+    commit('setQuestionnaire', questionnaire)
+  },
   setRestingPeriod({ commit }) {
     const startTime = new Date()
     const endTime = moment(startTime).add(5, 'm').format('DD-MM-YYYY HH:mm:ss')
     commit('setRestingPeriod', endTime)
+  },
+  checkQuestionnaire({commit}) {
+    if(hasStore()) {
+      const toShow = getQuestionnairesToShow()
+      commit('setQuestionnaire', { toShow })
+    }
   },
   calculateRestingPeriod({ commit, getters }) {
     const currentTime = new Date()
