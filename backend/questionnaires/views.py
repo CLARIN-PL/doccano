@@ -29,7 +29,6 @@ class QuestionListAPI(generics.ListAPIView):
     model = Question
     
     def get_queryset(self):
-        print(self.kwargs)
         queryset = self.model.objects.filter(questionnaire=self.kwargs["questionnaire_id"])
         return queryset
 
