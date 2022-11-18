@@ -36,4 +36,5 @@ export default {
   enableOthers: 'Ermöglicht dem Benutzer die Messung anderer Parameter',
   articleViewMode: 'Anmerkung als Teil eines Artikels anzeigen',
   singleTextViewMode: 'Anmerkung als einzelnen Text anzeigen',
+  combinationMode: 'Alle Anmerkungsmodi kombinieren'
 }

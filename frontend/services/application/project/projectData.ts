@@ -29,6 +29,7 @@ export class ProjectDTO {
   affectiveProjectMode?: string
   isSingleAnnView: boolean
   isCompleted?: boolean
+  isCombinationMode: boolean
 
   constructor(item: ProjectReadItem) {
     this.id = item.id
@@ -57,6 +58,7 @@ export class ProjectDTO {
     this.isOffensiveMode = item.isOffensiveMode
     this.isEmotionsMode = item.isEmotionsMode
     this.isSingleAnnView = item.isSingleAnnView
+    this.isCombinationMode = item.isCombinationMode
   }
 }
 
@@ -81,6 +83,7 @@ export type ProjectWriteDTO = Pick<
   | 'isEmotionsMode'
   | 'isSingleAnnView'
   | 'isCompleted'
+  | 'isCombinationMode'
 > & { tags: string[] }
 
 export class ProjectListDTO {

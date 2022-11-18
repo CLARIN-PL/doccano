@@ -145,7 +145,8 @@
                 <v-divider />
                 <div v-if="isScaleImported" class="pa-4">
                   <summary-input
-                      v-if="project.isSummaryMode"
+                      v-if="project.isSummaryMode || project.isCombinationMode"
+                      class="mb-10"
                       :text="doc.text"
                       :tags="affectiveSummaryTags"
                       :impressions="affectiveSummaryImpressions"
@@ -158,7 +159,8 @@
                       @add:impression="addImpression"
                     />
                     <emotions-input
-                      v-if="project.isEmotionsMode"
+                      v-if="project.isEmotionsMode || project.isCombinationMode"
+                      class="mb-10"
                       :read-only="!canEdit"
                       :general-positivity="affectiveScalesValues.positive"
                       :general-negativity="affectiveScalesValues.negative"
@@ -175,7 +177,8 @@
                       @change="emotionsChangeHandler"
                     />
                     <others-input
-                      v-if="project.isOthersMode"
+                      v-if="project.isOthersMode || project.isCombinationMode"
+                      class="mb-10"
                       :read-only="!canEdit"
                       :ironic="affectiveScalesValues.ironic"
                       :embarrassing="affectiveScalesValues.embarrassing"
@@ -198,8 +201,11 @@
                       @restore:wishToAuthor="restoreWishToAuthor"
                     />
                     <offensive-input
-                      v-if="project.isOffensiveMode"
-                      v-model="canConfirm"
+                      v-if="project.isOffensiveMode || project.isCombinationMode"
+                      v-model="hasValidEntries.isOffensiveMode"
+                      class="mb-10"
+                      :show-borders="project.isCombinationMode"
+                      :show-errors="hasClickedConfirmButton"
                       :project="project"
                       :doc="doc"
                       :scale-types="scaleTypes"
@@ -211,8 +217,11 @@
                       @update:label="updateTag"
                       @remove:label="removeTag" />
                     <humor-input
-                      v-if="project.isHumorMode"
-                      v-model="canConfirm"
+                      v-if="project.isHumorMode || project.isCombinationMode"
+                      v-model="hasValidEntries.isHumorMode"
+                      class="mb-10"
+                      :show-borders="project.isCombinationMode"
+                      :show-errors="hasClickedConfirmButton"
                       :project="project"
                       :doc="doc"
                       :scale-types="scaleTypes"
@@ -330,7 +339,13 @@ export default {
       showRestingMessage: false,
       restingEndTime: new Date(),
       hasCheckedPreviousDoc: false,
-      canConfirm: false,
+      hasValidEntries: {
+        isSummaryMode: false,
+        isHumorMode: false,
+        isOffensiveMode: false,
+        isEmotionsMode: false,
+        isOthersMode: false
+      },
       hasClickedConfirmButton: false
     }
   },
@@ -393,6 +408,23 @@ export default {
     },
     showArticleViewer() {
       return !this.isSingleAnnView
+    },
+    canConfirm() {
+      let canConfirm = false
+      if(this.project.isCombinationMode) {
+        canConfirm = Object.values(this.hasValidEntries).every((value)=> value === true)
+      } else if(this.project.isSummaryMode) {
+        canConfirm = this.hasValidEntries.isSummaryMode
+      } else if(this.project.isEmotionsMode) {
+        canConfirm = this.hasValidEntries.isEmotionsMode
+      } else if(this.project.isOthersMode) {
+        canConfirm = this.hasValidEntries.isOthersMode
+      } else if(this.project.isHumorMode) {
+        canConfirm = this.hasValidEntries.isHumorMode
+      } else if(project.isOffensiveMode) {
+        canConfirm = this.hasValidEntries.isOffensiveMode
+      } 
+      return canConfirm
     },
     selectedLabel() {
       if (Number.isInteger(this.selectedLabelIndex)) {
@@ -500,6 +532,9 @@ export default {
         affectiveScaleLabelsJSON = EmotionsScales
       } else if (this.project.isOthersMode) {
         affectiveScaleLabelsJSON = OthersScales
+      } else if (this.project.isCombinationMode) {
+        affectiveScaleLabelsJSON.push(...EmotionsScales)
+        affectiveScaleLabelsJSON.push(...OthersScales)
       }
       const affectiveScalesDict = {}
       affectiveScaleLabelsJSON.forEach(function(item) {
@@ -700,9 +735,17 @@ export default {
       }
     },
     async confirm() {
-      if(this.project.isSummaryMode || this.project.isOthersMode || this.project.isEmotionsMode) {
-        this.canConfirm = this.isAllAffectiveDataAdded()
-      }
+      if(this.project.isCombinationMode) {
+        this.hasValidEntries.isSummaryMode = this.isAllAffectiveDataAdded()
+        this.hasValidEntries.isOthersMode = this.isAllAffectiveDataAdded()
+        this.hasValidEntries.isEmotionsMode = this.isAllAffectiveDataAdded()
+      } else if(this.project.isSummaryMode) {
+        this.hasValidEntries.isSummaryMode = this.isAllAffectiveDataAdded()
+      } else if(this.project.isOthersMode) {
+        this.hasValidEntries.isOthersMode = this.isAllAffectiveDataAdded()
+      } else if(this.project.isEmotionsMode) {
+        this.hasValidEntries.isEmotionsMode = this.isAllAffectiveDataAdded()
+      } 
       this.hasClickedConfirmButton = this.canConfirm ? false : !this.isProjectAdmin
       if (this.canConfirm || this.isProjectAdmin) {
         await this.$services.example.confirm(this.projectId, this.doc.id)
@@ -724,10 +767,27 @@ export default {
           this.affectiveOthersWishToAuthor.length > 0
         )
       }
+      if (this.project.isCombinationMode) {
+        const affectiveEmotionsDict = Object.fromEntries(
+          Object.entries(this.affectiveScalesDict).map(([k, v]) => [v, k])
+        )
+        const keysMustExist = _.keys(this.affectiveScalesDict)
+        const keysAnswered = []
+        _.keys(this.affectiveScalesValues).forEach((key) => {
+          if (key !== "undefined") {
+            keysAnswered.push(affectiveEmotionsDict[key])
+          }
+        })
+        const output = (
+          keysMustExist.sort().join(',') === keysAnswered.sort().join(',') &&
+          this.affectiveSummaryTags.length >= 2 && this.affectiveSummaryImpressions.length >= 2 &&
+          this.affectiveOthersWishToAuthor.length > 0
+        )
+        return output
+      }
       return true
     },
     onConfirmationAlertClose() {
-      this.canConfirm = false
       this.hasClickedConfirmButton = false
     },
     changeSelectedLabel(event) {

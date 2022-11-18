@@ -118,19 +118,28 @@
             />
           </v-col>
           <v-col v-if="isAffectiveAnnotationProject" col="5">
-            <p class="font-weight-bold mb-0">Mode</p>
+            <p class="font-weight-bold mb-0">Mode options</p>
             <v-radio-group 
+              :value="isCombinationMode ? '' : affectiveProjectMode"
               @change="updateValue('affectiveProjectMode', $event)"
             >
               <v-radio
                 v-for="(affectiveAnnotationOption, idx) in affectiveAnnotationOptions"
                 :key="idx"
+                :disabled="isCombinationMode"
                 :label="affectiveAnnotationOption.label"
                 :value="affectiveAnnotationOption.value"
               ></v-radio>
             </v-radio-group>
+            <p class="font-weight-bold mb-0">Mode settings</p>
+            <v-checkbox
+              :value="isCombinationMode"
+              :label="$t('overview.combinationMode')"
+              @change="updateValue('isCombinationMode', $event === true)"
+            />
             <p class="font-weight-bold mb-0">View</p>
             <v-radio-group
+              :value="isSingleAnnView"
               @change="updateValue('isSingleAnnView', $event)"
             >
               <v-radio
@@ -212,6 +221,10 @@ export default Vue.extend({
       default: ''
     },
     isSingleAnnView: {
+      type: Boolean,
+      default: false
+    },
+    isCombinationMode: {
       type: Boolean,
       default: false
     },
