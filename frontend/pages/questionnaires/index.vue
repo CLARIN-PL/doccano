@@ -1,19 +1,15 @@
 <template>
-  <div>
-    show the message 
-    <ul>
-        <li></li>
-    </ul>
+  <v-card style="margin: 100px" >
     <v-btn @click="redirect">
         go to questionnaire
     </v-btn>
-  </div>
+  </v-card>
 </template>
 
 <script lang="ts">
 
 import {mapGetters} from 'vuex'
-import {questionnaires} from "~/utils/questionnaire"
+import { qCategories } from "~/utils/questionnaires"
 
 export default {
     name: "Questionnaire",
@@ -21,13 +17,18 @@ export default {
     computed: {
         ...mapGetters('user', ['getQuestionnaire']),
     },
+    data() {
+        return {
+            qCategories
+        }
+    },
     methods: {
         redirect() {
             const { toShow } = this.getQuestionnaire
             if(toShow.length) {
                 const questionnaireId = toShow[0].split(".")[0]
-                const {key} = questionnaires.find((k)=> k.id === questionnaireId)
-                this.$router.push(`/questionnaires/${key}`)
+                const { key } = this.qCategories.find((k)=> k.id === questionnaireId)
+                this.$router.push(`/questionnaires/${key}/`)
             }
         }
     }
