@@ -59,7 +59,7 @@ export default {
     ...mapGetters('user', ['getQuestionnaire']),
     ...mapActions('user', ['setQuestionnaire']),
     toShowId() {
-      return this.getQuestionnaire.toShow.find((qToShow)=> qToShow.startsWith("1."))
+      return this.getQuestionnaire.toShow.find((qToShow)=> qToShow.startsWith("4."))
     },
     selectedQuestionnaire() {
       return this.qTypes.find((qType)=> qType.id === this.toShowId)
@@ -69,7 +69,7 @@ export default {
     finishQuestionnaire() {
         // to delete later 
         const { toShow } = this.getQuestionnaire
-        const filteredToShow = toShow.filter((ts) => ts !== '1.1')
+        const filteredToShow = toShow.filter((ts) => ts !== this.selectedQuestionnaire.id)
         this.setQuestionnaire(filteredToShow)
         if(filteredToShow.length) {
             this.$router.push("/questionnaires")

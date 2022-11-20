@@ -27,7 +27,8 @@ import _ from 'lodash'
 const RESEARCH_TIME_IN_MONTHS = 3
 const TEXT_BATCH_COUNT = 20
 const DATE_FORMAT = "DD-MM-YYYY HH:mm:ss"
-export const questionnaires = [
+
+export const qCategories = [
     {
         id: "1",
         name: "Przed badaniem",
@@ -36,6 +37,7 @@ export const questionnaires = [
             {
                 id: "1.1",
                 name: "Przed badaniem",
+                count: 3,
             }
         ]
     },
@@ -46,11 +48,13 @@ export const questionnaires = [
         types: [
             {
                 id: "2.1",
-                name: "Przed badaniem",
+                name: "Przed i po badaniu (przed badaniem)",
+                count: 8,
             },
             {
                 id: "2.2",
-                name: "Po badaniu",
+                name: "Przed i po badaniu (po badaniu)",
+                count: 8,
             }
         ]
     },
@@ -62,10 +66,12 @@ export const questionnaires = [
             {
                 id: "3.1",
                 name: "Po pierwszym tygodniu",
+                count: 1
             },
             {
                 id: "3.2",
-                name: "Na końcu badań"
+                name: "Na końcu badań",
+                count: 1
             }
         ]
     }, 
@@ -76,24 +82,19 @@ export const questionnaires = [
         types: [
             {
                 id: "4.1",
-                name: "Sen (rano)"
+                name: "Rano (sen, stres)",
+                count: 2,
             },
             {
                 id: "4.2",
-                name: "Stres (rano)"
+                name: "Wieczorem (stres, zdrowie)",
+                count: 2
             },
             {
                 id: "4.3",
-                name: "Stres (wieczorem)"
+                name: "W przerwie (emocje)",
+                count: 1
             },
-            {
-                id: "4.4",
-                name: "Zdrowie (wieczorem)"
-            },
-            {
-                id: "4.5",
-                name: "Emocje (w przerwie)",
-            }
         ]
     },
     {
@@ -104,6 +105,7 @@ export const questionnaires = [
             {
                 id: "5.1",
                 name: "Ankieta na koniec badania",
+                count: 1,
             }
         ]
     },
@@ -115,6 +117,7 @@ export const questionnaires = [
             {
                 id: "6.1",
                 name: "Ankieta po 2 tygodniach badania",
+                count: 1,
             }
         ]
     }
@@ -124,8 +127,25 @@ export function hasStore() {
     return !!window.$nuxt && !!window.$nuxt.$store
 }
 
+export function mapQuestionnaires(questionnaires) {
+    return questionnaires.map((questionnaire)=> {
+        questionnaire.segments = questionnaire.segments.map((segment)=> {
+            segment.questions = segment.questions.map((question)=> {
+                question.required = question.required === undefined ? true : question.required
+                question.options = question.options.map((option)=> {
+                    option.value = option.value === undefined ? option.text : option.value
+                    return option
+                })
+                return question
+            })
+            return segment
+        })
+        return questionnaire
+    })
+}
+
 export function getQuestionnairesToShow() {
-    const questionnaireTypes =  _.flatMap(questionnaires, 'types')
+    const qTypes =  _.flatMap(qCategories, 'types')
     const todayTime = new Date()
     let getters = null
     let toShow = []
@@ -135,7 +155,7 @@ export function getQuestionnairesToShow() {
     }
     try {
         if(getters) {
-            questionnaireTypes.forEach((questionnaireType) => {
+            qTypes.forEach((questionnaireType) => {
             const isFilled = getters['user/getQuestionnaire'].filled.includes(questionnaireType.id)
             const monthDiff = moment(getters['user/getFirstLoginTime'], DATE_FORMAT)
                                 .diff(moment(todayTime), 'months')
@@ -161,13 +181,9 @@ export function getQuestionnairesToShow() {
                 isShowing = !isFilled && hasPassedResearchTime && getters['user/getHasAnnotated']
             } else if(questionnaireType.id === "4.1") {
                 isShowing = !isFilled && !getters['user/getHasAnnotatedToday']
-            } else if(questionnaireType.id === "4.2") {
-                isShowing = !isFilled && !getters['user/getHasAnnotatedToday']
+            }  else if(questionnaireType.id === "4.2") {
+                isShowing = !isFilled && getters['user/getHasFinishedAllProjects']
             } else if(questionnaireType.id === "4.3") {
-                isShowing = !isFilled && getters['user/getHasFinishedAllProjects']
-            } else if(questionnaireType.id === "4.4") {
-                isShowing = !isFilled && getters['user/getHasFinishedAllProjects']
-            } else if(questionnaireType.id === "4.5") {
                 const hasAnnotatedBatch = getters['user/getAnnotatedTextCount'] > 0 
                                         && getters['user/getAnnotatedTextCount']%TEXT_BATCH_COUNT === 0
                 isShowing = !isFilled && hasAnnotatedBatch

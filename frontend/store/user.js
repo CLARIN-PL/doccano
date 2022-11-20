@@ -2,7 +2,7 @@ import moment from 'moment'
 import { 
   hasStore, 
   getQuestionnairesToShow } 
-from "@/utils/questionnaire"
+from "@/utils/questionnaires"
 
 export const state = () => ({
   id: null,
