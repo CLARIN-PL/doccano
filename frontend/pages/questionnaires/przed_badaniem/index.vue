@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card v-if="selectedQuestionnaire">
     <v-window show-arrows>
     <template v-slot:prev="{ on, attrs }">
       <v-btn
@@ -57,7 +57,6 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['getQuestionnaire']),
-    ...mapActions('user', ['setQuestionnaire']),
     toShowId() {
       return this.getQuestionnaire.toShow.find((qToShow)=> qToShow.startsWith("1."))
     },
@@ -65,12 +64,21 @@ export default {
       return this.qTypes.find((qType)=> qType.id === this.toShowId)
     }
   },
+  created() {
+    this.validateQuestionnaire()
+  },
   methods: {
+    ...mapActions('user', ['setQuestionnaire']),
+    validateQuestionnaire() {
+      const {toShow} = this.getQuestionnaire
+      if(!toShow.includes("1.1")) {
+        this.$router.push("/questionnaires")
+      }
+    },
     finishQuestionnaire() {
-        // to delete later 
         const { toShow } = this.getQuestionnaire
         const filteredToShow = toShow.filter((ts) => ts !== '1.1')
-        this.setQuestionnaire(filteredToShow)
+        this.setQuestionnaire({toShow: filteredToShow, filled: ["1.1"]})
         if(filteredToShow.length) {
             this.$router.push("/questionnaires")
         } else {
