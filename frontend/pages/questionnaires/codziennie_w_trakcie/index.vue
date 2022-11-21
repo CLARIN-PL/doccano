@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card v-if="selectedQuestionnaire">
     <v-window show-arrows>
     <template v-slot:prev="{ on, attrs }">
       <v-btn
@@ -57,7 +57,6 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['getQuestionnaire']),
-    ...mapActions('user', ['setQuestionnaire']),
     toShowId() {
       return this.getQuestionnaire.toShow.find((qToShow)=> qToShow.startsWith("4."))
     },
@@ -66,11 +65,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions('user', ['setQuestionnaire']),
     finishQuestionnaire() {
         // to delete later 
         const { toShow } = this.getQuestionnaire
         const filteredToShow = toShow.filter((ts) => ts !== this.selectedQuestionnaire.id)
-        this.setQuestionnaire(filteredToShow)
+        this.setQuestionnaire({toShow: filteredToShow})
         if(filteredToShow.length) {
             this.$router.push("/questionnaires")
         } else {
