@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="selectedQuestionnaire">
+  <v-card v-if="selectedQType">
     <v-window show-arrows>
     <template v-slot:prev="{ on, attrs }">
       <v-btn
@@ -16,7 +16,7 @@
       >Next slide</v-btn>
     </template>
     <v-window-item
-      v-for="(n, index) in selectedQuestionnaire.questionnaires"
+      v-for="(n, index) in selectedQType.questionnaires"
       :key="`questionnaire-${index}`"
     >
       <v-card
@@ -50,6 +50,7 @@ import {
 
 export default {
     name: "PrzedBadaniem",
+    layout: "questionnaire",
   data() {
     return {
       qTypes
@@ -60,7 +61,7 @@ export default {
     toShowId() {
       return this.getQuestionnaire.toShow.find((qToShow)=> qToShow.startsWith("1."))
     },
-    selectedQuestionnaire() {
+    selectedQType() {
       return this.qTypes.find((qType)=> qType.id === this.toShowId)
     }
   },
@@ -76,9 +77,9 @@ export default {
       }
     },
     finishQuestionnaire() {
-        const { toShow } = this.getQuestionnaire
-        const filteredToShow = toShow.filter((ts) => ts !== '1.1')
-        this.setQuestionnaire({toShow: filteredToShow, filled: ["1.1"]})
+        const { toShow, filled } = this.getQuestionnaire
+        const filteredToShow = toShow.filter((ts) => ts !== this.toShowId)
+        this.setQuestionnaire({toShow: filteredToShow, filled: filled.concat(this.toShowId)})
         if(filteredToShow.length) {
             this.$router.push("/questionnaires")
         } else {
