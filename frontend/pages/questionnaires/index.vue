@@ -1,5 +1,12 @@
 <template>
-  <v-card style="margin: 100px" >
+  <v-card>
+    <p>
+        {{ $t('questionnaires_main.greetings')}}
+    </p>
+    <p>
+        {{ $t('questionnaires_main.greetingsDetail')}}
+    </p>
+
     <v-btn @click="redirect">
         go to questionnaire
     </v-btn>
@@ -7,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { mapGetters} from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { qCategories } from "~/utils/questionnaires"
 
 export default {
@@ -23,10 +30,13 @@ export default {
         ...mapGetters('user', ['getQuestionnaire']),
     },
     methods: {
+        ...mapActions('user', ['setQuestionnaire', 'setIsWorkingOnQuestionnaire']),
         redirect() {
             const { toShow } = this.getQuestionnaire
+            this.setIsWorkingOnQuestionnaire(true)
             if(toShow.length) {
                 const questionnaireId = toShow[0].split(".")[0]
+                this.setQuestionnaire({ inProgress: [questionnaireId] })
                 const { key } = this.qCategories.find((k)=> k.id === questionnaireId)
                 this.$router.push(`/questionnaires/${key}/`)
             }
