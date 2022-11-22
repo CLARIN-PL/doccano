@@ -182,7 +182,7 @@ export const qTypes = [
                 footer: "<b>Źródło:</b> Donnellan, M. B., Oswald, F. L., Baird, B. M. i Lucas, R. E. (2006). The Mini-IPIP scales: Tinyyet-effective measures of the Big Five Factors of personality. Psychological Assessment, 18(2), 192-203. <br/> <b>Polska adaptacja:</b> Ewa Topolewska, Ewa Skimina, Włodzimierz Strus, Jan Cieciuch, Tomasz Rowiński (2014)."
             },
             {
-                title: "Identyfikator uczestnika w badaniu",
+                title: "Demografia",
                 type: "demografia",
                 language: "pl",
                 segments: [

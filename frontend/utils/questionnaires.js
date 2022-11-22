@@ -127,20 +127,36 @@ export function hasStore() {
     return !!window.$nuxt && !!window.$nuxt.$store
 }
 
-export function mapQuestionnaires(questionnaires) {
-    return questionnaires.map((questionnaire)=> {
-        questionnaire.segments = questionnaire.segments.map((segment)=> {
-            segment.questions = segment.questions.map((question)=> {
-                question.required = question.required === undefined ? true : question.required
-                question.options = question.options.map((option)=> {
-                    option.value = option.value === undefined ? option.text : option.value
-                    return option
+export function mapQuestionnaireTypes(qTypes) {
+    return qTypes.map((qType)=> {
+        qType.questionnaires = qType.questionnaires.map((questionnaire)=> {
+            questionnaire.segments = questionnaire.segments.map((segment)=> {
+                segment.questions = segment.questions.map((question)=> {
+                    question.required = question.required === undefined ? true : question.required
+                    if(question.options) {
+                        question.options = question.options.map((option)=> {
+                            option.value = option.value === undefined ? option.text : option.value
+                            return option
+                        })
+                    }
+                    if(question.type === 'scale') {
+                        let min = question.min
+                        question.options = []
+                        while(min < question.max) {
+                            question.options.push({
+                                text: min.toString(),
+                                value: min.toString()
+                            })
+                            min++
+                        }
+                    }
+                    return question
                 })
-                return question
+                return segment
             })
-            return segment
+            return questionnaire
         })
-        return questionnaire
+        return qType
     })
 }
 
