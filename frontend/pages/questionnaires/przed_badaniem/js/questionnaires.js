@@ -191,7 +191,6 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Określam swoją płeć jako...",
-                                value: "",
                                 options: [
                                     {
                                         text: "Kobieta",
@@ -205,7 +204,6 @@ export const qTypes = [
                                     {
                                         text: "Wolę się samookreślić (odpowiedź otwarta)", 
                                         showTextbox: true,
-                                        value: ""
                                     },
                                     {
                                         text: "Wolę nie mówić",
@@ -220,12 +218,11 @@ export const qTypes = [
                             {
                                 type: "text",
                                 text: "Jakiej jest Pani/Pana narodowości? (np. Polak)",
-                                value: ""
                             },
                             {
                                 type: "radio",
                                 text: "Czy język polski jest Twoim pierwszym lub ojczystym językiem?",
-                                value: "",
+                                
                                 options: [
                                     {
                                         text: "Tak",
@@ -238,12 +235,11 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Czy ma Pani/Pan dzieci w wieku poniżej 18 lat?",
-                                value: "",
                                 options: [
                                     {
                                         text: "Tak:  proszę wymienić liczbę dzieci w polu odpowiedzi otwartej (tu odpowiedź otwarta) ",
                                         showTextbox: true,
-                                        value: ""
+                                        
                                     },
                                     {
                                         text: "Nie",
@@ -253,7 +249,6 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Czy ma Pani/Pan inne obowiązki związane z opieką nad dziećmi? ",
-                                value: "",
                                 options: [
                                     {
                                         text: "Tak",
@@ -266,7 +261,6 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Twoja sytuacja ekonomiczna w porównaniu do przeciętnej osoby w Twoim kraju jest:",
-                                value: "",
                                 options: [
                                     {
                                         text: "zdecydowanie gorsza",
@@ -294,7 +288,6 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Sektor zatrudnienia",
-                                value: "",
                                 options: [
                                     {
                                         text: "Przetwórstwo przemysłowe",
@@ -353,14 +346,13 @@ export const qTypes = [
                                     {
                                         text: "Inny: ",
                                         showTextbox: true,
-                                        value: ""
+                                        
                                     }
                                 ]
                             },
                             {
                                 type: "radio",
                                 text: "Jaki jest Twój status związku?",
-                                value: "",
                                 options: [
                                     {
                                         text: "Samotny",
@@ -379,7 +371,7 @@ export const qTypes = [
                                     },
                                     {
                                         text: "Inne (proszę określić) (odpowiedź otwarta)",
-                                        value: "",
+                                        
                                         showTextbox: true
                                     }
                                 ]
@@ -387,12 +379,12 @@ export const qTypes = [
                             {
                                 type: "number",
                                 text: "Ile osób, łącznie z Panem/Panią, mieszka w gospodarstwie domowym?",
-                                value: ""   
+                                   
                             },
                             {
                                 type: "radio",
                                 text: "Jaki jest Pana(i) poziom wykształcenia?",
-                                value: "",
+                                
                                 options: [
                                     {
                                         text: "Podstawowe"
@@ -411,7 +403,7 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Czy obecnie studiujesz?",
-                                value: "",
+                                
                                 options: [
                                     {
                                         text: "Tak"
@@ -424,7 +416,7 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Jaki jest Twój status zatrudnienia?",
-                                value: "",
+                                
                                 options: [
                                     {
                                         text: "Pełny etat"   
@@ -452,7 +444,7 @@ export const qTypes = [
                                     },
                                     {
                                         text: "Inny (proszę określić) (odpowiedź otwarta)",
-                                        value: "",
+                                        
                                         showTextbox: true
                                     }
                                 ]
@@ -460,7 +452,7 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Czy jest Pan(i) osobą religijną?",
-                                value: "",
+                                
                                 options: [
                                     {
                                         text: "Nie"
@@ -479,13 +471,13 @@ export const qTypes = [
                             {
                                 type: "text",
                                 text: "Z jakimi poglądami politycznymi się utożsamiasz na osi ekonomicznej oraz światopoglądowej? (odpowiedź nieobowiązkowa)",
-                                value: "",
+                                
                                 required: false
                             },
                             {
                                 type: "radio",
                                 text: "Oś ekonomiczna:",
-                                value: "",
+                                
                                 options: [
                                     {
                                         text: "Lewicowe (rozwinięty interwencjonizm państwowy, wysokie podatki, wyższe podatki dla bogatszych, rozwinięta polityka socjalna)",
@@ -498,7 +490,7 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Oś światopoglądowa/społeczna:",
-                                value: "",
+                                
                                 options: [
                                     {
                                         text: "Liberalne (akceptacja związków homoseksualnych, transseksualizmu, aborcji, egalitarność)",
