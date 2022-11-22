@@ -4,7 +4,7 @@ export default function ({ store, route, redirect }) {
     // const isStaff = store.getters['auth/isStaff']
     const isStaff = false
     const {toShow} = store.getters['user/getQuestionnaire']
-    if(toShow && Array.isArray(toShow)) {
+    if(toShow && Array.isArray(toShow) && toShow.length) {
         const isWorkingOnQuestionnaire = store.getters['user/getIsWorkingOnQuestionnaire']
         const isOnQuestionnairePage = route.path.includes("/questionnaires")
         const toShowId = toShow[0]

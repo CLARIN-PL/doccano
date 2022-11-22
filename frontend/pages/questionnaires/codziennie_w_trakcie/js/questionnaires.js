@@ -4,7 +4,7 @@ export const qTypes = [
         id: "4.1",
         questionnaires: [
             {
-                title: "Sen (rano)",
+                name: "Sen (rano)",
                 language: "pl",
                 segments: [
                     {
@@ -60,7 +60,7 @@ export const qTypes = [
                 ]
             },
             {
-                title: "Stres (rano)",
+                name: "Stres (rano)",
                 language: "pl",
                 segments: [
                     {
@@ -68,7 +68,7 @@ export const qTypes = [
                         scales: {
                             values: [
                                 {
-                                    value: -1,
+                                    value: 0,
                                     text: "zupełnie się nie zgadzam"
                                 },
                                 {
@@ -99,14 +99,14 @@ export const qTypes = [
                                 text: "Czuję się zestresowany, niespokojny, przytłoczony.",
                                 value: -1,
                                 min: 0,
-                                max: 4,
+                                max: 5,
                             },
                             {
                                 type: "scale",
                                 text: "Czuję, że panuję nad sytuacją, dobrze sobie radzę, mam wszystko pod kontrolą.",
                                 value: -1,
                                 min: 0,
-                                max: 4,
+                                max: 5,
                             }
                         ]
                     }
@@ -120,88 +120,96 @@ export const qTypes = [
         name: "Wieczorem (stres, zdrowie)",
         questionnaires: [
             {
-                title: "Stres (wieczorem)",
+                name: "Stres (wieczorem)",
                 language: "pl",
-                scales: {
-                    values: [
-                        {
-                            value: 0,
-                            text: "zupełnie się nie zgadzam"
-                        },
-                        {
-                            value: 1,
-                            text: "nie zgadzam się"
-                        },
-                        {
-                            value: 2,
-                            text: "nie mam zdania"
-                        },
-                        {
-                            value: 3,
-                            text: "zgadzam się"
-                        },
-                        {
-                            value: 4,
-                            text: "całkowicie się zgadzam"
-                        }
-                    ]
-                },
-                questions: [
+                segments: [
                     {
-                        type: "scale",
-                        text: "Czuję, że wszystko mnie teraz przytłacza.",
-                        min: 0,
-                        max: 4,
-                        value: -1
+                    scales: {
+                        values: [
+                            {
+                                value: 0,
+                                text: "zupełnie się nie zgadzam"
+                            },
+                            {
+                                value: 1,
+                                text: "nie zgadzam się"
+                            },
+                            {
+                                value: 2,
+                                text: "nie mam zdania"
+                            },
+                            {
+                                value: 3,
+                                text: "zgadzam się"
+                            },
+                            {
+                                value: 4,
+                                text: "całkowicie się zgadzam"
+                            }
+                        ]
                     },
-                    {
-                        
-                        type: "scale",
-                        text: "Czuję, że wszystko jest teraz nieprzewidywalne.",
-                        min: 0,
-                        max: 4,
-                        value: -1
-                    }
-                ],
-                footer: "<b>Źródło:</b> Gordon, A. M., & Mendes, W. B. (2021). A large-scale study of stress, emotions, and blood pressure in daily life using a digital platform. Proceedings of the National Academy of Sciences, 118(31). <br/> <b>Polska adaptacja:</b> Opracowanie własne"
-            },
-            {
-                title: "Zdrowie (wieczorem)",
-                language: "pl",
-                scales: {
-                    values: [
+                    questions: [
                         {
-                            value: 0,
-                            text: "źle"
+                            type: "scale",
+                            text: "Czuję, że wszystko mnie teraz przytłacza.",
+                            min: 0,
+                            max: 4,
+                            value: -1
                         },
                         {
-                            value: 1,
-                            text: "średnio"
-                        },
-                        {
-                            value: 2,
-                            text: "dobrze"
-                        },
-                        {
-                            value: 3,
-                            text: "bardzo dobrze"
-                        },
-                        {
-                            value: 4,
-                            text: "doskonale"
+                            
+                            type: "scale",
+                            text: "Czuję, że wszystko jest teraz nieprzewidywalne.",
+                            min: 0,
+                            max: 4,
+                            value: -1
                         }
-                    ]
-                },
-                questions: [
-                    {
-                        type: "scale",
-                        text: "Jak oceniasz stan swojego zdrowia?",
-                        min: 0,
-                        max: 4,
-                        value: -1
-                    }
-                ],
+                    ],
+                        }
+                    ],
                 footer: "<b>Źródło:</b> Gordon, A. M., & Mendes, W. B. (2021). A large-scale study of stress, emotions, and blood pressure in daily life using a digital platform. Proceedings of the National Academy of Sciences, 118(31). <br/> <b>Polska adaptacja:</b> Opracowanie własne"
+                },
+                {
+                    name: "Zdrowie (wieczorem)",
+                    language: "pl",
+                    segments: [
+                        {
+                            scales: {
+                                values: [
+                                    {
+                                        value: 0,
+                                        text: "źle"
+                                    },
+                                    {
+                                        value: 1,
+                                        text: "średnio"
+                                    },
+                                    {
+                                        value: 2,
+                                        text: "dobrze"
+                                    },
+                                    {
+                                        value: 3,
+                                        text: "bardzo dobrze"
+                                    },
+                                    {
+                                        value: 4,
+                                        text: "doskonale"
+                                    }
+                                ]
+                            },
+                            questions: [
+                                {
+                                    type: "scale",
+                                    text: "Jak oceniasz stan swojego zdrowia?",
+                                    min: 0,
+                                    max: 4,
+                                    value: -1
+                                }
+                            ],
+                        }
+                    ],
+                    footer: "<b>Źródło:</b> Gordon, A. M., & Mendes, W. B. (2021). A large-scale study of stress, emotions, and blood pressure in daily life using a digital platform. Proceedings of the National Academy of Sciences, 118(31). <br/> <b>Polska adaptacja:</b> Opracowanie własne"
             }
         ]
     },
@@ -210,7 +218,7 @@ export const qTypes = [
         id: "4.3",
         questionnaires: [
             {
-                title: "Emocje (w przerwie)",
+                name: "Emocje (w przerwie)",
                 language: "pl",
                 segments: [
                     {

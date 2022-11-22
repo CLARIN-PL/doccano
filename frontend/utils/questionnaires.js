@@ -127,12 +127,30 @@ export function hasStore() {
     return !!window.$nuxt && !!window.$nuxt.$store
 }
 
+export function setQuestionnaireIds(qTypes, questionnaires) {
+    console.log(qTypes)
+    return qTypes.map((qType)=> {
+        qType.questionnaires = qType.questionnaires.map((que)=> {
+            questionnaires.forEach((questionnaire)=> {
+                if(questionnaire.name === que.name) {
+                    que.id = questionnaire.id
+                }
+            })
+            return que
+        })
+        return qType
+    })
+}
+
 export function mapQuestionnaireTypes(qTypes) {
     return qTypes.map((qType)=> {
         qType.questionnaires = qType.questionnaires.map((questionnaire)=> {
             questionnaire.segments = questionnaire.segments.map((segment)=> {
                 segment.questions = segment.questions.map((question)=> {
+                    question.key = 0
                     question.required = question.required === undefined ? true : question.required
+                    const numberInputs = ['slider', 'scale']
+                    question.value = numberInputs.includes(question.type) ? 0 : ""
                     if(question.options) {
                         question.options = question.options.map((option)=> {
                             option.value = option.value === undefined ? option.text : option.value
@@ -142,7 +160,7 @@ export function mapQuestionnaireTypes(qTypes) {
                     if(question.type === 'scale') {
                         let min = question.min
                         question.options = []
-                        while(min < question.max) {
+                        while(min <= question.max) {
                             question.options.push({
                                 text: min.toString(),
                                 value: min.toString()

@@ -14,14 +14,19 @@
                 :value="option.value"
             >
             </v-radio>
-            <v-text-field v-if="selectedOption.showTextbox" />
+            <text-input v-if="selectedOption.showTextbox" />
         </v-radio-group>
     </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import TextInput from "~/components/questionnaires/form/TextInput"
+
 export default Vue.extend({
     name: 'RadioInput',
+    components: {
+        TextInput
+    },
     props: {
         question: {
             type: String,

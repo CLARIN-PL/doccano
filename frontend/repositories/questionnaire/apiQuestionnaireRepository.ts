@@ -7,7 +7,7 @@ from "~/domain/models/questionnaire/questionnaire"
 export class APIQuestionnaireRepository implements QuestionnaireRepository {
   constructor(private readonly request = ApiService) {}
 
-  async listTypes({ limit = '10', offset = '0', q = '' }: SearchOption): Promise<QuestionnaireTypeItemList> {
+  async listTypes({ limit = '10', offset = '0', q=''}: SearchOption): Promise<QuestionnaireTypeItemList> {
     const url = `/questionnaire_types?limit=${limit}&offset=${offset}&q=${q}`
     const response = await this.request.get(url)
     return plainToInstance(QuestionnaireTypeItemList, response.data)
@@ -33,7 +33,4 @@ export class APIQuestionnaireRepository implements QuestionnaireRepository {
     return plainToInstance(AnswerReadItem, response.data)
   }
 
-  async updateAnswer(item: AnswerWriteItem): Promise<void> {
-    // do something
-  }
 }

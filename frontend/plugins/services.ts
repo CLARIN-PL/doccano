@@ -46,6 +46,8 @@ import { APIAffectiveTextlabelRepository } from '~/repositories/tasks/affectiveA
 import { AffectiveTextlabelApplicationService } from '~/services/application/tasks/affectiveAnnotation/affectiveTextlabelApplicationService'
 import { APIAffectiveScaleRepository } from '~/repositories/tasks/affectiveAnnotation/apiAffectiveScale'
 import { AffectiveScaleApplicationService } from '~/services/application/tasks/affectiveAnnotation/affectiveScaleApplicationService'
+import { QuestionnaireApplicationService}  from "~/services/application/questionnaire/questionnaireApplicationService"
+import { APIQuestionnaireRepository } from '~/repositories/questionnaire/apiQuestionnaireRepository'
 
 export interface Services {
   categoryType: LabelApplicationService
@@ -74,6 +76,7 @@ export interface Services {
   tag: TagApplicationService
   affectiveTextlabel: AffectiveTextlabelApplicationService
   affectiveScale: AffectiveScaleApplicationService
+  questionnaire: QuestionnaireApplicationService
 }
 
 declare module 'vue/types/vue' {
@@ -106,6 +109,7 @@ const plugin: Plugin = (_, inject) => {
   const downloadRepository = new APIDownloadRepository()
   const affectiveTextlabelRepository = new APIAffectiveTextlabelRepository()
   const affectiveScaleRepository = new APIAffectiveScaleRepository()
+  const questionnaireRepository = new APIQuestionnaireRepository()
 
   const categoryType = new LabelApplicationService(new APILabelRepository('category-type'))
   const spanType = new LabelApplicationService(new APILabelRepository('span-type'))
@@ -136,6 +140,7 @@ const plugin: Plugin = (_, inject) => {
   const download = new DownloadApplicationService(downloadRepository)
   const affectiveTextlabel = new AffectiveTextlabelApplicationService(affectiveTextlabelRepository)
   const affectiveScale = new AffectiveScaleApplicationService(affectiveScaleRepository)
+  const questionnaire = new QuestionnaireApplicationService(questionnaireRepository)
 
   const services: Services = {
     categoryType,
@@ -163,7 +168,8 @@ const plugin: Plugin = (_, inject) => {
     download,
     tag,
     affectiveTextlabel,
-    affectiveScale
+    affectiveScale,
+    questionnaire
   }
   inject('services', services)
 }
