@@ -29,9 +29,6 @@ export default {
   },
   methods: {
     ...mapActions('user', ['setQuestionnaire']),
-    finishQuestionnaire() {
-      // do something
-    }
   }
 }
 </script>

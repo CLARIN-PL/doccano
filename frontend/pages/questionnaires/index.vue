@@ -36,7 +36,7 @@ export default {
             this.setIsWorkingOnQuestionnaire(true)
             if(toShow.length) {
                 const questionnaireId = toShow[0].split(".")[0]
-                this.setQuestionnaire({ inProgress: [questionnaireId] })
+                this.setQuestionnaire({ inProgress: [toShow[0]] })
                 const { key } = this.qCategories.find((k)=> k.id === questionnaireId)
                 this.$router.push(`/questionnaires/${key}/`)
             }
