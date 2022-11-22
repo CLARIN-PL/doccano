@@ -18,7 +18,7 @@
                   align="center"
                 >
                   <header>
-                    <strong class="text-h6">{{ questionnaire.title }}</strong>
+                    <strong class="text-h6">{{ questionnaire.name }}</strong>
                     <p>
                       {{ questionnaire.description }}
                     </p>
@@ -42,6 +42,9 @@
                             <li 
                               v-for="(segmentQuestion, idx) in segment.questions" 
                               :key="`segmentQuestion-${idx}`">
+                              <p v-if="segment.prependIndex">
+                                {{ segment.prependIndex+(idx+1) }}
+                              </p>
                               <component 
                                 @change="onQuestionChange(segmentQuestion, idx)"
                                 :is="getComponent(segmentQuestion.type)" 
@@ -90,6 +93,7 @@ import {
 } from "~/utils/questionnaires"
 import ScaleInput from "~/components/questionnaires/form/ScaleInput.vue"
 import RadioInput from '~/components/questionnaires/form/RadioInput.vue'
+import TextInput from '~/components/questionnaires/form/TextInput.vue'
 
 
 export default {
@@ -97,7 +101,8 @@ export default {
     layout: "questionnaire",
     components: {
       ScaleInput,
-      RadioInput
+      RadioInput,
+      TextInput
     },
   data() {
     return {
@@ -123,7 +128,9 @@ export default {
   },
   methods: {
     ...mapActions('user', ['setQuestionnaire', 'setIsWorkingOnQuestionnaire']),
-    getQuestionsList() {
+    async getQuestionsList() {
+      const types = await this.$services.questionnaire.listTypes()
+      console.log(types)
       // 
     },
     setQuestionnaireData() {
@@ -139,6 +146,8 @@ export default {
         return ScaleInput
       } else if(questionType === 'radio') {
         return RadioInput
+      } else if(questionType === 'text') {
+        return TextInput
       }
     },
     onClickContinueButton() {

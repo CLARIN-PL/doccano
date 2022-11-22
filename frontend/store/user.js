@@ -149,10 +149,11 @@ export const actions = {
     const endTime = moment(startTime).add(5, 'm').format('DD-MM-YYYY HH:mm:ss')
     commit('setRestingPeriod', endTime)
   },
-  checkQuestionnaire({commit}) {
+  initQuestionnaire({commit, getters}) {
     if(hasStore()) {
       const toShow = getQuestionnairesToShow()
-      commit('setQuestionnaire', { toShow })
+      const filled = getters.getQuestionnaire.filled || []
+      commit('setQuestionnaire', { toShow, filled, inProgress: [] })
     }
   },
   calculateRestingPeriod({ commit, getters }) {

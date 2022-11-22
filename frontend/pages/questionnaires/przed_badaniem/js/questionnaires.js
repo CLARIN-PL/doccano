@@ -4,7 +4,7 @@ export const qTypes = [
         name: "Przed badaniem",
         questionnaires: [
             {
-                title: "Kwestionariusz IPIP-BFM-20",
+                name: "Kwestionariusz IPIP-BFM-20",
                 language: "pl",
                 type: "osobowość",
                 description: "Przeczytaj uważnie poniższe zdania, opisujące różne zachowania, uczucia i myśli ludzi. Zastanów się nad każdym z nich – w jakim stopniu opisuje ono również Ciebie takiego/taką, jakim/jaką zwykle jesteś? Ludzie są bardzo różni, więc nie ma tu dobrych ani złych odpowiedzi. Za każdym razem po prostu szczerze odpowiedz na pytanie, w jakim stopniu dane stwierdzenie opisuje Ciebie.",
@@ -182,7 +182,7 @@ export const qTypes = [
                 footer: "<b>Źródło:</b> Donnellan, M. B., Oswald, F. L., Baird, B. M. i Lucas, R. E. (2006). The Mini-IPIP scales: Tinyyet-effective measures of the Big Five Factors of personality. Psychological Assessment, 18(2), 192-203. <br/> <b>Polska adaptacja:</b> Ewa Topolewska, Ewa Skimina, Włodzimierz Strus, Jan Cieciuch, Tomasz Rowiński (2014)."
             },
             {
-                title: "Demografia",
+                name: "Demografia",
                 type: "demografia",
                 language: "pl",
                 segments: [
@@ -211,9 +211,8 @@ export const qTypes = [
                                 ]
                             },
                             {
-                                type: "number",
+                                type: "text",
                                 text: "Jaki jest Pana/Pani wiek w latach (proszę wpisać tylko liczbę)?",
-                                value: -1
                             },
                             {
                                 type: "text",
@@ -222,7 +221,6 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Czy język polski jest Twoim pierwszym lub ojczystym językiem?",
-                                
                                 options: [
                                     {
                                         text: "Tak",
@@ -239,7 +237,6 @@ export const qTypes = [
                                     {
                                         text: "Tak:  proszę wymienić liczbę dzieci w polu odpowiedzi otwartej (tu odpowiedź otwarta) ",
                                         showTextbox: true,
-                                        
                                     },
                                     {
                                         text: "Nie",
@@ -371,20 +368,17 @@ export const qTypes = [
                                     },
                                     {
                                         text: "Inne (proszę określić) (odpowiedź otwarta)",
-                                        
                                         showTextbox: true
                                     }
                                 ]
                             },
                             {
-                                type: "number",
+                                type: "text",
                                 text: "Ile osób, łącznie z Panem/Panią, mieszka w gospodarstwie domowym?",
-                                   
                             },
                             {
                                 type: "radio",
                                 text: "Jaki jest Pana(i) poziom wykształcenia?",
-                                
                                 options: [
                                     {
                                         text: "Podstawowe"
@@ -403,7 +397,6 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Czy obecnie studiujesz?",
-                                
                                 options: [
                                     {
                                         text: "Tak"
@@ -416,7 +409,6 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Jaki jest Twój status zatrudnienia?",
-                                
                                 options: [
                                     {
                                         text: "Pełny etat"   
@@ -444,7 +436,6 @@ export const qTypes = [
                                     },
                                     {
                                         text: "Inny (proszę określić) (odpowiedź otwarta)",
-                                        
                                         showTextbox: true
                                     }
                                 ]
@@ -452,7 +443,6 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Czy jest Pan(i) osobą religijną?",
-                                
                                 options: [
                                     {
                                         text: "Nie"
@@ -471,13 +461,11 @@ export const qTypes = [
                             {
                                 type: "text",
                                 text: "Z jakimi poglądami politycznymi się utożsamiasz na osi ekonomicznej oraz światopoglądowej? (odpowiedź nieobowiązkowa)",
-                                
                                 required: false
                             },
                             {
                                 type: "radio",
                                 text: "Oś ekonomiczna:",
-                                
                                 options: [
                                     {
                                         text: "Lewicowe (rozwinięty interwencjonizm państwowy, wysokie podatki, wyższe podatki dla bogatszych, rozwinięta polityka socjalna)",
@@ -490,7 +478,6 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Oś światopoglądowa/społeczna:",
-                                
                                 options: [
                                     {
                                         text: "Liberalne (akceptacja związków homoseksualnych, transseksualizmu, aborcji, egalitarność)",
@@ -507,7 +494,7 @@ export const qTypes = [
             },
             {
                 type: "humor",
-                title: "Humor Styles Questionnaire",
+                name: "Humor Styles Questionnaire",
                 language: "pl",
                 segments: [
                     {
@@ -515,7 +502,7 @@ export const qTypes = [
                             description: "Pytania od Q1 do Q32 należy oceniać w skali całkowitoliczbowej od 1 do 5, gdzie:",
                             values: [
                                 {
-                                    value: 2,
+                                    value: 1,
                                     text: "Nigdy lub bardzo rzadko",
                                 },
                                 {
@@ -536,6 +523,7 @@ export const qTypes = [
                                 }
                             ]
                         },
+                        prependIndex: "Q",
                         questions: [
                             {
                                 type: "scale",
