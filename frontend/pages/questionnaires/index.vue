@@ -7,21 +7,20 @@
 </template>
 
 <script lang="ts">
-
-import {mapGetters} from 'vuex'
+import { mapGetters} from 'vuex'
 import { qCategories } from "~/utils/questionnaires"
 
 export default {
-    name: "Questionnaire",
+    name: "Questionnaires",
     layout: "questionnaires",
     middleware: ['check-auth', 'auth'],
-    computed: {
-        ...mapGetters('user', ['getQuestionnaire']),
-    },
     data() {
         return {
             qCategories
         }
+    },
+    computed: {
+        ...mapGetters('user', ['getQuestionnaire']),
     },
     methods: {
         redirect() {

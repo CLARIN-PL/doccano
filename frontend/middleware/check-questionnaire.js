@@ -9,9 +9,8 @@ export default function ({ store, route }) {
         const toShowId = toShow[0]
         const toShowType = qTypes.find((qType)=> qType.id === toShowId)
         const isInMiddleOfQuestionnaire = toShowType && route.path.includes(toShowType.key)
-
-        if(!isInMiddleOfQuestionnaire) {
-            return redirect("/questionnaires")
-        }
+        console.log(isInMiddleOfQuestionnaire, toShowId, toShowType)
+        
+        return redirect("/questionnaires")
     }
 }

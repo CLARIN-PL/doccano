@@ -1,11 +1,37 @@
 <template>
-    <div>
-        po 2 tygodniach
-    </div>
+<div>
+  po 2 tygodniach
+</div>
 </template>
-<script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-    name: "Po2Tygodniach"
-})
+
+<script>
+import { mapGetters, mapActions } from 'vuex'
+import {
+  qTypes, 
+} from "./js/questionnaires"
+import {
+  qCategories,
+} from "~/utils/questionnaires"
+
+export default {
+    name: "Po2Tygodniach",
+    layout: "questionnaire",
+  data() {
+    return {
+      qCategories,
+      qTypes,
+    }
+  },
+  computed: {
+    ...mapGetters('user', ['getQuestionnaire']),
+  },
+  created() {
+  },
+  methods: {
+    ...mapActions('user', ['setQuestionnaire']),
+    finishQuestionnaire() {
+      // do something
+    }
+  }
+}
 </script>
