@@ -89,13 +89,15 @@ import {
   mapQuestionnaireTypes
 } from "~/utils/questionnaires"
 import ScaleInput from "~/components/questionnaires/form/ScaleInput.vue"
+import RadioInput from '~/components/questionnaires/form/RadioInput.vue'
 
 
 export default {
     name: "PrzedBadaniem",
     layout: "questionnaire",
     components: {
-      ScaleInput
+      ScaleInput,
+      RadioInput
     },
   data() {
     return {
@@ -135,6 +137,8 @@ export default {
     getComponent(questionType) {
       if(questionType === "scale") {
         return ScaleInput
+      } else if(questionType === 'radio') {
+        return RadioInput
       }
     },
     onClickContinueButton() {
