@@ -1,7 +1,8 @@
 import { plainToInstance } from 'class-transformer'
 import ApiService from '@/services/api.service'
 import { QuestionnaireRepository, SearchOption } from '~/domain/models/questionnaire/questionnaireRepository'
-import { QuestionnaireTypeItemList, QuestionnaireItemList, QuestionItemList, AnswerItem, QuestionItem } from "~/domain/models/questionnaire/questionnaire"
+import { QuestionnaireTypeItemList, QuestionnaireItemList, QuestionItemList, AnswerReadItem, AnswerWriteItem } 
+from "~/domain/models/questionnaire/questionnaire"
 
 export class APIQuestionnaireRepository implements QuestionnaireRepository {
   constructor(private readonly request = ApiService) {}
@@ -26,13 +27,13 @@ export class APIQuestionnaireRepository implements QuestionnaireRepository {
     return plainToInstance(QuestionItemList, response.data)
   }
 
-  async createAnswer(item: AnswerItem): Promise<QuestionItem> {
+  async createAnswer(item: AnswerWriteItem): Promise<AnswerReadItem> {
     const url = `/answer`
     const response = await this.request.post(url, item.toObject())
-    return plainToInstance(QuestionItem, response.data)
+    return plainToInstance(AnswerReadItem, response.data)
   }
 
-  async updateAnswer(item: AnswerItem): Promise<void> {
+  async updateAnswer(item: AnswerWriteItem): Promise<void> {
     // do something
   }
 }

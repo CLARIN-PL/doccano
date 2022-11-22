@@ -144,8 +144,13 @@ export function mapQuestionnaires(questionnaires) {
     })
 }
 
-export function getQuestionnairesToShow() {
+export function getQuestionnaireTypes() {
     const qTypes =  _.flatMap(qCategories, 'types')
+    return qTypes
+}
+
+export function getQuestionnairesToShow() {
+    const qTypes = getQuestionnaireTypes()
     const todayTime = new Date()
     let getters = null
     let toShow = []
