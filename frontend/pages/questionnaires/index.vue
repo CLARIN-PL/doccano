@@ -13,6 +13,7 @@ import { qCategories } from "~/utils/questionnaires"
 
 export default {
     name: "Questionnaire",
+    layout: "questionnaires",
     middleware: ['check-auth', 'auth'],
     computed: {
         ...mapGetters('user', ['getQuestionnaire']),
