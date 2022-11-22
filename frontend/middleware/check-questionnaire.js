@@ -1,16 +1,22 @@
-import _ from "lodash"
 import { qCategories } from "~/utils/questionnaires"
 
-export default function ({ store, route }) {
-    const isStaff = store.getters['auth/isStaff']
+export default function ({ store, route, redirect }) {
+    // const isStaff = store.getters['auth/isStaff']
+    const isStaff = false
     const {toShow} = store.getters['user/getQuestionnaire']
-    const qTypes = _.flatMap(qCategories, "types")
-    if(!isStaff && toShow.length) {
-        const toShowId = toShow[0]
-        const toShowType = qTypes.find((qType)=> qType.id === toShowId)
-        const isInMiddleOfQuestionnaire = toShowType && route.path.includes(toShowType.key)
-        console.log(isInMiddleOfQuestionnaire, toShowId, toShowType)
-        
+    const isWorkingOnQuestionnaire = store.getters['user/getIsWorkingOnQuestionnaire']
+    const isOnQuestionnairePage = route.path.includes("/questionnaires")
+    const toShowId = toShow[0]
+    const toShowCategoryId = toShowId.split(".")[0]
+    const { key } = qCategories.find((qCategory)=> qCategory.id === toShowCategoryId )
+    
+    if(!isStaff && toShow.length && !isOnQuestionnairePage) {
+
+        if(isWorkingOnQuestionnaire && !route.path.includes(key)) {
+            redirect(`/questionnaires/${key}`)
+        }
+
         return redirect("/questionnaires")
     }
+
 }

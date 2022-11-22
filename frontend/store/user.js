@@ -12,12 +12,14 @@ export const state = () => ({
   firstLoginTime: "",
   lastAnnotationTime: "",
   isFirstLogin: false,
+  isWorkingOnQuestionnaire: false,
   hasAnnotated: false,
   hasAnnotatedToday: false,
   hasFinishedAllProjects: false,
   annotatedTextCount: 0,
   questionnaire: {
     filled: [],
+    inProgress: [],
     toShow: []
   }
 })
@@ -51,6 +53,9 @@ export const mutations = {
   },
   setHasAnnotated(state, hasAnnotated) {
     state.hasAnnotated = hasAnnotated
+  },
+  setIsWorkingOnQuestionnaire(state, isWorkingOnQuestionnaire) {
+    state.isWorkingOnQuestionnaire = isWorkingOnQuestionnaire
   },
   setHasAnnotatedToday(state, hasAnnotatedToday) {
     state.hasAnnotatedToday = hasAnnotatedToday
@@ -91,6 +96,9 @@ export const getters = {
   getIsFirstLogin(state) {
     return state.isFirstLogin
   },
+  getIsWorkingOnQuestionnaire(state) {
+    return state.isWorkingOnQuestionnaire
+  },
   getLastAnnotationTime(state) {
     return state.lastAnnotationTime
   },
@@ -114,6 +122,9 @@ export const actions = {
   },
   setFirstLoginTime({ commit }, firstLoginTime) {
     commit('setFirstLoginTime', firstLoginTime)
+  },
+  setIsWorkingOnQuestionnaire({ commit }, isWorkingOnQuestionnaire) {
+    commit('setIsWorkingOnQuestionnaire', isWorkingOnQuestionnaire)
   },
   setAnnotatedTextCount({ commit }, annotatedTextCount) {
     commit('setAnnotatedTextCount', annotatedTextCount)
