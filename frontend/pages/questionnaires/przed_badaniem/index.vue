@@ -164,13 +164,18 @@ export default {
       // check when data is loaded
       // do something
     },
-    onQuestionChange(question, segQuIdx, segIdx, qIdx) {
-      let key = _.get(this.formData, `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}].key`)
-      _.set(this.formData, `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}].isClicked`, true)
-      _.set(this.formData, `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}].key`, key++)
+    async onQuestionChange(question, segQuIdx, segIdx, qIdx) {
+      const formDataKey = `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}]`
+      let key = _.get(this.formData, `${formDataKey}.key`)
+      _.set(this.formData, `${formDataKey}.isClicked`, true)
+      _.set(this.formData, `${formDataKey}.key`, key++)
+      _.set(this.formData, `${formDataKey}.isSubmitting`, true)
+      await this.$services.questionnaire.createAnswer({
+        answerText: question.value,
+        question: question.id
+      })
+      _.set(this.formData, `${formDataKey}.isSubmitting`, false)
 
-      console.log(question)
-      // do something
     },
     getComponent(questionType) {
       if(questionType === "scale") {

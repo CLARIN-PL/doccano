@@ -42,6 +42,16 @@ export class QuestionnaireApplicationService {
     }
   }
 
+  public async updateAnswer(item: AnswerWriteDTO): Promise<AnswerReadDTO> {
+    try {
+      const answer = this.toWriteModel(item)
+      const response = await this.repository.updateAnswer(answer)
+      return new AnswerReadDTO(response)
+    } catch (e: any) {
+      throw new Error(e.response.data.detail)
+    }
+  }
+
   private toWriteModel(item: AnswerWriteDTO): AnswerWriteItem {
     return new AnswerWriteItem(
         item.id,

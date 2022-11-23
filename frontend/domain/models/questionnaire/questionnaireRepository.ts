@@ -17,4 +17,6 @@ export interface QuestionnaireRepository {
 
   createAnswer(item: AnswerWriteItem): Promise<AnswerReadItem>
 
+  updateAnswer(item: AnswerWriteItem): Promise<AnswerReadItem>
+
 }
