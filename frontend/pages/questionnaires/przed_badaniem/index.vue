@@ -47,7 +47,9 @@
                               </p>
                               <component 
                                 @change="onQuestionChange(segmentQuestion, segQuIdx, segIdx, qIdx)"
+                                :key="segmentQuestion.key"
                                 :is="getComponent(segmentQuestion.type)" 
+                                :header="segmentQuestion.header"
                                 :question="segmentQuestion.text"
                                 :options="segmentQuestion.options"
                                 :min="segmentQuestion.min"
@@ -83,6 +85,9 @@
     </div>
     <div v-else>
       not found
+      <v-btn  @click="onClickFinishButton">
+        Finish
+      </v-btn>
     </div>
   </v-row>
 </template>
@@ -153,17 +158,18 @@ export default {
 
       this.questionnaires = _.cloneDeep(questionnaires.items)
       this.questions = _.cloneDeep(questions)
-      this.formData = setQuestionnaireIds([this.formData], this.questionnaires)[0]
+      this.formData = setQuestionnaireIds([this.formData], this.questionnaires, this.questions)[0]
     },
     setQuestionnaireData() {
       // check when data is loaded
       // do something
     },
     onQuestionChange(question, segQuIdx, segIdx, qIdx) {
+      let key = _.get(this.formData, `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}].key`)
       _.set(this.formData, `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}].isClicked`, true)
-      _.set(this.formData, `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}].key`, 1)
+      _.set(this.formData, `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}].key`, key++)
 
-      console.log(question, this.formData)
+      console.log(question)
       // do something
     },
     getComponent(questionType) {

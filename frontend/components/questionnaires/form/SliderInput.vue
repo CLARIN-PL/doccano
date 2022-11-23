@@ -9,7 +9,7 @@
         :track-color="isClicked ? '' : 'grey'"
         ticks="always"
         :min="min" 
-        :max="max" 
+        :max="max+1" 
         :readonly="readOnly || isSubmitting"
         :disabled="readOnly"
         :tick-labels="tickLabels"
@@ -49,7 +49,7 @@ export default Vue.extend({
     },
     computed: {
         tickLabels() {
-            return Array.from(Array(this.max).keys())
+            return Array.from(Array(this.max+1).keys())
         },
         sliderValue: {
             get() {

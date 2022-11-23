@@ -1,6 +1,7 @@
 <template>
   <v-container class="widget">
     <v-row v-if="question" class="widget__question">
+        {{ header }}
       {{ question }}
       <span  v-if="required" class="red--text">
          *
@@ -19,7 +20,7 @@
           outlined
           readonly
           :value="showDialog ? '' : value"
-          :rules="rulesTextfield"
+          :rules="rules"
           hide-details="auto"
         />
       </v-col>
@@ -43,7 +44,7 @@
                 outlined
                 autofocus
                 :hint="$t('labels.clickEnter')"
-                :rules="rulesTextfield"
+                :rules="rules"
                 @keyup.enter="submitAnswer" >
                 <template #append-outer>
                     <v-btn 
@@ -82,6 +83,10 @@ export default {
       type: Boolean,
       default: false
     },
+    header: {
+      type: String,
+      default: ""
+    },
     question: {
       type: String,
       default: ""
@@ -94,7 +99,7 @@ export default {
       type: String,
       default: ""
     },
-    rulesTextfield: {
+    rules: {
       type: Array,
       default: () => []
     },

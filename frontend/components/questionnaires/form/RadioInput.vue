@@ -1,7 +1,10 @@
 <template>
     <div>
         <p>
+            {{ header }}
             {{ question }}
+
+            <span v-if="required">*</span>
         </p>
         <v-radio-group 
             v-model="input"
@@ -14,7 +17,12 @@
                 :value="option.value"
             >
             </v-radio>
-            <text-input v-if="selectedOption.showTextbox" />
+            <text-input 
+                v-if="selectedOption.showTextbox || !!inputText"
+                :question="selectedOption.text"
+                :required="true"
+                v-model="inputText"
+             />
         </v-radio-group>
     </div>
 </template>
@@ -29,6 +37,10 @@ export default Vue.extend({
     },
     props: {
         question: {
+            type: String,
+            default: ""
+        },
+        header: {
             type: String,
             default: ""
         },
@@ -49,13 +61,28 @@ export default Vue.extend({
             default: () => []
         }
     },
+    data() {
+        return {
+        }
+    },
     computed: {
         selectedOption() {
             return this.options.find((option)=> option.value === this.input ) || {}
         },
+        inputText: {
+            get() {
+                const isCustom = !this.options.find((option)=> option.value === this.value)
+                return isCustom? this.value : ""
+            },
+            set(val) {
+                this.$emit("input", val)
+            }
+        },
         input: {
             get() {
-                return this.value
+                const isCustom = this.value && !this.options.find((option)=> option.value === this.value)
+                const customOption = this.options.find((option)=> !!option.showTextbox)
+                return isCustom && customOption ? customOption.value : this.value
             },
             set(val) {
                 this.$emit("input", val)

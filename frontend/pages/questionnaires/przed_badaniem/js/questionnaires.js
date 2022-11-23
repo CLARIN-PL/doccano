@@ -190,6 +190,7 @@ export const qTypes = [
                         questions: [
                             {
                                 type: "radio",
+                                header: "[Płeć / Gender]",
                                 text: "Określam swoją płeć jako...",
                                 options: [
                                     {
@@ -212,14 +213,17 @@ export const qTypes = [
                             },
                             {
                                 type: "text",
+                                header: "[Wiek]",
                                 text: "Jaki jest Pana/Pani wiek w latach (proszę wpisać tylko liczbę)?",
                             },
                             {
                                 type: "text",
+                                header: "[Narodowość]",
                                 text: "Jakiej jest Pani/Pana narodowości? (np. Polak)",
                             },
                             {
                                 type: "radio",
+                                header: "[Język]",
                                 text: "Czy język polski jest Twoim pierwszym lub ojczystym językiem?",
                                 options: [
                                     {
@@ -232,6 +236,7 @@ export const qTypes = [
                             },
                             {
                                 type: "radio",
+                                header: "[Dzieci]",
                                 text: "Czy ma Pani/Pan dzieci w wieku poniżej 18 lat?",
                                 options: [
                                     {
@@ -245,6 +250,7 @@ export const qTypes = [
                             },
                             {
                                 type: "radio",
+                                header: "[Opieka]",
                                 text: "Czy ma Pani/Pan inne obowiązki związane z opieką nad dziećmi? ",
                                 options: [
                                     {
@@ -257,6 +263,7 @@ export const qTypes = [
                             },
                             {
                                 type: "radio",
+                                header: "[Dochody]",
                                 text: "Twoja sytuacja ekonomiczna w porównaniu do przeciętnej osoby w Twoim kraju jest:",
                                 options: [
                                     {
@@ -284,6 +291,7 @@ export const qTypes = [
                             },
                             {
                                 type: "radio",
+                                header: "[Sektor zatrudnienia]",
                                 text: "Sektor zatrudnienia",
                                 options: [
                                     {
@@ -349,6 +357,7 @@ export const qTypes = [
                             },
                             {
                                 type: "radio",
+                                header: "[Status związku]",
                                 text: "Jaki jest Twój status związku?",
                                 options: [
                                     {
@@ -374,10 +383,12 @@ export const qTypes = [
                             },
                             {
                                 type: "text",
+                                header: "[Wielkość gospodarstwa domowego]",
                                 text: "Ile osób, łącznie z Panem/Panią, mieszka w gospodarstwie domowym?",
                             },
                             {
                                 type: "radio",
+                                header: "[Wykształcenie]",
                                 text: "Jaki jest Pana(i) poziom wykształcenia?",
                                 options: [
                                     {
@@ -396,6 +407,7 @@ export const qTypes = [
                             },
                             {
                                 type: "radio",
+                                header: "[Obecnie studiujesz]",
                                 text: "Czy obecnie studiujesz?",
                                 options: [
                                     {
@@ -408,6 +420,7 @@ export const qTypes = [
                             },
                             {
                                 type: "radio",
+                                header: "[Zatrudnienie]",
                                 text: "Jaki jest Twój status zatrudnienia?",
                                 options: [
                                     {
@@ -442,6 +455,7 @@ export const qTypes = [
                             },
                             {
                                 type: "radio",
+                                header: "[Religia]",
                                 text: "Czy jest Pan(i) osobą religijną?",
                                 options: [
                                     {
@@ -460,12 +474,13 @@ export const qTypes = [
                             },
                             {
                                 type: "text",
+                                header: "[Poglądy polityczne]",
                                 text: "Z jakimi poglądami politycznymi się utożsamiasz na osi ekonomicznej oraz światopoglądowej? (odpowiedź nieobowiązkowa)",
                                 required: false
                             },
                             {
                                 type: "radio",
-                                text: "Oś ekonomiczna:",
+                                text: "Oś ekonomiczna",
                                 options: [
                                     {
                                         text: "Lewicowe (rozwinięty interwencjonizm państwowy, wysokie podatki, wyższe podatki dla bogatszych, rozwinięta polityka socjalna)",
