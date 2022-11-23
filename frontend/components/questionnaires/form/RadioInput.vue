@@ -75,6 +75,7 @@ export default Vue.extend({
                 return isCustom? this.value : ""
             },
             set(val) {
+                this.$emit("change", val)
                 this.$emit("input", val)
             }
         },
@@ -85,6 +86,7 @@ export default Vue.extend({
                 return isCustom && customOption ? customOption.value : this.value
             },
             set(val) {
+                this.$emit("change", val)
                 this.$emit("input", val)
             }
         }

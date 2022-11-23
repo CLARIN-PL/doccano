@@ -56,6 +56,7 @@ export default Vue.extend({
                 return this.value
             },
             set(val) {
+                this.$emit("change", val)
                 this.$emit("input", val)
             }
         }
