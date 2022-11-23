@@ -4,7 +4,7 @@ from .serializers import QuestionnaireTypeSerializer, QuestionnaireSerializer, Q
 from .models import QuestionnaireType, Questionnaire, Question, Answer
 from rest_framework import filters, generics
 from rest_framework.permissions import IsAuthenticated
-from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly
+from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly, IsProjectMember
 
 
 class QuestionnaireTypeListAPI(generics.ListAPIView):
@@ -35,7 +35,7 @@ class QuestionListAPI(generics.ListAPIView):
 
 class AnswerListAPI(generics.ListCreateAPIView):
     serializer_class = AnswerSerializer
-    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
+    permission_classes = [IsAuthenticated]
     model = Answer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ["question", "user"]
