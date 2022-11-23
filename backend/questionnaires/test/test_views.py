@@ -57,7 +57,7 @@ class TestAnswerList(CRUDMixin):
             username="bob",
         )
         cls.answer = make_answer(question=1, user=cls.user, answer_text="test")
-        cls.url = reverse(viewname="answer_list")
+        cls.url = reverse(viewname="answer_list", kwargs={"question_id": 1})
 
     def test_get_answer_list(self):
         self.client.force_authenticate(user=self.user)
@@ -74,5 +74,4 @@ class TestAnswerList(CRUDMixin):
         response = self.client.post(self.url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['answer_text'], data['answer_text'])
-        self.assertEqual(response.data['user'], self.user.id)
         self.assertEqual(response.data['question'], data['question'])
