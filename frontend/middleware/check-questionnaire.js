@@ -14,13 +14,9 @@ export default function ({ store, route, redirect }) {
         
         if(!isStaff && toShow.length && !isOnQuestionnairePage) {
             return redirect("/questionnaires")
-        } else if(!isStaff && toShow.length && isOnQuestionnairePage) {
-
-            if(isWorkingNow && isOnMainQuestionnairePage) {
-                redirect(`/questionnaires/${key}`)
-            }
-
-            if(isWorkingNow && !route.path.includes(key)) {
+        } 
+        else if(!isStaff && toShow.length && isOnQuestionnairePage) {
+            if(isWorkingNow && (isOnMainQuestionnairePage || !route.path.includes(key))) { 
                 redirect(`/questionnaires/${key}`)
             }
         }

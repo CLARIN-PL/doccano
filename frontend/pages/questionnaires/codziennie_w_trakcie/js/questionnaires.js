@@ -226,7 +226,6 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Czy właśnie czułeś silną emocję?",
-                                
                                 options: [
                                     {
                                         text: "Tak",

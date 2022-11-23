@@ -256,6 +256,7 @@
 import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 import { mdiText, mdiFormatListBulleted } from '@mdi/js'
+import moment from 'moment'
 import LabelGroup from '@/components/tasks/textClassification/LabelGroup'
 import LabelSelect from '@/components/tasks/textClassification/LabelSelect'
 import LayoutText from '@/components/tasks/layout/LayoutText'
@@ -370,6 +371,7 @@ export default {
   computed: {
     ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId']),
     ...mapGetters('config', ['isRTL']),
+    ...mapGetters('user', ['getAnnotation']),
     shortKeysSpans() {
       return Object.fromEntries(this.spanTypes.map((item) => [item.id, [item.suffixKey]]))
     },
@@ -456,6 +458,16 @@ export default {
   },
 
   watch: {
+    getAnnotation: {
+      deep: true,
+      handler(val) {
+        const textBatchCount = 20
+        if(val.textCountToday > 0 && val.textCountToday%textBatchCount === 0) {
+          this.initQuestionnaire()
+          
+        }
+      }
+    },
     '$route.query': '$fetch',
     enableAutoLabeling(val) {
       if (val) {
@@ -479,7 +491,8 @@ export default {
   },
 
   methods: {
-    ...mapActions('user', ['setRestingPeriod', 'calculateRestingPeriod']),
+    ...mapActions('user', ['setRestingPeriod', 'calculateRestingPeriod', 
+      'setAnnotation', 'initQuestionnaire', 'getQuestionnaire']),
 
     async checkRestingPeriod() {
       const restingEndTime = await this.calculateRestingPeriod()
@@ -742,6 +755,7 @@ export default {
       }
     },
     async confirm() {
+      const DATE_FORMAT = "DD-MM-YYYY HH:mm:ss"
       if(this.project.isCombinationMode) {
         this.hasValidEntries.isSummaryMode = this.isAllAffectiveSummaryAdded()
         this.hasValidEntries.isOthersMode = this.isAllAffectiveOthersAdded()
@@ -758,6 +772,12 @@ export default {
         await this.$services.example.confirm(this.projectId, this.doc.id)
         await this.$fetch()
         this.updateProgress()
+        const textCountToday = this.doc.isConfirmed ? this.getAnnotation.textCountToday+1 : this.getAnnotation.textCountToday
+        this.setAnnotation({ 
+          hasAnnotatedToday: true, 
+          textCountToday,
+          lastAnnotationTime: moment().format(DATE_FORMAT)
+        })
         this.hasClickedConfirmButton = false
       }
     },
