@@ -6,6 +6,8 @@ from rest_framework import filters, generics
 from rest_framework.permissions import IsAuthenticated
 from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly, IsProjectMember
 
+from datetime import date
+
 
 class QuestionnaireTypeListAPI(generics.ListAPIView):
     queryset = QuestionnaireType.objects.all()
@@ -42,8 +44,13 @@ class AnswerListAPI(generics.ListCreateAPIView):
     ordering_fields = ["created_at", "updated_at"]
 
     def get_queryset(self):
-        queryset = self.model.objects.filter(user=self.request.user)
+        today = date.today()
+        queryset = self.model.objects.filter(question=self.kwargs["question_id"], user=self.request.user, created_at__year=today.year, created_at__month=today.month, created_at__day=today.day)
         return queryset
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        queryset = self.get_queryset()
+        if queryset.exists():
+            queryset.update(answer_text=self.request.data["answer_text"])
+        else:
+            serializer.save(user=self.request.user)
