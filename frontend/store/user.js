@@ -18,7 +18,6 @@ export const state = () => ({
   },
   annotation: {
     textCountToday: 0,
-    hasAnnotated: false,
     hasAnnotatedToday: false,
     lastAnnotationTime: "",
   },
@@ -113,11 +112,10 @@ export const actions = {
     const endTime = moment(startTime).add(5, 'm').format('DD-MM-YYYY HH:mm:ss')
     commit('setRestingPeriod', endTime)
   },
-  initQuestionnaire({commit, getters}) {
+  initQuestionnaire({commit}) {
     if(hasStore()) {
       const toShow = getQuestionnairesToShow()
-      const filled = getters.getQuestionnaire.filled || []
-      commit('setQuestionnaire', { toShow, filled, inProgress: [], isWorkingNow: false })
+      commit('setQuestionnaire', { toShow, inProgress: [], isWorkingNow: false })
     }
   },
   calculateRestingPeriod({ commit, getters }) {

@@ -191,7 +191,7 @@ export default {
       this.setQuestionnaire({
         toShow: toShow.filter((ts)=> ts !== this.toShowId ),
         inProgress: [],
-        filled: filled.concat(this.toShowId),
+        filled: !filled.includes(this.toShowId) ? filled.concat(this.toShowId) : filled,
         isWorkingNow: false
       })
       this.$router.push("/questionnaires")

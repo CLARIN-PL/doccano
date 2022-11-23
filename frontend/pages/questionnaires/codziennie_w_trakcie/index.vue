@@ -50,7 +50,6 @@
                                 :is="getComponent(segmentQuestion.type)" 
                                 :question="segmentQuestion.text"
                                 :options="segmentQuestion.options"
-                                
                                 :min="segmentQuestion.min"
                                 :max="segmentQuestion.max"
                                 :min-label="segmentQuestion.minLabel"
@@ -187,7 +186,7 @@ export default {
       this.setQuestionnaire({
         toShow: toShow.filter((ts)=> ts !== this.toShowId ),
         inProgress: [],
-        filled: filled.concat(this.toShowId),
+        filled: !filled.includes(this.toShowId) ? filled.concat(this.toShowId) : filled,
         isWorkingNow: false
       })
       this.$router.push("/questionnaires")

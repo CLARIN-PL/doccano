@@ -120,6 +120,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import _ from 'lodash'
+import { mapActions } from "vuex"
 import ArticleList from '@/components/example/ArticleList.vue'
 import DocumentList from '@/components/example/DocumentList.vue'
 import FormDelete from '@/components/example/FormDelete.vue'
@@ -240,11 +241,12 @@ export default Vue.extend({
   },
 
   methods: {
+    ...mapActions('user', ['setAnnotation']),
     async toLabeling() {
-      const item : undefined | ExampleDTO = this.hasUnannotatedItem ? 
-        this.item.items.find((item: any) => !item.isConfirmed)
+      const itemToAnnotate : undefined | ExampleDTO = this.hasUnannotatedItem 
+        ? this.item.items.find((item: any) => !item.isConfirmed)
         : this.item.items[0]
-      const index = item ? this.item.items.indexOf(item) : 0
+      const index = itemToAnnotate ? this.item.items.indexOf(itemToAnnotate) : 0
       const page = ( index + 1).toString()
       await this.startAnnotation()
       this.movePage({ page })

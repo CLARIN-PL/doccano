@@ -218,7 +218,7 @@ export function getQuestionnairesToShow() {
             qTypes.forEach((questionnaireType) => {
                 const isFilled = filled.includes(questionnaireType.id)
                 const { firstLoginTime } = getters['user/getLogin']
-                const { hasAnnotated, hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
+                const { hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
                 const { hasFinishedAll } = getters['user/getProject'] 
                 const monthDiff = moment(firstLoginTime, DATE_FORMAT)
                                     .diff(moment(todayTime), 'months')
@@ -227,10 +227,10 @@ export function getQuestionnairesToShow() {
                 if(questionnaireType.id === '1.1') {
                     const hourDiff = moment(firstLoginTime, DATE_FORMAT)
                                         .diff(moment(todayTime), 'hours')
-                    const isFirstSignIn = hourDiff < 1
+                    const isFirstSignIn = hourDiff < .5
                     isShowing = !isFilled && isFirstSignIn
                 } else if(questionnaireType.id === "2.1") {
-                    isShowing = !isFilled && !hasAnnotated
+                    isShowing = !isFilled 
                 } else if(questionnaireType.id === "2.2") {
                     isShowing = !isFilled 
                                 && hasFinishedAll 
@@ -239,17 +239,18 @@ export function getQuestionnairesToShow() {
                     const weekDiff = moment(firstLoginTime, DATE_FORMAT)
                                     .diff(moment(todayTime), 'weeks')
                     const hasPassedOneWeek = weekDiff >= 1
-                    isShowing = !isFilled && hasPassedOneWeek && hasAnnotated
+                    isShowing = !isFilled && hasPassedOneWeek
                 } else if(questionnaireType.id === "3.2") {
-                    isShowing = !isFilled && hasPassedResearchTime && hasAnnotated
+                    isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "4.1") {
                     isShowing = !isFilled && !hasAnnotatedToday
                 }  else if(questionnaireType.id === "4.2") {
                     isShowing = !isFilled && hasFinishedAll
                 } else if(questionnaireType.id === "4.3") {
-                    const hasAnnotatedBatch = textCountToday > 0 
+                    const hasAnnotatedBatch = hasAnnotatedToday 
+                                            && textCountToday > 0 
                                             && textCountToday%TEXT_BATCH_COUNT === 0
-                    isShowing = !isFilled && hasAnnotatedBatch
+                    isShowing = hasAnnotatedBatch
                 } else if(questionnaireType.id === "5.1") {
                     isShowing = !isFilled 
                                 && hasFinishedAll

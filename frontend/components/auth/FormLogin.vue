@@ -68,8 +68,8 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapGetters('user', ['getLogin']),
-    ...mapActions('user', ['setLogin', 'initQuestionnaire', 'setAnnotation']),
+    ...mapGetters('user', ['getLogin', 'getQuestionnaire']),
+    ...mapActions('user', ['setLogin', 'initQuestionnaire', 'setAnnotation', 'setQuestionnaire']),
     setUserData() {
       try {
         const firstLoginTime = moment().format('DD-MM-YYYY HH:mm:ss')
@@ -78,7 +78,7 @@ export default Vue.extend({
         } else {
           this.setLogin({isFirstLogin: false})
         }
-        this.setAnnotation({hasAnnotated: false, hasAnnotatedToday: false})
+        this.setAnnotation({ hasAnnotatedToday: false})
         this.initQuestionnaire()
       }
       catch(error) {
