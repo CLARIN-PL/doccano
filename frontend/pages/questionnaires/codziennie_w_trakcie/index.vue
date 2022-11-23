@@ -104,7 +104,6 @@ import SliderInput from '~/components/questionnaires/form/SliderInput.vue'
 
 
 export default {
-    name: "CodziennieWTrakcie",
     layout: "questionnaire",
     components: {
       ScaleInput,
@@ -139,7 +138,7 @@ export default {
     this.setFormData()
   },
   methods: {
-    ...mapActions('user', ['setQuestionnaire', 'setIsWorkingOnQuestionnaire']),
+    ...mapActions('user', ['setQuestionnaire']),
     setFormData() {
       this.formData = _.cloneDeep(this.selectedQType)
     },
@@ -187,9 +186,9 @@ export default {
       this.setQuestionnaire({
         toShow: toShow.filter((ts)=> ts !== this.toShowId ),
         inProgress: [],
-        filled: filled.concat(this.toShowId)
+        filled: filled.concat(this.toShowId),
+        isWorkingNow: false
       })
-      this.setIsWorkingOnQuestionnaire(false)
       this.$router.push("/questionnaires")
       // continue to the next questionnaire
       // do something

@@ -88,7 +88,7 @@ export default Vue.extend({
 
   methods: {
     ...mapActions('user', ['setRestingPeriod', 'calculateRestingPeriod', 
-      'setCurrentlyAllowedProjectId', 'setHasFinishedAllProjects']),
+      'setCurrentlyAllowedProjectId', 'setProject']),
     async checkRestingPeriod() {
       const restingEndTime = await this.calculateRestingPeriod()
       if (restingEndTime === null) {
@@ -126,8 +126,8 @@ export default Vue.extend({
         this.projects = {...projects, ...{
           items,
         }}
-        const hasFinished = items.length === 0
-        this.setHasFinishedAllProjects(hasFinished)
+        const hasFinishedAll = items.length === 0
+        this.setProject({hasFinishedAll})
       }
       this.isLoading = false
     },
