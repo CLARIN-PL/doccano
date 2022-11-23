@@ -194,7 +194,8 @@ def populate_questions(apps, schema_editor):
     ]
     emocje_questions = [
         "Czy właśnie czułeś silną emocję?",
-        "Jak się czułaś:",
+        "Jak się czułaś: Neg-Pos",
+        "Jak się czułaś: Ospały-Bardzo pobudzony",
     ]
     anotacja_koniec_questions = [
         "Jak często powinno się robić przerwy w pracy anotacyjnej?",
