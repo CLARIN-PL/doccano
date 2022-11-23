@@ -128,16 +128,17 @@ export function hasStore() {
 }
 
 export function setQuestionnaireIds(qTypes, questionnaires) {
-    console.log(qTypes)
     return qTypes.map((qType)=> {
-        qType.questionnaires = qType.questionnaires.map((que)=> {
-            questionnaires.forEach((questionnaire)=> {
-                if(questionnaire.name === que.name) {
-                    que.id = questionnaire.id
-                }
+        if(qType && qType.questionnaires) {
+            qType.questionnaires = qType.questionnaires.map((que)=> {
+                questionnaires.forEach((questionnaire)=> {
+                    if(questionnaire.name === que.name) {
+                        que.id = questionnaire.id
+                    }
+                })
+                return que
             })
-            return que
-        })
+        }
         return qType
     })
 }
@@ -188,50 +189,55 @@ export function getQuestionnairesToShow() {
     const todayTime = new Date()
     let getters = null
     let toShow = []
+    let filled = []
     if(hasStore()) {
         getters = window.$nuxt.$store.getters
         toShow = getters['user/getQuestionnaire'].toShow || []
+        filled = getters['user/getQuestionnaire'].filled || []
     }
     try {
         if(getters) {
             qTypes.forEach((questionnaireType) => {
-            const isFilled = getters['user/getQuestionnaire'].filled.includes(questionnaireType.id)
-            const monthDiff = moment(getters['user/getFirstLoginTime'], DATE_FORMAT)
+            const isFilled = filled.includes(questionnaireType.id)
+            const { firstLoginTime } = getters['user/getLogin']
+            const { hasAnnotated, hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
+            const { hasFinishedAll } = getters['user/getProject'] 
+            const monthDiff = moment(firstLoginTime, DATE_FORMAT)
                                 .diff(moment(todayTime), 'months')
             const hasPassedResearchTime = monthDiff >= RESEARCH_TIME_IN_MONTHS
             let isShowing = false
             if(questionnaireType.id === '1.1') {
-                const hourDiff = moment(getters['user/getFirstLoginTime'], DATE_FORMAT)
+                const hourDiff = moment(firstLoginTime, DATE_FORMAT)
                                     .diff(moment(todayTime), 'hours')
                 const isFirstSignIn = hourDiff < 1
                 isShowing = !isFilled && isFirstSignIn
             } else if(questionnaireType.id === "2.1") {
-                isShowing = !isFilled && !getters['user/getHasAnnotated']
+                isShowing = !isFilled && !hasAnnotated
             } else if(questionnaireType.id === "2.2") {
                 isShowing = !isFilled 
-                            && getters['user/getHasFinishedAllProjects'] 
+                            && hasFinishedAll 
                             && hasPassedResearchTime
             } else if(questionnaireType.id === "3.1") {
-                const weekDiff = moment(getters['user/getFirstLoginTime'], DATE_FORMAT)
+                const weekDiff = moment(firstLoginTime, DATE_FORMAT)
                                 .diff(moment(todayTime), 'weeks')
                 const hasPassedOneWeek = weekDiff >= 1
-                isShowing = !isFilled && hasPassedOneWeek && getters['user/getHasAnnotated']
+                isShowing = !isFilled && hasPassedOneWeek && hasAnnotated
             } else if(questionnaireType.id === "3.2") {
-                isShowing = !isFilled && hasPassedResearchTime && getters['user/getHasAnnotated']
+                isShowing = !isFilled && hasPassedResearchTime && hasAnnotated
             } else if(questionnaireType.id === "4.1") {
-                isShowing = !isFilled && !getters['user/getHasAnnotatedToday']
+                isShowing = !isFilled && !hasAnnotatedToday
             }  else if(questionnaireType.id === "4.2") {
-                isShowing = !isFilled && getters['user/getHasFinishedAllProjects']
+                isShowing = !isFilled && hasFinishedAll
             } else if(questionnaireType.id === "4.3") {
-                const hasAnnotatedBatch = getters['user/getAnnotatedTextCount'] > 0 
-                                        && getters['user/getAnnotatedTextCount']%TEXT_BATCH_COUNT === 0
+                const hasAnnotatedBatch = textCountToday > 0 
+                                        && textCountToday%TEXT_BATCH_COUNT === 0
                 isShowing = !isFilled && hasAnnotatedBatch
             } else if(questionnaireType.id === "5.1") {
                 isShowing = !isFilled 
-                            && getters['user/getHasFinishedAllProjects'] 
+                            && hasFinishedAll
                             && hasPassedResearchTime
             } else if(questionnaireType.id === "6.1") {
-                const weekDiff = moment(getters['user/getFirstLoginTime'], DATE_FORMAT)
+                const weekDiff = moment(firstLoginTime, DATE_FORMAT)
                                 .diff(moment(todayTime), 'weeks')
                 const hasPassedTwoWeeks = weekDiff >= 2
                 isShowing = !isFilled && hasPassedTwoWeeks

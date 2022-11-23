@@ -30,13 +30,12 @@ export default {
         ...mapGetters('user', ['getQuestionnaire']),
     },
     methods: {
-        ...mapActions('user', ['setQuestionnaire', 'setIsWorkingOnQuestionnaire']),
+        ...mapActions('user', ['setQuestionnaire']),
         redirect() {
             const { toShow } = this.getQuestionnaire
-            this.setIsWorkingOnQuestionnaire(true)
             if(toShow.length) {
                 const questionnaireId = toShow[0].split(".")[0]
-                this.setQuestionnaire({ inProgress: [toShow[0]] })
+                this.setQuestionnaire({ inProgress: [toShow[0]], isWorkingNow: true })
                 const { key } = this.qCategories.find((k)=> k.id === questionnaireId)
                 this.$router.push(`/questionnaires/${key}/`)
             }
