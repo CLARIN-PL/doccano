@@ -50,6 +50,7 @@
                                 :is="getComponent(segmentQuestion.type)" 
                                 :question="segmentQuestion.text"
                                 :options="segmentQuestion.options"
+                                
                                 :min="segmentQuestion.min"
                                 :max="segmentQuestion.max"
                                 :min-label="segmentQuestion.minLabel"

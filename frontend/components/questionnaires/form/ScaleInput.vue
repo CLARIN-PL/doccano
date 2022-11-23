@@ -1,7 +1,11 @@
 <template>
     <div>
+        <small>
+            {{ header }}
+        </small>
         <p>
             {{ question }}
+            <span v-if="required">*</span>
         </p>
         <v-radio-group 
             v-model="input"
@@ -22,6 +26,10 @@ export default Vue.extend({
     name: 'ScaleInput',
     props: {
         question: {
+            type: String,
+            default: ""
+        },
+        header: {
             type: String,
             default: ""
         },

@@ -37,7 +37,7 @@ export const qCategories = [
             {
                 id: "1.1",
                 name: "Przed badaniem",
-                count: 3,
+                questionnaires: 3,
             }
         ]
     },
@@ -49,12 +49,12 @@ export const qCategories = [
             {
                 id: "2.1",
                 name: "Przed i po badaniu (przed badaniem)",
-                count: 8,
+                questionnaires: 8,
             },
             {
                 id: "2.2",
                 name: "Przed i po badaniu (po badaniu)",
-                count: 8,
+                questionnaires: 8,
             }
         ]
     },
@@ -66,12 +66,12 @@ export const qCategories = [
             {
                 id: "3.1",
                 name: "Po pierwszym tygodniu",
-                count: 1
+                questionnaires: 1
             },
             {
                 id: "3.2",
                 name: "Na końcu badań",
-                count: 1
+                questionnaires: 1
             }
         ]
     }, 
@@ -83,17 +83,17 @@ export const qCategories = [
             {
                 id: "4.1",
                 name: "Rano (sen, stres)",
-                count: 2,
+                questionnaires: 2,
             },
             {
                 id: "4.2",
                 name: "Wieczorem (stres, zdrowie)",
-                count: 2
+                questionnaires: 2
             },
             {
                 id: "4.3",
                 name: "W przerwie (emocje)",
-                count: 1
+                questionnaires: 1
             },
         ]
     },
@@ -105,7 +105,7 @@ export const qCategories = [
             {
                 id: "5.1",
                 name: "Ankieta na koniec badania",
-                count: 1,
+                questionnaires: 1,
             }
         ]
     },
@@ -117,7 +117,7 @@ export const qCategories = [
             {
                 id: "6.1",
                 name: "Ankieta po 2 tygodniach badania",
-                count: 1,
+                questionnaires: 1,
             }
         ]
     }
@@ -127,14 +127,27 @@ export function hasStore() {
     return !!window.$nuxt && !!window.$nuxt.$store
 }
 
-export function setQuestionnaireIds(qTypes, questionnaires) {
+export function setQuestionnaireIds(qTypes, questionnaires, questions=[]) {
     return qTypes.map((qType)=> {
         if(qType && qType.questionnaires) {
             qType.questionnaires = qType.questionnaires.map((que)=> {
-                questionnaires.forEach((questionnaire)=> {
-                    if(questionnaire.name === que.name) {
-                        que.id = questionnaire.id
-                    }
+                const queId = questionnaires.find((q)=> q.name === que.name)
+                if(queId) {
+                    que.id = queId
+                }
+                que.segments = que.segments.map((segment)=> {
+                    segment.questions = segment.questions.map((question)=> {
+                        let qItem = questions.find((quest)=> question.text === quest.questionText)
+                        if(question.header) {
+                            qItem = questions.find((quest)=> question.header === quest.questionText)
+                        }
+                        if(qItem) {
+                            question.id = qItem.id
+                            question.questionnaireId = qItem.questionnaire
+                        }
+                        return question
+                    })
+                    return segment
                 })
                 return que
             })
@@ -169,6 +182,11 @@ export function mapQuestionnaireTypes(qTypes) {
                             min++
                         }
                     }
+                    question.rules = []
+                    if(question.required) {
+                        const requiredCheck = (item) => !!item
+                        question.rules.push(requiredCheck)
+                    }
                     return question
                 })
                 return segment
@@ -198,54 +216,54 @@ export function getQuestionnairesToShow() {
     try {
         if(getters) {
             qTypes.forEach((questionnaireType) => {
-            const isFilled = filled.includes(questionnaireType.id)
-            const { firstLoginTime } = getters['user/getLogin']
-            const { hasAnnotated, hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
-            const { hasFinishedAll } = getters['user/getProject'] 
-            const monthDiff = moment(firstLoginTime, DATE_FORMAT)
-                                .diff(moment(todayTime), 'months')
-            const hasPassedResearchTime = monthDiff >= RESEARCH_TIME_IN_MONTHS
-            let isShowing = false
-            if(questionnaireType.id === '1.1') {
-                const hourDiff = moment(firstLoginTime, DATE_FORMAT)
-                                    .diff(moment(todayTime), 'hours')
-                const isFirstSignIn = hourDiff < 1
-                isShowing = !isFilled && isFirstSignIn
-            } else if(questionnaireType.id === "2.1") {
-                isShowing = !isFilled && !hasAnnotated
-            } else if(questionnaireType.id === "2.2") {
-                isShowing = !isFilled 
-                            && hasFinishedAll 
-                            && hasPassedResearchTime
-            } else if(questionnaireType.id === "3.1") {
-                const weekDiff = moment(firstLoginTime, DATE_FORMAT)
-                                .diff(moment(todayTime), 'weeks')
-                const hasPassedOneWeek = weekDiff >= 1
-                isShowing = !isFilled && hasPassedOneWeek && hasAnnotated
-            } else if(questionnaireType.id === "3.2") {
-                isShowing = !isFilled && hasPassedResearchTime && hasAnnotated
-            } else if(questionnaireType.id === "4.1") {
-                isShowing = !isFilled && !hasAnnotatedToday
-            }  else if(questionnaireType.id === "4.2") {
-                isShowing = !isFilled && hasFinishedAll
-            } else if(questionnaireType.id === "4.3") {
-                const hasAnnotatedBatch = textCountToday > 0 
-                                        && textCountToday%TEXT_BATCH_COUNT === 0
-                isShowing = !isFilled && hasAnnotatedBatch
-            } else if(questionnaireType.id === "5.1") {
-                isShowing = !isFilled 
-                            && hasFinishedAll
-                            && hasPassedResearchTime
-            } else if(questionnaireType.id === "6.1") {
-                const weekDiff = moment(firstLoginTime, DATE_FORMAT)
-                                .diff(moment(todayTime), 'weeks')
-                const hasPassedTwoWeeks = weekDiff >= 2
-                isShowing = !isFilled && hasPassedTwoWeeks
-            }
+                const isFilled = filled.includes(questionnaireType.id)
+                const { firstLoginTime } = getters['user/getLogin']
+                const { hasAnnotated, hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
+                const { hasFinishedAll } = getters['user/getProject'] 
+                const monthDiff = moment(firstLoginTime, DATE_FORMAT)
+                                    .diff(moment(todayTime), 'months')
+                const hasPassedResearchTime = monthDiff >= RESEARCH_TIME_IN_MONTHS
+                let isShowing = false
+                if(questionnaireType.id === '1.1') {
+                    const hourDiff = moment(firstLoginTime, DATE_FORMAT)
+                                        .diff(moment(todayTime), 'hours')
+                    const isFirstSignIn = hourDiff < 1
+                    isShowing = !isFilled && isFirstSignIn
+                } else if(questionnaireType.id === "2.1") {
+                    isShowing = !isFilled && !hasAnnotated
+                } else if(questionnaireType.id === "2.2") {
+                    isShowing = !isFilled 
+                                && hasFinishedAll 
+                                && hasPassedResearchTime
+                } else if(questionnaireType.id === "3.1") {
+                    const weekDiff = moment(firstLoginTime, DATE_FORMAT)
+                                    .diff(moment(todayTime), 'weeks')
+                    const hasPassedOneWeek = weekDiff >= 1
+                    isShowing = !isFilled && hasPassedOneWeek && hasAnnotated
+                } else if(questionnaireType.id === "3.2") {
+                    isShowing = !isFilled && hasPassedResearchTime && hasAnnotated
+                } else if(questionnaireType.id === "4.1") {
+                    isShowing = !isFilled && !hasAnnotatedToday
+                }  else if(questionnaireType.id === "4.2") {
+                    isShowing = !isFilled && hasFinishedAll
+                } else if(questionnaireType.id === "4.3") {
+                    const hasAnnotatedBatch = textCountToday > 0 
+                                            && textCountToday%TEXT_BATCH_COUNT === 0
+                    isShowing = !isFilled && hasAnnotatedBatch
+                } else if(questionnaireType.id === "5.1") {
+                    isShowing = !isFilled 
+                                && hasFinishedAll
+                                && hasPassedResearchTime
+                } else if(questionnaireType.id === "6.1") {
+                    const weekDiff = moment(firstLoginTime, DATE_FORMAT)
+                                    .diff(moment(todayTime), 'weeks')
+                    const hasPassedTwoWeeks = weekDiff >= 2
+                    isShowing = !isFilled && hasPassedTwoWeeks
+                }
 
-            if(isShowing && !toShow.includes(questionnaireType.id)) {
-                toShow = toShow.concat(questionnaireType.id)
-            }
+                if(isShowing && !toShow.includes(questionnaireType.id)) {
+                    toShow = toShow.concat(questionnaireType.id)
+                }
             })
         }
     }
