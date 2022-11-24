@@ -63,9 +63,8 @@
                                 {{ segment.prependIndex+(segQuIdx+1) }}
                               </p>
                               <component 
+                                :is="getComponent(segmentQuestion.type)"
                                 v-model="segmentQuestion.value"
-                                @change="onQuestionChange(segmentQuestion, segQuIdx, segIdx, qIdx)"
-                                :is="getComponent(segmentQuestion.type)" 
                                 :header="segmentQuestion.header"
                                 :required="segmentQuestion.required"
                                 :question="segmentQuestion.text"
@@ -75,14 +74,15 @@
                                 :is-submitting="segmentQuestion.isSubmitting"
                                 :error-message="segmentQuestion.errorMessage"
                                 :read-only="segmentQuestion.readOnly"
+                                @change="onQuestionChange(segmentQuestion, segQuIdx, segIdx, qIdx)"
                               />
                             </li>
                         </ul>
                       </div>
                     </li>
                   </ul>
-                  <footer v-html="questionnaire.footer">
-                  </footer>
+                  <!-- eslint-disable-next-line vue/no-v-html -->
+                  <footer v-html="questionnaire.footer" />
                 </v-row>
               </v-card-text>
               <v-card-actions>
@@ -119,7 +119,6 @@ import SliderInput from '~/components/questionnaires/form/SliderInput.vue'
 import GreetingCard from '~/components/questionnaires/GreetingCard.vue'
 
 export default {
-  layout: 'questionnaire',
   components: {
     ScaleInput,
     RadioInput,
@@ -127,6 +126,7 @@ export default {
     SliderInput,
     GreetingCard
   },
+  layout: 'questionnaire',
   props: {
     qTypes: {
       type: Array,
@@ -145,6 +145,9 @@ export default {
       formData: {}
     }
   },
+  fetch() {
+    this.list()
+  },
   computed: {
     ...mapGetters('user', ['getQuestionnaire']),
     toShowId() {
@@ -153,9 +156,6 @@ export default {
     selectedQType() {
       return this.mappedQTypes.find((qType) => qType.id === this.toShowId)
     }
-  },
-  fetch() {
-    this.list()
   },
   created() {
     this.initialize()
