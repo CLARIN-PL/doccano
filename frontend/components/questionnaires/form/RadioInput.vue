@@ -14,20 +14,19 @@
         :value="option.value"
       >
       </v-radio>
-
       <text-input
         v-if="selectedOption.showTextbox"
-        @blur="onBlurTextInput"
+        v-model="inputText"
         :question="selectedOption.text"
         :required="required"
-        v-model="inputText"
+        @blur="onBlurTextInput"
       />
     </v-radio-group>
   </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import TextInput from '~/components/questionnaires/form/TextInput'
+import TextInput from '~/components/questionnaires/form/TextInput.vue'
 
 export default Vue.extend({
   name: 'RadioInput',
@@ -78,33 +77,40 @@ export default Vue.extend({
   },
   computed: {
     selectedOption() {
-      return this.options.find((option) => option.value === this.input) || {}
+      // @ts-ignore
+      return this.options.find((option: any) => option.value === this.input) || {}
     },
     isCustom() {
-      return this.value && !this.options.find((option) => option.value === this.value)
+      // @ts-ignore
+      return this.value && !this.options.find((option: any) => option.value === this.value)
     },
     inputText: {
       get() {
+        // @ts-ignore
         return this.isCustom ? this.value : ''
       },
       set(val) {
-        this.$emit('input', val)
-        this.$emit('change', val)
+        // @ts-ignore
+        const base: any = this
+        base.$emit('input', val)
+        base.$emit('change', val)
       }
     },
     input: {
       get() {
-        const customOption = this.options.find((option) => !!option.showTextbox)
-        return this.isCustom && customOption ? customOption.value : this.value
+        const base: any = this
+        const customOption: any = base.options.find((option: any) => !!option.showTextbox)
+        return base.isCustom && customOption ? customOption.value : base.value
       },
       set(val) {
-        this.$emit('input', val)
-        this.$emit('change', val)
+        const base: any = this
+        base.$emit('input', val)
+        base.$emit('change', val)
       }
     }
   },
   methods: {
-    onBlurTextInput(val) {
+    onBlurTextInput(val: String) {
       this.$emit('change', val)
     }
   }

@@ -5,20 +5,18 @@
 </template>
 
 <script>
-import {
-  qTypes, 
-} from "./js/questionnaires"
-import QuestionnaireForm from "~/components/questionnaires/QuestionnaireForm.vue"
+import { qTypes } from './js/questionnaires'
+import QuestionnaireForm from '~/components/questionnaires/QuestionnaireForm.vue'
 
 export default {
-    layout: "questionnaire",
-    components: {
-      QuestionnaireForm
-    },
-    data() {
-      return {
-        qTypes
-      }
+  components: {
+    QuestionnaireForm
+  },
+  layout: 'questionnaire',
+  data() {
+    return {
+      qTypes
     }
+  }
 }
 </script>

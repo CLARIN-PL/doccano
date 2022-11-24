@@ -17,7 +17,7 @@
           :rules="rules"
           hide-details="auto"
         />
-        <span class="error-message" v-show="errorMessage">
+        <span v-show="errorMessage" class="error-message">
           {{ errorMessage }}
         </span>
       </v-col>

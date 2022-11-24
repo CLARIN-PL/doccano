@@ -24,8 +24,8 @@
       :show-select="isStaff"
       @update:query="updateQuery"
     />
-    <p v-if="!isStaff" class="warning-text" >
-        {{ $t('generic.onlyDisplayCompletedProject', { number: projects.items.length }) }}
+    <p v-if="!isStaff" class="warning-text">
+      {{ $t('generic.onlyDisplayCompletedProject', { number: projects.items.length }) }}
     </p>
     <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
   </v-card>
@@ -60,7 +60,7 @@ export default Vue.extend({
       selected: [] as ProjectDTO[],
       isLoading: false,
       showRestingMessage: false,
-      restingEndTime: "",
+      restingEndTime: ''
     }
   },
 
@@ -68,16 +68,12 @@ export default Vue.extend({
     await this.getProjectData()
   },
 
-  created() {
-    this.checkRestingPeriod()
-  },
-
   computed: {
     ...mapGetters('auth', ['isStaff']),
     ...mapGetters('user', ['getQuestionnaire']),
     canDelete(): boolean {
       return this.selected.length > 0
-    },
+    }
   },
 
   watch: {
@@ -87,15 +83,24 @@ export default Vue.extend({
     }, 1000)
   },
 
+  created() {
+    this.checkRestingPeriod()
+  },
+
   methods: {
-    ...mapActions('user', ['setRestingPeriod', 'calculateRestingPeriod', 
-      'setCurrentlyAllowedProjectId', 'setProject', 'initQuestionnaire']),
+    ...mapActions('user', [
+      'setRestingPeriod',
+      'calculateRestingPeriod',
+      'setCurrentlyAllowedProjectId',
+      'setProject',
+      'initQuestionnaire'
+    ]),
 
     async checkRestingPeriod() {
       const restingEndTime = await this.calculateRestingPeriod()
       if (restingEndTime === null) {
         this.showRestingMessage = false
-        this.restingEndTime = ""
+        this.restingEndTime = ''
       } else {
         this.showRestingMessage = !this.isStaff && !this.getQuestionnaire.toShow.length
         this.restingEndTime = restingEndTime
@@ -104,7 +109,9 @@ export default Vue.extend({
 
     findNextProjectIdToAnnotate(progressList: MyProgressList) {
       try {
-        const progress = progressList.results.find((projectProgress: MyProgress)=> projectProgress.remaining > 0)
+        const progress = progressList.results.find(
+          (projectProgress: MyProgress) => projectProgress.remaining > 0
+        )
         const nextProjectIdToAnnotate = progress?.project_id || -1
         this.setCurrentlyAllowedProjectId(nextProjectIdToAnnotate)
       } catch {
@@ -115,31 +122,39 @@ export default Vue.extend({
     async getProjectData() {
       this.isLoading = true
       const projects = await this.$services.project.list(this.$route.query)
-      if(this.isStaff) {
+      if (this.isStaff) {
         this.projects = _.cloneDeep(projects)
       } else {
         const progresses = await this.$services.metrics.fetchMyProgresses()
         this.findNextProjectIdToAnnotate(progresses)
-        const items = projects.items.map((projectItem: ProjectDTO)=> {
-            const progress = progresses.results.find((prog: MyProgress)=> prog.project_id === projectItem.id)
-            projectItem.isCompleted = progress && progress.total > 0  ?  progress.remaining === 0 : true
+        const items = projects.items
+          .map((projectItem: ProjectDTO) => {
+            const progress = progresses.results.find(
+              (prog: MyProgress) => prog.project_id === projectItem.id
+            )
+            projectItem.isCompleted =
+              progress && progress.total > 0 ? progress.remaining === 0 : true
             return projectItem
-          }).filter((projectItem)=> !projectItem.isCompleted)
-        this.projects = {...projects, ...{
-          items,
-        }}
+          })
+          .filter((projectItem) => !projectItem.isCompleted)
+        this.projects = {
+          ...projects,
+          ...{
+            items
+          }
+        }
       }
       const hasFinishedAll = this.projects.items.length === 0
-      this.setProject({hasFinishedAll})
+      this.setProject({ hasFinishedAll })
       this.checkQuestionnaire()
       this.isLoading = false
     },
 
     checkQuestionnaire() {
       this.initQuestionnaire()
-      if(this.getQuestionnaire.toShow.length) {
-        this.$router.push("/questionnaires")
-      } 
+      if (this.getQuestionnaire.toShow.length) {
+        this.$router.push('/questionnaires')
+      }
     },
 
     async remove() {
@@ -165,7 +180,7 @@ export default Vue.extend({
   padding: 10px 10px 20px;
   text-align: right;
   color: red;
-  font-size: .7rem;
+  font-size: 0.7rem;
   word-break: break-word;
 }
 </style>
