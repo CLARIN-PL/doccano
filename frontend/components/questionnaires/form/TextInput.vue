@@ -45,6 +45,7 @@
                 autofocus
                 :hint="$t('labels.clickEnter')"
                 :rules="rules"
+                @blur="onBlurTextField"
                 @keyup.enter="submitAnswer" >
                 <template #append-outer>
                     <v-btn 
@@ -124,13 +125,16 @@ export default {
         }
     }
   },
-
   methods: {
+    onBlurTextField() {
+      this.$emit("blur", this.text)
+    },
     submitAnswer() {
       const hasFilledText = this.required ? !!this.text : true
       if(hasFilledText) {
         this.showDialog = false
         this.$emit("submit", this.text)
+        this.$emit("change", this.text)
       } else {
         this.dialogErrorMessage = this.$t('rules.required')
       }

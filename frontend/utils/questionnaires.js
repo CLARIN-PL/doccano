@@ -165,6 +165,7 @@ export function mapQuestionnaireTypes(qTypes) {
                     question.required = question.required === undefined ? true : question.required
                     const numberInputs = ['slider', 'scale']
                     question.value = numberInputs.includes(question.type) ? 0 : ""
+                    question.config = {}
                     if(question.options) {
                         question.options = question.options.map((option)=> {
                             option.value = option.value === undefined ? option.text : option.value
@@ -180,6 +181,13 @@ export function mapQuestionnaireTypes(qTypes) {
                                 value: min.toString()
                             })
                             min++
+                        }
+                    } else if(question.type === "slider") {
+                        question.config = {
+                            min: question.min,
+                            max: question.max,
+                            minLabel: question.minLabel,
+                            maxLabel: question.maxLabel
                         }
                     }
                     question.rules = []

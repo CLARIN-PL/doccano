@@ -28,13 +28,13 @@ export class APIQuestionnaireRepository implements QuestionnaireRepository {
   }
 
   async createAnswer(item: AnswerWriteItem): Promise<AnswerReadItem> {
-    const url = `/answer/${item.question}`
+    const url = `/answers/${item.question}`
     const response = await this.request.post(url, item.toObject())
     return plainToInstance(AnswerReadItem, response.data)
   }
 
   async updateAnswer(item: AnswerWriteItem): Promise<AnswerReadItem> {
-    const url = `/answer/${item.question}`
+    const url = `/answers/${item.question}`
     const response = await this.request.post(url, item.toObject())
     return plainToInstance(AnswerReadItem, response.data)
   }

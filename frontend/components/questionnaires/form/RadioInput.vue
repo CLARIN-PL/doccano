@@ -19,6 +19,7 @@
             </v-radio>
             <text-input 
                 v-if="selectedOption.showTextbox || !!inputText"
+                @blur="onBlurTextInput"
                 :question="selectedOption.text"
                 :required="true"
                 v-model="inputText"
@@ -61,34 +62,37 @@ export default Vue.extend({
             default: () => []
         }
     },
-    data() {
-        return {
-        }
-    },
     computed: {
         selectedOption() {
             return this.options.find((option)=> option.value === this.input ) || {}
         },
+        isCustom() {
+            return this.value && !this.options.find((option)=> option.value === this.value)
+        },
         inputText: {
             get() {
-                const isCustom = !this.options.find((option)=> option.value === this.value)
-                return isCustom? this.value : ""
+                return this.isCustom? this.value : ""
             },
             set(val) {
-                this.$emit("change", val)
                 this.$emit("input", val)
             }
         },
         input: {
             get() {
-                const isCustom = this.value && !this.options.find((option)=> option.value === this.value)
                 const customOption = this.options.find((option)=> !!option.showTextbox)
-                return isCustom && customOption ? customOption.value : this.value
+                return this.isCustom && customOption ? customOption.value : this.value
             },
             set(val) {
-                this.$emit("change", val)
                 this.$emit("input", val)
+                if(!this.isCustom) {
+                    this.$emit("change", val)
+                }
             }
+        }
+    },
+    methods: {
+        onBlurTextInput(val) {
+            this.$emit("change", val)
         }
     }
 })
