@@ -68,6 +68,10 @@ export default Vue.extend({
     await this.getProjectData()
   },
 
+  created() {
+    this.checkRestingPeriod()
+  },
+
   computed: {
     ...mapGetters('auth', ['isStaff']),
     ...mapGetters('user', ['getQuestionnaire']),
@@ -93,7 +97,7 @@ export default Vue.extend({
         this.showRestingMessage = false
         this.restingEndTime = ""
       } else {
-        this.showRestingMessage = !this.isStaff
+        this.showRestingMessage = !this.isStaff && !this.getQuestionnaire.toShow.length
         this.restingEndTime = restingEndTime
       }
     },
@@ -124,20 +128,18 @@ export default Vue.extend({
         this.projects = {...projects, ...{
           items,
         }}
-        this.checkQuestionnaire()
       }
+      const hasFinishedAll = this.projects.items.length === 0
+      this.setProject({hasFinishedAll})
+      this.checkQuestionnaire()
       this.isLoading = false
     },
 
     checkQuestionnaire() {
-      const hasFinishedAll = this.projects.items.length === 0
-      this.setProject({hasFinishedAll})
       this.initQuestionnaire()
       if(this.getQuestionnaire.toShow.length) {
         this.$router.push("/questionnaires")
-      } else {
-        this.checkRestingPeriod()
-      }
+      } 
     },
 
     async remove() {

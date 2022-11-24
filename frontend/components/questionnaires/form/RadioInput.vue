@@ -1,99 +1,112 @@
 <template>
-    <div>
-        <p>
-            {{ header }}
-            {{ question }}
+  <div>
+    <p>
+      {{ header }}
+      {{ question }}
+      <span v-if="required">*</span>
+    </p>
+    <v-radio-group v-model="input">
+      <v-radio
+        v-for="(option, idx) in options"
+        :key="idx"
+        :disabled="readOnly || isSubmitting"
+        :label="option.text"
+        :value="option.value"
+      >
+      </v-radio>
 
-            <span v-if="required">*</span>
-        </p>
-        <v-radio-group 
-            v-model="input"
-        >
-            <v-radio
-                v-for="(option, idx) in options"
-                :key="idx"
-                :disabled="readOnly"
-                :label="option.text"
-                :value="option.value"
-            >
-            </v-radio>
-
-            <text-input 
-                v-if="selectedOption.showTextbox"
-                @blur="onBlurTextInput"
-                :question="selectedOption.text"
-                :required="true"
-                v-model="inputText"
-             />
-        </v-radio-group>
-    </div>
+      <text-input
+        v-if="selectedOption.showTextbox"
+        @blur="onBlurTextInput"
+        :question="selectedOption.text"
+        :required="required"
+        v-model="inputText"
+      />
+    </v-radio-group>
+  </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import TextInput from "~/components/questionnaires/form/TextInput"
+import TextInput from '~/components/questionnaires/form/TextInput'
 
 export default Vue.extend({
-    name: 'RadioInput',
-    components: {
-        TextInput
+  name: 'RadioInput',
+  components: {
+    TextInput
+  },
+  props: {
+    question: {
+      type: String,
+      default: ''
     },
-    props: {
-        question: {
-            type: String,
-            default: ""
-        },
-        header: {
-            type: String,
-            default: ""
-        },
-        readOnly: {
-            type: Boolean,
-            default: false
-        },
-        required: {
-            type: Boolean,
-            default: false
-        },
-        value: {
-            type: [String, Number],
-            default: ""
-        },
-        options: {
-            type: Array,
-            default: () => []
-        }
+    header: {
+      type: String,
+      default: ''
     },
-    computed: {
-        selectedOption() {
-            return this.options.find((option)=> option.value === this.input ) || {}
-        },
-        isCustom() {
-            return !this.options.find((option)=> option.value === this.value)
-        },
-        inputText: {
-            get() {
-                return this.isCustom? this.value : ""
-            },
-            set(val) {
-                this.$emit("input", val)
-                this.$emit("change", val)
-            }
-        },
-        input: {
-            get() {
-                const customOption = this.options.find((option)=> !!option.showTextbox)
-                return this.isCustom && customOption ? customOption.value : this.value
-            },
-            set(val) {
-                this.$emit("input", val)
-                this.$emit("change", val)
-            }
-        }
+    readOnly: {
+      type: Boolean,
+      default: false
     },
-    methods: {
-        onBlurTextInput(val) {
-            this.$emit("change", val)
-        }
+    isSubmitting: {
+      type: Boolean,
+      default: false
+    },
+    isClicked: {
+      type: Boolean,
+      default: false
+    },
+    required: {
+      type: Boolean,
+      default: false
+    },
+    value: {
+      type: [String, Number],
+      default: ''
+    },
+    options: {
+      type: Array,
+      default: () => []
+    },
+    errorMessage: {
+      type: String,
+      default: ''
+    },
+    config: {
+      type: Object,
+      default: () => {}
     }
+  },
+  computed: {
+    selectedOption() {
+      return this.options.find((option) => option.value === this.input) || {}
+    },
+    isCustom() {
+      return this.value && !this.options.find((option) => option.value === this.value)
+    },
+    inputText: {
+      get() {
+        return this.isCustom ? this.value : ''
+      },
+      set(val) {
+        this.$emit('input', val)
+        this.$emit('change', val)
+      }
+    },
+    input: {
+      get() {
+        const customOption = this.options.find((option) => !!option.showTextbox)
+        return this.isCustom && customOption ? customOption.value : this.value
+      },
+      set(val) {
+        this.$emit('input', val)
+        this.$emit('change', val)
+      }
+    }
+  },
+  methods: {
+    onBlurTextInput(val) {
+      this.$emit('change', val)
+    }
+  }
 })
 </script>
