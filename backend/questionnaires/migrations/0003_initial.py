@@ -191,6 +191,7 @@ def populate_questions(apps, schema_editor):
     ]
     zdrowie_wieczor_questions = [
         "Jak oceniasz stan swojego zdrowia?",
+        "Jak się dzisiaj czułeś/aś?"
     ]
     emocje_questions = [
         "Czy właśnie czułeś silną emocję?",
