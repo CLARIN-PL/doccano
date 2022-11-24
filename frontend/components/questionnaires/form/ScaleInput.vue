@@ -53,6 +53,7 @@ export default Vue.extend({
     computed: {
         input: {
             get() {
+                // @ts-ignore
                 return this.value
             },
             set(val) {

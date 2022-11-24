@@ -70,6 +70,7 @@ export default Vue.extend({
 
   computed: {
     ...mapGetters('auth', ['isStaff']),
+    ...mapGetters('user', ['getQuestionnaire']),
     canDelete(): boolean {
       return this.selected.length > 0
     },
@@ -82,13 +83,10 @@ export default Vue.extend({
     }, 1000)
   },
 
-  created() {
-    this.checkRestingPeriod()
-  },
-
   methods: {
     ...mapActions('user', ['setRestingPeriod', 'calculateRestingPeriod', 
-      'setCurrentlyAllowedProjectId', 'setProject']),
+      'setCurrentlyAllowedProjectId', 'setProject', 'initQuestionnaire']),
+
     async checkRestingPeriod() {
       const restingEndTime = await this.calculateRestingPeriod()
       if (restingEndTime === null) {
@@ -126,10 +124,20 @@ export default Vue.extend({
         this.projects = {...projects, ...{
           items,
         }}
-        const hasFinishedAll = items.length === 0
-        this.setProject({hasFinishedAll})
+        this.checkQuestionnaire()
       }
       this.isLoading = false
+    },
+
+    checkQuestionnaire() {
+      const hasFinishedAll = this.projects.items.length === 0
+      this.setProject({hasFinishedAll})
+      this.initQuestionnaire()
+      if(this.getQuestionnaire.toShow.length) {
+        this.$router.push("/questionnaires")
+      } else {
+        this.checkRestingPeriod()
+      }
     },
 
     async remove() {

@@ -17,8 +17,9 @@
                 :value="option.value"
             >
             </v-radio>
+
             <text-input 
-                v-if="selectedOption.showTextbox || !!inputText"
+                v-if="selectedOption.showTextbox"
                 @blur="onBlurTextInput"
                 :question="selectedOption.text"
                 :required="true"
@@ -67,7 +68,7 @@ export default Vue.extend({
             return this.options.find((option)=> option.value === this.input ) || {}
         },
         isCustom() {
-            return this.value && !this.options.find((option)=> option.value === this.value)
+            return !this.options.find((option)=> option.value === this.value)
         },
         inputText: {
             get() {
@@ -75,6 +76,7 @@ export default Vue.extend({
             },
             set(val) {
                 this.$emit("input", val)
+                this.$emit("change", val)
             }
         },
         input: {
@@ -84,9 +86,7 @@ export default Vue.extend({
             },
             set(val) {
                 this.$emit("input", val)
-                if(!this.isCustom) {
-                    this.$emit("change", val)
-                }
+                this.$emit("change", val)
             }
         }
     },

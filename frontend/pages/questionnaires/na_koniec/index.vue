@@ -1,34 +1,24 @@
 <template>
-<div>
-    na koniec
-</div>
+  <div>
+    <questionnaire-form :q-types="qTypes" />
+  </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
 import {
   qTypes, 
 } from "./js/questionnaires"
-import {
-  qCategories,
-} from "~/utils/questionnaires"
+import QuestionnaireForm from "~/components/questionnaires/QuestionnaireForm.vue"
 
 export default {
-    name: "NaKoniec",
     layout: "questionnaire",
-  data() {
-    return {
-      qCategories,
-      qTypes,
+    components: {
+      QuestionnaireForm
+    },
+    data() {
+      return {
+        qTypes
+      }
     }
-  },
-  computed: {
-    ...mapGetters('user', ['getQuestionnaire']),
-  },
-  created() {
-  },
-  methods: {
-    ...mapActions('user', ['setQuestionnaire']),
-  }
 }
 </script>
