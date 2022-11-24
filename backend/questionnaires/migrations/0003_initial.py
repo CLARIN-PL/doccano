@@ -226,7 +226,7 @@ def populate_questions(apps, schema_editor):
         "Jaka liczba tekstów byłaby odpowiednia?",
         "Co byś zmieniła/zmienił w badaniu?",
     ]
-    questions = ipip_bfm_questions + demografia_questions +  humor_styles_questions + spane_questions + skala_questions + phq9_questions + pss_questions + zdrowie_questions + ress_ema_questions + paq_questions + zwrotna_questions + sen_questions + stres_rano_questions + stres_wieczor_questions + zdrowie_wieczor_questions + emocje_questions + anotacja_koniec_questions + ankieta_tygodniu_questions
+    questions = ipip_bfm_questions + demografia_questions +  humor_styles_questions + swlsa_questions + spane_questions + skala_questions + phq9_questions + pss_questions + zdrowie_questions + ress_ema_questions + paq_questions + zwrotna_questions + sen_questions + stres_rano_questions + stres_wieczor_questions + zdrowie_wieczor_questions + emocje_questions + anotacja_koniec_questions + ankieta_tygodniu_questions
     questionnaire = [1]*len(ipip_bfm_questions) + [2]*len(demografia_questions) + [3]*len(humor_styles_questions) + [4]*len(swlsa_questions) + [5]*len(spane_questions) + [6]*len(skala_questions) + [7]*len(phq9_questions) + [8]*len(pss_questions) + [9]*len(zdrowie_questions) + [10]*len(ress_ema_questions) + [11]*len(paq_questions) + [12]*len(zwrotna_questions) + [13]*len(sen_questions) + [14]*len(stres_rano_questions) + [15]*len(stres_wieczor_questions) + [16]*len(zdrowie_wieczor_questions) + [17]*len(emocje_questions) + [18]*len(anotacja_koniec_questions) + [19]*len(ankieta_tygodniu_questions)
 
     Question = apps.get_model('questionnaires', 'Question')
