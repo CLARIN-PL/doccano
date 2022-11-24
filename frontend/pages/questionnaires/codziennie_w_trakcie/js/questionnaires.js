@@ -111,7 +111,6 @@ export const qTypes = [
                         ]
                     }
                 ],
-                footer: "<b>Źródło:</b> Gordon, A. M., & Mendes, W. B. (2021). A large-scale study of stress, emotions, and blood pressure in daily life using a digital platform. Proceedings of the National Academy of Sciences, 118(31). <br/> <b>Polska adaptacja:</b> Opracowanie własne"
             }
         ]
     },
@@ -167,7 +166,6 @@ export const qTypes = [
                     ],
                         }
                     ],
-                footer: "<b>Źródło:</b> Gordon, A. M., & Mendes, W. B. (2021). A large-scale study of stress, emotions, and blood pressure in daily life using a digital platform. Proceedings of the National Academy of Sciences, 118(31). <br/> <b>Polska adaptacja:</b> Opracowanie własne"
                 },
                 {
                     name: "Zdrowie (wieczorem)",
@@ -209,7 +207,6 @@ export const qTypes = [
                             ],
                         }
                     ],
-                    footer: "<b>Źródło:</b> Gordon, A. M., & Mendes, W. B. (2021). A large-scale study of stress, emotions, and blood pressure in daily life using a digital platform. Proceedings of the National Academy of Sciences, 118(31). <br/> <b>Polska adaptacja:</b> Opracowanie własne"
             }
         ]
     },
@@ -238,30 +235,26 @@ export const qTypes = [
                                 ]
                             },
                             {
-                                text: "Jak się czułaś:",
-                                subquestions: [
-                                    {
-                                        type: "slider",
-                                        min: 0,
-                                        max: 100,
-                                        value: -1,
-                                        minLabel: "Negatywnie",
-                                        maxLabel: "Pozytywnie"
-                                    },
-                                    {
-                                        type: "slider",
-                                        min: 0,
-                                        max: 100,
-                                        value: -1,
-                                        minLabel: "Ospały",
-                                        maxLabel: "Bardzo pobudzony"
-                                    }
-                                ]
+                                text: "Jak się czułaś: Neg-Pos",
+                                type: "slider",
+                                min: 0,
+                                max: 100,
+                                value: -1,
+                                minLabel: "Negatywnie",
+                                maxLabel: "Pozytywnie"
+                            },
+                            {
+                                text: "Jak się czułaś: Ospały-Bardzo pobudzony",
+                                type: "slider",
+                                min: 0,
+                                max: 100,
+                                value: -1,
+                                minLabel: "Ospały",
+                                maxLabel: "Bardzo pobudzony"
                             }
                         ]
                     }
                 ],
-                footer: "<b>Źródło:</b> Saganowski, S., Behnke, M., Komoszyńska, J., Kunc, D., Perz, B., & Kazienko, P. (2021, September). A system for collecting emotionally annotated physiological signals in daily life using wearables. In 2021 9th International Conference on Affective Computing and Intelligent Interaction Workshops and Demos (ACIIW) (pp. 1-3). IEEE."        
             }
         ]
        }

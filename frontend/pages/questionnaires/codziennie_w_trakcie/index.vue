@@ -1,5 +1,19 @@
 <template>
   <v-row align="center" >
+    <div v-if="showGreetingCard">
+        <greeting-card @click="onClickGreetingCardButton" />
+    </div>
+    <div v-else>
+     <v-alert
+          :value="showWarning"
+          color="error"
+          dark
+          transition="scale-transition"
+          dismissible
+          @input="onConfirmationAlertClose"
+        >
+          {{ $t('errors.incompleteAffectiveAnnotation') }}
+        </v-alert>
     <div v-if="formData">
       <v-col>
         <v-window
@@ -45,24 +59,24 @@
                               <p v-if="segment.prependIndex">
                                 {{ segment.prependIndex+(segQuIdx+1) }}
                               </p>
+
+                              {{ segmentQuestion.isClicked }}
+                              {{ segmentQuestion.value }}
                               <component 
+                                v-model="segmentQuestion.value"
                                 @change="onQuestionChange(segmentQuestion, segQuIdx, segIdx, qIdx)"
                                 :is="getComponent(segmentQuestion.type)" 
+                                :header="segmentQuestion.header"
                                 :question="segmentQuestion.text"
                                 :options="segmentQuestion.options"
-                                :min="segmentQuestion.min"
-                                :max="segmentQuestion.max"
-                                :min-label="segmentQuestion.minLabel"
-                                :max-label="segmentQuestion.maxLabel"
+                                :config="segmentQuestion.config"
                                 :is-clicked="segmentQuestion.isClicked"
-                                v-model="segmentQuestion.value"
                               />
                             </li>
                         </ul>
                       </div>
                     </li>
                   </ul>
-
                   <footer v-html="questionnaire.footer">
                   </footer>
                 </v-row>
@@ -83,6 +97,10 @@
     </div>
     <div v-else>
       not found
+      <v-btn  @click="onClickFinishButton">
+        Finish
+      </v-btn>
+    </div>
     </div>
   </v-row>
 </template>
@@ -101,6 +119,7 @@ import ScaleInput from "~/components/questionnaires/form/ScaleInput.vue"
 import RadioInput from '~/components/questionnaires/form/RadioInput.vue'
 import TextInput from '~/components/questionnaires/form/TextInput.vue'
 import SliderInput from '~/components/questionnaires/form/SliderInput.vue'
+import GreetingCard from '~/components/questionnaires/GreetingCard.vue'
 
 
 export default {
@@ -109,7 +128,8 @@ export default {
       ScaleInput,
       RadioInput,
       TextInput,
-      SliderInput
+      SliderInput,
+      GreetingCard,
     },
   data() {
     return {
@@ -117,7 +137,9 @@ export default {
       qTypes: mapQuestionnaireTypes(qTypes),
       questionnaires: [],
       questions: [],
-      activeQuestionnaire: "",
+      activeQuestionnaire: 0,
+      showWarning: false,
+      showGreetingCard: false,
       formData: {}
     }
   },
@@ -134,7 +156,8 @@ export default {
     this.list()
   },
   created() {
-    this.setQuestionnaireData()
+    this.showWarning = false
+    this.showGreetingCard = false
     this.setFormData()
   },
   methods: {
@@ -153,18 +176,35 @@ export default {
 
       this.questionnaires = _.cloneDeep(questionnaires.items)
       this.questions = _.cloneDeep(questions)
-      this.formData = setQuestionnaireIds([this.formData], this.questionnaires)[0]
+      this.formData = setQuestionnaireIds([this.formData], this.questionnaires, this.questions)[0]
     },
-    setQuestionnaireData() {
-      // check when data is loaded
-      // do something
+    onQuestionClick(segQuIdx, segIdx, qIdx) {
+      const formDataKey = `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}]`
+      _.set(this.formData, `${formDataKey}.isClicked`, true)
     },
-    onQuestionChange(question, segQuIdx, segIdx, qIdx) {
-      _.set(this.formData, `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}].isClicked`, true)
-      _.set(this.formData, `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}].key`, 1)
-
-      console.log(question, this.formData)
-      // do something
+    async onQuestionChange(question, segQuIdx, segIdx, qIdx) {
+      const formDataKey = `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}]`
+      const formData = _.get(this.formData, `${formDataKey}`)
+      const { key } = formData
+      _.set(this.formData, `${formDataKey}`, {
+        ...formData,
+        ...{
+          key: key+1,
+          isSubmitting: true,
+          isClicked: true
+        }
+      })
+      this.$forceUpdate()
+      if(question.id) {
+        await this.$services.questionnaire.createAnswer({
+          answerText: question.value,
+          question: question.id
+        })
+        _.set(this.formData, `${formDataKey}.isValid`, true)
+      } else {
+        _.set(this.formData, `${formDataKey}.isValid`, false)
+      }
+      _.set(this.formData, `${formDataKey}.isSubmitting`, false)
     },
     getComponent(questionType) {
       if(questionType === "scale") {
@@ -177,21 +217,40 @@ export default {
         return SliderInput
       }
     },
-    onClickContinueButton() {
-      // make sure all questions are already filled
+    onConfirmationAlertClose() {
+      this.showWarning = false
+    },
+    onClickGreetingCardButton() {
+      this.showGreetingCard = false
       this.activeQuestionnaire +=1
     },
+    onClickContinueButton() {
+      const selectedQuestionnaire = this.formData.questionnaires[this.activeQuestionnaire]
+      const questions = _.flatMap(selectedQuestionnaire.segments, 'questions')
+      const hasClickedEverything = questions.every((question)=> question.required ? question.isClicked : true)
+      if(hasClickedEverything) {
+        this.showGreetingCard = true
+      } else {
+        this.showWarning = true
+      }
+    },
     onClickFinishButton() {
-      const { toShow, filled } = this.getQuestionnaire
-      this.setQuestionnaire({
-        toShow: toShow.filter((ts)=> ts !== this.toShowId ),
-        inProgress: [],
-        filled: !filled.includes(this.toShowId) ? filled.concat(this.toShowId) : filled,
-        isWorkingNow: false
-      })
-      this.$router.push("/questionnaires")
-      // continue to the next questionnaire
-      // do something
+      const selectedQuestionnaire = this.formData.questionnaires[this.activeQuestionnaire]
+      console.log(selectedQuestionnaire)
+      const questions = _.flatMap(selectedQuestionnaire.segments, 'questions')
+      const hasClickedEverything = questions.every((question)=> question.required ? question.isClicked : true)
+      if(hasClickedEverything) {
+        const { toShow, filled } = this.getQuestionnaire
+        this.setQuestionnaire({
+          toShow: toShow.filter((ts)=> ts !== this.toShowId ),
+          inProgress: [],
+          filled: !filled.includes(this.toShowId) ? filled.concat(this.toShowId) : filled,
+          isWorkingNow: false
+        })
+        this.$router.push("/questionnaires")
+      } else {
+        this.showWarning = true
+      }
     }
   }
 }

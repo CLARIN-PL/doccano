@@ -1,26 +1,21 @@
 <template>
-  <v-card>
-    <p>
-        {{ $t('questionnaires_main.greetings')}}
-    </p>
-    <p>
-        {{ $t('questionnaires_main.greetingsDetail')}}
-    </p>
-
-    <v-btn @click="redirect">
-        go to questionnaire
-    </v-btn>
-  </v-card>
+    <div>
+        <greeting-card @click="redirect" />
+    </div>
 </template>
 
 <script lang="ts">
 import { mapGetters, mapActions } from 'vuex'
 import { qCategories } from "~/utils/questionnaires"
+import GreetingCard from "~/components/questionnaires/GreetingCard.vue"
 
 export default {
     name: "Questionnaires",
     layout: "questionnaires",
     middleware: ['check-auth', 'auth'],
+    components: {
+        GreetingCard
+    },
     data() {
         return {
             qCategories

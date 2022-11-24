@@ -179,7 +179,6 @@ export const qTypes = [
                         ]
                     }
                 ],
-                footer: "<b>Źródło:</b> Donnellan, M. B., Oswald, F. L., Baird, B. M. i Lucas, R. E. (2006). The Mini-IPIP scales: Tinyyet-effective measures of the Big Five Factors of personality. Psychological Assessment, 18(2), 192-203. <br/> <b>Polska adaptacja:</b> Ewa Topolewska, Ewa Skimina, Włodzimierz Strus, Jan Cieciuch, Tomasz Rowiński (2014)."
             },
             {
                 name: "Demografia",
@@ -767,7 +766,6 @@ export const qTypes = [
                         ]
                     }
                 ],
-                footer: "<b>Źródło:</b> Martin, R. A., Puhlik-Doris, P., Larsen, G., Gray, J., & Weir, K. (2003). Individual differences in uses of humor and their relation to psychological well-being: Development of the Humor Styles Questionnaire. Journal of Research in Personality, 37, 48-75. <br/> <b>Polska adaptacja:</b> Opracowanie własne"
             }
         ]
     }
