@@ -66,20 +66,37 @@ export default Vue.extend({
       mdiLock
     }
   },
-
-  methods: {
+  computed: {
     ...mapGetters('user', ['getLogin', 'getQuestionnaire']),
+  },
+  methods: {
     ...mapActions('user', ['setLogin', 'initQuestionnaire', 'setAnnotation', 'setQuestionnaire']),
     setUserData() {
       try {
-        const firstLoginTime = moment().format('DD-MM-YYYY HH:mm:ss')
+        const dateFormat = 'DD-MM-YYYY HH:mm:ss'
+        const loginTime = moment().format(dateFormat)
+        const { filled } = this.getQuestionnaire
+        const lastLoginTime = this.getLogin.lastLoginTime
+        const currentDiffDay = this.getLogin.lastLoginTime ?
+          moment(new Date()).diff(moment(lastLoginTime, dateFormat), 'days')
+          : 0
         if(!this.getLogin.firstLoginTime) {         
-          this.setLogin({firstLoginTime, isFirstLogin: true})
+          this.setLogin({
+            firstLoginTime: loginTime, 
+            isFirstLogin: true,
+            lastLoginTime: loginTime
+          })
         } else {
-          this.setLogin({isFirstLogin: false})
+          this.setLogin({ isFirstLogin: false, lastLoginTime: loginTime })
         }
         this.setAnnotation({ hasAnnotatedToday: false})
         this.initQuestionnaire()
+        const dailyQuestionnaireId = "4"
+        if(currentDiffDay > 0) {
+          this.setQuestionnaire({
+            filled: filled.filter((fill)=> !fill.startsWith(dailyQuestionnaireId))
+          })
+        }
       }
       catch(error) {
         console.error(error)
