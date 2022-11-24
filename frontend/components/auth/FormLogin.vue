@@ -80,6 +80,8 @@ export default Vue.extend({
         const currentDiffDay = this.getLogin.lastLoginTime ?
           moment(new Date()).diff(moment(lastLoginTime, dateFormat), 'days')
           : 0
+        const dailyQuestionnaireId = "4"
+
         if(!this.getLogin.firstLoginTime) {         
           this.setLogin({
             firstLoginTime: loginTime, 
@@ -89,12 +91,14 @@ export default Vue.extend({
         } else {
           this.setLogin({ isFirstLogin: false, lastLoginTime: loginTime })
         }
-        this.setAnnotation({ hasAnnotatedToday: false})
         this.initQuestionnaire()
-        const dailyQuestionnaireId = "4"
         if(currentDiffDay > 0) {
+          this.setAnnotation({
+            textCountToday: 0,
+            hasAnnotatedToday: false
+          })
           this.setQuestionnaire({
-            filled: filled.filter((fill)=> !fill.startsWith(dailyQuestionnaireId))
+            filled: filled.filter((fill: any)=> !fill.startsWith(dailyQuestionnaireId))
           })
         }
       }

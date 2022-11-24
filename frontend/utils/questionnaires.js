@@ -37,7 +37,7 @@ export const qCategories = [
             {
                 id: "1.1",
                 name: "Przed badaniem",
-                questionnaires: 3,
+                count: 3,
             }
         ]
     },
@@ -49,12 +49,12 @@ export const qCategories = [
             {
                 id: "2.1",
                 name: "Przed i po badaniu (przed badaniem)",
-                questionnaires: 8,
+                count: 8,
             },
             {
                 id: "2.2",
                 name: "Przed i po badaniu (po badaniu)",
-                questionnaires: 8,
+                count: 8,
             }
         ]
     },
@@ -66,12 +66,12 @@ export const qCategories = [
             {
                 id: "3.1",
                 name: "Po pierwszym tygodniu",
-                questionnaires: 1
+                count: 1
             },
             {
                 id: "3.2",
                 name: "Na końcu badań",
-                questionnaires: 1
+                count: 1
             }
         ]
     }, 
@@ -83,17 +83,17 @@ export const qCategories = [
             {
                 id: "4.1",
                 name: "Rano (sen, stres)",
-                questionnaires: 2,
+                count: 2,
             },
             {
                 id: "4.2",
                 name: "Wieczorem (stres, zdrowie)",
-                questionnaires: 2
+                count: 2
             },
             {
                 id: "4.3",
                 name: "W przerwie (emocje)",
-                questionnaires: 1
+                count: 1
             },
         ]
     },
@@ -105,7 +105,7 @@ export const qCategories = [
             {
                 id: "5.1",
                 name: "Ankieta na koniec badania",
-                questionnaires: 1,
+                count: 1,
             }
         ]
     },
@@ -117,7 +117,7 @@ export const qCategories = [
             {
                 id: "6.1",
                 name: "Ankieta po 2 tygodniach badania",
-                questionnaires: 1,
+                count: 1,
             }
         ]
     }
@@ -166,12 +166,14 @@ export function mapQuestionnaireTypes(qTypes) {
                     const numberInputs = ['slider', 'scale']
                     question.value = numberInputs.includes(question.type) ? 0 : ""
                     question.config = {}
+                    
                     if(question.options) {
                         question.options = question.options.map((option)=> {
                             option.value = option.value === undefined ? option.text : option.value
                             return option
                         })
                     }
+
                     if(question.type === 'scale') {
                         let min = question.min
                         question.options = []
@@ -190,6 +192,7 @@ export function mapQuestionnaireTypes(qTypes) {
                             maxLabel: question.maxLabel
                         }
                     }
+                    
                     question.rules = []
                     if(question.required) {
                         const requiredCheck = (item) => !!item

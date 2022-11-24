@@ -27,12 +27,13 @@ export default {
     methods: {
         ...mapActions('user', ['setQuestionnaire']),
         redirect() {
-            const { toShow } = this.getQuestionnaire
+            const base = this
+            const { toShow } = base.getQuestionnaire
             if(toShow.length) {
                 const questionnaireId = toShow[0].split(".")[0]
-                this.setQuestionnaire({ inProgress: [toShow[0]], isWorkingNow: true })
-                const { key } = this.qCategories.find((k)=> k.id === questionnaireId)
-                this.$router.push(`/questionnaires/${key}/`)
+                base.setQuestionnaire({ inProgress: [toShow[0]], isWorkingNow: true })
+                const { key } = base.qCategories.find((k: any)=> k.id === questionnaireId)
+                base.$router.push(`/questionnaires/${key}/`)
             }
         }
     }
