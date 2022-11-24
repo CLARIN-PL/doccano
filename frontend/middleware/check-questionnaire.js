@@ -1,8 +1,7 @@
 import { qCategories } from "~/utils/questionnaires"
 
 export default function ({ store, route, redirect }) {
-    // const isStaff = store.getters['auth/isStaff']
-    const isStaff = false
+    const isStaff = store.getters['auth/isStaff']
     const {toShow} = store.getters['user/getQuestionnaire']
     const hasValidToShow = toShow && Array.isArray(toShow)
     if(hasValidToShow && toShow.length) {

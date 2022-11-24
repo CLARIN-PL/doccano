@@ -13,7 +13,7 @@
             <v-radio
                 v-for="(option, idx) in options"
                 :key="idx"
-                :disabled="readOnly"
+                :disabled="readOnly || isSubmitting"
                 :label="option.text"
                 :value="option.value"
             ></v-radio>
@@ -34,6 +34,10 @@ export default Vue.extend({
             default: ""
         },
         readOnly: {
+            type: Boolean,
+            default: false
+        },
+        isSubmitting: {
             type: Boolean,
             default: false
         },

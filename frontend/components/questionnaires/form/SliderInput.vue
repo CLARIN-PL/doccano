@@ -1,6 +1,7 @@
 <template>
     <div>
         {{ question }}
+        <span v-if="required">*</span>
         <v-slider 
             v-model="sliderValue"
             class="slider"
@@ -46,6 +47,10 @@ export default Vue.extend({
         value: {
             type: Number,
             default: 0
+        },
+        required: {
+            type: Boolean,
+            default: false
         },
         isClicked: {
             type: Boolean,

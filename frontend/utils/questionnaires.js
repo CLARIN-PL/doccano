@@ -157,16 +157,20 @@ export function setQuestionnaireIds(qTypes, questionnaires, questions=[]) {
 }
 
 export function mapQuestionnaireTypes(qTypes) {
+    const numberInputs = ['slider', 'scale']
     return qTypes.map((qType)=> {
         qType.questionnaires = qType.questionnaires.map((questionnaire)=> {
             questionnaire.segments = questionnaire.segments.map((segment)=> {
                 segment.questions = segment.questions.map((question)=> {
                     question.key = 0
                     question.required = question.required === undefined ? true : question.required
-                    const numberInputs = ['slider', 'scale']
+                    question.readOnly = question.readOnly === undefined ? false : question.readOnly
+                    question.errorMessage = ""
+                    question.isSubmitting = false
+                    question.isClicked = false
                     question.value = numberInputs.includes(question.type) ? 0 : ""
                     question.config = {}
-                    
+
                     if(question.options) {
                         question.options = question.options.map((option)=> {
                             option.value = option.value === undefined ? option.text : option.value

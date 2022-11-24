@@ -67,10 +67,14 @@
                                 @change="onQuestionChange(segmentQuestion, segQuIdx, segIdx, qIdx)"
                                 :is="getComponent(segmentQuestion.type)" 
                                 :header="segmentQuestion.header"
+                                :required="segmentQuestion.required"
                                 :question="segmentQuestion.text"
                                 :options="segmentQuestion.options"
                                 :config="segmentQuestion.config"
                                 :is-clicked="segmentQuestion.isClicked"
+                                :is-submitting="segmentQuestion.isSubmitting"
+                                :error-message="segmentQuestion.errorMessage"
+                                :read-only="segmentQuestion.readOnly"
                               />
                             </li>
                         </ul>
@@ -107,33 +111,28 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import {
-  qCategories,
-  setQuestionnaireIds,
-  mapQuestionnaireTypes
-} from "~/utils/questionnaires"
-import ScaleInput from "~/components/questionnaires/form/ScaleInput.vue"
+import { qCategories, setQuestionnaireIds, mapQuestionnaireTypes } from '~/utils/questionnaires'
+import ScaleInput from '~/components/questionnaires/form/ScaleInput.vue'
 import RadioInput from '~/components/questionnaires/form/RadioInput.vue'
 import TextInput from '~/components/questionnaires/form/TextInput.vue'
 import SliderInput from '~/components/questionnaires/form/SliderInput.vue'
 import GreetingCard from '~/components/questionnaires/GreetingCard.vue'
 
-
 export default {
-    layout: "questionnaire",
-    components: {
-      ScaleInput,
-      RadioInput,
-      TextInput,
-      SliderInput,
-      GreetingCard,
-    },
-    props: {
-        qTypes: {
-            type: Array,
-            default: () => []
-        }
-    },
+  layout: 'questionnaire',
+  components: {
+    ScaleInput,
+    RadioInput,
+    TextInput,
+    SliderInput,
+    GreetingCard
+  },
+  props: {
+    qTypes: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
       qCategories,
@@ -152,7 +151,7 @@ export default {
       return this.getQuestionnaire.toShow[0]
     },
     selectedQType() {
-      return this.mappedQTypes.find((qType)=> qType.id === this.toShowId)
+      return this.mappedQTypes.find((qType) => qType.id === this.toShowId)
     }
   },
   fetch() {
@@ -168,15 +167,21 @@ export default {
       this.formData = this.selectedQType ? _.cloneDeep(this.selectedQType) : { questionnaires: [] }
     },
     initialize() {
-        this.showWarning = false
-        this.showGreetingCard = false
-        this.mappedQTypes = mapQuestionnaireTypes(this.qTypes)
+      this.showWarning = false
+      this.showGreetingCard = false
+      this.mappedQTypes = mapQuestionnaireTypes(this.qTypes)
     },
     async list() {
-      const typeId = this.toShowId.split(".")[0]
-      const questionnaires = await this.$services.questionnaire.listQuestionnairesByTypeId({questionnaireTypeId: typeId, limit: 50})
-      const promises = _.flatMap(questionnaires.items, 'id').map((q)=> {
-        return this.$services.questionnaire.listQuestionsByQuestionnaireId({questionnaireId: q, limit: 100 })
+      const typeId = this.toShowId.split('.')[0]
+      const questionnaires = await this.$services.questionnaire.listQuestionnairesByTypeId({
+        questionnaireTypeId: typeId,
+        limit: 50
+      })
+      const promises = _.flatMap(questionnaires.items, 'id').map((q) => {
+        return this.$services.questionnaire.listQuestionsByQuestionnaireId({
+          questionnaireId: q,
+          limit: 100
+        })
       })
       const responses = await Promise.all(promises)
       const questions = _.flatMap(responses, 'items')
@@ -196,31 +201,43 @@ export default {
       _.set(this.formData, `${formDataKey}`, {
         ...formData,
         ...{
-          key: key+1,
+          key: key + 1,
           isSubmitting: true,
           isClicked: true
         }
       })
       this.$forceUpdate()
-      if(question.id) {
+
+      if (question.id && question.value) {
         await this.$services.questionnaire.createAnswer({
           answerText: question.value,
           question: question.id
         })
         _.set(this.formData, `${formDataKey}.isValid`, true)
-      } else {
+      } else if (!question.id) {
         _.set(this.formData, `${formDataKey}.isValid`, false)
+      } else if (question.id && !question.value && !question.required) {
+        _.set(
+          this.formData,
+          `${formDataKey}.errorMessage`,
+          'You cannot delete this field once it is filled '
+        )
+        this.$forceUpdate()
       }
       _.set(this.formData, `${formDataKey}.isSubmitting`, false)
+      _.set(this.formData, `${formDataKey}.hasError`, false)
+      _.set(this.formData, `${formDataKey}.errorMessage`, '')
+
+      this.$forceUpdate()
     },
     getComponent(questionType) {
-      if(questionType === "scale") {
+      if (questionType === 'scale') {
         return ScaleInput
-      } else if(questionType === 'radio') {
+      } else if (questionType === 'radio') {
         return RadioInput
-      } else if(questionType === 'text') {
+      } else if (questionType === 'text') {
         return TextInput
-      } else if(questionType === 'slider') {
+      } else if (questionType === 'slider') {
         return SliderInput
       }
     },
@@ -230,52 +247,53 @@ export default {
     onClickGreetingCardButton() {
       this.showGreetingCard = false
       this.showWarning = false
-      this.activeQuestionnaire +=1
+      this.activeQuestionnaire += 1
     },
     onClickContinueButton() {
       const selectedQuestionnaire = this.formData.questionnaires[this.activeQuestionnaire]
-      if(selectedQuestionnaire) {
+      if (selectedQuestionnaire) {
         const questions = _.flatMap(selectedQuestionnaire.segments, 'questions')
-        const hasClickedEverything = questions.every((question)=> question.required ? question.isClicked : true)
-        if(hasClickedEverything) {
-            this.showGreetingCard = true
+        const hasClickedEverything = questions.every((question) =>
+          question.required ? question.isClicked : true
+        )
+        if (hasClickedEverything) {
+          this.showGreetingCard = true
         } else {
-            const firstErrorIndex = questions.findIndex((question)=> !question.isClicked )
-            this.showWarning = true
-            if(this.$refs[`question_${firstErrorIndex}`][0]) {
-                this.$refs[`question_${firstErrorIndex}`][0].scrollIntoView({ behavior: 'smooth' });
-            } else {
-                this.$refs.header.scrollIntoView({behavior: 'smooth'})
-            }
+          const firstErrorIndex = questions.findIndex((question) => !question.isClicked)
+          this.showWarning = true
+          if (this.$refs[`question_${firstErrorIndex}`][0]) {
+            this.$refs[`question_${firstErrorIndex}`][0].scrollIntoView({ behavior: 'smooth' })
+          } else {
+            this.$refs.header.scrollIntoView({ behavior: 'smooth' })
+          }
         }
       }
     },
+    resetQuestionnaire() {
+      const { toShow, filled } = this.getQuestionnaire
+      this.setQuestionnaire({
+        toShow: toShow.filter((ts) => ts !== this.toShowId),
+        inProgress: [],
+        filled: !filled.includes(this.toShowId) ? filled.concat(this.toShowId) : filled,
+        isWorkingNow: false
+      })
+    },
     onClickFinishButton() {
       const selectedQuestionnaire = this.formData.questionnaires[this.activeQuestionnaire]
-      if(selectedQuestionnaire) {
+      if (selectedQuestionnaire) {
         const questions = _.flatMap(selectedQuestionnaire.segments, 'questions')
-        const hasClickedEverything = questions.every((question)=> question.required ? question.isClicked : true)
-        if(hasClickedEverything) {
-            const { toShow, filled } = this.getQuestionnaire
-            this.setQuestionnaire({
-                toShow: toShow.filter((ts)=> ts !== this.toShowId ),
-                inProgress: [],
-                filled: !filled.includes(this.toShowId) ? filled.concat(this.toShowId) : filled,
-                isWorkingNow: false
-            })
-            this.$router.push("/questionnaires")
+        const hasClickedEverything = questions.every((question) =>
+          question.required ? question.isClicked : true
+        )
+        if (hasClickedEverything) {
+          this.resetQuestionnaire()
+          this.$router.push('/questionnaires')
         } else {
-            this.showWarning = true
-      }
+          this.showWarning = true
+        }
       } else {
-            const { toShow, filled } = this.getQuestionnaire
-            this.setQuestionnaire({
-                toShow: toShow.filter((ts)=> ts !== this.toShowId ),
-                inProgress: [],
-                filled: !filled.includes(this.toShowId) ? filled.concat(this.toShowId) : filled,
-                isWorkingNow: false
-            })
-            this.$router.push("/questionnaires")
+        this.resetQuestionnaire()
+        this.$router.push('/questionnaires')
       }
     }
   }
