@@ -180,9 +180,17 @@ export function mapQuestionnaireTypes(qTypes) {
                         question.options = question.options.map((option)=> {
                             option.preventDirectSubmission = option.showTextbox ? hasMultipleTextboxes : false
                             option.value = option.value === undefined ? option.text : option.value
+                            
+                            if(option.dynamicSelectInput) {
+                                option.dynamicSelectInput.options = option.dynamicSelectInput.options.map((opt)=> {
+                                    opt.value = opt.value === undefined ? opt.text : opt.value
+                                    return opt
+                                })
+                            }
                             return option
                         })
                     }
+
 
                     if(question.type === 'scale') {
                         let min = question.min
@@ -208,6 +216,7 @@ export function mapQuestionnaireTypes(qTypes) {
                         const requiredCheck = (item) => !!item
                         question.rules.push(requiredCheck)
                     }
+
                     return question
                 })
                 return segment
