@@ -74,7 +74,11 @@
                                 :is-submitting="segmentQuestion.isSubmitting"
                                 :error-message="segmentQuestion.errorMessage"
                                 :read-only="segmentQuestion.readOnly"
-                                @change="onQuestionChange(segmentQuestion, segQuIdx, segIdx, qIdx)"
+                                :passed-data="{
+                                    question: segmentQuestion, 
+                                    formDataKey: getFormDataKey(segQuIdx, segIdx, qIdx)
+                                  }"
+                                @change="onQuestionChange"
                               />
                             </li>
                         </ul>
@@ -190,45 +194,42 @@ export default {
       this.questions = _.cloneDeep(questions)
       this.formData = setQuestionnaireIds([this.formData], this.questionnaires, this.questions)[0]
     },
-    onQuestionClick(segQuIdx, segIdx, qIdx) {
-      const formDataKey = `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}]`
-      _.set(this.formData, `${formDataKey}.isClicked`, true)
+    getFormDataKey(segQuIdx, segIdx, qIdx) {
+      return `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}]`
     },
-    async onQuestionChange(question, segQuIdx, segIdx, qIdx) {
-      const formDataKey = `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}]`
-      const formData = _.get(this.formData, `${formDataKey}`)
-      const { key } = formData
-      _.set(this.formData, `${formDataKey}`, {
-        ...formData,
-        ...{
-          key: key + 1,
-          isSubmitting: true,
-          isClicked: true
-        }
-      })
-      this.$forceUpdate()
-
-      if (question.id && question.value) {
-        await this.$services.questionnaire.createAnswer({
-          answerText: question.value,
-          question: question.id
+    async onQuestionChange({ question, formDataKey, hasFilledEverything }) {
+      if (question && formDataKey) {
+        const isClicked = hasFilledEverything === undefined ? true : hasFilledEverything
+        const { key } = question
+        _.set(this.formData, `${formDataKey}`, {
+          ...question,
+          ...{
+            key: key + 1,
+            isSubmitting: true,
+            isClicked
+          }
         })
-        _.set(this.formData, `${formDataKey}.isValid`, true)
-      } else if (!question.id) {
-        _.set(this.formData, `${formDataKey}.isValid`, false)
-      } else if (question.id && !question.value && !question.required) {
-        _.set(
-          this.formData,
-          `${formDataKey}.errorMessage`,
-          'You cannot delete this field once it is filled '
-        )
+        this.$forceUpdate()
+
+        if (question.id && question.value) {
+          _.set(this.formData, `${formDataKey}.isSubmitting`, true)
+          await this.$services.questionnaire.createAnswer({
+            answerText: question.value,
+            question: question.id
+          })
+        } else if (question.id && !question.value && !question.required) {
+          _.set(
+            this.formData,
+            `${formDataKey}.errorMessage`,
+            'You cannot delete this field once it is filled'
+          )
+          this.$forceUpdate()
+        }
+        _.set(this.formData, `${formDataKey}.isSubmitting`, false)
+        _.set(this.formData, `${formDataKey}.errorMessage`, '')
+
         this.$forceUpdate()
       }
-      _.set(this.formData, `${formDataKey}.isSubmitting`, false)
-      _.set(this.formData, `${formDataKey}.hasError`, false)
-      _.set(this.formData, `${formDataKey}.errorMessage`, '')
-
-      this.$forceUpdate()
     },
     getComponent(questionType) {
       if (questionType === 'scale') {
@@ -262,6 +263,8 @@ export default {
         } else {
           const firstErrorIndex = questions.findIndex((question) => !question.isClicked)
           this.showWarning = true
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+
           if (this.$refs[`question_${firstErrorIndex}`][0]) {
             this.$refs[`question_${firstErrorIndex}`][0].scrollIntoView({ behavior: 'smooth' })
           } else {

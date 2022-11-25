@@ -93,6 +93,10 @@ export default {
       type: String,
       default: ''
     },
+    passedData: {
+      type: Object,
+      default: () => {}
+    },
     value: {
       type: String,
       default: ''
@@ -130,7 +134,7 @@ export default {
       const hasFilledText = this.required ? !!this.text : true
       if (hasFilledText) {
         this.showDialog = false
-        this.$emit('change', this.text)
+        this.$emit('change', { ...this.passedData, value: this.text })
         this.$emit('submit', this.text)
       } else {
         this.dialogErrorMessage = this.$t('rules.required')

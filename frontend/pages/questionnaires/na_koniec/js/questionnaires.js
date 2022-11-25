@@ -20,54 +20,37 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 text: "Czy któreś pytanie/polecenie dotyczące tekstu było niezrozumiałe?",
-                                isJson: true,
-                                multipleValues: true,
                                 options: [
                                     {
                                         text: "Tak",
-                                        enableSelection: true,
-                                        subquestions: [
-                                            {
-                                                type: "text",
-                                                text: "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Dlaczego?",
-                                                subquestions: [
-                                                    {
-                                                        type: "text",
-                                                        text: "Dlaczego?"
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                type: "text",
-                                                text: "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Dlaczego?",
-                                                subquestions: [
-                                                    {
-                                                        type: "text",
-                                                        text: "Dlaczego?"
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                type: "text",
-                                                text: "Czy tekst wzbudza w Tobie jakiekolwiek emocje? Dlaczego?",
-                                                subquestions: [
-                                                    {
-                                                        type: "text",
-                                                        text: "Dlaczego?"
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                type: "text",
-                                                text: "etc? Dlaczego?",
-                                                subquestions: [
-                                                    {
-                                                        type: "text",
-                                                        text: "Dlaczego?"
-                                                    }
-                                                ]
-                                            },
-                                        ]
+                                        showDynamicSelectInput: true,
+                                        dynamicSelectInput: {
+                                            showAddButton: true,
+                                            prependOptions: [
+                                                {
+                                                    text: "Wybierz opcję",
+                                                    isSelectable: false
+                                                }
+                                            ],
+                                            options: [
+                                                {
+                                                    showTextbox: true,
+                                                    text: "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Dlaczego?",
+                                                },
+                                                {
+                                                    showTextbox: true,
+                                                    text: "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Dlaczego?",
+                                                },
+                                                {
+                                                    showTextbox: true,
+                                                    text: "Czy tekst wzbudza w Tobie jakiekolwiek emocje? Dlaczego?",
+                                                },
+                                                {
+                                                    showTextbox: true,
+                                                    text: "etc? Dlaczego?",
+                                                },
+                                            ]
+                                        }
                                     },
                                     {
                                         text: "Nie"
