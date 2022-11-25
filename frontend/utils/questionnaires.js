@@ -141,6 +141,9 @@ export function setQuestionnaireIds(qTypes, questionnaires, questions=[]) {
                         if(question.header) {
                             qItem = questions.find((quest)=> question.header === quest.questionText)
                         }
+                        if(question.alternateText) {
+                            qItem = questions.find((quest)=> question.alternateText === quest.questionText)
+                        }
                         if(qItem) {
                             question.id = qItem.id
                             question.questionnaireId = qItem.questionnaire
@@ -171,8 +174,11 @@ export function mapQuestionnaireTypes(qTypes) {
                     question.value = numberInputs.includes(question.type) ? 0 : ""
                     question.config = {}
 
+
                     if(question.options) {
+                        const hasMultipleTextboxes = question.options.filter((opt)=> opt.showTextbox).length > 1
                         question.options = question.options.map((option)=> {
+                            option.preventDirectSubmission = option.showTextbox ? hasMultipleTextboxes : false
                             option.value = option.value === undefined ? option.text : option.value
                             return option
                         })
@@ -270,6 +276,7 @@ export function getQuestionnairesToShow() {
                     isShowing = !isFilled 
                                 && hasFinishedAll
                                 && hasPassedResearchTime
+                    isShowing = true
                 } else if(questionnaireType.id === "6.1") {
                     const weekDiff = moment(firstLoginTime, DATE_FORMAT)
                                     .diff(moment(todayTime), 'weeks')

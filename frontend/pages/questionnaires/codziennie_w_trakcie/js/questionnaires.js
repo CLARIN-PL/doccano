@@ -226,11 +226,9 @@ export const qTypes = [
                                 options: [
                                     {
                                         text: "Tak",
-                                        value: 1
                                     },
                                     {
                                         text: "Nie",
-                                        value: -1
                                     }
                                 ]
                             },

@@ -67,7 +67,7 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapGetters('user', ['getLogin', 'getQuestionnaire']),
+    ...mapGetters('user', ['getLogin', 'getQuestionnaire'])
   },
   methods: {
     ...mapActions('user', ['setLogin', 'initQuestionnaire', 'setAnnotation', 'setQuestionnaire']),
@@ -77,14 +77,14 @@ export default Vue.extend({
         const loginTime = moment().format(dateFormat)
         const { filled } = this.getQuestionnaire
         const lastLoginTime = this.getLogin.lastLoginTime
-        const currentDiffDay = this.getLogin.lastLoginTime ?
-          moment(new Date()).diff(moment(lastLoginTime, dateFormat), 'days')
+        const currentDiffDay = this.getLogin.lastLoginTime
+          ? moment(new Date()).diff(moment(lastLoginTime, dateFormat), 'days')
           : 0
-        const dailyQuestionnaireId = "4"
+        const dailyQuestionnaireId = '4'
 
-        if(!this.getLogin.firstLoginTime) {         
+        if (!this.getLogin.firstLoginTime) {
           this.setLogin({
-            firstLoginTime: loginTime, 
+            firstLoginTime: loginTime,
             isFirstLogin: true,
             lastLoginTime: loginTime
           })
@@ -92,17 +92,16 @@ export default Vue.extend({
           this.setLogin({ isFirstLogin: false, lastLoginTime: loginTime })
         }
         this.initQuestionnaire()
-        if(currentDiffDay > 0) {
+        if (currentDiffDay > 0) {
           this.setAnnotation({
             textCountToday: 0,
             hasAnnotatedToday: false
           })
           this.setQuestionnaire({
-            filled: filled.filter((fill: any)=> !fill.startsWith(dailyQuestionnaireId))
+            filled: filled.filter((fill: any) => !fill.startsWith(dailyQuestionnaireId))
           })
         }
-      }
-      catch(error) {
+      } catch (error) {
         console.error(error)
       }
     },

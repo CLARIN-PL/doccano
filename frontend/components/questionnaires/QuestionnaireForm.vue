@@ -248,6 +248,7 @@ export default {
       this.showGreetingCard = false
       this.showWarning = false
       this.activeQuestionnaire += 1
+      window.scrollTo({ top: 0 })
     },
     onClickContinueButton() {
       const selectedQuestionnaire = this.formData.questionnaires[this.activeQuestionnaire]

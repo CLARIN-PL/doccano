@@ -14,12 +14,14 @@
         :value="option.value"
       >
       </v-radio>
+
       <text-input
         v-if="selectedOption.showTextbox"
         v-model="inputText"
-        :question="selectedOption.text"
+        :question="selectedOption.question || selectedOption.text"
+        :full-question="selectedOption.question || selectedOption.text"
         :required="required"
-        @blur="onBlurTextInput"
+        @submit="onInputSubmit"
       />
     </v-radio-group>
   </div>
@@ -77,41 +79,48 @@ export default Vue.extend({
   },
   computed: {
     selectedOption() {
-      // @ts-ignore
-      return this.options.find((option: any) => option.value === this.input) || {}
+      const base: any = this
+      const value = base.value.includes(' - ') ? base.value.split(' - ')[0] : base.value
+      return base.options.find((option: any) => option.value === value) || {}
     },
     isCustom() {
-      // @ts-ignore
-      return this.value && !this.options.find((option: any) => option.value === this.value)
+      const base: any = this
+      const value = base.value.includes(' - ') ? base.value.split(' - ')[0] : ''
+      return base.value && !base.options.find((option: any) => option.value === value)
     },
     inputText: {
       get() {
-        // @ts-ignore
-        return this.isCustom ? this.value : ''
+        const base: any = this
+        const value = base.value.includes(' - ') ? base.value.split(' - ')[1] : ''
+        return value
       },
       set(val) {
-        // @ts-ignore
-        const base: any = this
-        base.$emit('input', val)
-        base.$emit('change', val)
+        const value = val ? `${this.input} - ${val}` : this.input
+        this.$emit('input', value)
+        this.$emit('change', value)
       }
     },
     input: {
       get() {
         const base: any = this
-        const customOption: any = base.options.find((option: any) => !!option.showTextbox)
-        return base.isCustom && customOption ? customOption.value : base.value
+        const value = base.value.includes(' - ') ? base.value.split(' - ')[0] : base.value
+        return value
       },
       set(val) {
-        const base: any = this
-        base.$emit('input', val)
-        base.$emit('change', val)
+        if (val) {
+          const base: any = this
+          const value =
+            this.inputText && this.selectedOption.showTextbox ? `${val} - ${this.inputText}` : val
+          base.$emit('input', value)
+          base.$emit('change', value)
+        }
       }
     }
   },
   methods: {
-    onBlurTextInput(val: String) {
-      this.$emit('change', val)
+    onInputSubmit(val) {
+      const base: any = this
+      base.$emit('change', `${this.input} - ${val}`)
     }
   }
 })

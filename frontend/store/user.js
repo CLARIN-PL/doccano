@@ -11,6 +11,7 @@ export const state = () => ({
   restingEndTime: null,
   login: {
     firstLoginTime: "",
+    lastLoginTime: "",
     isFirstLogin: false,
   },
   project: {

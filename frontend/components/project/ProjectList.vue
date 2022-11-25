@@ -82,7 +82,7 @@ export default Vue.extend({
     showSelect: {
       type: Boolean,
       default: false
-    },
+    }
   },
 
   data() {
