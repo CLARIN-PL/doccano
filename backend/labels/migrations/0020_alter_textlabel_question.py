@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
+        migrations.AddField(
             model_name='textlabel',
             name='question',
             field=models.TextField(blank=True, null=True),

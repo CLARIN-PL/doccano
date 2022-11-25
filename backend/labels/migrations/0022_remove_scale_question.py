@@ -8,10 +8,3 @@ class Migration(migrations.Migration):
     dependencies = [
         ('labels', '0021_remove_category_question'),
     ]
-
-    operations = [
-        migrations.RemoveField(
-            model_name='scale',
-            name='question',
-        ),
-    ]
