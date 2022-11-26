@@ -451,7 +451,6 @@ export default Vue.extend({
 </script>
 <style lang="scss">
 .humor-input {
-    max-height: 400px;
     overflow-y: auto;
 
     &.--bordered {

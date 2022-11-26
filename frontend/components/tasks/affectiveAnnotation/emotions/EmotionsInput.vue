@@ -240,7 +240,6 @@ export default {
 .emotions-input {
   word-wrap: normal;
   word-break: break-word;
-  max-height: 230px;
   overflow-y: auto;
   overflow-x: auto;
   width: 100%;

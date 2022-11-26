@@ -451,7 +451,6 @@ export default Vue.extend({
 </script>
 <style lang="scss">
 .offensive-input {
-    max-height: 400px;
     overflow-y: auto;
 
     &.--bordered {

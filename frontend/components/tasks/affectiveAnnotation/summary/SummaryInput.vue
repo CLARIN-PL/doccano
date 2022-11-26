@@ -127,7 +127,6 @@ export default {
 
 <style lang="scss">
 .summary-input {
-  max-height: 400px;
   overflow-y: auto;
   padding: 10px;
 
