@@ -337,7 +337,7 @@ export default {
       affectiveOthersWishToAuthor: [],
       affectiveOthersTmp: {},
       showRestingMessage: false,
-      restingEndTime: new Date(),
+      restingEndTime: "",
       hasCheckedPreviousDoc: false,
       hasValidEntries: {
         isSummaryMode: false,
@@ -479,6 +479,7 @@ export default {
       const restingEndTime = await this.calculateRestingPeriod()
       if (restingEndTime === null) {
         this.showRestingMessage = false
+        this.restingEndTime = ""
         return true
       } else {
         this.showRestingMessage = !this.isProjectAdmin

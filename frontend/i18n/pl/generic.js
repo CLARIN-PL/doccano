@@ -21,7 +21,7 @@ export default {
   onlyDisplayCompletedProject: "Obecnie pokazuje {number} nieukończonych projektów. Ukończone projekty nie są widoczne na liście.",
   restingMessage: {
     title: 'Czas na odpoczynek!',
-    message1: 'Dziękujemy za Twoją pracę! Proszę napić się kawy, zanim przejdziesz dalej!',
+    message1: 'Dziękujemy za Twoją pracę!',
     message2: 'Możesz kontynuować anotację od:',
     message3: 'Odśwież tę stronę, gdy czas na odpoczynek się skończy.'
   }

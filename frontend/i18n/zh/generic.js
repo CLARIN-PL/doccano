@@ -20,7 +20,7 @@ export default {
   onlyDisplayCompletedProject: "当前显示 {number} 个未完成的项目。已完成的项目在列表中不可见。",
   restingMessage: {
     title: '休息时间!',
-    message1: '感谢您的工作! 请先喝杯咖啡再继续!',
+    message1: '感谢您的工作!',
     message2: '您可以在此日期继续注释:',
     message3: '请在休息时间结束后刷新此页面.'
   }

@@ -36,7 +36,7 @@ export const getters = {
   },
   getRestingEndTime(state) {
     if (state.restingEndTime !== null) {
-      return moment(state.restingEndTime, 'ddd, DD-MM-YYYY HH:mm:ss').toDate()
+      return moment(state.restingEndTime, 'DD-MM-YYYY HH:mm:ss').toDate()
     }
     return null
   }
@@ -48,7 +48,7 @@ export const actions = {
   },
   setRestingPeriod({ commit }) {
     const startTime = new Date()
-    const endTime = moment(startTime).add(5, 'm').format('ddd, DD-MM-YYYY HH:mm:ss')
+    const endTime = moment(startTime).add(5, 'm').format('DD-MM-YYYY HH:mm:ss')
     commit('setRestingPeriod', endTime)
   },
   calculateRestingPeriod({ commit, getters }) {
@@ -63,7 +63,7 @@ export const actions = {
       isRestingPeriodCleared = true
     }
     if (restingUserId !== null && currentUserId === restingUserId && !isRestingPeriodCleared) {
-      return restingEndTime
+      return moment(restingEndTime).format('DD-MM-YYYY HH:mm:ss')
     }
     return null
   },

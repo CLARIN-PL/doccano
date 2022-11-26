@@ -20,7 +20,7 @@ export default {
   onlyDisplayCompletedProject: "Derzeit werden {number} nicht abgeschlossene Projekte angezeigt. Abgeschlossene Projekte sind in der Liste nicht sichtbar.",
   restingMessage: {
     title: 'Zeit zum ausruhen!',
-    message1: 'Danke für deine Arbeit! Bitte trinken Sie einen Kaffee, bevor Sie fortfahren!',
+    message1: 'Danke für deine Arbeit!',
     message2: 'Sie können mit dem Kommentieren fortfahren:',
     message3: 'Bitte aktualisieren Sie diese Seite, wenn die Ruhezeit abgelaufen ist.'
   }

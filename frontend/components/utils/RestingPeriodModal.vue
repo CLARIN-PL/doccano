@@ -32,7 +32,7 @@ import Vue from 'vue'
 export default Vue.extend({
   props: {
     endTime: {
-      type: Date,
+      type: String,
       required: true
     }
   },

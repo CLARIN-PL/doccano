@@ -60,7 +60,7 @@ export default Vue.extend({
       selected: [] as ProjectDTO[],
       isLoading: false,
       showRestingMessage: false,
-      restingEndTime: new Date(),
+      restingEndTime: "",
     }
   },
 
@@ -93,6 +93,7 @@ export default Vue.extend({
       const restingEndTime = await this.calculateRestingPeriod()
       if (restingEndTime === null) {
         this.showRestingMessage = false
+        this.restingEndTime = ""
       } else {
         this.showRestingMessage = !this.isStaff
         this.restingEndTime = restingEndTime
