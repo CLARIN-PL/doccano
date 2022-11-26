@@ -151,6 +151,8 @@
                       :tags="affectiveSummaryTags"
                       :impressions="affectiveSummaryImpressions"
                       :read-only="!canEdit"
+                      :show-borders="project.isCombinationMode"
+                      :show-errors="(!hasValidEntries.isSummaryMode && hasClickedConfirmButton)"
                       @remove:tag="removeTag"
                       @update:tag="updateTag"
                       @add:tag="addTag"
@@ -162,6 +164,8 @@
                       v-if="project.isEmotionsMode || project.isCombinationMode"
                       class="mb-10"
                       :read-only="!canEdit"
+                      :show-borders="project.isCombinationMode"
+                      :show-errors="(!hasValidEntries.isEmotionsMode && hasClickedConfirmButton)"
                       :general-positivity="affectiveScalesValues.positive"
                       :general-negativity="affectiveScalesValues.negative"
                       :joy="affectiveScalesValues.joy"
@@ -180,6 +184,8 @@
                       v-if="project.isOthersMode || project.isCombinationMode"
                       class="mb-10"
                       :read-only="!canEdit"
+                      :show-borders="project.isCombinationMode"
+                      :show-errors="(!hasValidEntries.isOthersMode && hasClickedConfirmButton)"
                       :ironic="affectiveScalesValues.ironic"
                       :embarrassing="affectiveScalesValues.embarrassing"
                       :vulgar="affectiveScalesValues.vulgar"
@@ -737,15 +743,15 @@ export default {
     },
     async confirm() {
       if(this.project.isCombinationMode) {
-        this.hasValidEntries.isSummaryMode = this.isAllAffectiveDataAdded()
-        this.hasValidEntries.isOthersMode = this.isAllAffectiveDataAdded()
-        this.hasValidEntries.isEmotionsMode = this.isAllAffectiveDataAdded()
+        this.hasValidEntries.isSummaryMode = this.isAllAffectiveSummaryAdded()
+        this.hasValidEntries.isOthersMode = this.isAllAffectiveOthersAdded()
+        this.hasValidEntries.isEmotionsMode = this.isAllAffectiveEmotionsAdded()
       } else if(this.project.isSummaryMode) {
-        this.hasValidEntries.isSummaryMode = this.isAllAffectiveDataAdded()
+        this.hasValidEntries.isSummaryMode = this.isAllAffectiveSummaryAdded()
       } else if(this.project.isOthersMode) {
-        this.hasValidEntries.isOthersMode = this.isAllAffectiveDataAdded()
+        this.hasValidEntries.isOthersMode = this.isAllAffectiveOthersAdded()
       } else if(this.project.isEmotionsMode) {
-        this.hasValidEntries.isEmotionsMode = this.isAllAffectiveDataAdded()
+        this.hasValidEntries.isEmotionsMode = this.isAllAffectiveEmotionsAdded()
       } 
       this.hasClickedConfirmButton = this.canConfirm ? false : !this.isProjectAdmin
       if (this.canConfirm || this.isProjectAdmin) {
@@ -755,38 +761,45 @@ export default {
         this.hasClickedConfirmButton = false
       }
     },
-    isAllAffectiveDataAdded() {
-      if (this.project.isSummaryMode) {
-        return this.affectiveSummaryTags.length >= 2 && this.affectiveSummaryImpressions.length >= 2
-      }
-      if (this.project.isEmotionsMode) {
-        return _.keys(this.affectiveScalesDict).length === _.keys(this.affectiveScalesValues).length
-      }
-      if (this.project.isOthersMode) {
-        return (
-          _.keys(this.affectiveScalesDict).length === _.keys(this.affectiveScalesValues).length &&
-          this.affectiveOthersWishToAuthor.length > 0
-        )
-      }
-      if (this.project.isCombinationMode) {
-        const affectiveEmotionsDict = Object.fromEntries(
-          Object.entries(this.affectiveScalesDict).map(([k, v]) => [v, k])
-        )
-        const keysMustExist = _.keys(this.affectiveScalesDict)
-        const keysAnswered = []
-        _.keys(this.affectiveScalesValues).forEach((key) => {
-          if (key !== "undefined") {
-            keysAnswered.push(affectiveEmotionsDict[key])
-          }
-        })
-        const output = (
-          keysMustExist.sort().join(',') === keysAnswered.sort().join(',') &&
-          this.affectiveSummaryTags.length >= 2 && this.affectiveSummaryImpressions.length >= 2 &&
-          this.affectiveOthersWishToAuthor.length > 0
-        )
-        return output
-      }
-      return true
+    isAllAffectiveSummaryAdded() {
+      return this.affectiveSummaryTags.length >= 2 && this.affectiveSummaryImpressions.length >= 2
+    },
+    isAllAffectiveEmotionsAdded() {
+      const EmotionsScalesDict = {}
+      const varsMustExist = []
+      const keysMustExist = []
+      const keysAnswered = []
+      EmotionsScales.forEach(function(item) {
+        EmotionsScalesDict[item.varname] = item.text
+        varsMustExist.push(item.varname)
+        keysMustExist.push(item.text)
+      })
+      _.keys(this.affectiveScalesValues).forEach((key) => {
+        if (varsMustExist.includes(key)) {
+          keysAnswered.push(EmotionsScalesDict[key])
+        }
+      })
+      return (keysMustExist.sort().join(',') === keysAnswered.sort().join(','))
+    },
+    isAllAffectiveOthersAdded() {
+      const OthersScalesDict = {}
+      const varsMustExist = []
+      const keysMustExist = []
+      const keysAnswered = []
+      OthersScales.forEach(function(item) {
+        OthersScalesDict[item.varname] = item.text
+        varsMustExist.push(item.varname)
+        keysMustExist.push(item.text)
+      })
+      _.keys(this.affectiveScalesValues).forEach((key) => {
+        if (varsMustExist.includes(key)) {
+          keysAnswered.push(OthersScalesDict[key])
+        }
+      })
+      return (
+        keysMustExist.sort().join(',') === keysAnswered.sort().join(',') &&
+        this.affectiveOthersWishToAuthor.length > 0
+      )
     },
     onConfirmationAlertClose() {
       this.hasClickedConfirmButton = false
