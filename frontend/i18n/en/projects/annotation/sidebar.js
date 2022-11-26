@@ -1,7 +1,7 @@
 export default {
     progress: {
         title: 'Progress',
-        total: 'Total',
-        complete: 'Complete'
+        total: 'Total Texts',
+        complete: 'Completed Texts'
     },
 }
