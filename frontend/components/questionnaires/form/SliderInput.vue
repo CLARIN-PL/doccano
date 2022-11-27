@@ -5,7 +5,6 @@
     <v-slider
       v-model="sliderValue"
       class="slider"
-      :class="{ '--has-filled': isClicked }"
       :color="isClicked ? 'primary' : 'grey'"
       :thumb-size="isClicked ? 12 : 0"
       :thumb-color="isClicked ? 'primary' : 'transparent'"

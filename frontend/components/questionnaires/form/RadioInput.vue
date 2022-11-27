@@ -27,10 +27,10 @@
 
     <dynamic-select-input
       v-if="selectedOption.showDynamicSelectInput"
-      @change="onDynamicSelectInputChange"
       v-model="inputDynamicSelect"
       :options="selectedOption.dynamicSelectInput.options"
       :show-add-button="selectedOption.dynamicSelectInput.showAddButton"
+      @change="onDynamicSelectInputChange"
     />
   </div>
 </template>
@@ -96,14 +96,14 @@ export default Vue.extend({
       return keys.some((key) => String(this.value).includes(key))
     },
     hasSingleValue() {
-      return this.value.includes('_single-value_')
+      return String(this.value).includes('_single-value_')
     },
     hasMultipleValues() {
-      return this.value.includes('_multiple-values_')
+      return String(this.value).includes('_multiple-values_')
     },
     selectedOption() {
       const base: any = this
-      const key = this.hasMultipleValues ? '_multiple-values_' : '_single-value_'
+      const key = base.hasMultipleValues ? '_multiple-values_' : '_single-value_'
       const value = base.value.includes(key) ? base.value.split(key)[0] : base.value
       const option = base.options.find((option: any) => option.value === value) || {}
       return option
@@ -111,49 +111,54 @@ export default Vue.extend({
   },
   watch: {
     input(val) {
-      this.inputText = ''
+      const base: any = this
+      base.inputText = ''
       const keys = ['_multiple-values_', '_single-value_']
-      const option = this.options.find((option: any) => option.value === val) || {}
-      const hasAdditionalValue = keys.some((key) => String(this.input).includes(key))
+      const option = base.options.find((option: any) => option.value === val) || {}
+      const hasAdditionalValue = keys.some((key) => String(base.input).includes(key))
       let hasFilledEverything = true
       if (option.showTextbox) {
-        hasFilledEverything = this.inputText.length > 0
+        hasFilledEverything = base.inputText.length > 0
       } else if (option.showDynamicSelectInput) {
-        hasFilledEverything = this.inputDynamicSelect.filter((v) => !!v).length > 0
+        hasFilledEverything = base.inputDynamicSelect.filter((v: any) => !!v).length > 0
       }
       if (!hasAdditionalValue) {
-        this.$emit('input', val)
-        this.$emit('change', { ...this.passedData, value: val, hasFilledEverything })
+        base.$emit('input', val)
+        base.$emit('change', { ...base.passedData, value: val, hasFilledEverything })
       }
     },
     value() {
       const base: any = this
-      const key = this.hasMultipleValues ? '_multiple-values_' : '_single-value_'
+      const key = base.hasMultipleValues ? '_multiple-values_' : '_single-value_'
       const input = base.value.includes(key) ? base.value.split(key)[0] : base.value
       const adtInput = base.value.includes(key) ? base.value.split(key)[1] : ''
 
-      this.input = input
-      if (this.hasMultipleValues) {
-        this.inputDynamicSelect = adtInput ? JSON.parse(adtInput) : []
+      base.input = input
+      if (base.hasMultipleValues) {
+        base.inputDynamicSelect = adtInput ? JSON.parse(adtInput) : []
       } else {
-        this.inputText = adtInput
+        base.inputText = adtInput
       }
     }
   },
   methods: {
-    onDynamicSelectInputChange({ hasFilledEverything }) {
-      const filteredVal = this.inputDynamicSelect ? this.inputDynamicSelect.filter((v) => !!v) : []
+    onDynamicSelectInputChange({ hasFilledEverything }: any) {
+      const base: any = this
+      const filteredVal = base.inputDynamicSelect
+        ? base.inputDynamicSelect.filter((v: any) => !!v)
+        : []
       const value = filteredVal.length
-        ? `${this.input}_multiple-values_${JSON.stringify(filteredVal)}`
-        : this.input
-      this.$emit('input', value)
-      this.$emit('change', { ...this.passedData, value, hasFilledEverything })
+        ? `${base.input}_multiple-values_${JSON.stringify(filteredVal)}`
+        : base.input
+      base.$emit('input', value)
+      base.$emit('change', { ...base.passedData, value, hasFilledEverything })
     },
-    onTextInputSubmit(val) {
-      this.inputText = val
-      const value = this.inputText ? `${this.input}_single-value_${this.inputText}` : this.input
-      this.$emit('input', value)
-      this.$emit('change', { ...this.passedData, value, hasFilledEverything: true })
+    onTextInputSubmit(val: String) {
+      const base: any = this
+      base.inputText = val
+      const value = base.inputText ? `${base.input}_single-value_${base.inputText}` : base.input
+      base.$emit('input', value)
+      base.$emit('change', { ...base.passedData, value, hasFilledEverything: true })
     }
   }
 })
