@@ -3,7 +3,7 @@
     <layout-text v-if="doc.id" v-shortkey="shortKeysSpans" @shortkey="changeSelectedLabel">
       <template #header>
         <v-alert
-          :value="(!canConfirm && hasClickedConfirmButton)"
+          :value="!canConfirm && hasClickedConfirmButton"
           color="error"
           dark
           transition="scale-transition"
@@ -22,7 +22,7 @@
                 checked: $t('annotation.checkedTooltip'),
                 notChecked: $t('annotation.notCheckedTooltip')
               },
-              disabled: !canEdit,
+              disabled: !canEdit
             },
             filter: {
               visible: showFilterButton
@@ -52,15 +52,15 @@
               tooltip: {
                 first: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
                 prev: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
-                next: canNavigateForward? '' : $t('annotation.warningCheckedNavigation'),
+                next: canNavigateForward ? '' : $t('annotation.warningCheckedNavigation'),
                 prev: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
-                jump: '',
+                jump: ''
               },
               callback: {
                 next: annotateStartStates,
                 last: annotateStartStates
               }
-            },
+            }
           }"
           :enable-auto-labeling.sync="enableAutoLabeling"
           :guideline-text="project.guideline"
@@ -73,7 +73,7 @@
           @click:clear-label="clear"
           @click:review="confirm"
         >
-        <v-spacer />
+          <v-spacer />
         </toolbar-laptop>
         <toolbar-mobile :total="docs.count" class="d-flex d-sm-none" />
       </template>
@@ -81,43 +81,47 @@
         <div>
           <v-row>
             <v-col cols="12">
-                <h3 class="mt-3 mb-2"> 
-                  {{ doc.meta.meta.article_title }}
-                </h3>
-                <v-divider />
+              <h3 class="mt-3 mb-2">
+                {{ doc.meta.meta.article_title }}
+              </h3>
+              <v-divider />
             </v-col>
           </v-row>
           <v-row class="mt-3">
             <v-col v-if="showArticleViewer" cols="5">
               <div>
-                <toolbar-article 
+                <toolbar-article
                   :project="project"
                   :article-items="currentWholeArticle.items"
                   :current-article-item="doc"
                 />
               </div>
             </v-col>
-            <v-col :cols="showArticleViewer ? 7: 12" >
-              <v-card v-shortkey="shortKeysCategory" @shortkey="addOrRemoveCategory">
-                <v-card-title>
-                    <label-group
-                      v-if="labelOption === 0"
-                      :read-only="!canEdit"
-                      :labels="categoryTypes"
-                      :annotations="categories"
-                      :single-label="project.singleClassClassification"
-                      @add="addCategory"
-                      @remove="removeCategory"
-                    />
-                    <label-select
-                      v-else
-                      :read-only="!canEdit"
-                      :labels="categoryTypes"
-                      :annotations="categories"
-                      :single-label="project.singleClassClassification"
-                      @add="addCategory"
-                      @remove="removeCategory"
-                    />
+            <v-col :cols="showArticleViewer ? 7 : 12" class="annotation-container">
+              <v-card
+                v-shortkey="shortKeysCategory"
+                @shortkey="addOrRemoveCategory"
+                class="annotation-card"
+              >
+                <v-card-title v-if="categoryTypes.length">
+                  <label-group
+                    v-if="labelOption === 0"
+                    :read-only="!canEdit"
+                    :labels="categoryTypes"
+                    :annotations="categories"
+                    :single-label="project.singleClassClassification"
+                    @add="addCategory"
+                    @remove="removeCategory"
+                  />
+                  <label-select
+                    v-else
+                    :read-only="!canEdit"
+                    :labels="categoryTypes"
+                    :annotations="categories"
+                    :single-label="project.singleClassClassification"
+                    @add="addCategory"
+                    @remove="removeCategory"
+                  />
                 </v-card-title>
                 <v-divider />
                 <div class="annotation-text pa-4">
@@ -142,103 +146,105 @@
                     @contextmenu:relation="deleteRelation"
                   />
                 </div>
-                <v-divider />
-                <div v-if="isScaleImported" class="pa-4">
-                  <summary-input
-                      v-if="project.isSummaryMode || project.isCombinationMode"
-                      class="mb-10"
-                      :text="doc.text"
-                      :tags="affectiveSummaryTags"
-                      :impressions="affectiveSummaryImpressions"
-                      :read-only="!canEdit"
-                      :show-borders="project.isCombinationMode"
-                      :show-errors="(!hasValidEntries.isSummaryMode && hasClickedConfirmButton)"
-                      @remove:tag="removeTag"
-                      @update:tag="updateTag"
-                      @add:tag="addTag"
-                      @remove:impression="removeImpression"
-                      @update:impression="updateImpression"
-                      @add:impression="addImpression"
-                    />
-                    <emotions-input
-                      v-if="project.isEmotionsMode || project.isCombinationMode"
-                      class="mb-10"
-                      :read-only="!canEdit"
-                      :show-borders="project.isCombinationMode"
-                      :show-errors="(!hasValidEntries.isEmotionsMode && hasClickedConfirmButton)"
-                      :general-positivity="affectiveScalesValues.positive"
-                      :general-negativity="affectiveScalesValues.negative"
-                      :joy="affectiveScalesValues.joy"
-                      :admiration="affectiveScalesValues.admiration"
-                      :inspiration="affectiveScalesValues.inspiration"
-                      :peace="affectiveScalesValues.peace"
-                      :surprise="affectiveScalesValues.surprise"
-                      :sympathy="affectiveScalesValues.sympathy"
-                      :fear="affectiveScalesValues.fear"
-                      :sadness="affectiveScalesValues.sadness"
-                      :disgust="affectiveScalesValues.disgust"
-                      :anger="affectiveScalesValues.anger"
-                      @change="emotionsChangeHandler"
-                    />
-                    <others-input
-                      v-if="project.isOthersMode || project.isCombinationMode"
-                      class="mb-10"
-                      :read-only="!canEdit"
-                      :show-borders="project.isCombinationMode"
-                      :show-errors="(!hasValidEntries.isOthersMode && hasClickedConfirmButton)"
-                      :ironic="affectiveScalesValues.ironic"
-                      :embarrassing="affectiveScalesValues.embarrassing"
-                      :vulgar="affectiveScalesValues.vulgar"
-                      :politic="affectiveScalesValues.politic"
-                      :interesting="affectiveScalesValues.interesting"
-                      :comprehensible="affectiveScalesValues.comprehensible"
-                      :agreeable="affectiveScalesValues.agreeable"
-                      :believable="affectiveScalesValues.believable"
-                      :sympathy-to-author="affectiveScalesValues.sympathyToAuthor"
-                      :need-more-info="affectiveScalesValues.needMoreInfo"
-                      :wish-to-author="affectiveOthersWishToAuthor"
-                      @change="othersChangeHandler"
-                      @nullifyCategoryValue="nullifyOthersValueHandler"
-                      @restoreCategoryValue="restoreOthersValueHandler"
-                      @remove:wishToAuthor="removeWishToAuthor"
-                      @update:wishToAuthor="updateWishToAuthor"
-                      @add:wishToAuthor="addWishToAuthor"
-                      @nullify:wishToAuthor="nullifyWishToAuthor"
-                      @restore:wishToAuthor="restoreWishToAuthor"
-                    />
-                    <offensive-input
-                      v-if="project.isOffensiveMode || project.isCombinationMode"
-                      v-model="hasValidEntries.isOffensiveMode"
-                      class="mb-10"
-                      :show-borders="project.isCombinationMode"
-                      :show-errors="hasClickedConfirmButton"
-                      :project="project"
-                      :doc="doc"
-                      :scale-types="scaleTypes"
-                      :scales="scales"
-                      :text-labels="textLabels"
-                      :read-only="!canEdit"
-                      @update:scale="updateScale"
-                      @add:label="addLabel"
-                      @update:label="updateTag"
-                      @remove:label="removeTag" />
-                    <humor-input
-                      v-if="project.isHumorMode || project.isCombinationMode"
-                      v-model="hasValidEntries.isHumorMode"
-                      class="mb-10"
-                      :show-borders="project.isCombinationMode"
-                      :show-errors="hasClickedConfirmButton"
-                      :project="project"
-                      :doc="doc"
-                      :scale-types="scaleTypes"
-                      :scales="scales"
-                      :text-labels="textLabels"
-                      :read-only="!canEdit"
-                      @update:scale="updateScale"
-                      @add:label="addLabel"
-                      @update:label="updateTag"
-                      @remove:label="removeTag"  />
-                </div>
+              </v-card>
+              <v-divider />
+              <v-card v-if="isScaleImported" class="pa-4 dimension-card">
+                <summary-input
+                  v-if="project.isSummaryMode || project.isCombinationMode"
+                  class="mb-10"
+                  :text="doc.text"
+                  :tags="affectiveSummaryTags"
+                  :impressions="affectiveSummaryImpressions"
+                  :read-only="!canEdit"
+                  :show-borders="project.isCombinationMode"
+                  :show-errors="!hasValidEntries.isSummaryMode && hasClickedConfirmButton"
+                  @remove:tag="removeTag"
+                  @update:tag="updateTag"
+                  @add:tag="addTag"
+                  @remove:impression="removeImpression"
+                  @update:impression="updateImpression"
+                  @add:impression="addImpression"
+                />
+                <emotions-input
+                  v-if="project.isEmotionsMode || project.isCombinationMode"
+                  class="mb-10"
+                  :read-only="!canEdit"
+                  :show-borders="project.isCombinationMode"
+                  :show-errors="!hasValidEntries.isEmotionsMode && hasClickedConfirmButton"
+                  :general-positivity="affectiveScalesValues.positive"
+                  :general-negativity="affectiveScalesValues.negative"
+                  :joy="affectiveScalesValues.joy"
+                  :admiration="affectiveScalesValues.admiration"
+                  :inspiration="affectiveScalesValues.inspiration"
+                  :peace="affectiveScalesValues.peace"
+                  :surprise="affectiveScalesValues.surprise"
+                  :sympathy="affectiveScalesValues.sympathy"
+                  :fear="affectiveScalesValues.fear"
+                  :sadness="affectiveScalesValues.sadness"
+                  :disgust="affectiveScalesValues.disgust"
+                  :anger="affectiveScalesValues.anger"
+                  @change="emotionsChangeHandler"
+                />
+                <others-input
+                  v-if="project.isOthersMode || project.isCombinationMode"
+                  class="mb-10"
+                  :read-only="!canEdit"
+                  :show-borders="project.isCombinationMode"
+                  :show-errors="!hasValidEntries.isOthersMode && hasClickedConfirmButton"
+                  :ironic="affectiveScalesValues.ironic"
+                  :embarrassing="affectiveScalesValues.embarrassing"
+                  :vulgar="affectiveScalesValues.vulgar"
+                  :politic="affectiveScalesValues.politic"
+                  :interesting="affectiveScalesValues.interesting"
+                  :comprehensible="affectiveScalesValues.comprehensible"
+                  :agreeable="affectiveScalesValues.agreeable"
+                  :believable="affectiveScalesValues.believable"
+                  :sympathy-to-author="affectiveScalesValues.sympathyToAuthor"
+                  :need-more-info="affectiveScalesValues.needMoreInfo"
+                  :wish-to-author="affectiveOthersWishToAuthor"
+                  @change="othersChangeHandler"
+                  @nullifyCategoryValue="nullifyOthersValueHandler"
+                  @restoreCategoryValue="restoreOthersValueHandler"
+                  @remove:wishToAuthor="removeWishToAuthor"
+                  @update:wishToAuthor="updateWishToAuthor"
+                  @add:wishToAuthor="addWishToAuthor"
+                  @nullify:wishToAuthor="nullifyWishToAuthor"
+                  @restore:wishToAuthor="restoreWishToAuthor"
+                />
+                <offensive-input
+                  v-if="project.isOffensiveMode || project.isCombinationMode"
+                  v-model="hasValidEntries.isOffensiveMode"
+                  class="mb-10"
+                  :show-borders="project.isCombinationMode"
+                  :show-errors="hasClickedConfirmButton"
+                  :project="project"
+                  :doc="doc"
+                  :scale-types="scaleTypes"
+                  :scales="scales"
+                  :text-labels="textLabels"
+                  :read-only="!canEdit"
+                  @update:scale="updateScale"
+                  @add:label="addLabel"
+                  @update:label="updateTag"
+                  @remove:label="removeTag"
+                />
+                <humor-input
+                  v-if="project.isHumorMode || project.isCombinationMode"
+                  v-model="hasValidEntries.isHumorMode"
+                  class="mb-10"
+                  :show-borders="project.isCombinationMode"
+                  :show-errors="hasClickedConfirmButton"
+                  :project="project"
+                  :doc="doc"
+                  :scale-types="scaleTypes"
+                  :scales="scales"
+                  :text-labels="textLabels"
+                  :read-only="!canEdit"
+                  @update:scale="updateScale"
+                  @add:label="addLabel"
+                  @update:label="updateTag"
+                  @remove:label="removeTag"
+                />
               </v-card>
             </v-col>
           </v-row>
@@ -272,7 +278,6 @@ import OthersScales from '@/static/formats/affective_annotation/affective_others
 import OffensiveInput from '@/components/tasks/affectiveAnnotation/offensive/OffensiveInput.vue'
 import HumorInput from '@/components/tasks/affectiveAnnotation/humor/HumorInput.vue'
 import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
-
 
 export default {
   components: {
@@ -326,24 +331,26 @@ export default {
       articleTotal: 1,
       articleIndex: 1,
       isScaleImported: true,
-      currentArticleId: "",
+      currentArticleId: '',
       currentWholeArticle: [],
       affectiveTmp: {},
       affectiveScalesValues: {},
       affectiveTextlabelQuestions: {
-        summaryTag: "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.",
-        summaryImpression: "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów.",
-        othersWishToAuthor: "Czego życzę autorowi tego tekstu?"
+        summaryTag:
+          'Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)? Proszę wpisać 2-10 słów.',
+        summaryImpression:
+          'Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst? Proszę wpisać 2-10 słów.',
+        othersWishToAuthor: 'Czego życzę autorowi tego tekstu?'
       },
       affectiveScalesDict: {},
       intNullFlag: -1,
-      strNullFlag: "-1",
+      strNullFlag: '-1',
       affectiveSummaryTags: [],
       affectiveSummaryImpressions: [],
       affectiveOthersWishToAuthor: [],
       affectiveOthersTmp: {},
       showRestingMessage: false,
-      restingEndTime: "",
+      restingEndTime: '',
       hasCheckedPreviousDoc: false,
       hasValidEntries: {
         isSummaryMode: false,
@@ -361,7 +368,7 @@ export default {
     await this.setProjectData()
     await this.setDoc()
     await this.setHasCheckedPreviousDoc()
-    this.$nextTick(()=> {
+    this.$nextTick(() => {
       this.setArticleData()
       this.loadLabels()
     })
@@ -417,19 +424,19 @@ export default {
     },
     canConfirm() {
       let canConfirm = false
-      if(this.project.isCombinationMode) {
-        canConfirm = Object.values(this.hasValidEntries).every((value)=> value === true)
-      } else if(this.project.isSummaryMode) {
+      if (this.project.isCombinationMode) {
+        canConfirm = Object.values(this.hasValidEntries).every((value) => value === true)
+      } else if (this.project.isSummaryMode) {
         canConfirm = this.hasValidEntries.isSummaryMode
-      } else if(this.project.isEmotionsMode) {
+      } else if (this.project.isEmotionsMode) {
         canConfirm = this.hasValidEntries.isEmotionsMode
-      } else if(this.project.isOthersMode) {
+      } else if (this.project.isOthersMode) {
         canConfirm = this.hasValidEntries.isOthersMode
-      } else if(this.project.isHumorMode) {
+      } else if (this.project.isHumorMode) {
         canConfirm = this.hasValidEntries.isHumorMode
-      } else if(project.isOffensiveMode) {
+      } else if (project.isOffensiveMode) {
         canConfirm = this.hasValidEntries.isOffensiveMode
-      } 
+      }
       return canConfirm
     },
     selectedLabel() {
@@ -452,7 +459,7 @@ export default {
       } else {
         return this.spanTypes
       }
-    },
+    }
   },
 
   watch: {
@@ -461,7 +468,7 @@ export default {
       if (val) {
         this.list(this.doc.id)
       }
-    },
+    }
   },
 
   async created() {
@@ -485,7 +492,7 @@ export default {
       const restingEndTime = await this.calculateRestingPeriod()
       if (restingEndTime === null) {
         this.showRestingMessage = false
-        this.restingEndTime = ""
+        this.restingEndTime = ''
         return true
       } else {
         this.showRestingMessage = !this.isProjectAdmin
@@ -496,7 +503,7 @@ export default {
     async setHasCheckedPreviousDoc() {
       const query = this.$route.query.q || ''
       const isCheckedQuery = this.$route.query.isChecked || ''
-      const page = parseInt(this.$route.query.page) 
+      const page = parseInt(this.$route.query.page)
       const prevPage = page > 1 ? page - 1 : page
       const docs = await this.$services.example.fetchOne(
         this.projectId,
@@ -505,12 +512,13 @@ export default {
         isCheckedQuery
       )
       const doc = docs.items[0]
-      this.hasCheckedPreviousDoc =  !!doc.isConfirmed
+      this.hasCheckedPreviousDoc = !!doc.isConfirmed
     },
     async annotateStartStates() {
       await this.setDoc()
-      this.$nextTick(()=> {
-        !this.doc.isConfirmed && this.$services.example.annotateStartStates(this.projectId, this.doc.id)
+      this.$nextTick(() => {
+        !this.doc.isConfirmed &&
+          this.$services.example.annotateStartStates(this.projectId, this.doc.id)
       })
     },
     async setLabelData() {
@@ -544,7 +552,7 @@ export default {
         affectiveScaleLabelsJSON.push(...OthersScales)
       }
       const affectiveScalesDict = {}
-      affectiveScaleLabelsJSON.forEach(function(item) {
+      affectiveScaleLabelsJSON.forEach(function (item) {
         affectiveScalesDict[item.text] = item.varname
       })
       this.affectiveScalesDict = affectiveScalesDict
@@ -554,7 +562,7 @@ export default {
       if (scaleTypesRaw.length > 0) {
         const scaleTypesIdsTexts = {}
         const scaleTypesTextsIds = {}
-        scaleTypesRaw.forEach(function(item) {
+        scaleTypesRaw.forEach(function (item) {
           scaleTypesIdsTexts[item.id] = item.text
           scaleTypesTextsIds[item.text] = item.id
         })
@@ -565,7 +573,7 @@ export default {
       }
     },
     async setArticleData() {
-      if(this.docs.items && this.docs.items.length) {
+      if (this.docs.items && this.docs.items.length) {
         const doc = this.docs.items[0]
         const isCheckedQuery = this.$route.query.isChecked || ''
         this.currentArticleId = doc.articleId
@@ -597,7 +605,7 @@ export default {
       await this.list(this.doc.id)
     },
     async list(docId) {
-      if(docId) {
+      if (docId) {
         const spans = await this.$services.sequenceLabeling.list(this.projectId, docId)
         const relations = await this.$services.sequenceLabeling.listRelations(this.projectId, docId)
         // In colab mode, if someone add a new label and annotate data
@@ -609,9 +617,9 @@ export default {
         this.categories = await this.$services.textClassification.list(this.projectId, docId)
         this.textLabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
         this.scales = await this.$services.affectiveScale.list(this.projectId, docId)
-        
+
         this.setAffectiveList()
-      } 
+      }
     },
     setAffectiveList() {
       this.affectiveSummaryTags = this.textLabels.filter(
@@ -626,7 +634,7 @@ export default {
       const affectiveScalesValues = {}
       const affectiveScalesDict = this.affectiveScalesDict
       const scaleTypesIdsTexts = this.scaleTypesIdsTexts
-      this.scales.forEach(function(item) {
+      this.scales.forEach(function (item) {
         const category = affectiveScalesDict[scaleTypesIdsTexts[item.label]]
         affectiveScalesValues[category] = item.scale
       })
@@ -742,17 +750,17 @@ export default {
       }
     },
     async confirm() {
-      if(this.project.isCombinationMode) {
+      if (this.project.isCombinationMode) {
         this.hasValidEntries.isSummaryMode = this.isAllAffectiveSummaryAdded()
         this.hasValidEntries.isOthersMode = this.isAllAffectiveOthersAdded()
         this.hasValidEntries.isEmotionsMode = this.isAllAffectiveEmotionsAdded()
-      } else if(this.project.isSummaryMode) {
+      } else if (this.project.isSummaryMode) {
         this.hasValidEntries.isSummaryMode = this.isAllAffectiveSummaryAdded()
-      } else if(this.project.isOthersMode) {
+      } else if (this.project.isOthersMode) {
         this.hasValidEntries.isOthersMode = this.isAllAffectiveOthersAdded()
-      } else if(this.project.isEmotionsMode) {
+      } else if (this.project.isEmotionsMode) {
         this.hasValidEntries.isEmotionsMode = this.isAllAffectiveEmotionsAdded()
-      } 
+      }
       this.hasClickedConfirmButton = this.canConfirm ? false : !this.isProjectAdmin
       if (this.canConfirm || this.isProjectAdmin) {
         await this.$services.example.confirm(this.projectId, this.doc.id)
@@ -769,7 +777,7 @@ export default {
       const varsMustExist = []
       const keysMustExist = []
       const keysAnswered = []
-      EmotionsScales.forEach(function(item) {
+      EmotionsScales.forEach(function (item) {
         EmotionsScalesDict[item.varname] = item.text
         varsMustExist.push(item.varname)
         keysMustExist.push(item.text)
@@ -779,14 +787,14 @@ export default {
           keysAnswered.push(EmotionsScalesDict[key])
         }
       })
-      return (keysMustExist.sort().join(',') === keysAnswered.sort().join(','))
+      return keysMustExist.sort().join(',') === keysAnswered.sort().join(',')
     },
     isAllAffectiveOthersAdded() {
       const OthersScalesDict = {}
       const varsMustExist = []
       const keysMustExist = []
       const keysAnswered = []
-      OthersScales.forEach(function(item) {
+      OthersScales.forEach(function (item) {
         OthersScalesDict[item.varname] = item.text
         varsMustExist.push(item.varname)
         keysMustExist.push(item.text)
@@ -812,7 +820,12 @@ export default {
       await this.list(this.doc.id)
     },
     async updateTag(annotationId, text) {
-      await this.$services.affectiveTextlabel.changeText(this.projectId, this.doc.id, annotationId, text)
+      await this.$services.affectiveTextlabel.changeText(
+        this.projectId,
+        this.doc.id,
+        annotationId,
+        text
+      )
       await this.list(this.doc.id)
     },
     async addTag(text) {
@@ -829,7 +842,12 @@ export default {
       await this.list(this.doc.id)
     },
     async updateImpression(annotationId, text) {
-      await this.$services.affectiveTextlabel.changeText(this.projectId, this.doc.id, annotationId, text)
+      await this.$services.affectiveTextlabel.changeText(
+        this.projectId,
+        this.doc.id,
+        annotationId,
+        text
+      )
       await this.list(this.doc.id)
     },
     async addImpression(text) {
@@ -847,12 +865,7 @@ export default {
       )
       const label = affectiveEmotionsDict[category]
       const labelId = this.scaleTypesTextsIds[label]
-      await this.$services.affectiveScale.create(
-        this.projectId,
-        this.doc.id,
-        labelId,
-        value
-      )
+      await this.$services.affectiveScale.create(this.projectId, this.doc.id, labelId, value)
       await this.list(this.doc.id)
     },
     async othersChangeHandler(value, category) {
@@ -861,12 +874,7 @@ export default {
       )
       const label = affectiveOthersDict[category]
       const labelId = this.scaleTypesTextsIds[label]
-      await this.$services.affectiveScale.create(
-        this.projectId,
-        this.doc.id,
-        labelId,
-        value
-      )
+      await this.$services.affectiveScale.create(this.projectId, this.doc.id, labelId, value)
       await this.list(this.doc.id)
     },
     async nullifyOthersValueHandler(category) {
@@ -884,7 +892,12 @@ export default {
       await this.list(this.doc.id)
     },
     async updateWishToAuthor(annotationId, text) {
-      await this.$services.affectiveTextlabel.changeText(this.projectId, this.doc.id, annotationId, text)
+      await this.$services.affectiveTextlabel.changeText(
+        this.projectId,
+        this.doc.id,
+        annotationId,
+        text
+      )
       await this.list(this.doc.id)
     },
     async addWishToAuthor(text) {
@@ -921,18 +934,13 @@ export default {
       }
     },
     async updateScale(labelId, value) {
-      if(labelId) {
-         await this.$services.affectiveScale.create(
-          this.projectId,
-          this.doc.id,
-          labelId,
-          value
-        )
+      if (labelId) {
+        await this.$services.affectiveScale.create(this.projectId, this.doc.id, labelId, value)
         await this.list(this.doc.id)
-      } 
+      }
     },
     async addLabel(question, answer) {
-      if(question && answer) {
+      if (question && answer) {
         await this.$services.affectiveTextlabel.create(
           this.projectId,
           this.doc.id,
@@ -941,12 +949,12 @@ export default {
         )
         await this.list(this.doc.id)
       }
-    },
+    }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" >
 .annotation-text {
   font-size: 1.1rem !important;
   font-weight: 500;
@@ -961,4 +969,21 @@ export default {
   }
 }
 
+.annotation-container {
+  position: relative;
+}
+
+.annotation-card {
+  position: sticky;
+  max-height: 250px;
+  overflow-x: visible;
+  top: 80px;
+  z-index: 1;
+}
+
+.dimension-card {
+  position: relative;
+  z-index: 0;
+  margin-top: 60px;
+}
 </style>
