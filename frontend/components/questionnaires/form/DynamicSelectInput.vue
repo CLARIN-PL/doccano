@@ -6,19 +6,19 @@
     <div>
       <select-input
         v-for="(select, idx) in formData"
-        @change="emitFormData"
+        :key="`select-input_${idx}`"
         v-model="select.value"
         :question="select.question"
         :read-only="!!select.value"
-        :key="`select-input_${idx}`"
         :options="select.options"
+        @change="emitFormData"
       />
       <v-btn
         v-if="showAddButton"
-        @click="onClickAddButton"
         :disabled="formData.length === options.length"
+        @click="onClickAddButton"
       >
-        add
+        add more question
       </v-btn>
     </div>
   </div>
@@ -52,22 +52,16 @@ export default Vue.extend({
     },
     options: {
       type: Array,
-      default: () => []
+      default: () => [] as any[]
+    }
+  },
+  data() {
+    return {
+      formData: [] as any[]
     }
   },
   created() {
     this.setFormData()
-  },
-  data() {
-    return {
-      formData: []
-    }
-  },
-  watch: {
-    formData: {
-      deep: true,
-      handler() {}
-    }
   },
   methods: {
     emitFormData() {
@@ -90,9 +84,9 @@ export default Vue.extend({
       })
     },
     onClickAddButton() {
-      const values = _.flatMap(this.formData, 'value')
-      const options = this.options.filter((opt) => {
-        const isAdded = values.find((val) => val.includes(opt.text))
+      const values: String[] = _.flatMap(this.formData, 'value')
+      const options = this.options.filter((opt: any) => {
+        const isAdded = values.find((val: String) => val.includes(opt.text))
         return !isAdded
       })
       this.formData.push({

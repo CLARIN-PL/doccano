@@ -468,6 +468,14 @@ export default {
         }
       }
     },
+    getQuestionnaire: {
+      deep: true,
+      handler() {
+        if(valtoShow.length) {
+          this.$router.push("/questionnaires")
+        }
+      }
+    },
     '$route.query': '$fetch',
     enableAutoLabeling(val) {
       if (val) {

@@ -176,9 +176,7 @@ export function mapQuestionnaireTypes(qTypes) {
 
 
                     if(question.options) {
-                        const hasMultipleTextboxes = question.options.filter((opt)=> opt.showTextbox).length > 1
                         question.options = question.options.map((option)=> {
-                            option.preventDirectSubmission = option.showTextbox ? hasMultipleTextboxes : false
                             option.value = option.value === undefined ? option.text : option.value
                             
                             if(option.dynamicSelectInput) {

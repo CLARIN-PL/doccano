@@ -6,15 +6,14 @@
     <div v-else>
         <div ref="header">
         <v-alert
-            :value="showWarning"
+            v-model="showWarning"
             color="error"
             dark
             transition="scale-transition"
             dismissible
-            @input="onConfirmationAlertClose"
             >
-            {{ $t('errors.incompleteAffectiveAnnotation') }}
-            </v-alert>
+        {{ $t('errors.incompleteAffectiveAnnotation') }}
+        </v-alert>
         </div>
     <div v-if="formData.questionnaires.length">
       <v-col>
@@ -59,27 +58,32 @@
                               v-for="(segmentQuestion, segQuIdx) in segment.questions" 
                               :ref="`question_${segQuIdx}`"
                               :key="`segmentQuestion-${segQuIdx}`">
-                              <p v-if="segment.prependIndex">
-                                {{ segment.prependIndex+(segQuIdx+1) }}
+                              <div v-if="segmentQuestion.id">
+                                <p v-if="segment.prependIndex">
+                                  {{ segment.prependIndex+(segQuIdx+1) }}
+                                </p>
+                                <component 
+                                  :is="getComponent(segmentQuestion.type)"
+                                  v-model="segmentQuestion.value"
+                                  :header="segmentQuestion.header"
+                                  :required="segmentQuestion.required"
+                                  :question="segmentQuestion.text"
+                                  :options="segmentQuestion.options"
+                                  :config="segmentQuestion.config"
+                                  :is-clicked="segmentQuestion.isClicked"
+                                  :is-submitting="segmentQuestion.isSubmitting"
+                                  :error-message="segmentQuestion.errorMessage"
+                                  :read-only="segmentQuestion.readOnly"
+                                  :passed-data="{
+                                      question: segmentQuestion, 
+                                      formDataKey: getFormDataKey(segQuIdx, segIdx, qIdx)
+                                    }"
+                                  @change="onQuestionChange"
+                                />
+                              </div>
+                              <p v-else>
+                                This question doesnt contain proper information  
                               </p>
-                              <component 
-                                :is="getComponent(segmentQuestion.type)"
-                                v-model="segmentQuestion.value"
-                                :header="segmentQuestion.header"
-                                :required="segmentQuestion.required"
-                                :question="segmentQuestion.text"
-                                :options="segmentQuestion.options"
-                                :config="segmentQuestion.config"
-                                :is-clicked="segmentQuestion.isClicked"
-                                :is-submitting="segmentQuestion.isSubmitting"
-                                :error-message="segmentQuestion.errorMessage"
-                                :read-only="segmentQuestion.readOnly"
-                                :passed-data="{
-                                    question: segmentQuestion, 
-                                    formDataKey: getFormDataKey(segQuIdx, segIdx, qIdx)
-                                  }"
-                                @change="onQuestionChange"
-                              />
                             </li>
                         </ul>
                       </div>
@@ -92,7 +96,7 @@
               <v-card-actions>
                 <v-btn v-if="activeQuestionnaire+1 < formData.questionnaires.length" 
                   @click="onClickContinueButton">
-                  Continue to the next step 
+                  Continue to the next questionnaire 
                 </v-btn>
                 <v-btn v-else @click="onClickFinishButton">
                   Finish
@@ -150,7 +154,9 @@ export default {
     }
   },
   fetch() {
-    this.list()
+    if (this.toShowId) {
+      this.list()
+    }
   },
   computed: {
     ...mapGetters('user', ['getQuestionnaire']),
@@ -177,14 +183,15 @@ export default {
     },
     async list() {
       const typeId = this.toShowId.split('.')[0]
+      const limit = 100
       const questionnaires = await this.$services.questionnaire.listQuestionnairesByTypeId({
         questionnaireTypeId: typeId,
-        limit: 50
+        limit
       })
       const promises = _.flatMap(questionnaires.items, 'id').map((q) => {
         return this.$services.questionnaire.listQuestionsByQuestionnaireId({
           questionnaireId: q,
-          limit: 100
+          limit
         })
       })
       const responses = await Promise.all(promises)
@@ -242,14 +249,11 @@ export default {
         return SliderInput
       }
     },
-    onConfirmationAlertClose() {
-      this.showWarning = false
-    },
     onClickGreetingCardButton() {
       this.showGreetingCard = false
       this.showWarning = false
       this.activeQuestionnaire += 1
-      window.scrollTo({ top: 0 })
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     },
     onClickContinueButton() {
       const selectedQuestionnaire = this.formData.questionnaires[this.activeQuestionnaire]
@@ -263,7 +267,6 @@ export default {
         } else {
           const firstErrorIndex = questions.findIndex((question) => !question.isClicked)
           this.showWarning = true
-          window.scrollTo({ top: 0, behavior: 'smooth' })
 
           if (this.$refs[`question_${firstErrorIndex}`][0]) {
             this.$refs[`question_${firstErrorIndex}`][0].scrollIntoView({ behavior: 'smooth' })

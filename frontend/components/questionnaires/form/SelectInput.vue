@@ -1,6 +1,7 @@
 <template>
   <div>
     <p>
+      {{ header }}
       {{ question }}
       <span v-if="required">*</span>
     </p>
@@ -8,7 +9,7 @@
     <v-select
       v-model="input"
       :items="options"
-      :disabled="readOnly"
+      :disabled="readOnly || isSubmitting"
       placeholder="Wybierz opcję"
       dense
       outlined
@@ -16,6 +17,7 @@
     <text-input
       v-if="selectedOption.showTextbox"
       v-model="inputText"
+      :read-only="isSubmitting"
       :question="selectedOption.question || selectedOption.text"
       :full-question="selectedOption.question || selectedOption.text"
       :required="required"
@@ -96,8 +98,9 @@ export default Vue.extend({
   watch: {
     input() {
       this.inputText = ''
+      const key = '_single-value_'
       if (!this.selectedOption.showTextbox) {
-        const value = this.inputText ? `${this.input}_single-value_${this.inputText}` : this.input
+        const value = this.inputText ? `${this.input}${key}${this.inputText}` : this.input
         this.$emit('input', value)
         this.$emit('change', { ...this.passedData, value })
       }
@@ -110,9 +113,10 @@ export default Vue.extend({
     }
   },
   methods: {
-    onTextInputSubmit(val) {
+    onTextInputSubmit(val: any) {
       this.inputText = val
-      const value = this.inputText ? `${this.input}_single-value_${this.inputText}` : this.input
+      const key = '_single-value_'
+      const value = this.inputText ? `${this.input}${key}${this.inputText}` : this.input
       this.$emit('input', value)
       this.$emit('change', { ...this.passedData, value })
     }
