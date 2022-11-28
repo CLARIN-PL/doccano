@@ -47,6 +47,10 @@ export default Vue.extend({
       type: Number,
       default: 0
     },
+    passedData: {
+      type: Object,
+      default: () => {}
+    },
     required: {
       type: Boolean,
       default: false
@@ -78,7 +82,7 @@ export default Vue.extend({
         const base: any = this
         if (base.isLoaded) {
           base.$emit('input', val)
-          base.$emit('change', val)
+          base.$emit('change', { ...base.passedData, value: val })
         }
       }
     }
