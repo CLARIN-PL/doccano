@@ -1,5 +1,5 @@
 <template>
-  <div class="emotions-input">
+  <div class="emotions-input" :class="{'--has-error': showErrors, '--bordered': showBorders}">
     <p class="emotions-input__title">{{ $t('annotation.affectiveEmotions.titleQuestion') }}</p>
     <v-divider class="emotions-input__divider" />
     <p class="emotions-input__subheader">{{ $t('annotation.affectiveEmotions.titleWhat') }}</p>
@@ -133,6 +133,14 @@ export default {
       type: Boolean,
       default: false
     },
+    showErrors: {
+      type: Boolean,
+      default: false
+    },
+    showBorders: {
+      type: Boolean,
+      default: false
+    },
     generalPositivity: {
       type: Number,
       default: -99
@@ -232,18 +240,29 @@ export default {
 .emotions-input {
   word-wrap: normal;
   word-break: break-word;
-  max-height: 230px;
+  overflow-y: auto;
   overflow-x: auto;
   width: 100%;
-  padding-right: 20px !important;
+  padding: 15px 20px 10px 10px;
+
+  &.--bordered {
+    border: 2px solid #ddd;
+    border-radius: 2px;  
+
+    &.--has-error {
+      border: 2px solid red;
+    }
+  }
 
   &__title {
     font-size: 1.0rem;
+    font-weight: bold;
     line-height: 1.0;
   }
 
   &__subheader {
     font-size: 0.8rem;
+    font-weight: bold;
     line-height: 0.95;
     margin-top: 10px !important;
     margin-bottom: 0 !important;

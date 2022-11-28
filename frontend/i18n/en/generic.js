@@ -21,7 +21,7 @@ export default {
   onlyDisplayCompletedProject: "Currently showing {number} uncompleted projects. Completed projects are not visible in the list.",
   restingMessage: {
     title: 'Time to rest!',
-    message1: 'Thank you for your work! Please have some coffee before continuing!',
+    message1: 'Thank you for your work!',
     message2: 'You can continue annotating at:',
     message3: 'Please refresh this page when the time to rest has ended.'
   }

@@ -3,6 +3,7 @@
     <v-data-table
       :headers="headers"
       :items="annotations"
+      :no-data-text="$t('vuetify.noDataAvailable')"
       item-key="id"
       hide-default-header
       hide-default-footer

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="summary-input" :class="{'--has-error': showErrors, '--bordered': showBorders}">
     <textfield-with-seq-2-seq
       :read-only="readOnly"
       :text="text"
@@ -39,6 +39,14 @@ export default {
       default: ""
     },
     readOnly: {
+      type: Boolean,
+      default: false
+    },
+    showErrors: {
+      type: Boolean,
+      default: false
+    },
+    showBorders: {
       type: Boolean,
       default: false
     },
@@ -116,3 +124,19 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.summary-input {
+  overflow-y: auto;
+  padding: 10px;
+
+  &.--bordered {
+    border: 2px solid #ddd;
+    border-radius: 2px;  
+
+    &.--has-error {
+      border: 2px solid red;
+    }
+  }
+}
+</style>

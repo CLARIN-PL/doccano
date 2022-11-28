@@ -201,6 +201,10 @@ export default {
       line-height: 0.95;
     }
 
+    &__question {
+      font-weight: bold;
+    }
+
     &__category {
       padding: 0 !important;
     }

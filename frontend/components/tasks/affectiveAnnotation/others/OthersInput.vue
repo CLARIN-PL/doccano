@@ -1,6 +1,7 @@
 <template>
-  <div class="others-input">
+  <div class="others-input" :class="{'--has-error': showErrors, '--bordered': showBorders}">
     <p class="others-input__title">{{ $t('annotation.affectiveOthers.titleQuestion') }}</p>
+    <v-divider class="others-input__divider" />
     <div class="others-input__content">
       <slider
         :read-only="readOnly"
@@ -177,6 +178,14 @@ export default {
       type: Boolean,
       default: false
     },
+    showErrors: {
+      type: Boolean,
+      default: false
+    },
+    showBorders: {
+      type: Boolean,
+      default: false
+    },
     ironic: {
       type: Number,
       default: -99
@@ -320,19 +329,29 @@ export default {
 .others-input {
   word-wrap: normal;
   word-break: break-word;
-  max-height: 230px;
+  overflow-y: auto;
   overflow-x: auto;
   width: 100%;
-  padding-right: 20px !important;
+  padding: 15px 20px 10px 10px;
+
+  &.--bordered {
+    border: 2px solid #ddd;
+    border-radius: 2px;  
+
+    &.--has-error {
+      border: 2px solid red;
+    }
+  }
 
   &__title {
     font-size: 1.0rem;
+    font-weight: bold;
     line-height: 1.0;
-    margin-bottom: 0 !important;
   }
 
   &__subheader {
     font-size: 0.8rem;
+    font-weight: bold;
     line-height: 0.95;
     margin-top: 10px !important;
     margin-bottom: 0 !important;

@@ -40,3 +40,9 @@ export default Vue.extend({
   }
 })
 </script>
+
+<style>
+.v-list-item__title {
+  overflow: visible;
+}
+</style>
