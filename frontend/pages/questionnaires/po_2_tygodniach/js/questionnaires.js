@@ -98,7 +98,7 @@ export const qTypes = [
                                                 {
                                                     showTextbox: true,
                                                     text: "etc? Dlaczego?",
-                                                },
+                                                }
                                             ]
                                         }
                                     },
@@ -109,7 +109,8 @@ export const qTypes = [
                             },
                             {
                                 type: "radio",
-                                text: "Tekstów było",
+                                text: "Tekstów było?",
+                                alternateText: "Tekstów było?Jaka liczba tekstów byłaby odpowiednia?",
                                 options: [
                                     {
                                         text: "za dużo",

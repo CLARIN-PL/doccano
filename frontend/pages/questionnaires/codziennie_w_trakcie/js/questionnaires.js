@@ -81,14 +81,10 @@ export const qTypes = [
                                 },
                                 {
                                     value: 3,
-                                    text: "nie mam zdania"
-                                },
-                                {
-                                    value: 4,
                                     text: "zgadzam się"
                                 },
                                 {
-                                    value: 5,
+                                    value: 4,
                                     text: "całkowicie się zgadzam"
                                 }
                             ]
@@ -99,18 +95,18 @@ export const qTypes = [
                                 text: "Czuję się zestresowany, niespokojny, przytłoczony.",
                                 value: -1,
                                 min: 0,
-                                max: 5,
+                                max: 4,
                             },
                             {
                                 type: "scale",
                                 text: "Czuję, że panuję nad sytuacją, dobrze sobie radzę, mam wszystko pod kontrolą.",
                                 value: -1,
                                 min: 0,
-                                max: 5,
+                                max: 4,
                             }
                         ]
                     }
-                ],
+                ]
             }
         ]
     },
@@ -123,90 +119,90 @@ export const qTypes = [
                 language: "pl",
                 segments: [
                     {
-                    scales: {
-                        values: [
+                        scales: {
+                            values: [
+                                {
+                                    value: 0,
+                                    text: "zupełnie się nie zgadzam"
+                                },
+                                {
+                                    value: 1,
+                                    text: "nie zgadzam się"
+                                },
+                                {
+                                    value: 2,
+                                    text: "nie mam zdania"
+                                },
+                                {
+                                    value: 3,
+                                    text: "zgadzam się"
+                                },
+                                {
+                                    value: 4,
+                                    text: "całkowicie się zgadzam"
+                                }
+                            ]
+                        },
+                        questions: [
                             {
-                                value: 0,
-                                text: "zupełnie się nie zgadzam"
+                                type: "scale",
+                                text: "Czuję, że wszystko mnie teraz przytłacza.",
+                                min: 0,
+                                max: 4,
+                                value: -1
                             },
                             {
-                                value: 1,
-                                text: "nie zgadzam się"
-                            },
-                            {
-                                value: 2,
-                                text: "nie mam zdania"
-                            },
-                            {
-                                value: 3,
-                                text: "zgadzam się"
-                            },
-                            {
-                                value: 4,
-                                text: "całkowicie się zgadzam"
+                                
+                                type: "scale",
+                                text: "Czuję, że wszystko jest teraz nieprzewidywalne.",
+                                min: 0,
+                                max: 4,
+                                value: -1
                             }
                         ]
-                    },
-                    questions: [
-                        {
-                            type: "scale",
-                            text: "Czuję, że wszystko mnie teraz przytłacza.",
-                            min: 0,
-                            max: 4,
-                            value: -1
-                        },
-                        {
-                            
-                            type: "scale",
-                            text: "Czuję, że wszystko jest teraz nieprzewidywalne.",
-                            min: 0,
-                            max: 4,
-                            value: -1
-                        }
-                    ],
-                        }
-                    ],
-                },
-                {
-                    name: "Zdrowie (wieczorem)",
-                    language: "pl",
-                    segments: [
-                        {
-                            scales: {
-                                values: [
-                                    {
-                                        value: 0,
-                                        text: "źle"
-                                    },
-                                    {
-                                        value: 1,
-                                        text: "średnio"
-                                    },
-                                    {
-                                        value: 2,
-                                        text: "dobrze"
-                                    },
-                                    {
-                                        value: 3,
-                                        text: "bardzo dobrze"
-                                    },
-                                    {
-                                        value: 4,
-                                        text: "doskonale"
-                                    }
-                                ]
-                            },
-                            questions: [
+                    }
+                ]
+            },
+            {
+                name: "Zdrowie (wieczorem)",
+                language: "pl",
+                segments: [
+                    {
+                        scales: {
+                            values: [
                                 {
-                                    type: "scale",
-                                    text: "Jak oceniasz stan swojego zdrowia?",
-                                    min: 0,
-                                    max: 4,
-                                    value: -1
+                                    value: 0,
+                                    text: "źle"
+                                },
+                                {
+                                    value: 1,
+                                    text: "średnio"
+                                },
+                                {
+                                    value: 2,
+                                    text: "dobrze"
+                                },
+                                {
+                                    value: 3,
+                                    text: "bardzo dobrze"
+                                },
+                                {
+                                    value: 4,
+                                    text: "doskonale"
                                 }
-                            ],
-                        }
-                    ],
+                            ]
+                        },
+                        questions: [
+                            {
+                                type: "scale",
+                                text: "Jak oceniasz stan swojego zdrowia?",
+                                min: 0,
+                                max: 4,
+                                value: -1
+                            }
+                        ]
+                    }
+                ]
             }
         ]
     },
@@ -233,7 +229,7 @@ export const qTypes = [
                                 ]
                             },
                             {
-                                text: "Jak się czułaś: Neg-Pos",
+                                text: "Jak się czułaś: Negatywnie-Pozytywnie",
                                 type: "slider",
                                 min: 0,
                                 max: 100,
@@ -252,8 +248,8 @@ export const qTypes = [
                             }
                         ]
                     }
-                ],
+                ]
             }
         ]
-       }
+    }
 ]
