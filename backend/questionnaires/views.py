@@ -54,3 +54,18 @@ class AnswerListAPI(generics.ListCreateAPIView):
             queryset.update(answer_text=self.request.data["answer_text"])
         else:
             serializer.save(user=self.request.user)
+
+
+class AnswersPerQuestionnaireListAPI(generics.ListAPIView):
+    serializer_class = AnswerSerializer
+    permission_classes = [IsAuthenticated]
+    model = Answer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ["question__questionnaire", "user"]
+    ordering_fields = ["created_at", "updated_at"]
+
+    def get_queryset(self):
+        questionnaire_id = self.kwargs["questionnaire_id"]
+        list_of_questions = Question.objects.filter(questionnaire=questionnaire_id)
+        queryset = self.model.objects.filter(question__in=list_of_questions, user=self.request.user).order_by("-created_at")
+        return queryset
