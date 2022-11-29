@@ -152,7 +152,7 @@ export default Vue.extend({
 
     checkQuestionnaire() {
       this.initQuestionnaire()
-      if (this.getQuestionnaire.toShow.length) {
+      if (!this.isStaff && this.getQuestionnaire.toShow.length) {
         this.$router.push('/questionnaires')
       }
     },
