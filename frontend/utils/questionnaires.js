@@ -26,6 +26,7 @@ import _ from 'lodash'
 
 const RESEARCH_TIME_IN_MONTHS = 3
 const TEXT_BATCH_COUNT = 20
+const TEXT_DAILY_LOAD = 100
 const DATE_FORMAT = "DD-MM-YYYY HH:mm:ss"
 
 export const qCategories = [
@@ -273,7 +274,8 @@ export function getQuestionnairesToShow() {
                 } else if(questionnaireType.id === "4.1") {
                     isShowing = !isFilled && !hasAnnotatedToday
                 }  else if(questionnaireType.id === "4.2") {
-                    isShowing = !isFilled && hasFinishedAll
+                    const hasAnnotatedTodaysLoad = textCountToday >= TEXT_DAILY_LOAD
+                    isShowing = !isFilled && hasAnnotatedTodaysLoad
                 } else if(questionnaireType.id === "4.3") {
                     const hasAnnotatedBatch = hasAnnotatedToday 
                                             && textCountToday > 0 
@@ -283,7 +285,6 @@ export function getQuestionnairesToShow() {
                     isShowing = !isFilled 
                                 && hasFinishedAll
                                 && hasPassedResearchTime
-                    isShowing = true
                 } else if(questionnaireType.id === "6.1") {
                     const weekDiff = moment(firstLoginTime, DATE_FORMAT)
                                     .diff(moment(todayTime), 'weeks')
