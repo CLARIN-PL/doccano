@@ -229,7 +229,7 @@ export const qTypes = [
                                 ]
                             },
                             {
-                                text: "Jak się czułaś: Negatywnie-Pozytywnie",
+                                text: "Jak się czułaś: Neg-Poz",
                                 type: "slider",
                                 min: 0,
                                 max: 100,
