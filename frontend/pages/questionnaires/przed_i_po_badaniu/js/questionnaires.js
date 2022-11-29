@@ -244,7 +244,7 @@ export const qTypes = [
                         questions: [
                             {
                                 type: "scale",
-                                text: "Prowadzę życie, które ma sens i cel",
+                                text: "Prowadzę życie, które ma sens i cel.",
                                 min: 1,
                                 max: 7,
                                 value: -1
@@ -404,7 +404,7 @@ export const qTypes = [
                 segments: [
                     {
                         scales: {
-                            description: "Pytania zawarte w tej skali dotyczą Twoich myśli i odczuć związanych z doświadczanymi w ostatnim miesiącu zdarzeniami. Mimo znacznych podobieństw są to różne pytania i każde z nich należy traktować oddzielnie. W każdym pytaniu wskaż – jak często myślałeś/aś i odczuwałeś/aś w podany sposób, wykorzystując poniższą skalę:",
+                            description: "Pytania zawarte w tej skali dotyczą Twoich myśli i odczuć związanych z doświadczanymi w ostatnim miesiącu zdarzeniami. Mimo znacznych podobieństw są to różne pytania i każde z nich należy traktować oddzielnie. W każdym pytaniu wskaż — jak często myślałeś/aś i odczuwałeś/aś w podany sposób, wykorzystując poniższą skalę:",
                             values: [
                                 {
                                     value: 0,
@@ -627,49 +627,82 @@ export const qTypes = [
                             description: "",
                             values: [
                                 {
-                                    value: 1,
                                     text: "0 razy"
                                 },
                                 {
-                                    value: 2,
                                     text: "1-2 razy"
                                 },
                                 {
-                                    value: 3,
                                     text: "3 razy"
                                 },
                                 {
-                                    value: 4,
                                     text: "4 razy"
                                 },
                                 {
-                                    value: 5,
                                     text: "5 razy"
                                 },
                                 {
-                                    value: 6,
                                     text: "6 razy"
                                 },
                                 {
-                                    value: 7,
                                     text: "7 razy"
                                 }
                             ]
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "radio",
                                 text: "Ile razy miałeś/aś drobne przeziębienie (np. takie które sprawiło, że czułeś/aś się niekomfortowo, ale nie zatrzymało Cię ono w łóżku ani nie spowodowało, że opuściłeś/aś pracę)?",
-                                min: 1,
-                                max: 7,
-                                value: -1
+                                options: [
+                                    {
+                                        text: "0 razy"
+                                    },
+                                    {
+                                        text: "1-2 razy"
+                                    },
+                                    {
+                                        text: "3 razy"
+                                    },
+                                    {
+                                        text: "4 razy"
+                                    },
+                                    {
+                                        text: "5 razy"
+                                    },
+                                    {
+                                        text: "6 razy"
+                                    },
+                                    {
+                                        text: "7 razy"
+                                    }
+                                ]
                             },
                             {
-                                type: "scale",
-                                text: 'Ile razy miałeś/aś infekcje dróg oddechowych, poważniejsze niż drobne przeziębienie (np. takie które "rozłożyły" cię na łopatki - zapalenie oskrzeli, zapalenie zatok itp.)?',
-                                min: 1,
-                                max: 7,
-                                value: -1
+                                type: "radio",
+                                text: "Ile razy miałeś/aś infekcje dróg oddechowych, poważniejsze niż drobne przeziębienie (np. takie które 'rozłożyły' cię na łopatki - zapalenie oskrzeli, zapalenie zatok itp.)?",
+                                options: [
+                                    {
+                                        text: "0 razy"
+                                    },
+                                    {
+                                        text: "1-2 razy"
+                                    },
+                                    {
+                                        text: "3 razy"
+                                    },
+                                    {
+                                        text: "4 razy"
+                                    },
+                                    {
+                                        text: "5 razy"
+                                    },
+                                    {
+                                        text: "6 razy"
+                                    },
+                                    {
+                                        text: "7 razy"
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -678,31 +711,24 @@ export const qTypes = [
                             description: "",
                             values: [
                                 {
-                                    value: 1,
                                     text: "1 dzień"
                                 },
                                 {
-                                    value: 2,
                                     text: "2 dni"
                                 },
                                 {
-                                    value: 3,
                                     text: "3 dni"
                                 },
                                 {
-                                    value: 4,
                                     text: "4 dni"
                                 },
                                 {
-                                    value: 5,
                                     text: "5 dni"
                                 },
                                 {
-                                    value: 6,
                                     text: "6 dni"
                                 },
                                 {
-                                    value: 7,
                                     text: "7 dni"
                                 }
                             ]
@@ -1160,7 +1186,7 @@ export const qTypes = [
                         questions: [
                             {
                                 type: "scale",
-                                text: "Prowadzę życie, które ma sens i cel",
+                                text: "Prowadzę życie, które ma sens i cel.",
                                 min: 1,
                                 max: 7,
                                 value: -1
@@ -1320,7 +1346,7 @@ export const qTypes = [
                 segments: [
                     {
                         scales: {
-                            description: "Pytania zawarte w tej skali dotyczą Twoich myśli i odczuć związanych z doświadczanymi w ostatnim miesiącu zdarzeniami. Mimo znacznych podobieństw są to różne pytania i każde z nich należy traktować oddzielnie. W każdym pytaniu wskaż – jak często myślałeś/aś i odczuwałeś/aś w podany sposób, wykorzystując poniższą skalę:",
+                            description: "Pytania zawarte w tej skali dotyczą Twoich myśli i odczuć związanych z doświadczanymi w ostatnim miesiącu zdarzeniami. Mimo znacznych podobieństw są to różne pytania i każde z nich należy traktować oddzielnie. W każdym pytaniu wskaż — jak często myślałeś/aś i odczuwałeś/aś w podany sposób, wykorzystując poniższą skalę:",
                             values: [
                                 {
                                     value: 0,
@@ -1543,49 +1569,82 @@ export const qTypes = [
                             description: "",
                             values: [
                                 {
-                                    value: 1,
                                     text: "0 razy"
                                 },
                                 {
-                                    value: 2,
                                     text: "1-2 razy"
                                 },
                                 {
-                                    value: 3,
                                     text: "3 razy"
                                 },
                                 {
-                                    value: 4,
                                     text: "4 razy"
                                 },
                                 {
-                                    value: 5,
                                     text: "5 razy"
                                 },
                                 {
-                                    value: 6,
                                     text: "6 razy"
                                 },
                                 {
-                                    value: 7,
                                     text: "7 razy"
                                 }
                             ]
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "radio",
                                 text: "Ile razy miałeś/aś drobne przeziębienie (np. takie które sprawiło, że czułeś/aś się niekomfortowo, ale nie zatrzymało Cię ono w łóżku ani nie spowodowało, że opuściłeś/aś pracę)?",
-                                min: 1,
-                                max: 7,
-                                value: -1
+                                options: [
+                                    {
+                                        text: "0 razy"
+                                    },
+                                    {
+                                        text: "1-2 razy"
+                                    },
+                                    {
+                                        text: "3 razy"
+                                    },
+                                    {
+                                        text: "4 razy"
+                                    },
+                                    {
+                                        text: "5 razy"
+                                    },
+                                    {
+                                        text: "6 razy"
+                                    },
+                                    {
+                                        text: "7 razy"
+                                    }
+                                ]
                             },
                             {
-                                type: "scale",
-                                text: 'Ile razy miałeś/aś infekcje dróg oddechowych, poważniejsze niż drobne przeziębienie (np. takie które "rozłożyły" cię na łopatki - zapalenie oskrzeli, zapalenie zatok itp.)?',
-                                min: 1,
-                                max: 7,
-                                value: -1
+                                type: "radio",
+                                text: "Ile razy miałeś/aś infekcje dróg oddechowych, poważniejsze niż drobne przeziębienie (np. takie które 'rozłożyły' cię na łopatki - zapalenie oskrzeli, zapalenie zatok itp.)?",
+                                options: [
+                                    {
+                                        text: "0 razy"
+                                    },
+                                    {
+                                        text: "1-2 razy"
+                                    },
+                                    {
+                                        text: "3 razy"
+                                    },
+                                    {
+                                        text: "4 razy"
+                                    },
+                                    {
+                                        text: "5 razy"
+                                    },
+                                    {
+                                        text: "6 razy"
+                                    },
+                                    {
+                                        text: "7 razy"
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -1594,31 +1653,24 @@ export const qTypes = [
                             description: "",
                             values: [
                                 {
-                                    value: 1,
                                     text: "1 dzień"
                                 },
                                 {
-                                    value: 2,
                                     text: "2 dni"
                                 },
                                 {
-                                    value: 3,
                                     text: "3 dni"
                                 },
                                 {
-                                    value: 4,
                                     text: "4 dni"
                                 },
                                 {
-                                    value: 5,
                                     text: "5 dni"
                                 },
                                 {
-                                    value: 6,
                                     text: "6 dni"
                                 },
                                 {
-                                    value: 7,
                                     text: "7 dni"
                                 }
                             ]
