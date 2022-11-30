@@ -178,7 +178,7 @@ export const qTypes = [
                             }
                         ]
                     }
-                ],
+                ]
             },
             {
                 name: "Demografia",
@@ -239,7 +239,7 @@ export const qTypes = [
                                 text: "Czy ma Pani/Pan dzieci w wieku poniżej 18 lat?",
                                 options: [
                                     {
-                                        text: "Tak:  proszę wymienić liczbę dzieci w polu odpowiedzi otwartej (tu odpowiedź otwarta) ",
+                                        text: "Tak: proszę wymienić liczbę dzieci w polu odpowiedzi otwartej (tu odpowiedź otwarta)",
                                         showTextbox: true,
                                     },
                                     {
@@ -250,7 +250,7 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 header: "[Opieka]",
-                                text: "Czy ma Pani/Pan inne obowiązki związane z opieką nad dziećmi? ",
+                                text: "Czy ma Pani/Pan inne obowiązki związane z opieką nad dziećmi?",
                                 options: [
                                     {
                                         text: "Tak",
@@ -350,7 +350,6 @@ export const qTypes = [
                                     {
                                         text: "Inny: ",
                                         showTextbox: true,
-                                        
                                     }
                                 ]
                             },
@@ -438,7 +437,7 @@ export const qTypes = [
                                         text: "Bezrobotny (i poszukujący pracy)"   
                                     },
                                     {
-                                        text: "Bezrobotny (nie poszukujący pracy)"
+                                        text: "Bezrobotni (nie poszukujący pracy)"
                                     },
                                     {
                                         text: "Nie pracuję zarobkowo (np. opieka, pomoc domowa, emerytura, wolontariat, student, uczeń)"
@@ -730,7 +729,7 @@ export const qTypes = [
                             },
                             {
                                 type: "scale",
-                                text: "Jeśli mam problemy lub czuję się nieszczęśliwy, często ukrywam to przez żarty, aby nawet moi najbliżsi przyjaciele nie wiedzieli, jak naprawdę się czuję. Zwykle nie potrafię wymyślić dowcipnych rzeczy do powiedzenia, gdy jestem z innymi ludźmi.",
+                                text: "Jeśli mam problemy lub czuję się nieszczęśliwy, często ukrywam to przez żarty, aby nawet moi najbliżsi przyjaciele nie wiedzieli, jak naprawdę się czuję.",
                                 min: 1,
                                 max: 5,
                                 value: -1
@@ -762,10 +761,10 @@ export const qTypes = [
                                 min: 1,
                                 max: 5,
                                 value: -1
-                            },
+                            }
                         ]
                     }
-                ],
+                ]
             }
         ]
     }

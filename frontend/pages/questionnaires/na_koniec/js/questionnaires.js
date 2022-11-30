@@ -48,7 +48,7 @@ export const qTypes = [
                                                 {
                                                     showTextbox: true,
                                                     text: "etc? Dlaczego?",
-                                                },
+                                                }
                                             ]
                                         }
                                     },

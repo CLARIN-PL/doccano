@@ -258,7 +258,7 @@ export function getQuestionnairesToShow() {
                     const isFirstSignIn = hourDiff < .5
                     isShowing = !isFilled && isFirstSignIn
                 } else if(questionnaireType.id === "2.1") {
-                    isShowing = !isFilled 
+                    isShowing = !isFilled
                 } else if(questionnaireType.id === "2.2") {
                     isShowing = !isFilled 
                                 && hasFinishedAll 
@@ -273,7 +273,9 @@ export function getQuestionnairesToShow() {
                 } else if(questionnaireType.id === "4.1") {
                     isShowing = !isFilled && !hasAnnotatedToday
                 }  else if(questionnaireType.id === "4.2") {
-                    isShowing = !isFilled && hasFinishedAll
+                    const currentTimeHour = todayTime.getHours()
+                    const isEvening = currentTimeHour >= 17 && currentTimeHour <= 23
+                    isShowing = !isFilled && isEvening
                 } else if(questionnaireType.id === "4.3") {
                     const hasAnnotatedBatch = hasAnnotatedToday 
                                             && textCountToday > 0 
@@ -283,7 +285,6 @@ export function getQuestionnairesToShow() {
                     isShowing = !isFilled 
                                 && hasFinishedAll
                                 && hasPassedResearchTime
-                    isShowing = true
                 } else if(questionnaireType.id === "6.1") {
                     const weekDiff = moment(firstLoginTime, DATE_FORMAT)
                                     .diff(moment(todayTime), 'weeks')
