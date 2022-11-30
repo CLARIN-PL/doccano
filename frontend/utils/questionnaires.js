@@ -26,7 +26,6 @@ import _ from 'lodash'
 
 const RESEARCH_TIME_IN_MONTHS = 3
 const TEXT_BATCH_COUNT = 20
-const TEXT_DAILY_LOAD = 100
 const DATE_FORMAT = "DD-MM-YYYY HH:mm:ss"
 
 export const qCategories = [
@@ -259,7 +258,7 @@ export function getQuestionnairesToShow() {
                     const isFirstSignIn = hourDiff < .5
                     isShowing = !isFilled && isFirstSignIn
                 } else if(questionnaireType.id === "2.1") {
-                    isShowing = !isFilled 
+                    isShowing = !isFilled
                 } else if(questionnaireType.id === "2.2") {
                     isShowing = !isFilled 
                                 && hasFinishedAll 
@@ -274,8 +273,9 @@ export function getQuestionnairesToShow() {
                 } else if(questionnaireType.id === "4.1") {
                     isShowing = !isFilled && !hasAnnotatedToday
                 }  else if(questionnaireType.id === "4.2") {
-                    const hasAnnotatedTodaysLoad = textCountToday >= TEXT_DAILY_LOAD
-                    isShowing = !isFilled && hasAnnotatedTodaysLoad
+                    const currentTimeHour = todayTime.getHours()
+                    const isEvening = currentTimeHour >= 17 && currentTimeHour <= 23
+                    isShowing = !isFilled && isEvening
                 } else if(questionnaireType.id === "4.3") {
                     const hasAnnotatedBatch = hasAnnotatedToday 
                                             && textCountToday > 0 
