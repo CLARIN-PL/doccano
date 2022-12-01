@@ -18,7 +18,7 @@
           :disabled="readOnly"
           :tick-labels="config.showTickLabels ? tickLabels : []"
           step="1"
-          @change="valueChangeHandler"
+          @change="onSliderValueChange"
         >
           <template v-if="!config.showTickLabels" #prepend>{{ config.minLabel }}</template>
           <template v-if="!config.showTickLabels" #append>{{ config.maxLabel }}</template>
@@ -91,7 +91,7 @@ export default Vue.extend({
     this.isLoaded = true
   },
   methods: {
-    valueChangeHandler(val: any) {
+    onSliderValueChange(val: any) {
       const base: any = this
       if (base.isLoaded) {
         base.$emit('input', val)
