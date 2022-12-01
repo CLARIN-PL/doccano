@@ -28,6 +28,7 @@ export default Vue.extend({
         allowOverlapping: false,
         graphemeMode: false,
         useRelation: false,
+        sharedOrgLabel: false,
         tags: [] as string[]
       } as ProjectWriteDTO,
       defaultItem: {
@@ -40,6 +41,7 @@ export default Vue.extend({
         allowOverlapping: false,
         graphemeMode: false,
         useRelation: false,
+        sharedOrgLabel: false,
         tags: [] as string[]
       } as ProjectWriteDTO
     }

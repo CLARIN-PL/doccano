@@ -60,6 +60,9 @@ export class ProjectReadItem {
   @Expose({ name: 'can_define_category' })
   canDefineCategory: boolean
 
+  @Expose({ name: 'shared_org_label' })
+  sharedOrgLabel: boolean
+
   get annotationPageLink(): string {
     const mapping = {
       DocumentClassification: 'text-classification',
@@ -105,6 +108,7 @@ export class ProjectWriteItem {
     public allow_overlapping: boolean,
     public grapheme_mode: boolean,
     public use_relation: boolean,
+    public shared_org_label: boolean,
     public tags: string[]
   ) {}
 
@@ -134,6 +138,7 @@ export class ProjectWriteItem {
       allow_overlapping: this.allow_overlapping,
       grapheme_mode: this.grapheme_mode,
       use_relation: this.use_relation,
+      shared_org_label: this.shared_org_label,
       tags: this.tags.map((tag) => ({ text: tag })),
       resourcetype: this.resourceType
     }

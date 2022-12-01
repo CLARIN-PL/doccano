@@ -71,6 +71,12 @@
           label="Allow overlapping entity"
           @change="updateValue('allowOverlapping', $event === true)"
         />
+        <v-checkbox
+          v-if="isCustomProject"
+          :value="sharedOrgLabel"
+          label="Shared original label"
+          @change="updateValue('sharedOrgLabel', $event === true)"
+        />
         <v-img
           v-if="isSequenceLabelingProject || isCustomProject"
           :src="require('~/assets/project/creation.gif')"
@@ -172,6 +178,10 @@ export default Vue.extend({
       default: false
     },
     graphemeMode: {
+      type: Boolean,
+      default: false
+    },
+    sharedOrgLabel: {
       type: Boolean,
       default: false
     },
