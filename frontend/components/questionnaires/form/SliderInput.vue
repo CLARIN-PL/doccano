@@ -75,6 +75,7 @@ export default Vue.extend({
   },
   data() {
     return {
+      sliderValue: this.value,
       isLoaded: false
     }
   },
@@ -83,13 +84,6 @@ export default Vue.extend({
       const start = this.config.min
       const end = this.config.max
       return Array(end - start + 1).fill(undefined).map((_, idx) => (start + idx).toString())
-    },
-    sliderValue: {
-      get() {
-        const base: any = this
-        return base.value
-      },
-      set() {}
     }
   },
   mounted() {
