@@ -124,7 +124,7 @@ class ImageClassificationProjectSerializer(ProjectSerializer):
 class CustomDocumentClassificationProjectSerializer(ProjectSerializer):
     class Meta(ProjectSerializer.Meta):
         model = CustomDocumentClassificationProject
-        fields = ProjectSerializer.Meta.fields + ["allow_overlapping", "grapheme_mode", "use_relation"]
+        fields = ProjectSerializer.Meta.fields + ["allow_overlapping", "grapheme_mode", "use_relation", "shared_org_label"]
 
 
 class ProjectPolymorphicSerializer(PolymorphicSerializer):
