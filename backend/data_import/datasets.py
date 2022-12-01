@@ -248,8 +248,8 @@ class CategoryAndSpanDataset(Dataset):
             spans.save_types(self.project)
 
             # create Labels
-            categories.save(user)
-            spans.save(user)
+            categories.save(user, self.project)
+            spans.save(user, self.project)
 
     @property
     def errors(self) -> List[FileParseException]:

@@ -40,10 +40,10 @@ class Labels(abc.ABC):
         examples = Example.objects.filter(uuid__in=example_uuids)
         return {example.uuid: example for example in examples}
 
-    def save(self, user, **kwargs):
+    def save(self, user, project: Project, **kwargs):
         uuid_to_example = self.uuid_to_example
         labels = [
-            label.create(user, uuid_to_example[label.example_uuid], self.types, **kwargs)
+            label.create(user, uuid_to_example[label.example_uuid], self.types, project=project, **kwargs)
             for label in self.labels
             if label.example_uuid in uuid_to_example
         ]

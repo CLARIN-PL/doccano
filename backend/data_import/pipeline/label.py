@@ -41,7 +41,7 @@ class Label(BaseModel, abc.ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def create(self, user, example: Example, types: LabelTypes, **kwargs) -> LabelModel:
+    def create(self, user, example: Example, types: LabelTypes, project: Project, **kwargs) -> LabelModel:
         raise NotImplementedError
 
     def __hash__(self):
@@ -61,8 +61,17 @@ class CategoryLabel(Label):
     def create_type(self, project: Project) -> Optional[LabelType]:
         return CategoryType(text=self.label, project=project)
 
-    def create(self, user, example: Example, types: LabelTypes, **kwargs):
-        return CategoryModel(uuid=self.uuid, user=user, example=example, label=types[self.label])
+    def create(self, user, example: Example, types: LabelTypes, project: Project, **kwargs):
+        if project.shared_org_label:
+            user = example.user
+            return CategoryModel(
+                uuid=self.uuid,
+                user=user,
+                example=example,
+                label=types[self.label],
+            )
+        else:
+            return CategoryModel(uuid=self.uuid, user=user, example=example, label=types[self.label])
 
 
 class SpanLabel(Label):
@@ -93,15 +102,26 @@ class SpanLabel(Label):
     def create_type(self, project: Project) -> Optional[LabelType]:
         return SpanType(text=self.label, project=project)
 
-    def create(self, user, example: Example, types: LabelTypes, **kwargs):
-        return SpanModel(
-            uuid=self.uuid,
-            user=user,
-            example=example,
-            start_offset=self.start_offset,
-            end_offset=self.end_offset,
-            label=types[self.label],
-        )
+    def create(self, user, example: Example, types: LabelTypes, project: Project, **kwargs):
+        if project.shared_org_label:
+            user = example.user
+            return SpanModel(
+                uuid=self.uuid,
+                user=user,
+                example=example,
+                label=types[self.label],
+                start_offset=self.start_offset,
+                end_offset=self.end_offset,
+            )
+        else:
+            return SpanModel(
+                uuid=self.uuid,
+                user=user,
+                example=example,
+                start_offset=self.start_offset,
+                end_offset=self.end_offset,
+                label=types[self.label],
+            )
 
 
 class TextLabel(Label):
@@ -117,7 +137,7 @@ class TextLabel(Label):
     def create_type(self, project: Project) -> Optional[LabelType]:
         return None
 
-    def create(self, user, example: Example, types: LabelTypes, **kwargs):
+    def create(self, user, example: Example, types: LabelTypes, project: Project, **kwargs):
         return TextLabelModel(uuid=self.uuid, user=user, example=example, text=self.text)
 
 
@@ -136,12 +156,23 @@ class RelationLabel(Label):
     def create_type(self, project: Project) -> Optional[LabelType]:
         return RelationType(text=self.type, project=project)
 
-    def create(self, user, example: Example, types: LabelTypes, **kwargs):
-        return RelationModel(
-            uuid=self.uuid,
-            user=user,
-            example=example,
-            type=types[self.type],
-            from_id=kwargs["id_to_span"][self.from_id],
-            to_id=kwargs["id_to_span"][self.to_id],
-        )
+    def create(self, user, example: Example, types: LabelTypes, project: Project, **kwargs):
+        if project.shared_org_label:
+            user = example.user
+            return RelationLabel(
+                uuid=self.uuid,
+                user=user,
+                example=example,
+                type=types[self.type],
+                from_id=kwargs["id_to_span"][self.from_id],
+                to_id=kwargs["id_to_span"][self.to_id],
+            )
+        else:
+            return RelationModel(
+                uuid=self.uuid,
+                user=user,
+                example=example,
+                type=types[self.type],
+                from_id=kwargs["id_to_span"][self.from_id],
+                to_id=kwargs["id_to_span"][self.to_id],
+            )
