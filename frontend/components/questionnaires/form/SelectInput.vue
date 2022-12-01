@@ -10,7 +10,7 @@
       v-model="input"
       :items="options"
       :disabled="readOnly || isSubmitting"
-      placeholder="Wybierz opcję"
+      :placeholder="$t('questionnaires_main.inputSelectPlaceholder')"
       dense
       outlined
     />
