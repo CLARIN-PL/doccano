@@ -18,7 +18,7 @@
         :disabled="formData.length === options.length"
         @click="onClickAddButton"
       >
-        add more question
+        {{ $t('questionnaires_main.buttonAddQuestion') }}
       </v-btn>
     </div>
   </div>

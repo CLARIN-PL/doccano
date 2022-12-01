@@ -98,10 +98,10 @@
                 <v-card-actions>
                   <v-btn v-if="activeQuestionnaire+1 < formData.questionnaires.length" 
                     @click="onClickContinueButton">
-                    Continue to the next questionnaire 
+                    {{ $t('questionnaires_main.buttonContinue') }}
                   </v-btn>
                   <v-btn v-else @click="onClickFinishButton">
-                    Finish
+                    {{ $t('questionnaires_main.buttonFinish') }}
                   </v-btn>
                 </v-card-actions>
               </v-card>
@@ -112,7 +112,7 @@
       <div v-else>
         not found
         <v-btn  @click="onClickFinishButton">
-          Finish
+          {{ $t('questionnaires_main.buttonFinish') }}
         </v-btn>
       </div>
     </v-col>
