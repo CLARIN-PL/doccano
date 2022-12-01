@@ -1,34 +1,22 @@
 <template>
-<div>
-  po 1 tygodniu
-</div>
+  <div>
+    <questionnaire-form :q-types="qTypes" />
+  </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import {
-  qTypes, 
-} from "./js/questionnaires"
-import {
-  qCategories,
-} from "~/utils/questionnaires"
+import { qTypes } from './js/questionnaires'
+import QuestionnaireForm from '~/components/questionnaires/QuestionnaireForm.vue'
 
 export default {
-    name: "Po1Tygodniu",
-    layout: "questionnaire",
+  components: {
+    QuestionnaireForm
+  },
+  layout: 'questionnaire',
   data() {
     return {
-      qCategories,
-      qTypes,
+      qTypes
     }
-  },
-  computed: {
-    ...mapGetters('user', ['getQuestionnaire']),
-  },
-  created() {
-  },
-  methods: {
-    ...mapActions('user', ['setQuestionnaire']),
   }
 }
 </script>
