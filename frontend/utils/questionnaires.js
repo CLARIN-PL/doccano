@@ -201,16 +201,12 @@ export function mapQuestionnaireTypes(qTypes) {
                             min++
                         }
                     } else if(question.type === "slider") {
-                        let showTickLabels = true
-                        if (typeof question.showTickLabels !== 'undefined') {
-                            showTickLabels = question.showTickLabels
-                        }
                         question.config = {
                             min: question.min,
                             max: question.max,
                             minLabel: question.minLabel,
                             maxLabel: question.maxLabel,
-                            showTickLabels
+                            showTickLabels: !!question.showTickLabels
                         }
                     }
                     
