@@ -1,10 +1,10 @@
 <template>
   <v-row align="center" >
     <div v-if="showGreetingCard">
-        <greeting-card @click="onClickGreetingCardButton" />
+      <greeting-card @click="onClickGreetingCardButton" />
     </div>
-    <div v-else>
-        <div ref="header">
+    <v-col v-else>
+      <div ref="header">
         <v-alert
             v-model="showWarning"
             color="error"
@@ -14,106 +14,108 @@
             >
         {{ $t('errors.incompleteAffectiveAnnotation') }}
         </v-alert>
-        </div>
-    <div v-if="formData.questionnaires.length">
-      <v-col>
-        <v-window
-          v-model="activeQuestionnaire"
-          class="elevation-1"
-          horizontal
-        >
-          <v-window-item
-            v-for="(questionnaire, qIdx) in formData.questionnaires"
-            :key="`questionnaire-window-${qIdx}`"
+      </div>
+      <div v-if="formData.questionnaires.length" class="questionnaire-container">
+        <v-col>
+          <v-window
+            v-model="activeQuestionnaire"
+            class="questionnaire-window elevation-1"
+            horizontal
           >
-            <v-card flat>
-              <v-card-text>
-                <v-row
-                  class="mb-4"
-                  align="center"
-                >
-                  <header>
-                    <strong class="text-h6">{{ questionnaire.name }}</strong>
-                    <p>
-                      {{ questionnaire.description }}
-                    </p>
-                  </header>
-
-                  <ul>
-                    <li v-for="(segment, segIdx) in questionnaire.segments" :key="`segment-${segIdx}`">
-                      <div v-if="segment.scales">
+            <v-window-item
+              v-for="(questionnaire, qIdx) in formData.questionnaires"
+              :key="`questionnaire-window-${qIdx}`"
+            >
+              <v-card flat>
+                <v-card-text>
+                  <v-row
+                    class="mb-4"
+                    align="center"
+                  >
+                    <v-col>
+                      <header>
+                        <strong class="text-h6">{{ questionnaire.name }}</strong>
                         <p>
-                          {{ segment.scales.description }}
-                          <ul>
-                            <li v-for="(segmentScaleValue, segScalIdx) in segment.scales.values" :key="`segmentScaleValue-${segScalIdx}`">
-                              {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
-                            </li>
-                          </ul>
+                          {{ questionnaire.description }}
                         </p>
-                      </div>
+                      </header>
 
-                      <div v-if="segment.questions">
-                        <ul>
-                            <li 
-                              v-for="(segmentQuestion, segQuIdx) in segment.questions" 
-                              :ref="`question_${segQuIdx}`"
-                              :key="`segmentQuestion-${segQuIdx}`">
-                              <div v-if="segmentQuestion.id">
-                                <p v-if="segment.prependIndex">
-                                  {{ segment.prependIndex+(segQuIdx+1) }}
-                                </p>
-                                <component 
-                                  :is="getComponent(segmentQuestion.type)"
-                                  v-model="segmentQuestion.value"
-                                  :header="segmentQuestion.header"
-                                  :required="segmentQuestion.required"
-                                  :question="segmentQuestion.text"
-                                  :options="segmentQuestion.options"
-                                  :config="segmentQuestion.config"
-                                  :is-clicked="segmentQuestion.isClicked"
-                                  :is-submitting="segmentQuestion.isSubmitting"
-                                  :error-message="segmentQuestion.errorMessage"
-                                  :read-only="segmentQuestion.readOnly"
-                                  :passed-data="{
-                                      question: segmentQuestion, 
-                                      formDataKey: getFormDataKey(segQuIdx, segIdx, qIdx)
-                                    }"
-                                  @change="onQuestionChange"
-                                />
-                              </div>
-                              <p v-else>
-                                This question doesnt contain proper information  
-                              </p>
-                            </li>
-                        </ul>
-                      </div>
-                    </li>
-                  </ul>
-                  <!-- eslint-disable-next-line vue/no-v-html -->
-                  <footer v-html="questionnaire.footer" />
-                </v-row>
-              </v-card-text>
-              <v-card-actions>
-                <v-btn v-if="activeQuestionnaire+1 < formData.questionnaires.length" 
-                  @click="onClickContinueButton">
-                  Continue to the next questionnaire 
-                </v-btn>
-                <v-btn v-else @click="onClickFinishButton">
-                  Finish
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-window-item>
-        </v-window>
-      </v-col>
-    </div>
-    <div v-else>
-      not found
-      <v-btn  @click="onClickFinishButton">
-        Finish
-      </v-btn>
-    </div>
-    </div>
+                      <ul>
+                        <li v-for="(segment, segIdx) in questionnaire.segments" :key="`segment-${segIdx}`">
+                          <div v-if="segment.scales" class="segment-description-container">
+                            <p>
+                              {{ segment.scales.description }}
+                              <ul>
+                                <li v-for="(segmentScaleValue, segScalIdx) in segment.scales.values" :key="`segmentScaleValue-${segScalIdx}`">
+                                  {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
+                                </li>
+                              </ul>
+                            </p>
+                          </div>
+
+                          <div v-if="segment.questions">
+                            <ul>
+                                <li 
+                                  v-for="(segmentQuestion, segQuIdx) in segment.questions" 
+                                  :ref="`question_${segQuIdx}`"
+                                  :key="`segmentQuestion-${segQuIdx}`">
+                                  <div v-if="segmentQuestion.id" class="question-container">
+                                    <p v-if="segment.prependIndex">
+                                      {{ segment.prependIndex+(segQuIdx+1) }}
+                                    </p>
+                                    <component 
+                                      :is="getComponent(segmentQuestion.type)"
+                                      v-model="segmentQuestion.value"
+                                      :header="segmentQuestion.header"
+                                      :required="segmentQuestion.required"
+                                      :question="segmentQuestion.text"
+                                      :options="segmentQuestion.options"
+                                      :config="segmentQuestion.config"
+                                      :is-clicked="segmentQuestion.isClicked"
+                                      :is-submitting="segmentQuestion.isSubmitting"
+                                      :error-message="segmentQuestion.errorMessage"
+                                      :read-only="segmentQuestion.readOnly"
+                                      :passed-data="{
+                                          question: segmentQuestion, 
+                                          formDataKey: getFormDataKey(segQuIdx, segIdx, qIdx)
+                                        }"
+                                      @change="onQuestionChange"
+                                    />
+                                  </div>
+                                  <p v-else>
+                                    This question doesnt contain proper information  
+                                  </p>
+                                </li>
+                            </ul>
+                          </div>
+                        </li>
+                      </ul>
+                      <!-- eslint-disable-next-line vue/no-v-html -->
+                      <footer v-html="questionnaire.footer" />
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn v-if="activeQuestionnaire+1 < formData.questionnaires.length" 
+                    @click="onClickContinueButton">
+                    Continue to the next questionnaire 
+                  </v-btn>
+                  <v-btn v-else @click="onClickFinishButton">
+                    Finish
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-window-item>
+          </v-window>
+        </v-col>
+      </div>
+      <div v-else>
+        not found
+        <v-btn  @click="onClickFinishButton">
+          Finish
+        </v-btn>
+      </div>
+    </v-col>
   </v-row>
 </template>
 
@@ -306,3 +308,14 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.questionnaire-window {
+  padding: 20px;
+}
+
+.segment-description-container, .question-container {
+  margin-bottom: 20px;
+}
+
+</style>
