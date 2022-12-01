@@ -30,16 +30,19 @@
         </v-card-title>
         <v-card-text class="widget-dialog__text">
           <p class="widget-dialog__warning">{{ dialogErrorMessage }}</p>
-          <v-text-field
-            v-model.trim="text"
-            outlined
-            autofocus
-            :hint="$t('labels.clickEnter')"
-            :rules="rules"
-            @blur="onBlurTextField"
-            @keyup.enter="submitAnswer"
-          >
-            <template #append-outer>
+          <v-row justify="center" align="top">
+            <v-col cols="10">
+              <v-text-field
+                v-model.trim="text"
+                outlined
+                autofocus
+                :hint="$t('labels.clickEnter')"
+                :rules="rules"
+                @blur="onBlurTextField"
+                @keyup.enter="submitAnswer"
+              />
+            </v-col>
+            <v-col cols="2">
               <v-btn
                 large
                 primary
@@ -51,8 +54,8 @@
               >
                 <v-icon>{{ mdiSend }}</v-icon>
               </v-btn>
-            </template>
-          </v-text-field>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-dialog>
