@@ -44,35 +44,35 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Pod wieloma względami moje życie jest zbliżone do ideału.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Warunki mojego życia są doskonałe.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jestem zadowolony/a z mojego życia.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "W życiu osiągnąłem/osiągnęłam najważniejsze rzeczy, które chciałem/am.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Gdybym mógł/mogła jeszcze raz przeżyć swoje życie, to nie chciałbym/chciałabym prawie nic zmienić.",
                                 min: 1,
                                 max: 7,
@@ -115,84 +115,84 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Pozytywnie",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Negatywnie",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Dobrze",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Źle",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Przyjemnie",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Nieprzyjemnie",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Szczęśliwy/-a",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Smutny/-a",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Przestraszony/-a",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Radosny/-a",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Rozgniewany/-a",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Zadowolony/-a",
                                 min: 1,
                                 max: 5,
@@ -243,56 +243,56 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Prowadzę życie, które ma sens i cel.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Moje relacje społeczne są wspierające i dają mi satysfakcję.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Angażuję się i interesuję tym, czym zajmuję się na co dzień.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Aktywnie przyczyniam się do szczęścia i dobrostanu innych.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jestem kompetentny i zdolny do wykonywania zajęć, które są dla mnie ważne.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jestem dobrym człowiekiem i prowadzę dobre życie.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Z optymizmem patrzę na swoją przyszłość.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Ludzie mnie szanują.",
                                 min: 1,
                                 max: 7,
@@ -331,63 +331,63 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Niewielkie zainteresowanie lub odczuwanie przyjemności z wykonywania czynności.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Uczucie smutku, przygnębienia lub beznadziejności.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Kłopoty z zaśnięciem lub przerywany sen, albo zbyt długi sen.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Uczucie zmęczenia lub brak energii.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Brak apetytu lub przejadanie się.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Poczucie niezadowolenia z siebie — lub uczucie, że jest się do niczego, albo że zawiódł/zawiodła Pan/Pani siebie lub rodzinę.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Problemy ze skupieniem się na przykład przy czytaniu gazety lub oglądaniu telewizji.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Poruszanie się lub mówienie tak wolno, że inni mogliby to zauważyć? Albo wręcz przeciwnie — niemożność usiedzenia w miejscu lub podenerwowanie powodujące ruchliwość znacznie większą niż zwykle.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Myśli, że lepiej byłoby umrzeć, albo chęć zrobienia sobie jakiejś krzywdy.",
                                 min: 0,
                                 max: 3,
@@ -430,70 +430,70 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca byłeś/aś zdenerwowany/a, ponieważ zdarzyło się coś niespodziewanego?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca czułeś/aś, że ważne sprawy w twoim życiu wymykają ci się spod kontroli?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca odczuwałeś/aś zdenerwowanie i napięcie?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca byłeś/aś przekonany/a, że jesteś w stanie poradzić sobie z problemami osobistymi?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca czułeś/aś, że sprawy układają się po twojej myśli?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca stwierdzałeś/aś, że nie radzisz sobie ze wszystkimi obowiązkami?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca potrafiłeś/aś opanować swoje rozdrażnienie?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca czułeś/aś, że wszystko ci wychodzi?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca złościłeś/aś się, ponieważ nie miałeś/aś wpływu na to co się zdarzyło?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca czułeś/aś, że nie możesz przezwyciężyć narastających trudności?",
                                 min: 0,
                                 max: 4,
@@ -544,77 +544,77 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często miałeś/aś trudności z zasypianiem w nocy?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często budziłeś/aś się w nocy?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często miałeś/aś koszmary senne lub niepokojące sny?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często Twój sen był spokojny i niezakłócony?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często miałeś/aś bóle głowy?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często bolała Cię głowa, gdy wywierano się na Ciebie dużą presję, aby załatwić sprawy?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często bolała Cię głowa, gdy byłeś/aś sfrustrowany/a, ponieważ sprawy nie ułożyły się tak, jak powinny, lub gdy byłeś/aś na kogoś zirytowany/a?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często cierpiałeś/aś z powodu rozstroju żołądka (niestrawności)?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często musiałeś/aś uważać na to, co jesz, aby uniknąć rozstroju żołądka?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często miałeś/aś mdłości lub inne problemy żołądkowe?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często miałeś/aś zaparcia lub cierpiałeś na biegunkę?",
                                 min: 1,
                                 max: 7,
@@ -735,7 +735,7 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak długo na ogół trwało przeziębienie lub grypa, które przechodziłeś/aś?",
                                 min: 1,
                                 max: 7,
@@ -766,87 +766,123 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Starałem/am się zwolnić tętno i oddech.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Wziąłem/am głęboki oddech.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Okazałem/am swoje uczucia.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Wyraziłem/am swoje uczucia.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "W kółko myślałem/am o tym wydarzeniu emocjonalnym.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Ciągle myślałem/am o tym, co mi przeszkadzało.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Myślałem/am o innych sposobach interpretacji sytuacji.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Spojrzałem/am na sytuację z kilku różnych punktów widzenia.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Zaangażowałem/am się w coś innego, żeby mieć zajęcie.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Zaangażowałem/am się w jakieś czynności, żeby odwrócić swoją uwagę.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Starałem/am się ukryć swoje uczucia.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Udawałem/am, że wcale nie odczuwam emocji, którą odczuwałem/am.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             }
                         ]
@@ -894,42 +930,42 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Kiedy czuję się źle (odczuwam nieprzyjemne emocje), nie potrafię znaleźć odpowiednich słów, by opisać te uczucia.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Kiedy czuję się źle, nie potrafię powiedzieć, czy jestem smutny, zły czy przestraszony.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Mam skłonność do ignorowania tego, co czuję.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Kiedy czuję się dobrze (odczuwam przyjemne emocje), nie potrafię znaleźć odpowiednich słów, by opisać te uczucia.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Kiedy czuję się dobrze, nie potrafię powiedzieć, czy jestem szczęśliwy, podekscytowany czy rozbawiony.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Nie zwracam uwagi na swoje emocje.",
                                 min: 1,
                                 max: 7,
@@ -986,35 +1022,35 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Pod wieloma względami moje życie jest zbliżone do ideału.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Warunki mojego życia są doskonałe.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jestem zadowolony/a z mojego życia.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "W życiu osiągnąłem/osiągnęłam najważniejsze rzeczy, które chciałem/am.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Gdybym mógł/mogła jeszcze raz przeżyć swoje życie, to nie chciałbym/chciałabym prawie nic zmienić.",
                                 min: 1,
                                 max: 7,
@@ -1057,84 +1093,84 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Pozytywnie",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Negatywnie",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Dobrze",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Źle",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Przyjemnie",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Nieprzyjemnie",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Szczęśliwy/-a",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Smutny/-a",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Przestraszony/-a",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Radosny/-a",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Rozgniewany/-a",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Zadowolony/-a",
                                 min: 1,
                                 max: 5,
@@ -1185,56 +1221,56 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Prowadzę życie, które ma sens i cel.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Moje relacje społeczne są wspierające i dają mi satysfakcję.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Angażuję się i interesuję tym, czym zajmuję się na co dzień.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Aktywnie przyczyniam się do szczęścia i dobrostanu innych.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jestem kompetentny i zdolny do wykonywania zajęć, które są dla mnie ważne.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jestem dobrym człowiekiem i prowadzę dobre życie.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Z optymizmem patrzę na swoją przyszłość.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Ludzie mnie szanują.",
                                 min: 1,
                                 max: 7,
@@ -1273,63 +1309,63 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Niewielkie zainteresowanie lub odczuwanie przyjemności z wykonywania czynności.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Uczucie smutku, przygnębienia lub beznadziejności.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Kłopoty z zaśnięciem lub przerywany sen, albo zbyt długi sen.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Uczucie zmęczenia lub brak energii.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Brak apetytu lub przejadanie się.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Poczucie niezadowolenia z siebie — lub uczucie, że jest się do niczego, albo że zawiódł/zawiodła Pan/Pani siebie lub rodzinę.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Problemy ze skupieniem się na przykład przy czytaniu gazety lub oglądaniu telewizji.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Poruszanie się lub mówienie tak wolno, że inni mogliby to zauważyć? Albo wręcz przeciwnie — niemożność usiedzenia w miejscu lub podenerwowanie powodujące ruchliwość znacznie większą niż zwykle.",
                                 min: 0,
                                 max: 3,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Myśli, że lepiej byłoby umrzeć, albo chęć zrobienia sobie jakiejś krzywdy.",
                                 min: 0,
                                 max: 3,
@@ -1372,70 +1408,70 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca byłeś/aś zdenerwowany/a, ponieważ zdarzyło się coś niespodziewanego?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca czułeś/aś, że ważne sprawy w twoim życiu wymykają ci się spod kontroli?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca odczuwałeś/aś zdenerwowanie i napięcie?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca byłeś/aś przekonany/a, że jesteś w stanie poradzić sobie z problemami osobistymi?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca czułeś/aś, że sprawy układają się po twojej myśli?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca stwierdzałeś/aś, że nie radzisz sobie ze wszystkimi obowiązkami?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca potrafiłeś/aś opanować swoje rozdrażnienie?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca czułeś/aś, że wszystko ci wychodzi?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca złościłeś/aś się, ponieważ nie miałeś/aś wpływu na to co się zdarzyło?",
                                 min: 0,
                                 max: 4,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często w ciągu ostatniego miesiąca czułeś/aś, że nie możesz przezwyciężyć narastających trudności?",
                                 min: 0,
                                 max: 4,
@@ -1486,77 +1522,77 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często miałeś/aś trudności z zasypianiem w nocy?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często budziłeś/aś się w nocy?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często miałeś/aś koszmary senne lub niepokojące sny?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często Twój sen był spokojny i niezakłócony?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często miałeś/aś bóle głowy?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często bolała Cię głowa, gdy wywierano się na Ciebie dużą presję, aby załatwić sprawy?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często bolała Cię głowa, gdy byłeś/aś sfrustrowany/a, ponieważ sprawy nie ułożyły się tak, jak powinny, lub gdy byłeś/aś na kogoś zirytowany/a?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często cierpiałeś/aś z powodu rozstroju żołądka (niestrawności)?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często musiałeś/aś uważać na to, co jesz, aby uniknąć rozstroju żołądka?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często miałeś/aś mdłości lub inne problemy żołądkowe?",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak często miałeś/aś zaparcia lub cierpiałeś na biegunkę?",
                                 min: 1,
                                 max: 7,
@@ -1677,7 +1713,7 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak długo na ogół trwało przeziębienie lub grypa, które przechodziłeś/aś?",
                                 min: 1,
                                 max: 7,
@@ -1708,87 +1744,123 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Starałem/am się zwolnić tętno i oddech.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Wziąłem/am głęboki oddech.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Okazałem/am swoje uczucia.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Wyraziłem/am swoje uczucia.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "W kółko myślałem/am o tym wydarzeniu emocjonalnym.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Ciągle myślałem/am o tym, co mi przeszkadzało.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Myślałem/am o innych sposobach interpretacji sytuacji.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Spojrzałem/am na sytuację z kilku różnych punktów widzenia.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Zaangażowałem/am się w coś innego, żeby mieć zajęcie.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Zaangażowałem/am się w jakieś czynności, żeby odwrócić swoją uwagę.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Starałem/am się ukryć swoje uczucia.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Udawałem/am, że wcale nie odczuwam emocji, którą odczuwałem/am.",
                                 min: 0,
                                 max: 100,
+                                showTickLabels: false,
+                                minLabel: "0",
+                                maxLabel: "100",
                                 value: -1
                             }
                         ]
@@ -1836,42 +1908,42 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Kiedy czuję się źle (odczuwam nieprzyjemne emocje), nie potrafię znaleźć odpowiednich słów, by opisać te uczucia.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Kiedy czuję się źle, nie potrafię powiedzieć, czy jestem smutny, zły czy przestraszony.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Mam skłonność do ignorowania tego, co czuję.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Kiedy czuję się dobrze (odczuwam przyjemne emocje), nie potrafię znaleźć odpowiednich słów, by opisać te uczucia.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Kiedy czuję się dobrze, nie potrafię powiedzieć, czy jestem szczęśliwy, podekscytowany czy rozbawiony.",
                                 min: 1,
                                 max: 7,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Nie zwracam uwagi na swoje emocje.",
                                 min: 1,
                                 max: 7,

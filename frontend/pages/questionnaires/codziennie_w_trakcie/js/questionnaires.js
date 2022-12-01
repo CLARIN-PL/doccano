@@ -91,14 +91,14 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Czuję się zestresowany, niespokojny, przytłoczony.",
                                 value: -1,
                                 min: 0,
                                 max: 4,
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Czuję, że panuję nad sytuacją, dobrze sobie radzę, mam wszystko pod kontrolą.",
                                 value: -1,
                                 min: 0,
@@ -145,7 +145,7 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Czuję, że wszystko mnie teraz przytłacza.",
                                 min: 0,
                                 max: 4,
@@ -153,7 +153,7 @@ export const qTypes = [
                             },
                             {
                                 
-                                type: "scale",
+                                type: "slider",
                                 text: "Czuję, że wszystko jest teraz nieprzewidywalne.",
                                 min: 0,
                                 max: 4,
@@ -194,7 +194,7 @@ export const qTypes = [
                         },
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jak oceniasz stan swojego zdrowia?",
                                 min: 0,
                                 max: 4,
@@ -234,6 +234,7 @@ export const qTypes = [
                                 min: 0,
                                 max: 100,
                                 value: -1,
+                                showTickLabels: false,
                                 minLabel: "Negatywnie",
                                 maxLabel: "Pozytywnie"
                             },
@@ -243,6 +244,7 @@ export const qTypes = [
                                 min: 0,
                                 max: 100,
                                 value: -1,
+                                showTickLabels: false,
                                 minLabel: "Ospały",
                                 maxLabel: "Bardzo pobudzony"
                             }

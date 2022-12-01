@@ -38,140 +38,140 @@ export const qTypes = [
                         questions: [
                             {
                                 text: "Jestem duszą towarzystwa.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Niezbyt obchodzą mnie inni ludzie.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Zostawiam moje rzeczy gdzie popadnie.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Zwykle jestem zrelaksowany/a.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Mam bogate słownictwo.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Trzymam się z boku.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Jestem wyrozumiały/a dla uczuć innych ludzi.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Bez zwłoki wypełniam codzienne obowiązki.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Często martwię się czymś.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Mam trudności ze zrozumieniem abstrakcyjnych pojęć.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Rozmawiam z wieloma różnymi ludźmi na przyjęciach.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Nie interesują mnie problemy innych ludzi.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Często zapominam odkładać rzeczy na miejsce.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Rzadko czuję się przygnębiony/a.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Mam głowę pełną pomysłów.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Wśród nieznajomych jestem małomówny/a.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Znajduję czas dla innych.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Postępuję zgodnie z harmonogramem.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Często miewam huśtawki nastrojów.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
                             },
                             {
                                 text: "Nie mam zbyt bogatej wyobraźni.",
-                                type: "scale",
+                                type: "slider",
                                 min: 1,
                                 max: 5,
                                 value: -1,
@@ -539,224 +539,224 @@ export const qTypes = [
                         prependIndex: "Q",
                         questions: [
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Zazwyczaj nie śmieję się i nie żartuję zbytnio z innymi ludźmi.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jeśli czuję się przygnębiony, zwykle mogę się rozweselić humorem.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jeśli ktoś popełni błąd, często będę tym dokuczać.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Pozwalam ludziom śmiać się ze mnie lub żartować moim kosztem bardziej niż powinienem.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Nie muszę ciężko pracować nad rozśmieszaniem innych ludzi — wydaje mi się, że jestem osobą z natury dowcipną.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Nawet gdy jestem sam, często bawią mnie absurdy życia.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Ludzie nigdy nie są urażeni ani zranieni moim poczuciem humoru.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Często daję się ponieść umniejszaniu sobie, jeśli rozśmiesza to moją rodzinę lub przyjaciół.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Rzadko rozśmieszam innych ludzi opowiadając zabawne historie o sobie.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jeśli czuję się zdenerwowany lub nieszczęśliwy, zwykle staram się wymyślić coś zabawnego w tej sytuacji, aby poczuć się lepiej.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Kiedy opowiadam dowcipy lub mówię śmieszne rzeczy, zwykle nie przejmuję się tym, jak inni ludzie to odbierają.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Często staram się, aby ludzie bardziej mnie polubili lub zaakceptowali, mówiąc coś śmiesznego o moich własnych słabościach, błędach lub wadach.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Z najbliższymi przyjaciółmi dużo się śmieję i żartuję.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Moje humorystyczne spojrzenie na życie powstrzymuje mnie przed nadmiernym denerwowaniem się lub przygnębieniem z powodu różnych rzeczy.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Nie lubię, gdy ludzie używają humoru jako sposobu na krytykowanie lub poniżanie kogoś.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Rzadko używam humoru, by sobie umniejszać.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Zazwyczaj nie lubię opowiadać dowcipów ani bawić ludzi.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jeśli jestem sam i czuję się nieszczęśliwy, staram się wymyślić coś zabawnego, aby podnieść się na duchu.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Czasami myślę o czymś, co jest tak zabawne, że nie mogę się powstrzymać przed powiedzeniem tego, nawet jeśli nie jest to odpowiednie do sytuacji.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Często przekraczam granicę w umniejszaniu sobie, kiedy robię sobie żarty lub próbuję być zabawny.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Lubię bawić ludzi.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jeśli czuję się smutny lub zdenerwowany, zwykle tracę poczucie humoru.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Nigdy nie śmieję się z innych, nawet jeśli robią to wszyscy moi znajomi.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Kiedy jestem z przyjaciółmi lub rodziną, często wydaję się być tym, z którego inni ludzie się śmieją lub z którego żartują.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Nieczęsto żartuję z przyjaciółmi.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Z mojego doświadczenia wynika, że myślenie o jakimś zabawnym aspekcie sytuacji jest często bardzo skutecznym sposobem radzenia sobie z problemami.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jeśli kogoś nie lubię, często używam humoru lub przekomarzania się, aby mu umniejszyć.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Jeśli mam problemy lub czuję się nieszczęśliwy, często ukrywam to przez żarty, aby nawet moi najbliżsi przyjaciele nie wiedzieli, jak naprawdę się czuję.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Zwykle nie potrafię wymyślić dowcipnych rzeczy do powiedzenia, gdy jestem z innymi ludźmi.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Nie muszę przebywać z innymi ludźmi, żeby czuć się rozbawiony - zwykle potrafię znaleźć rzeczy do śmiechu nawet wtedy, gdy jestem sam.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Nawet jeśli coś jest dla mnie naprawdę zabawne, nie będę się z tego śmiał ani żartował, jeśli ktoś będzie urażony.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
-                                type: "scale",
+                                type: "slider",
                                 text: "Pozwalając innym na śmianie się ze mnie jest moim sposobem na utrzymanie moich przyjaciół i rodziny w dobrym nastroju.",
                                 min: 1,
                                 max: 5,
