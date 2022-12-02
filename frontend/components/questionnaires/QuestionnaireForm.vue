@@ -83,7 +83,7 @@
                                     />
                                   </div>
                                   <p v-else>
-                                    This question doesnt contain proper information  
+                                    {{ $t('questionnaires_main.errorDataMapping') }}
                                   </p>
                                 </li>
                             </ul>
@@ -110,7 +110,7 @@
         </v-col>
       </div>
       <div v-else>
-        not found
+        {{ $t('questionnaires_main.errorNotFound') }}
         <v-btn  @click="onClickFinishButton">
           {{ $t('questionnaires_main.buttonFinish') }}
         </v-btn>

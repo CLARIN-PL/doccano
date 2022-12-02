@@ -4,5 +4,7 @@ export default {
     buttonContinue: "Przejdź do następnego kwestionariusza",
     buttonFinish: "Skończyć",
     inputSelectPlaceholder: "Wybierz opcję",
-    buttonAddQuestion: "Dodaj więcej pytań"
+    buttonAddQuestion: "Dodaj więcej pytań",
+    errorDataMapping: "To pytanie nie zawiera odpowiednich informacji, proszę skontaktować się z pomocą techniczną w tej sprawie.",
+    errorNotFound: "Nie znaleziono danych kwestionariusza, proszę skontaktować się z pomocą techniczną w tej sprawie."
 }

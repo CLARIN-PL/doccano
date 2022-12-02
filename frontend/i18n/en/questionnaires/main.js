@@ -4,5 +4,7 @@ export default {
     buttonContinue: "Continue to the next questionnaire",
     buttonFinish: "Finish",
     inputSelectPlaceholder: "Select an option",
-    buttonAddQuestion: "Add more question"
+    buttonAddQuestion: "Add more question",
+    errorDataMapping: "This question does not contain proper information, please contact technical support about this.",
+    errorNotFound: "Questionnaire data not found, please contact technical support about this."
 }
