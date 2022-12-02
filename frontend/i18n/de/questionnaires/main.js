@@ -4,5 +4,7 @@ export default {
     buttonContinue: "Fahren Sie mit dem nächsten Fragebogen fort",
     buttonFinish: "Fertig",
     inputSelectPlaceholder: "Wähle eine Option",
-    buttonAddQuestion: "Weitere Frage hinzufügen"
+    buttonAddQuestion: "Weitere Frage hinzufügen",
+    errorDataMapping: "Diese Frage enthält keine korrekten Informationen. Wenden Sie sich diesbezüglich bitte an den technischen Support.",
+    errorNotFound: "Fragebogendaten nicht gefunden, bitte wenden Sie sich diesbezüglich an den technischen Support."
 }

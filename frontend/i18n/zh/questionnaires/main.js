@@ -4,5 +4,7 @@ export default {
     buttonContinue: "继续下一个问卷",
     buttonFinish: "结束",
     inputSelectPlaceholder: "选择一个选项",
-    buttonAddQuestion: "添加更多问题"
+    buttonAddQuestion: "添加更多问题",
+    errorDataMapping: "该问题不包含正确的信息, 请联系技术支持.",
+    errorNotFound: "未找到问卷数据, 请联系技术支持."
 }
