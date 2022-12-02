@@ -127,7 +127,7 @@ export default {
       numericOnlyRules: [
         (value) => {
           const pattern = /^[0-9]+$/
-          return pattern.test(value) || this.$i18n.t('annotation.warningInvalidChar')
+          return pattern.test(value) || this.$i18n.t('rules.inputTextRules.numericOnly')
         }
       ]
     }
