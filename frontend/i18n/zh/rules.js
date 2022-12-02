@@ -1,5 +1,8 @@
 export default {
   required: '请输入',
+  inputTextRules: {
+    numericOnly: '请仅使用数字 (0-9) 字符'
+  },
   colorRules: {
     colorRequired: '请输入颜色'
   },
