@@ -210,9 +210,17 @@ class CustomRelationExtractionDataset(Dataset):
             relations.save_types(self.project)
 
             # create Labels
-            categories.save(user)
-            spans.save(user)
-            relations.save(user, spans=spans)
+                        # create Labels
+            if self.project.shared_org_label:
+                users = Member.objects.filter(project=self.project).values_list('user', flat=True)
+                for user in users:
+                    categories.save(User.objects.get(id=user), self.project)
+                    spans.save(User.objects.get(id=user), self.project)
+                    relations.save(User.objects.get(id=user), self.project, spans=spans)
+            else:
+                categories.save(user)
+                spans.save(user)
+                relations.save(user, spans=spans)
 
     @property
     def errors(self) -> List[FileParseException]:
