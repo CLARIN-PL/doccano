@@ -1,4 +1,5 @@
 import moment from 'moment'
+import _ from "lodash"
 import { 
   hasStore, 
   getQuestionnairesToShow } 
@@ -9,6 +10,12 @@ export const state = () => ({
   currentlyAllowedProjectId: -1,
   restingUserId: null,
   restingEndTime: null,
+  histories: []
+})
+
+export const history = 
+{
+  id: null,
   login: {
     firstLoginTime: "",
     lastLoginTime: "",
@@ -28,7 +35,7 @@ export const state = () => ({
     inProgress: [],
     toShow: []
   }
-})
+}
 
 export const mutations = {
   setUserId(state, userId) {
@@ -45,18 +52,50 @@ export const mutations = {
     state.restingUserId = null
     state.restingEndTime = null
   },
+  setHistories(state, histories) {
+    state.histories = _.cloneDeep(histories)
+  },
+  addHistory(state, history) {
+    state.histories = state.histories.concat(history)
+  },
+  replaceHistory(state, history) {
+    const userHistory = state.histories.find((hist)=> hist.id === history.id)
+    if(userHistory) {
+      const index = state.histories.indexOf(userHistory)
+      state.histories.splice(index, 1, history)
+    }
+  },
+  removeHistory(state, history) {
+    state.histories = state.histories.filter((hist)=> hist.id !== history.id )
+  },
   setQuestionnaire(state, questionnaire) {
-    state.questionnaire = {...state.questionnaire, ...questionnaire}
+    const userHistory = state.histories.find((hist)=> hist.id === state.id)
+    if(userHistory) {
+      const index = state.histories.indexOf(userHistory)
+      state.histories.splice(index, 1, { ...userHistory, questionnaire: {...userHistory.questionnaire, ...questionnaire} })
+    }
   },
   setLogin(state, login) {
-    state.login = {...state.login, ...login}
+    const userHistory = state.histories.find((hist)=> hist.id === state.id)
+    if(userHistory) {
+      const index = state.histories.indexOf(userHistory)
+      state.histories.splice(index, 1, { ...userHistory, login: {...userHistory.login, ...login} })
+    }
   },
   setAnnotation(state, annotation) {
-    state.annotation = {...state.annotation, ...annotation}
+    const userHistory = state.histories.find((hist)=> hist.id === state.id)
+    if(userHistory) {
+      const index = state.histories.indexOf(userHistory)
+      state.histories.splice(index, 1, { ...userHistory, annotation: {...userHistory.annotation, ...annotation} })
+    }
   },
   setProject(state, project) {
-    state.project = {...state.project, ...project}
-  }
+    const userHistory = state.histories.find((hist)=> hist.id === state.id)
+    if(userHistory) {
+      const index = state.histories.indexOf(userHistory)
+      state.histories.splice(index, 1, { ...userHistory, project: {...userHistory.project, ...project} })
+    }
+  },
 }
 
 export const getters = {
@@ -78,17 +117,24 @@ export const getters = {
     }
     return null
   },
+  getHistories(state) {
+    return state.histories
+  },
   getQuestionnaire(state) {
-    return state.questionnaire
+    const { questionnaire } = state.histories.find((hist)=> hist.id === state.id ) || {}
+    return questionnaire || {}
   },
   getLogin(state) {
-    return state.login
+    const { login } = state.histories.find((hist)=> hist.id === state.id ) || {}
+    return login || {}
   },
   getAnnotation(state) {
-    return state.annotation
+    const { annotation } = state.histories.find((hist)=> hist.id === state.id ) || {}
+    return annotation || {}
   },
   getProject(state) {
-    return state.project
+    const { project } = state.histories.find((hist)=> hist.id === state.id ) || {}
+    return project || {}
   },
 }
 
@@ -101,6 +147,15 @@ export const actions = {
   },
   setLogin({ commit }, login) {
     commit('setLogin', login)
+  },
+  addHistory({ commit }, history) {
+    commit('addHistory', history)
+  },
+  replaceHistory({ commit }, history) {
+    commit('replaceHistory', history)
+  },
+  removeHistory({ commit }, history) {
+    commit('removeHistory', history)
   },
   setQuestionnaire({ commit }, questionnaire) {
     commit('setQuestionnaire', questionnaire)

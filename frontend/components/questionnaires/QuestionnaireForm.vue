@@ -214,7 +214,8 @@ export default {
     async onQuestionChange({ question, formDataKey, hasFilledEverything }) {
       if (question && formDataKey) {
         const isClicked = hasFilledEverything === undefined ? true : hasFilledEverything
-        const hasValue = typeof question.value !== 'undefined' && question.value !== null && question.value !== ""
+        const hasValue =
+          typeof question.value !== 'undefined' && question.value !== null && question.value !== ''
         const { key } = question
         _.set(this.formData, `${formDataKey}`, {
           ...question,
@@ -263,6 +264,16 @@ export default {
       this.activeQuestionnaire += 1
       window.scrollTo({ top: 0, behavior: 'smooth' })
     },
+    scrollToFaultyQuestion(questions = []) {
+      const firstErrorIndex = questions.findIndex((question) => !question.isClicked)
+      this.showWarning = true
+
+      if (this.$refs[`question_${firstErrorIndex}`][0]) {
+        this.$refs[`question_${firstErrorIndex}`][0].scrollIntoView({ behavior: 'smooth' })
+      } else {
+        this.$refs.header.scrollIntoView({ behavior: 'smooth' })
+      }
+    },
     onClickContinueButton() {
       const selectedQuestionnaire = this.formData.questionnaires[this.activeQuestionnaire]
       if (selectedQuestionnaire) {
@@ -273,14 +284,7 @@ export default {
         if (hasClickedEverything) {
           this.showGreetingCard = true
         } else {
-          const firstErrorIndex = questions.findIndex((question) => !question.isClicked)
-          this.showWarning = true
-
-          if (this.$refs[`question_${firstErrorIndex}`][0]) {
-            this.$refs[`question_${firstErrorIndex}`][0].scrollIntoView({ behavior: 'smooth' })
-          } else {
-            this.$refs.header.scrollIntoView({ behavior: 'smooth' })
-          }
+          this.scrollToFaultyQuestion(questions)
         }
       }
     },
@@ -305,6 +309,7 @@ export default {
           this.$router.push('/questionnaires')
         } else {
           this.showWarning = true
+          this.scrollToFaultyQuestion(questions)
         }
       } else {
         this.resetQuestionnaire()
@@ -320,7 +325,8 @@ export default {
   padding: 20px;
 }
 
-.segment-description-container, .question-container {
+.segment-description-container,
+.question-container {
   margin-bottom: 20px;
 }
 
@@ -328,5 +334,4 @@ export default {
   list-style: none;
   padding-left: 0 !important;
 }
-
 </style>

@@ -250,16 +250,18 @@ export function getQuestionnairesToShow() {
         if(getters) {
             qTypes.forEach((questionnaireType) => {
                 const isFilled = filled.includes(questionnaireType.id)
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { firstLoginTime } = getters['user/getLogin']
+                const firstLoginTimeAtZero = moment(firstLoginTime, DATE_FORMAT).format("DD-MM-YYYY")+" 00:00:00"
                 const { hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
                 const { hasFinishedAll } = getters['user/getProject'] 
                 const monthDiff = moment(todayTime).diff(
-                    moment(firstLoginTime, DATE_FORMAT), 'months'
+                    moment(firstLoginTimeAtZero, DATE_FORMAT), 'months'
                 )
                 const hasPassedResearchTime = monthDiff >= RESEARCH_TIME_IN_MONTHS
                 let isShowing = false
                 if(questionnaireType.id === '1.1') {
-                    const hourDiff = moment(firstLoginTime, DATE_FORMAT)
+                    const hourDiff = moment(firstLoginTimeAtZero, DATE_FORMAT)
                                         .diff(moment(todayTime), 'hours')
                     const isFirstSignIn = hourDiff < .5
                     isShowing = !isFilled && isFirstSignIn
@@ -271,7 +273,7 @@ export function getQuestionnairesToShow() {
                                 && hasPassedResearchTime
                 } else if(questionnaireType.id === "3.1") {
                     const weekDiff = moment(todayTime)
-                                    .diff(moment(firstLoginTime, DATE_FORMAT), 'weeks')
+                                    .diff(moment(firstLoginTimeAtZero, DATE_FORMAT), 'weeks')
                     const hasPassedOneWeek = weekDiff >= 1
                     isShowing = !isFilled && hasPassedOneWeek
                 } else if(questionnaireType.id === "3.2") {
@@ -279,8 +281,6 @@ export function getQuestionnairesToShow() {
                 } else if(questionnaireType.id === "4.1") {
                     isShowing = !isFilled && !hasAnnotatedToday
                 }  else if(questionnaireType.id === "4.2") {
-                    const currentTimeHour = todayTime.getHours()
-                    const isEvening = currentTimeHour >= 17 && currentTimeHour <= 23
                     isShowing = !isFilled && isEvening
                 } else if(questionnaireType.id === "4.3") {
                     const hasAnnotatedBatch = hasAnnotatedToday 
@@ -293,7 +293,7 @@ export function getQuestionnairesToShow() {
                                 && hasPassedResearchTime
                 } else if(questionnaireType.id === "6.1") {
                     const weekDiff = moment(todayTime)
-                                    .diff(moment(firstLoginTime, DATE_FORMAT), 'weeks')
+                                    .diff(moment(firstLoginTimeAtZero, DATE_FORMAT), 'weeks')
                     const hasPassedTwoWeeks = weekDiff >= 2
                     isShowing = !isFilled && hasPassedTwoWeeks
                 }
