@@ -210,7 +210,6 @@ class CustomRelationExtractionDataset(Dataset):
             relations.save_types(self.project)
 
             # create Labels
-                        # create Labels
             if self.project.shared_org_label:
                 users = Member.objects.filter(project=self.project).values_list('user', flat=True)
                 for user in users:
