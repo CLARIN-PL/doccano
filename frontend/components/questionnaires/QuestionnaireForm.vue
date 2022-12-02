@@ -41,11 +41,15 @@
                       </header>
 
                       <ul>
-                        <li v-for="(segment, segIdx) in questionnaire.segments" :key="`segment-${segIdx}`">
+                        <li
+                          v-for="(segment, segIdx) in questionnaire.segments"
+                          :key="`segment-${segIdx}`"
+                          class="hide-list-style"
+                        >
                           <div v-if="segment.scales" class="segment-description-container">
                             <p>
                               {{ segment.scales.description }}
-                              <ul>
+                              <ul class="hide-list-style">
                                 <li v-for="(segmentScaleValue, segScalIdx) in segment.scales.values" :key="`segmentScaleValue-${segScalIdx}`">
                                   {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
                                 </li>
@@ -322,6 +326,7 @@ export default {
 
 .hide-list-style {
   list-style: none;
+  padding-left: 0 !important;
 }
 
 </style>
