@@ -54,11 +54,12 @@
                           </div>
 
                           <div v-if="segment.questions">
-                            <ul>
+                            <ol :class="segment.prependIndex ? 'segment-question hide-list-style' : 'segment-question'">
                                 <li 
                                   v-for="(segmentQuestion, segQuIdx) in segment.questions" 
                                   :ref="`question_${segQuIdx}`"
-                                  :key="`segmentQuestion-${segQuIdx}`">
+                                  :key="`segmentQuestion-${segQuIdx}`"
+                                >
                                   <div v-if="segmentQuestion.id" class="question-container">
                                     <p v-if="segment.prependIndex">
                                       {{ segment.prependIndex+(segQuIdx+1) }}
@@ -86,7 +87,7 @@
                                     {{ $t('questionnaires_main.errorDataMapping') }}
                                   </p>
                                 </li>
-                            </ul>
+                            </ol>
                           </div>
                         </li>
                       </ul>
@@ -317,6 +318,10 @@ export default {
 
 .segment-description-container, .question-container {
   margin-bottom: 20px;
+}
+
+.hide-list-style {
+  list-style: none;
 }
 
 </style>
