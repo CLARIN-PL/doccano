@@ -33,7 +33,7 @@
           <v-row justify="center" align="top">
             <v-col cols="10">
               <v-text-field
-                v-model.trim="text"
+                v-model.trim="textInput"
                 outlined
                 autofocus
                 :hint="$t('labels.clickEnter')"
@@ -123,19 +123,13 @@ export default {
       mdiSend,
       enableTextfield: true,
       showDialog: false,
-      dialogErrorMessage: ''
+      dialogErrorMessage: '',
+      textInput: '',
+      text: ''
     }
   },
 
   computed: {
-    text: {
-      get() {
-        return this.value
-      },
-      set(val) {
-        this.$emit('input', val)
-      }
-    },
     textFieldRules() {
       const { numericOnly } = this.config
       const numericOnlyRules = [
@@ -147,15 +141,21 @@ export default {
       return numericOnly ? this.rules.concat(numericOnlyRules) : this.rules
     }
   },
+  watch: {
+    textInput() {
+      this.text = this.textInput
+      console.log(this.text)
+    }
+  },
   methods: {
     onBlurTextField() {
       this.$emit('blur', this.text)
     },
     submitAnswer() {
+      console.log("submitAnswer, this.textAnswer: ", this.text)
       const { numericOnly } = this.config
       const numericPattern = /^[0-9]+$/
       const hasFilledText = this.required ? !!this.text : true
-      console.log("this.text: ", this.text)
       const hasFilledNumericOnly = numericOnly ? numericPattern.test(this.text) : true
       if (hasFilledText && hasFilledNumericOnly) {
         this.showDialog = false
