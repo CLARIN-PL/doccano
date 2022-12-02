@@ -384,6 +384,7 @@ export const qTypes = [
                                 type: "text",
                                 header: "[Wielkość gospodarstwa domowego]",
                                 text: "Ile osób, łącznie z Panem/Panią, mieszka w gospodarstwie domowym?",
+                                numericOnly: true,
                             },
                             {
                                 type: "radio",
