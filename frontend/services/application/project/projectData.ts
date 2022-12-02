@@ -21,6 +21,7 @@ export class ProjectDTO {
   hasSpan: boolean
   taskNames: string[]
   useRelation: boolean
+  sharedOrgLabel: boolean
 
   constructor(item: ProjectReadItem) {
     this.id = item.id
@@ -43,6 +44,7 @@ export class ProjectDTO {
     this.hasSpan = item.canDefineSpan
     this.taskNames = item.taskNames
     this.useRelation = item.useRelation
+    this.sharedOrgLabel = item.sharedOrgLabel
   }
 }
 
@@ -59,6 +61,7 @@ export type ProjectWriteDTO = Pick<
   | 'allowOverlapping'
   | 'graphemeMode'
   | 'useRelation'
+  | 'sharedOrgLabel'
 > & { tags: string[] }
 
 export class ProjectListDTO {

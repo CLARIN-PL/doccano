@@ -57,6 +57,7 @@ export class ProjectApplicationService {
       item.allowOverlapping,
       item.graphemeMode,
       item.useRelation,
+      item.sharedOrgLabel,
       item.tags
     )
   }

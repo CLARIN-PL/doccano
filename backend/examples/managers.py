@@ -1,4 +1,6 @@
 from django.db.models import Count, Manager
+from projects.models import Project
+from django.shortcuts import get_object_or_404
 
 
 class ExampleManager(Manager):
@@ -17,12 +19,19 @@ class ExampleStateManager(Manager):
             queryset = self.filter(example_id__in=examples)
         return queryset.distinct().values("example").count()
 
-    def measure_member_progress(self, examples, members):
+    def measure_member_progress(self, examples, members, project_id=None):
+        project = get_object_or_404(Project, pk=project_id)
+        if project.shared_org_label:
+            for member in members:
+                queryset = self.filter(example_id__in=examples, confirmed_by=member.user)
+                total = queryset.distinct().values("example").count()
+        else:
+            total = examples.count()
         done_count = (
             self.filter(example_id__in=examples).values("confirmed_by__username").annotate(total=Count("confirmed_by"))
         )
         response = {
-            "total": examples.count(),
+            "total": total,
             "progress": [{"user": obj["confirmed_by__username"], "done": obj["total"]} for obj in done_count],
         }
         members_with_progress = {o["confirmed_by__username"] for o in done_count}

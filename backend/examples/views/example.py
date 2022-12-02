@@ -34,6 +34,8 @@ class ExampleList(generics.ListCreateAPIView):
             random.seed(self.request.user.id)
             value = random.randrange(2, 20)
             queryset = queryset.annotate(sort_id=F("id") % value).order_by("sort_id", "id")
+        elif self.project.shared_org_label and not self.request.user.is_staff:
+            queryset = queryset.filter(user = self.request.user)
         else:
             queryset = queryset.order_by("created_at")
         return queryset
