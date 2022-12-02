@@ -37,7 +37,7 @@ class MemberProgressAPI(APIView):
     def get(self, request, *args, **kwargs):
         examples = Example.objects.filter(project=self.kwargs["project_id"]).values("id")
         members = Member.objects.filter(project=self.kwargs["project_id"])
-        data = ExampleState.objects.measure_member_progress(examples, members)
+        data = ExampleState.objects.measure_member_progress(examples, members, project_id=self.kwargs["project_id"])
         return Response(data=data, status=status.HTTP_200_OK)
 
 
