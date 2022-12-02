@@ -30,6 +30,7 @@ from projects.models import (
     Project,
     CUSTOM_DOCUMENT_CLASSIFICATION,
 )
+from projects.models import Member
 
 
 class Dataset(abc.ABC):
@@ -248,8 +249,14 @@ class CategoryAndSpanDataset(Dataset):
             spans.save_types(self.project)
 
             # create Labels
-            categories.save(user, self.project)
-            spans.save(user, self.project)
+            if self.project.shared_org_label:
+                users = Member.objects.filter(project=self.project).values_list('user', flat=True)
+                for user in users:
+                    categories.save(User.objects.get(id=user), self.project)
+                    spans.save(User.objects.get(id=user), self.project)
+            else:
+                categories.save(user, self.project)
+                spans.save(user, self.project)
 
     @property
     def errors(self) -> List[FileParseException]:

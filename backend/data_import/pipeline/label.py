@@ -13,7 +13,8 @@ from labels.models import Relation as RelationModel
 from labels.models import Span as SpanModel
 from labels.models import TextLabel as TextLabelModel
 from projects.models import Project
-
+from projects.models import Member
+from django.contrib.auth.models import User
 
 class NonEmptyStr(ConstrainedStr):
     min_length = 1
@@ -63,13 +64,10 @@ class CategoryLabel(Label):
 
     def create(self, user, example: Example, types: LabelTypes, project: Project, **kwargs):
         if project.shared_org_label:
-            user = example.user
-            return CategoryModel(
-                uuid=self.uuid,
-                user=user,
-                example=example,
-                label=types[self.label],
-            )
+            users = Member.objects.filter(project=project).values_list("user", flat=True)
+            for i in range(len(users)):
+                self.uuid = uuid.uuid4()
+                return CategoryModel(uuid=self.uuid, user=user, example=example, label=types[self.label])
         else:
             return CategoryModel(uuid=self.uuid, user=user, example=example, label=types[self.label])
 
@@ -104,15 +102,17 @@ class SpanLabel(Label):
 
     def create(self, user, example: Example, types: LabelTypes, project: Project, **kwargs):
         if project.shared_org_label:
-            user = example.user
-            return SpanModel(
-                uuid=self.uuid,
-                user=user,
-                example=example,
-                label=types[self.label],
-                start_offset=self.start_offset,
-                end_offset=self.end_offset,
-            )
+            users = Member.objects.filter(project=project).values_list("user", flat=True)
+            for i in range(len(users)):
+                self.uuid = uuid.uuid4()
+                return SpanModel(
+                    uuid=self.uuid,
+                    user=user,
+                    example=example,
+                    start_offset=self.start_offset,
+                    end_offset=self.end_offset,
+                    label=types[self.label],
+                )
         else:
             return SpanModel(
                 uuid=self.uuid,
@@ -158,15 +158,17 @@ class RelationLabel(Label):
 
     def create(self, user, example: Example, types: LabelTypes, project: Project, **kwargs):
         if project.shared_org_label:
-            user = example.user
-            return RelationLabel(
-                uuid=self.uuid,
-                user=user,
-                example=example,
-                type=types[self.type],
-                from_id=kwargs["id_to_span"][self.from_id],
-                to_id=kwargs["id_to_span"][self.to_id],
-            )
+            users = Member.objects.filter(project=project).values_list("user", flat=True)
+            for i in range(len(users)):
+                self.uuid = uuid.uuid4()
+                return RelationModel(
+                    uuid=self.uuid,
+                    user=user,
+                    example=example,
+                    type=types[self.type],
+                    from_id=kwargs["id_to_span"][self.from_id],
+                    to_id=kwargs["id_to_span"][self.to_id],
+                )
         else:
             return RelationModel(
                 uuid=self.uuid,
