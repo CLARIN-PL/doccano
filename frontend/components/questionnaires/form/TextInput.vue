@@ -14,7 +14,7 @@
           outlined
           readonly
           :value="showDialog ? '' : value"
-          :rules="rules"
+          :rules="config.numericOnly ? numericOnlyRules : rules"
           hide-details="auto"
         />
         <span v-show="errorMessage" class="error-message">
@@ -37,7 +37,7 @@
                 outlined
                 autofocus
                 :hint="$t('labels.clickEnter')"
-                :rules="rules"
+                :rules="config.numericOnly ? numericOnlyRules : rules"
                 @blur="onBlurTextField"
                 @keyup.enter="submitAnswer"
               />
@@ -68,6 +68,14 @@ import { mdiSend } from '@mdi/js'
 export default {
   name: 'TextInput',
   props: {
+    config: {
+      type: Object,
+      default() {
+        return {
+          numericOnly: false
+        }
+      }
+    },
     disabled: {
       type: Boolean,
       default: false
@@ -115,7 +123,13 @@ export default {
       mdiSend,
       enableTextfield: true,
       showDialog: false,
-      dialogErrorMessage: ''
+      dialogErrorMessage: '',
+      numericOnlyRules: [
+        (value) => {
+          const pattern = /^[0-9]+$/
+          return pattern.test(value) || this.$i18n.t('annotation.warningInvalidChar')
+        }
+      ]
     }
   },
 

@@ -214,6 +214,7 @@ export const qTypes = [
                                 type: "text",
                                 header: "[Wiek]",
                                 text: "Jaki jest Pana/Pani wiek w latach (proszę wpisać tylko liczbę)?",
+                                numericOnly: true,
                             },
                             {
                                 type: "text",
