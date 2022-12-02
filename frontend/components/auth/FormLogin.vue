@@ -42,6 +42,7 @@ import { mdiAccount, mdiLock } from '@mdi/js'
 import { mapGetters, mapActions } from 'vuex'
 import { userNameRules, passwordRules } from '@/rules/index'
 import BaseCard from '@/components/utils/BaseCard.vue'
+import { history } from '~/store/user'
 
 export default Vue.extend({
   components: {
@@ -67,19 +68,32 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapGetters('user', ['getLogin', 'getQuestionnaire'])
+    ...mapGetters('user', ['getUserId', 'getLogin', 'getQuestionnaire', 'getHistories'])
   },
   methods: {
-    ...mapActions('user', ['setLogin', 'initQuestionnaire', 'setAnnotation', 'setQuestionnaire']),
+    ...mapActions('user', [
+      'setLogin',
+      'initQuestionnaire',
+      'setAnnotation',
+      'setQuestionnaire',
+      'addHistory'
+    ]),
     setUserData() {
+      const userHistory = this.getHistories.find((hist) => hist.id === this.getUserId)
+      if (!userHistory) {
+        this.addHistory({ ...history, id: this.getUserId })
+      }
       try {
         const dateFormat = 'DD-MM-YYYY HH:mm:ss'
         const loginTime = moment().format(dateFormat)
         const { filled } = this.getQuestionnaire
         const lastLoginTime = this.getLogin.lastLoginTime
-        const currentDiffDay = this.getLogin.lastLoginTime
+        const lastLoginDay = parseInt(moment(lastLoginTime, dateFormat).format('DD'))
+        const todayDay = parseInt(moment().format('DD'))
+        let currentDiffDay = this.getLogin.lastLoginTime
           ? moment(new Date()).diff(moment(lastLoginTime, dateFormat), 'days')
           : 0
+        currentDiffDay = currentDiffDay === 0 ? todayDay - lastLoginDay : currentDiffDay
         const dailyQuestionnaireId = '4'
 
         if (!this.getLogin.firstLoginTime) {

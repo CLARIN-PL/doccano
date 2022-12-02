@@ -1,6 +1,6 @@
 <template>
   <v-container class="widget">
-    <v-row v-if="question" class="widget__question">
+    <v-row v-if="question" class="widget__question" align="left">
       {{ header }}
       {{ question }}
       <span v-if="required" class="red--text"> * </span>
