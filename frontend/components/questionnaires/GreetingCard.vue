@@ -1,16 +1,17 @@
 <template>
-     <v-card>
-    <p>
-        {{ $t('questionnaires_main.greetings')}}
-    </p>
-    <p>
-        {{ $t('questionnaires_main.greetingsDetail')}}
-    </p>
-    <v-btn @click="onStartButtonClick">
-        Start
-    </v-btn>
-  </v-card>
+    <v-card class="greeting-card">
+        <h3>
+            {{ $t('questionnaires_main.greetings')}}
+        </h3>
+        <p>
+            {{ $t('questionnaires_main.greetingsDetail')}}
+        </p>
+        <v-btn @click="onStartButtonClick">
+            Start
+        </v-btn>
+    </v-card>
 </template>
+
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
@@ -21,3 +22,9 @@ export default Vue.extend({
     }
 })
 </script>
+
+<style lang="scss">
+.greeting-card {
+    padding: 20px;
+}
+</style>

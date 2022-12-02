@@ -8,7 +8,9 @@ export const qTypes = [
                 language: "pl",
                 segments: [
                     {
-                        description: "Webinarium",
+                        scales: {
+                            description: "Webinarium",
+                        },
                         questions: [
                             {
                                 type: "radio",
@@ -57,7 +59,9 @@ export const qTypes = [
                         ]
                     },
                     {
-                        description: "Anotacja",
+                        scales: {
+                            description: "Anotacja",
+                        },
                         questions: [
                             {
                                 type: "text",

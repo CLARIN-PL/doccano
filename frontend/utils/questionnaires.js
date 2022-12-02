@@ -205,7 +205,8 @@ export function mapQuestionnaireTypes(qTypes) {
                             min: question.min,
                             max: question.max,
                             minLabel: question.minLabel,
-                            maxLabel: question.maxLabel
+                            maxLabel: question.maxLabel,
+                            showTickLabels: question.showTickLabels ?? true
                         }
                     }
                     
