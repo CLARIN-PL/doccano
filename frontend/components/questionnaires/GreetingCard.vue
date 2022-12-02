@@ -6,7 +6,7 @@
         <p>
             {{ $t('questionnaires_main.greetingsDetail')}}
         </p>
-        <v-btn @click="onStartButtonClick">
+        <v-btn color="primary" @click="onStartButtonClick">
             Start
         </v-btn>
     </v-card>
