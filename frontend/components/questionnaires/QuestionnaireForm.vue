@@ -220,7 +220,7 @@ export default {
         })
         this.$forceUpdate()
 
-        if (question.id && typeof question.value !== 'undefined' && question.value !== null) {
+        if (question.id && typeof question.value !== 'undefined' && question.value !== null && question.value != "") {
           _.set(this.formData, `${formDataKey}.isSubmitting`, true)
           await this.$services.questionnaire.createAnswer({
             answerText: question.value,
