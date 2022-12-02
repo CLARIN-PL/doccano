@@ -214,6 +214,7 @@ export const qTypes = [
                                 type: "text",
                                 header: "[Wiek]",
                                 text: "Jaki jest Pana/Pani wiek w latach (proszę wpisać tylko liczbę)?",
+                                numericOnly: true,
                             },
                             {
                                 type: "text",
@@ -383,6 +384,7 @@ export const qTypes = [
                                 type: "text",
                                 header: "[Wielkość gospodarstwa domowego]",
                                 text: "Ile osób, łącznie z Panem/Panią, mieszka w gospodarstwie domowym?",
+                                numericOnly: true,
                             },
                             {
                                 type: "radio",

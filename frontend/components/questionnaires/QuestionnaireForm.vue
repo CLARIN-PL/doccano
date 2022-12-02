@@ -41,11 +41,15 @@
                       </header>
 
                       <ul>
-                        <li v-for="(segment, segIdx) in questionnaire.segments" :key="`segment-${segIdx}`">
+                        <li
+                          v-for="(segment, segIdx) in questionnaire.segments"
+                          :key="`segment-${segIdx}`"
+                          class="hide-list-style"
+                        >
                           <div v-if="segment.scales" class="segment-description-container">
                             <p>
                               {{ segment.scales.description }}
-                              <ul>
+                              <ul class="hide-list-style">
                                 <li v-for="(segmentScaleValue, segScalIdx) in segment.scales.values" :key="`segmentScaleValue-${segScalIdx}`">
                                   {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
                                 </li>
@@ -54,11 +58,12 @@
                           </div>
 
                           <div v-if="segment.questions">
-                            <ul>
+                            <ol :class="segment.prependIndex ? 'segment-question hide-list-style' : 'segment-question'">
                                 <li 
                                   v-for="(segmentQuestion, segQuIdx) in segment.questions" 
                                   :ref="`question_${segQuIdx}`"
-                                  :key="`segmentQuestion-${segQuIdx}`">
+                                  :key="`segmentQuestion-${segQuIdx}`"
+                                >
                                   <div v-if="segmentQuestion.id" class="question-container">
                                     <p v-if="segment.prependIndex">
                                       {{ segment.prependIndex+(segQuIdx+1) }}
@@ -86,7 +91,7 @@
                                     {{ $t('questionnaires_main.errorDataMapping') }}
                                   </p>
                                 </li>
-                            </ul>
+                            </ol>
                           </div>
                         </li>
                       </ul>
@@ -97,10 +102,10 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-btn v-if="activeQuestionnaire+1 < formData.questionnaires.length" 
-                    @click="onClickContinueButton">
+                    color="primary" @click="onClickContinueButton">
                     {{ $t('questionnaires_main.buttonContinue') }}
                   </v-btn>
-                  <v-btn v-else @click="onClickFinishButton">
+                  <v-btn v-else color="primary" @click="onClickFinishButton">
                     {{ $t('questionnaires_main.buttonFinish') }}
                   </v-btn>
                 </v-card-actions>
@@ -111,7 +116,7 @@
       </div>
       <div v-else>
         {{ $t('questionnaires_main.errorNotFound') }}
-        <v-btn  @click="onClickFinishButton">
+        <v-btn color="primary" @click="onClickFinishButton">
           {{ $t('questionnaires_main.buttonFinish') }}
         </v-btn>
       </div>
@@ -317,6 +322,11 @@ export default {
 
 .segment-description-container, .question-container {
   margin-bottom: 20px;
+}
+
+.hide-list-style {
+  list-style: none;
+  padding-left: 0 !important;
 }
 
 </style>

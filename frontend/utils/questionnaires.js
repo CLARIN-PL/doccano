@@ -208,6 +208,10 @@ export function mapQuestionnaireTypes(qTypes) {
                             maxLabel: question.maxLabel,
                             showTickLabels: question.showTickLabels ?? true
                         }
+                    } else if(question.type === "text" || question.type === "radio") {
+                        question.config = {
+                            numericOnly: question.numericOnly ?? false
+                        }
                     }
                     
                     question.rules = []

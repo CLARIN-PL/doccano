@@ -14,7 +14,7 @@
           outlined
           readonly
           :value="showDialog ? '' : value"
-          :rules="rules"
+          :rules="textFieldRules"
           hide-details="auto"
         />
         <span v-show="errorMessage" class="error-message">
@@ -37,7 +37,7 @@
                 outlined
                 autofocus
                 :hint="$t('labels.clickEnter')"
-                :rules="rules"
+                :rules="textFieldRules"
                 @blur="onBlurTextField"
                 @keyup.enter="submitAnswer"
               />
@@ -68,6 +68,14 @@ import { mdiSend } from '@mdi/js'
 export default {
   name: 'TextInput',
   props: {
+    config: {
+      type: Object,
+      default() {
+        return {
+          numericOnly: false
+        }
+      }
+    },
     disabled: {
       type: Boolean,
       default: false
@@ -115,18 +123,27 @@ export default {
       mdiSend,
       enableTextfield: true,
       showDialog: false,
-      dialogErrorMessage: ''
+      dialogErrorMessage: '',
+      textInput: '',
+      text: ''
     }
   },
 
   computed: {
-    text: {
-      get() {
-        return this.value
-      },
-      set(val) {
-        this.$emit('input', val)
-      }
+    textFieldRules() {
+      const { numericOnly } = this.config
+      const numericOnlyRules = [
+        (value) => {
+          const pattern = /^[0-9]+$/
+          return pattern.test(value) || this.$i18n.t('rules.inputTextRules.numericOnly')
+        }
+      ]
+      return numericOnly ? this.rules.concat(numericOnlyRules) : this.rules
+    }
+  },
+  watch: {
+    value() {
+      this.text = this.value
     }
   },
   methods: {
@@ -134,13 +151,23 @@ export default {
       this.$emit('blur', this.text)
     },
     submitAnswer() {
+      const { numericOnly } = this.config
+      const numericPattern = /^[0-9]+$/
       const hasFilledText = this.required ? !!this.text : true
-      if (hasFilledText) {
+      const hasFilledNumericOnly = numericOnly ? numericPattern.test(this.text) : true
+      if (hasFilledText && hasFilledNumericOnly) {
         this.showDialog = false
-        this.$emit('change', { ...this.passedData, value: this.text })
-        this.$emit('submit', this.text)
+        const passedData = JSON.parse(JSON.stringify(this.passedData))
+        passedData.question.value = this.text
+        this.$emit('change', { ...passedData, value: passedData.question.value })
+        this.$emit('submit', passedData.question.value)
       } else {
-        this.dialogErrorMessage = this.$t('rules.required')
+        if (!hasFilledText) {
+          this.dialogErrorMessage = this.$t('rules.required')
+        }
+        if (!hasFilledNumericOnly) {
+          this.dialogErrorMessage = this.$i18n.t('rules.inputTextRules.numericOnly')
+        }
       }
     },
     textfieldClickHandler() {
