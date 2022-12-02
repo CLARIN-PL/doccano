@@ -121,24 +121,27 @@ export const getters = {
     return state.histories
   },
   getQuestionnaire(state) {
-    const { questionnaire } = state.histories.find((hist)=> hist.id === state.id ) || {}
-    return questionnaire || {}
+    const { questionnaire } = state.histories.find((hist)=> hist.id === state.id ) || history
+    return questionnaire  
   },
   getLogin(state) {
-    const { login } = state.histories.find((hist)=> hist.id === state.id ) || {}
-    return login || {}
+    const { login } = state.histories.find((hist)=> hist.id === state.id ) || history
+    return login 
   },
   getAnnotation(state) {
-    const { annotation } = state.histories.find((hist)=> hist.id === state.id ) || {}
-    return annotation || {}
+    const { annotation } = state.histories.find((hist)=> hist.id === state.id ) || history
+    return annotation 
   },
   getProject(state) {
-    const { project } = state.histories.find((hist)=> hist.id === state.id ) || {}
-    return project || {}
+    const { project } = state.histories.find((hist)=> hist.id === state.id ) || history
+    return project 
   },
 }
 
 export const actions = {
+  setUserId({commit}, userId) {
+    commit('setUserId', userId)
+  },
   setCurrentlyAllowedProjectId({ commit }, projectId) {
     commit('setCurrentlyAllowedProjectId', projectId)
   },

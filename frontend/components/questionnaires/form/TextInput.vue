@@ -1,6 +1,6 @@
 <template>
   <v-container class="widget">
-    <v-row v-if="question" class="widget__question" align="left">
+    <v-row v-if="question" class="widget__question" align="center">
       {{ header }}
       {{ question }}
       <span v-if="required" class="red--text"> * </span>
@@ -30,7 +30,7 @@
         </v-card-title>
         <v-card-text class="widget-dialog__text">
           <p class="widget-dialog__warning">{{ dialogErrorMessage }}</p>
-          <v-row justify="center" align="top">
+          <v-row justify="center" align="center">
             <v-col cols="10">
               <v-text-field
                 v-model.trim="text"
@@ -106,7 +106,12 @@ export default {
     },
     passedData: {
       type: Object,
-      default: () => {}
+      default: () => {
+        return {
+          question: {},
+          questionKey: ''
+        }
+      }
     },
     value: {
       type: String,
@@ -124,7 +129,6 @@ export default {
       enableTextfield: true,
       showDialog: false,
       dialogErrorMessage: '',
-      textInput: '',
       text: ''
     }
   },
@@ -152,17 +156,14 @@ export default {
     },
     submitAnswer() {
       const { numericOnly } = this.config
+      const { question, formDataKey } = this.passedData
       const numericPattern = /^[0-9]+$/
       const hasFilledText = this.required ? !!this.text : true
       const hasFilledNumericOnly = numericOnly ? numericPattern.test(this.text) : true
       if (hasFilledText && hasFilledNumericOnly) {
         this.showDialog = false
-        let passedData = null
-        if (this.passedData) {
-          passedData = JSON.parse(JSON.stringify(this.passedData))
-          passedData.question.value = this.text
-        }
-        this.$emit('change', { ...passedData, value: this.text })
+        question.value = this.text
+        this.$emit('change', { ...this.passedData, question, formDataKey })
         this.$emit('submit', this.text)
       } else {
         if (!hasFilledText) {
