@@ -209,6 +209,7 @@ export default {
     async onQuestionChange({ question, formDataKey, hasFilledEverything }) {
       if (question && formDataKey) {
         const isClicked = hasFilledEverything === undefined ? true : hasFilledEverything
+        const hasValue = typeof question.value !== 'undefined' && question.value !== null && question.value !== ""
         const { key } = question
         _.set(this.formData, `${formDataKey}`, {
           ...question,
@@ -220,7 +221,7 @@ export default {
         })
         this.$forceUpdate()
 
-        if (question.id && typeof question.value !== 'undefined' && question.value !== null && question.value != "") {
+        if (question.id && hasValue) {
           _.set(this.formData, `${formDataKey}.isSubmitting`, true)
           await this.$services.questionnaire.createAnswer({
             answerText: question.value,
