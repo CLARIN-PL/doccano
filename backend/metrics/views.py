@@ -19,10 +19,7 @@ class ProgressAPI(APIView):
     def get(self, request, *args, **kwargs):
         examples = Example.objects.filter(project=self.kwargs["project_id"]).values("id")
         project = get_object_or_404(Project, pk=self.kwargs["project_id"])
-        if project.shared_org_label and not self.request.user.is_staff:
-            total = examples.filter(user = self.request.user).count()
-        else:
-            total = examples.count()
+        total = examples.count()
         if project.collaborative_annotation:
             complete = ExampleState.objects.count_done(examples)
         else:
@@ -37,7 +34,7 @@ class MemberProgressAPI(APIView):
     def get(self, request, *args, **kwargs):
         examples = Example.objects.filter(project=self.kwargs["project_id"]).values("id")
         members = Member.objects.filter(project=self.kwargs["project_id"])
-        data = ExampleState.objects.measure_member_progress(examples, members, project_id=self.kwargs["project_id"])
+        data = ExampleState.objects.measure_member_progress(examples, members)
         return Response(data=data, status=status.HTTP_200_OK)
 
 

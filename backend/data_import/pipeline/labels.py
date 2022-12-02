@@ -93,6 +93,6 @@ class Texts(Labels):
 class Relations(Labels):
     label_model = RelationModel
 
-    def save(self, user, **kwargs):
+    def save(self, user, project:Project,  **kwargs):
         id_to_span = kwargs["spans"].id_to_span
-        super().save(user, id_to_span=id_to_span)
+        super().save(user, project, id_to_span=id_to_span)
