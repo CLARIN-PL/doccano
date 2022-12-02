@@ -144,7 +144,6 @@ export default {
   watch: {
     textInput() {
       this.text = this.textInput
-      console.log(this.text)
     }
   },
   methods: {
@@ -152,15 +151,16 @@ export default {
       this.$emit('blur', this.text)
     },
     submitAnswer() {
-      console.log("submitAnswer, this.textAnswer: ", this.text)
       const { numericOnly } = this.config
       const numericPattern = /^[0-9]+$/
       const hasFilledText = this.required ? !!this.text : true
       const hasFilledNumericOnly = numericOnly ? numericPattern.test(this.text) : true
       if (hasFilledText && hasFilledNumericOnly) {
         this.showDialog = false
-        this.$emit('change', { ...this.passedData, value: this.text })
-        this.$emit('submit', this.text)
+        const passedData = JSON.parse(JSON.stringify(this.passedData))
+        passedData.question.value = this.text
+        this.$emit('change', { ...passedData, value: passedData.question.value })
+        this.$emit('submit', passedData.question.value)
       } else {
         if (!hasFilledText) {
           this.dialogErrorMessage = this.$t('rules.required')
