@@ -152,13 +152,22 @@ export default {
       this.$emit('blur', this.text)
     },
     submitAnswer() {
+      const { numericOnly } = this.config
+      const numericPattern = /^[0-9]+$/
       const hasFilledText = this.required ? !!this.text : true
-      if (hasFilledText) {
+      console.log("this.text: ", this.text)
+      const hasFilledNumericOnly = numericOnly ? numericPattern.test(this.text) : true
+      if (hasFilledText && hasFilledNumericOnly) {
         this.showDialog = false
         this.$emit('change', { ...this.passedData, value: this.text })
         this.$emit('submit', this.text)
       } else {
-        this.dialogErrorMessage = this.$t('rules.required')
+        if (!hasFilledText) {
+          this.dialogErrorMessage = this.$t('rules.required')
+        }
+        if (!hasFilledNumericOnly) {
+          this.dialogErrorMessage = this.$i18n.t('rules.inputTextRules.numericOnly')
+        }
       }
     },
     textfieldClickHandler() {
