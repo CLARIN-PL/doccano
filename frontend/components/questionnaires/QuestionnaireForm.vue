@@ -225,7 +225,7 @@ export default {
           }
         })
         this.$forceUpdate()
-
+        console.log("question.value: ", question.value)
         if (question.id && hasValue) {
           _.set(this.formData, `${formDataKey}.isSubmitting`, true)
           await this.$services.questionnaire.createAnswer({
