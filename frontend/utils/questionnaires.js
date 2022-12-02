@@ -147,6 +147,10 @@ export function setQuestionnaireIds(qTypes, questionnaires, questions=[]) {
                         if(qItem) {
                             question.id = qItem.id
                             question.questionnaireId = qItem.questionnaire
+                            question.isValid = true
+                        } else {
+                            question.isClicked = true
+                            question.isValid = false
                         }
                         return question
                     })
@@ -174,7 +178,6 @@ export function mapQuestionnaireTypes(qTypes) {
                     question.value = numberInputs.includes(question.type) ? 0 : ""
                     question.config = {}
 
-
                     if(question.options) {
                         question.options = question.options.map((option)=> {
                             option.value = option.value === undefined ? option.text : option.value
@@ -185,10 +188,14 @@ export function mapQuestionnaireTypes(qTypes) {
                                     return opt
                                 })
                             }
+
+                            if(option.showTextbox) {
+                                option.config = { numericOnly: !!option.numericOnly }
+                            }
+
                             return option
                         })
                     }
-
 
                     if(question.type === 'scale') {
                         let min = question.min
@@ -261,7 +268,7 @@ export function getQuestionnairesToShow() {
                 const hasPassedResearchTime = monthDiff >= RESEARCH_TIME_IN_MONTHS
                 let isShowing = false
                 if(questionnaireType.id === '1.1') {
-                    const hourDiff = moment(firstLoginTimeAtZero, DATE_FORMAT)
+                    const hourDiff = moment(firstLoginTime, DATE_FORMAT)
                                         .diff(moment(todayTime), 'hours')
                     const isFirstSignIn = hourDiff < .5
                     isShowing = !isFilled && isFirstSignIn
@@ -275,12 +282,16 @@ export function getQuestionnairesToShow() {
                     const weekDiff = moment(todayTime)
                                     .diff(moment(firstLoginTimeAtZero, DATE_FORMAT), 'weeks')
                     const hasPassedOneWeek = weekDiff >= 1
-                    isShowing = !isFilled && hasPassedOneWeek
+                    const hasFilledSimilarQuestionnaire = filled.includes("3.2")
+                    isShowing = !isFilled && hasPassedOneWeek && !hasFilledSimilarQuestionnaire
                 } else if(questionnaireType.id === "3.2") {
-                    isShowing = !isFilled && hasPassedResearchTime
+                    const hasFilledSimilarQuestionnaire = filled.includes("3.1")
+                    isShowing = !isFilled && hasPassedResearchTime && !hasFilledSimilarQuestionnaire
                 } else if(questionnaireType.id === "4.1") {
                     isShowing = !isFilled && !hasAnnotatedToday
                 }  else if(questionnaireType.id === "4.2") {
+                    const currentHour = todayTime.getHours()
+                    const isEvening = currentHour >= 17 && currentHour < 23
                     isShowing = !isFilled && isEvening
                 } else if(questionnaireType.id === "4.3") {
                     const hasAnnotatedBatch = hasAnnotatedToday 
@@ -288,6 +299,7 @@ export function getQuestionnairesToShow() {
                                             && textCountToday%TEXT_BATCH_COUNT === 0
                     isShowing = hasAnnotatedBatch
                 } else if(questionnaireType.id === "5.1") {
+                    console.log(hasPassedResearchTime, hasFinishedAll)
                     isShowing = !isFilled 
                                 && hasFinishedAll
                                 && hasPassedResearchTime
@@ -307,6 +319,20 @@ export function getQuestionnairesToShow() {
     catch(error) {
         console.error(error)
     }
+
+    const duplicatePairs = [["3.1", "3.2"]]
+    console.log(toShow, "ayam")
+    const hasDuplicates = duplicatePairs.some((duplicatePair)=> _.intersection(duplicatePair, toShow).length > 0)
+    console.log(hasDuplicates, "yes")
+    if(hasDuplicates) {
+        const pairs = _.flatten(duplicatePairs)
+        console.log(pairs)
+        const toBeKept = [...duplicatePairs.map((duplicatePair)=> duplicatePair[duplicatePair.length-1])]
+        console.log(toBeKept)
+        toShow = toShow.filter((ts)=> pairs.includes(ts) ? toBeKept.includes(ts) : true)
+        console.log(toShow)
+    }
+
     return toShow
 }
 

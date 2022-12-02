@@ -241,6 +241,7 @@ export const qTypes = [
                                 options: [
                                     {
                                         text: "Tak: proszę wymienić liczbę dzieci w polu odpowiedzi otwartej (tu odpowiedź otwarta)",
+                                        numericOnly: true,
                                         showTextbox: true,
                                     },
                                     {

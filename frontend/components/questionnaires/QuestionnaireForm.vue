@@ -15,7 +15,7 @@
         {{ $t('errors.incompleteAffectiveAnnotation') }}
         </v-alert>
       </div>
-      <div v-if="formData.questionnaires.length" class="questionnaire-container">
+      <div v-if="formData.questionnaires && formData.questionnaires.length" class="questionnaire-container">
         <v-col>
           <v-window
             v-model="activeQuestionnaire"
@@ -279,7 +279,7 @@ export default {
       if (selectedQuestionnaire) {
         const questions = _.flatMap(selectedQuestionnaire.segments, 'questions')
         const hasClickedEverything = questions.every((question) =>
-          question.required ? question.isClicked : true
+          question.required && question.isValid ? question.isClicked : true
         )
         if (hasClickedEverything) {
           this.showGreetingCard = true
@@ -302,13 +302,12 @@ export default {
       if (selectedQuestionnaire) {
         const questions = _.flatMap(selectedQuestionnaire.segments, 'questions')
         const hasClickedEverything = questions.every((question) =>
-          question.required ? question.isClicked : true
+          question.required && question.isValid ? question.isClicked : true
         )
         if (hasClickedEverything) {
           this.resetQuestionnaire()
           this.$router.push('/questionnaires')
         } else {
-          this.showWarning = true
           this.scrollToFaultyQuestion(questions)
         }
       } else {

@@ -68,20 +68,23 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapGetters('user', ['getUserId', 'getLogin', 'getQuestionnaire', 'getHistories'])
+    ...mapGetters('user', ['getLogin', 'getQuestionnaire', 'getHistories'])
   },
   methods: {
     ...mapActions('user', [
+      'setUserId',
       'setLogin',
       'initQuestionnaire',
       'setAnnotation',
       'setQuestionnaire',
       'addHistory'
     ]),
-    setUserData() {
-      const userHistory = this.getHistories.find((hist) => hist.id === this.getUserId)
-      if (!userHistory) {
-        this.addHistory({ ...history, id: this.getUserId })
+    async setUserData() {
+      const user = await this.$services.user.getMyProfile()
+      const userHistory = this.getHistories.find((hist) => hist.id === user.id)
+      if (user.id && !userHistory) {
+        this.setUserId(user.id)
+        this.addHistory({ ...history, id: user.id })
       }
       try {
         const dateFormat = 'DD-MM-YYYY HH:mm:ss'
@@ -105,7 +108,6 @@ export default Vue.extend({
         } else {
           this.setLogin({ isFirstLogin: false, lastLoginTime: loginTime })
         }
-        this.initQuestionnaire()
         if (currentDiffDay > 0) {
           this.setAnnotation({
             textCountToday: 0,
@@ -115,6 +117,7 @@ export default Vue.extend({
             filled: filled.filter((fill: any) => !fill.startsWith(dailyQuestionnaireId))
           })
         }
+        this.initQuestionnaire()
       } catch (error) {
         console.error(error)
       }

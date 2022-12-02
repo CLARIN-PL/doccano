@@ -119,12 +119,14 @@ export const qTypes = [
                                     {
                                         text: "za dużo",
                                         question: "Jaka liczba tekstów byłaby odpowiednia?",
-                                        showTextbox: true
+                                        showTextbox: true,
+                                        numericOnly: true
                                     },
                                     {
                                         text: "za mało",
                                         question: "Jaka liczba tekstów byłaby odpowiednia?",
-                                        showTextbox: true
+                                        showTextbox: true,
+                                        numericOnly: true
                                     },
                                     {
                                         text: "w sam raz"

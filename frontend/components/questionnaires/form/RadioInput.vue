@@ -16,10 +16,13 @@
       </v-radio>
     </v-radio-group>
 
+    {{ selectedOption }}
+
     <text-input
       v-if="selectedOption.showTextbox"
       v-model="inputText"
       :question="selectedOption.question || selectedOption.text"
+      :config="selectedOption.config"
       :full-question="selectedOption.question || selectedOption.text"
       :required="required"
       @submit="onTextInputSubmit"
