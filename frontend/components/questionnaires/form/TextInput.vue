@@ -14,7 +14,7 @@
           outlined
           readonly
           :value="showDialog ? '' : value"
-          :rules="config.numericOnly ? numericOnlyRules : rules"
+          :rules="textFieldRules"
           hide-details="auto"
         />
         <span v-show="errorMessage" class="error-message">
@@ -37,7 +37,7 @@
                 outlined
                 autofocus
                 :hint="$t('labels.clickEnter')"
-                :rules="config.numericOnly ? numericOnlyRules : rules"
+                :rules="textFieldRules"
                 @blur="onBlurTextField"
                 @keyup.enter="submitAnswer"
               />
@@ -123,13 +123,7 @@ export default {
       mdiSend,
       enableTextfield: true,
       showDialog: false,
-      dialogErrorMessage: '',
-      numericOnlyRules: [
-        (value) => {
-          const pattern = /^[0-9]+$/
-          return pattern.test(value) || this.$i18n.t('rules.inputTextRules.numericOnly')
-        }
-      ]
+      dialogErrorMessage: ''
     }
   },
 
@@ -141,6 +135,16 @@ export default {
       set(val) {
         this.$emit('input', val)
       }
+    },
+    textFieldRules() {
+      const { numericOnly } = this.config
+      const numericOnlyRules = [
+        (value) => {
+          const pattern = /^[0-9]+$/
+          return pattern.test(value) || this.$i18n.t('rules.inputTextRules.numericOnly')
+        }
+      ]
+      return numericOnly ? this.rules.concat(numericOnlyRules) : this.rules
     }
   },
   methods: {
