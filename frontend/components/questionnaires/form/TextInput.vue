@@ -33,7 +33,7 @@
           <v-row justify="center" align="top">
             <v-col cols="10">
               <v-text-field
-                v-model.trim="textInput"
+                v-model.trim="text"
                 outlined
                 autofocus
                 :hint="$t('labels.clickEnter')"
@@ -142,8 +142,8 @@ export default {
     }
   },
   watch: {
-    textInput() {
-      this.text = this.textInput
+    value() {
+      this.text = this.value
     }
   },
   methods: {
