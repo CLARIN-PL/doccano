@@ -15,7 +15,7 @@
         {{ $t('errors.incompleteAffectiveAnnotation') }}
         </v-alert>
       </div>
-      <div v-if="formData.questionnaires && formData.questionnaires.length" class="questionnaire-container">
+      <div v-if="formData.questionnaires && formData.questionnaires.length && isLoaded" class="questionnaire-container">
         <v-col>
           <v-window
             v-model="activeQuestionnaire"
@@ -114,6 +114,9 @@
           </v-window>
         </v-col>
       </div>
+      <div v-else-if="!isLoaded">
+        loading...
+      </div>
       <div v-else>
         {{ $t('questionnaires_main.errorNotFound') }}
         <v-btn color="primary" @click="onClickFinishButton">
@@ -155,38 +158,43 @@ export default {
       questionnaires: [],
       questions: [],
       activeQuestionnaire: 0,
+      isLoaded: false,
       showWarning: false,
       showGreetingCard: false,
-      formData: {}
+      formData: {
+        questionnaires: []
+      }
     }
   },
-  fetch() {
+  async fetch() {
     if (this.toShowId) {
-      this.list()
+      await this.list()
+      this.setFormData()
     }
   },
   computed: {
-    ...mapGetters('user', ['getQuestionnaire']),
+    ...mapGetters('user', ['getQuestionnaire', 'getAnnotation']),
     toShowId() {
       return this.getQuestionnaire.toShow[0]
-    },
-    selectedQType() {
-      return this.mappedQTypes.find((qType) => qType.id === this.toShowId)
     }
   },
   created() {
     this.initialize()
-    this.setFormData()
   },
   methods: {
     ...mapActions('user', ['setQuestionnaire']),
     setFormData() {
-      this.formData = this.selectedQType ? _.cloneDeep(this.selectedQType) : { questionnaires: [] }
+      const selectedQType = this.mappedQTypes.find((qType) => qType.id === this.toShowId)
+      const formData = selectedQType ? _.cloneDeep(selectedQType) : { questionnaires: [] }
+      this.formData = setQuestionnaireIds([formData], this.questionnaires, this.questions)[0]
     },
     initialize() {
       this.showWarning = false
       this.showGreetingCard = false
       this.mappedQTypes = mapQuestionnaireTypes(this.qTypes)
+      this.$nextTick(() => {
+        this.isLoaded = true
+      })
     },
     async list() {
       const typeId = this.toShowId.split('.')[0]
@@ -206,7 +214,6 @@ export default {
 
       this.questionnaires = _.cloneDeep(questionnaires.items)
       this.questions = _.cloneDeep(questions)
-      this.formData = setQuestionnaireIds([this.formData], this.questionnaires, this.questions)[0]
     },
     getFormDataKey(segQuIdx, segIdx, qIdx) {
       return `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}]`
@@ -290,10 +297,18 @@ export default {
     },
     resetQuestionnaire() {
       const { toShow, filled } = this.getQuestionnaire
+      const { textCountToday } = this.getAnnotation
+      const specialCombinations = [['4.3', textCountToday]]
+      const specialCombinationIds = specialCombinations.map((sc) => sc[0])
+      let id = this.toShowId
+      if (specialCombinationIds.includes(this.toShowId)) {
+        const combination = specialCombinations.find((sc) => sc.join('_').includes(this.toShowId))
+        id = combination.join('_')
+      }
       this.setQuestionnaire({
-        toShow: toShow.filter((ts) => ts !== this.toShowId),
+        toShow: toShow.filter((ts) => !ts.startsWith(this.toShowId)),
         inProgress: [],
-        filled: !filled.includes(this.toShowId) ? filled.concat(this.toShowId) : filled,
+        filled: !filled.includes(id) ? filled.concat(id) : filled,
         isWorkingNow: false
       })
     },

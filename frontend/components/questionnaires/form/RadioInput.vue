@@ -16,8 +16,6 @@
       </v-radio>
     </v-radio-group>
 
-    {{ selectedOption }}
-
     <text-input
       v-if="selectedOption.showTextbox"
       v-model="inputText"

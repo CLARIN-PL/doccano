@@ -70,7 +70,7 @@ export default Vue.extend({
       const hasFilledEverything = this.required
         ? this.formData.every((fData) => {
             return fData.showTextbox ? fData.value.includes(singleValueKey) : !!fData.value
-          })
+          }) && values.filter((val) => !!val).length
         : true
       this.$emit('input', values)
       this.$emit('change', { ...this.passedData, hasFilledEverything, value: values })
