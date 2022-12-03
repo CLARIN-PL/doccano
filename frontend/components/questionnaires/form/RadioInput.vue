@@ -1,9 +1,13 @@
 <template>
-  <div>
+  <div class="radio-input">
     <p>
-      {{ header }}
-      {{ question }}
-      <span v-if="required">*</span>
+      <span>
+        {{ header }}
+      </span>
+      <span>
+        {{ question }}
+      </span>
+      <span class="red--text" v-if="required">*</span>
     </p>
     <v-radio-group v-model="input">
       <v-radio
@@ -164,3 +168,12 @@ export default Vue.extend({
   }
 })
 </script>
+<style lang="scss">
+.radio-input .v-input {
+  font-size: 0.875rem !important;
+
+  label {
+    font-size: inherit !important;
+  }
+}
+</style>

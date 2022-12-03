@@ -1,7 +1,9 @@
 <template>
-  <div>
-    {{ question }}
-    <span v-if="required">*</span>
+  <div class="slider-input">
+    <span>
+      {{ question }}
+    </span>
+    <span class="red--text" v-if="required">*</span>
     <v-row align="center">
       <v-col>
         <v-slider
@@ -24,7 +26,7 @@
           <template v-if="!config.showTickLabels" #append>{{ config.maxLabel }}</template>
         </v-slider>
       </v-col>
-      <v-spacer v-if="config.showTickLabels"/>
+      <v-spacer v-if="config.showTickLabels" />
     </v-row>
   </div>
 </template>
@@ -83,7 +85,9 @@ export default Vue.extend({
     tickLabels() {
       const start = this.config.min
       const end = this.config.max
-      return Array(end - start + 1).fill(undefined).map((_, idx) => (start + idx).toString())
+      return Array(end - start + 1)
+        .fill(undefined)
+        .map((_, idx) => (start + idx).toString())
     }
   },
   mounted() {
