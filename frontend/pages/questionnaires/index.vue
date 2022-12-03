@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <greeting-card @click="redirect" />
-  </div>
+  <v-row align="center" justify="center">
+    <v-col cols="8" class="mt-10">
+      <greeting-card @click="redirect" />
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">

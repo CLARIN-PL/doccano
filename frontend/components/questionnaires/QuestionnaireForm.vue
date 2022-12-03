@@ -1,9 +1,9 @@
 <template>
-  <v-row align="center" >
-    <div v-if="showGreetingCard">
+  <v-row align="center" justify="center" >
+    <v-col cols="8" v-if="showGreetingCard">
       <greeting-card @click="onClickGreetingCardButton" />
-    </div>
-    <v-col v-else>
+    </v-col>
+    <v-col cols="8" v-else>
       <div ref="header">
         <v-alert
             v-model="showWarning"
@@ -33,20 +33,19 @@
                     align="center"
                   >
                     <v-col>
-                      <header>
-                        <strong class="text-h6">{{ questionnaire.name }}</strong>
-                        <p>
-                          {{ questionnaire.description }}
-                        </p>
+                      <header class="text-center" >
+                        <h2 class="mb-5">{{ questionnaire.name }}</h2>
                       </header>
-
-                      <ul>
+                      <p class="text-caption">
+                        {{ questionnaire.description }}
+                      </p>
+                      <ul class="pa-0">
                         <li
                           v-for="(segment, segIdx) in questionnaire.segments"
                           :key="`segment-${segIdx}`"
                           class="hide-list-style"
                         >
-                          <div v-if="segment.scales" class="segment-description-container">
+                          <div v-if="segment.scales" class="segment-description-container text-caption">
                             <p>
                               {{ segment.scales.description }}
                               <ul class="hide-list-style">
@@ -61,13 +60,13 @@
                             <ol :class="segment.prependIndex ? 'segment-question hide-list-style' : 'segment-question'">
                                 <li 
                                   v-for="(segmentQuestion, segQuIdx) in segment.questions" 
-                                  :ref="`question_${segQuIdx}`"
+                                  :ref="`question_${qIdx}_${segQuIdx}`"
                                   :key="`segmentQuestion-${segQuIdx}`"
                                 >
                                   <div v-if="segmentQuestion.id" class="question-container">
-                                    <p v-if="segment.prependIndex">
+                                    <span v-if="segment.prependIndex">
                                       {{ segment.prependIndex+(segQuIdx+1) }}
-                                    </p>
+                                    </span>
                                     <component 
                                       :is="getComponent(segmentQuestion.type)"
                                       v-model="segmentQuestion.value"
@@ -100,10 +99,12 @@
                     </v-col>
                   </v-row>
                 </v-card-text>
+                <v-divider />
                 <v-card-actions>
+                  <v-spacer />
                   <v-btn v-if="activeQuestionnaire+1 < formData.questionnaires.length" 
                     color="primary" @click="onClickContinueButton">
-                    {{ $t('questionnaires_main.buttonContinue') }}
+                    {{ $t('generic.continue') }}
                   </v-btn>
                   <v-btn v-else color="primary" @click="onClickFinishButton">
                     {{ $t('questionnaires_main.buttonFinish') }}
@@ -115,9 +116,12 @@
         </v-col>
       </div>
       <div v-else-if="!isLoaded">
-        loading...
+        <v-progress-circular
+          indeterminate
+          color="primary"
+        ></v-progress-circular>
       </div>
-      <div v-else>
+      <div v-else class="align-right">
         {{ $t('questionnaires_main.errorNotFound') }}
         <v-btn color="primary" @click="onClickFinishButton">
           {{ $t('questionnaires_main.buttonFinish') }}
@@ -271,12 +275,11 @@ export default {
       this.activeQuestionnaire += 1
       window.scrollTo({ top: 0, behavior: 'smooth' })
     },
-    scrollToFaultyQuestion(questions = []) {
+    scrollToFaultyQuestion(id, questions = []) {
       const firstErrorIndex = questions.findIndex((question) => !question.isClicked)
       this.showWarning = true
-
-      if (this.$refs[`question_${firstErrorIndex}`][0]) {
-        this.$refs[`question_${firstErrorIndex}`][0].scrollIntoView({ behavior: 'smooth' })
+      if (this.$refs[`question_${id}_${firstErrorIndex}`][0]) {
+        this.$refs[`question_${id}_${firstErrorIndex}`][0].scrollIntoView({ behavior: 'smooth' })
       } else {
         this.$refs.header.scrollIntoView({ behavior: 'smooth' })
       }
@@ -291,7 +294,7 @@ export default {
         if (hasClickedEverything) {
           this.showGreetingCard = true
         } else {
-          this.scrollToFaultyQuestion(questions)
+          this.scrollToFaultyQuestion(this.activeQuestionnaire, questions)
         }
       }
     },
