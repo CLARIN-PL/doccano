@@ -256,7 +256,7 @@ export function getQuestionnairesToShow() {
     try {
         if(getters) {
             qTypes.forEach((questionnaireType) => {
-                const isFilled = filled.includes(questionnaireType.id)
+                let isFilled = filled.includes(questionnaireType.id)
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { firstLoginTime } = getters['user/getLogin']
                 const firstLoginTimeAtZero = moment(firstLoginTime, DATE_FORMAT).format("DD-MM-YYYY")+" 00:00:00"
@@ -294,12 +294,12 @@ export function getQuestionnairesToShow() {
                     const isEvening = currentHour >= 17 && currentHour < 23
                     isShowing = !isFilled && isEvening
                 } else if(questionnaireType.id === "4.3") {
+                    isFilled = !!filled.find((fill)=> fill === `4.3_${textCountToday}`)
                     const hasAnnotatedBatch = hasAnnotatedToday 
                                             && textCountToday > 0 
                                             && textCountToday%TEXT_BATCH_COUNT === 0
-                    isShowing = hasAnnotatedBatch
+                    isShowing = !isFilled && hasAnnotatedBatch
                 } else if(questionnaireType.id === "5.1") {
-                    console.log(hasPassedResearchTime, hasFinishedAll)
                     isShowing = !isFilled 
                                 && hasFinishedAll
                                 && hasPassedResearchTime
@@ -321,16 +321,11 @@ export function getQuestionnairesToShow() {
     }
 
     const duplicatePairs = [["3.1", "3.2"]]
-    console.log(toShow, "ayam")
     const hasDuplicates = duplicatePairs.some((duplicatePair)=> _.intersection(duplicatePair, toShow).length > 0)
-    console.log(hasDuplicates, "yes")
     if(hasDuplicates) {
         const pairs = _.flatten(duplicatePairs)
-        console.log(pairs)
         const toBeKept = [...duplicatePairs.map((duplicatePair)=> duplicatePair[duplicatePair.length-1])]
-        console.log(toBeKept)
         toShow = toShow.filter((ts)=> pairs.includes(ts) ? toBeKept.includes(ts) : true)
-        console.log(toShow)
     }
 
     return toShow

@@ -81,7 +81,7 @@ export default Vue.extend({
     ]),
     async setUserData() {
       const user = await this.$services.user.getMyProfile()
-      const userHistory = this.getHistories.find((hist) => hist.id === user.id)
+      const userHistory = this.getHistories.find((hist: any) => hist.id === user.id)
       if (user.id && !userHistory) {
         this.setUserId(user.id)
         this.addHistory({ ...history, id: user.id })
