@@ -298,11 +298,9 @@ export function getQuestionnairesToShow() {
                     const weekDiff = moment(todayTime)
                                     .diff(moment(firstLoginTimeAtZero, DATE_FORMAT), 'weeks')
                     const hasPassedOneWeek = weekDiff >= 1
-                    const hasFilledSimilarQuestionnaire = filled.includes("3.2")
-                    isShowing = !isFilled && hasPassedOneWeek && !hasFilledSimilarQuestionnaire
+                    isShowing = !isFilled && hasPassedOneWeek
                 } else if(questionnaireType.id === "3.2") {
-                    const hasFilledSimilarQuestionnaire = filled.includes("3.1")
-                    isShowing = !isFilled && hasPassedResearchTime && !hasFilledSimilarQuestionnaire
+                    isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "4.1") {
                     isShowing = !isFilled && !hasAnnotatedToday
                 }  else if(questionnaireType.id === "4.2") {
