@@ -100,8 +100,8 @@
             <v-col :cols="showArticleViewer ? 7 : 12" class="annotation-container">
               <v-card
                 v-shortkey="shortKeysCategory"
-                @shortkey="addOrRemoveCategory"
                 class="annotation-card"
+                @shortkey="addOrRemoveCategory"
               >
                 <v-card-title v-if="categoryTypes.length">
                   <label-group
