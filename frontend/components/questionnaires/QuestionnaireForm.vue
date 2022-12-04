@@ -341,13 +341,13 @@ export default {
         )
         if (hasClickedEverything) {
           this.resetQuestionnaire()
-          this.$router.push('/questionnaires')
+          this.$router.push(this.localePath('/questionnaires'))
         } else {
           this.scrollToFaultyQuestion(questions)
         }
       } else {
         this.resetQuestionnaire()
-        this.$router.push('/questionnaires')
+        this.$router.push(this.localePath('/questionnaires'))
       }
     }
   }

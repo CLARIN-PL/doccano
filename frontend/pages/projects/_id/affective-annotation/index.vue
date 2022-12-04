@@ -479,7 +479,7 @@ export default {
       deep: true,
       handler() {
         if(valtoShow.length) {
-          this.$router.push("/questionnaires")
+          this.$router.push(this.localePath('/questionnaires'))
         }
       }
     },

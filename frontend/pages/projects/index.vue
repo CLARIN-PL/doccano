@@ -49,7 +49,7 @@ export default Vue.extend({
   },
   layout: 'projects',
 
-  middleware: ['check-auth', 'auth', 'check-questionnaire'],
+  middleware: ['check-auth', 'auth'],
 
   data() {
     return {
@@ -153,7 +153,7 @@ export default Vue.extend({
     checkQuestionnaire() {
       this.initQuestionnaire()
       if (!this.isStaff && this.getQuestionnaire.toShow.length) {
-        this.$router.push('/questionnaires')
+        this.$router.push(this.localePath('/questionnaires'))
       }
     },
 

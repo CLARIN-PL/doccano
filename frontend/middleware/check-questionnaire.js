@@ -1,6 +1,6 @@
 import { qCategories } from "~/utils/questionnaires"
 
-export default function ({ store, route, redirect }) {
+export default function ({ store, route, redirect, app }) {
     const isStaff = store.getters['auth/isStaff']
     const {toShow} = store.getters['user/getQuestionnaire']
     const isOnQuestionnairePage = route.path.includes("/questionnaires")
@@ -12,12 +12,13 @@ export default function ({ store, route, redirect }) {
         const toShowCategoryId = toShowId.split(".")[0]
         const { key } = qCategories.find((qCategory)=> qCategory.id === toShowCategoryId )
         
+        const locale = app.i18n.locale ?? 'en'
         if(!isStaff && toShow.length && !isOnQuestionnairePage) {
-            return redirect("/questionnaires")
+            return redirect(locale + "/questionnaires")
         } 
         else if(!isStaff && toShow.length && isOnQuestionnairePage) {
             if(isWorkingNow && (isOnMainQuestionnairePage || !route.path.includes(key))) { 
-                redirect(`/questionnaires/${key}`)
+                redirect(`${locale}/questionnaires/${key}`)
             }
         }
     } else if(hasValidToShow && !toShow.length && isOnQuestionnairePage)  {
