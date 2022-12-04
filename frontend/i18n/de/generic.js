@@ -23,5 +23,6 @@ export default {
     message1: 'Danke für deine Arbeit!',
     message2: 'Sie können mit dem Kommentieren fortfahren:',
     message3: 'Bitte aktualisieren Sie diese Seite, wenn die Ruhezeit abgelaufen ist.'
-  }
+  },
+  goToTop: "Gehen Sie zurück nach oben"
 }
