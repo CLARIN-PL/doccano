@@ -35,53 +35,59 @@
         filled
       />
     </template>
-      <template #[`item.title`]="{ item }">
-        <span class="d-flex d-sm-none article-title">{{ item.title | truncate(50) }}</span>
-        <span class="d-none d-sm-flex article-title">{{ item.title | truncate(200) }}</span>
-      </template>
-    <template #expanded-item="{ item }">
-        <td :colspan="headers.length + 2" class="expanded-column" >
-            <v-data-table
-                ref="articleItemsDatatable"
-                class="article-items-datatable"
-                :value="selectedChildArticleItems"
-                :headers="childHeaders"
-                :items="item.data"
-                :loading-text="$t('generic.loading')"
-                :no-data-text="$t('vuetify.noDataAvailable')"
-                item-key="id"
-                :show-select="isProjectAdmin"
-                show-expand
-                @item-selected="onSelectChildArticleItems"
-            >
-                <template #[`item.text`]="articleItem">
-                  <span class="d-flex d-sm-none">{{ articleItem.item.text | truncate(50) }}</span>
-                  <span class="d-none d-sm-flex">{{ articleItem.item.text | truncate(200) }}</span>
-                </template>
-                <template #[`item.isConfirmed`]="articleItem">
-                  {{ articleItem.item.isConfirmed ? $t('annotation.checkedTooltip') : $t('annotation.notCheckedTooltip') }}
-                </template>
-                <template #[`item.action`]="articleItem">
-                    <v-btn 
-                      v-if="showAnnotationButton"
-                      small 
-                      color="primary text-capitalize mr-5" 
-                      @click="toLabeling(articleItem.item)">
-                        {{ $t('dataset.annotate') }}
-                    </v-btn>
-                </template>
-            </v-data-table>
-        </td>
+    <template #[`item.title`]="{ item }">
+      <span class="d-flex d-sm-none article-title">{{ item.title | truncate(50) }}</span>
+      <span class="d-none d-sm-flex article-title">{{ item.title | truncate(200) }}</span>
     </template>
-    <template #[`item.isConfirmed`]="{item}">
+    <template #expanded-item="{ item }">
+      <td :colspan="headers.length + 2" class="expanded-column">
+        <v-data-table
+          ref="articleItemsDatatable"
+          class="article-items-datatable"
+          :value="selectedChildArticleItems"
+          :headers="childHeaders"
+          :items="item.data"
+          :loading-text="$t('generic.loading')"
+          :no-data-text="$t('vuetify.noDataAvailable')"
+          item-key="id"
+          :show-select="isProjectAdmin"
+          show-expand
+          @item-selected="onSelectChildArticleItems"
+        >
+          <template #[`item.text`]="articleItem">
+            <span class="d-flex d-sm-none">{{ articleItem.item.text | truncate(50) }}</span>
+            <span class="d-none d-sm-flex">{{ articleItem.item.text | truncate(200) }}</span>
+          </template>
+          <template #[`item.isConfirmed`]="articleItem">
+            {{
+              articleItem.item.isConfirmed
+                ? $t('annotation.checkedTooltip')
+                : $t('annotation.notCheckedTooltip')
+            }}
+          </template>
+          <template #[`item.action`]="articleItem">
+            <v-btn
+              v-if="showAnnotationButton"
+              small
+              color="primary text-capitalize mr-5"
+              @click="toLabeling(articleItem.item)"
+            >
+              {{ $t('dataset.annotate') }}
+            </v-btn>
+          </template>
+        </v-data-table>
+      </td>
+    </template>
+    <template #[`item.isConfirmed`]="{ item }">
       {{ item.isConfirmed ? $t('annotation.checkedTooltip') : $t('annotation.notCheckedTooltip') }}
     </template>
     <template #[`item.action`]="{ item }">
-      <v-btn 
+      <v-btn
         v-if="showAnnotationButton"
         small
-        color="primary text-capitalize mr-5" 
-        @click="toLabeling(item.data[0])">
+        color="primary text-capitalize mr-5"
+        @click="toLabeling(item.data[0])"
+      >
         {{ $t('dataset.startAnnotation') }}
       </v-btn>
     </template>
@@ -94,8 +100,15 @@ import _ from 'lodash'
 import { mdiMagnify } from '@mdi/js'
 import { DataOptions } from 'vuetify/types'
 import { ExampleMetaContent } from '~/domain/models/example/example'
-import { ExampleArticleDTO, ExampleDTO, ExampleGroupedDTO } from '~/services/application/example/exampleData'
-import { DatatableSelectArticleEventData, DatatableSelectChildArticleEventData } from '~/services/application/example/exampleVuetify'
+import {
+  ExampleArticleDTO,
+  ExampleDTO,
+  ExampleGroupedDTO
+} from '~/services/application/example/exampleData'
+import {
+  DatatableSelectArticleEventData,
+  DatatableSelectChildArticleEventData
+} from '~/services/application/example/exampleVuetify'
 
 export default Vue.extend({
   props: {
@@ -106,7 +119,7 @@ export default Vue.extend({
     },
     showAnnotationButton: {
       type: Boolean,
-      default: true,
+      default: true
     },
     items: {
       type: Array as PropType<ExampleDTO[]>,
@@ -142,66 +155,69 @@ export default Vue.extend({
       return this.$route.params.id
     },
     groupedItems() {
-        const groupsByArticleIdDict = _.groupBy(this.items, 'articleId') as ExampleGroupedDTO
-        const groupsByArticleIdList = [] as ExampleArticleDTO[]
-        Object.keys(groupsByArticleIdDict).forEach((key: string, index: number)=> {
-            const firstItem = groupsByArticleIdDict[key][0] as ExampleDTO
-            firstItem.meta.meta = firstItem.meta.meta || {} as ExampleMetaContent
-            groupsByArticleIdList.push({
-                itemId: `${key}_article_${index}`,
-                id: index,
-                articleId: key,
-                isConfirmed: groupsByArticleIdDict[key].every((data: ExampleDTO) => data.isConfirmed === true),
-                title: firstItem.meta.meta.article_title,
-                publishDatetime: firstItem.meta.meta.publish_datetime,
-                data: groupsByArticleIdDict[key] as ExampleDTO[]
-            })
+      const groupsByArticleIdDict = _.groupBy(this.items, 'articleId') as ExampleGroupedDTO
+      const groupsByArticleIdList = [] as ExampleArticleDTO[]
+      Object.keys(groupsByArticleIdDict).forEach((key: string, index: number) => {
+        const firstItem = groupsByArticleIdDict[key][0] as ExampleDTO
+        firstItem.meta.meta = firstItem.meta.meta || ({} as ExampleMetaContent)
+        groupsByArticleIdList.push({
+          itemId: `${key}_article_${index}`,
+          id: index,
+          articleId: key,
+          isConfirmed: groupsByArticleIdDict[key].every(
+            (data: ExampleDTO) => data.isConfirmed === true
+          ),
+          title: firstItem.meta.meta.article_title,
+          publishDatetime: firstItem.meta.meta.publish_datetime,
+          data: groupsByArticleIdDict[key] as ExampleDTO[]
         })
-        const articleList : ExampleArticleDTO[] = groupsByArticleIdList
-          .map((group: ExampleArticleDTO)=> {
-            group.data = group.data.map((data: ExampleDTO, index: number)=> {
-                data.itemId = `${data.articleId}_articleItem_${index}`
-                return data
-            })
-            group.data = _.sortBy(group.data, 'order')
-            return group
-        })
-        return articleList
+      })
+      const articleList: ExampleArticleDTO[] = groupsByArticleIdList.map(
+        (group: ExampleArticleDTO) => {
+          group.data = group.data.map((data: ExampleDTO, index: number) => {
+            data.itemId = `${data.articleId}_articleItem_${index}`
+            return data
+          })
+          group.data = _.sortBy(group.data, 'order')
+          return group
+        }
+      )
+      return articleList
     },
     childHeaders() {
       const headers = [
-            {
-                text: this.$t('dataset.text'),
-                value: 'text',
-                sortable: true
-            },
-            {
-                text: this.$t('dataset.type'),
-                value: 'type',
-                sortable: false
-            },
-            {
-                text: this.$t('dataset.order'),
-                value: 'order',
-                sortable: false
-            },
-            {
-                text: this.$t('comments.comments'),
-                value: 'commentCount',
-                sortable: false
-            },
-            {
-              text: this.$t('dataset.status'),
-              value: 'isConfirmed',
-              sortable: true
-            },
-            {
-                text: this.$t('dataset.action'),
-                value: 'action',
-                sortable: false
-            }
-        ]
-        return headers
+        {
+          text: this.$t('dataset.text'),
+          value: 'text',
+          sortable: true
+        },
+        {
+          text: this.$t('dataset.type'),
+          value: 'type',
+          sortable: false
+        },
+        {
+          text: this.$t('dataset.order'),
+          value: 'order',
+          sortable: false
+        },
+        {
+          text: this.$t('comments.comments'),
+          value: 'commentCount',
+          sortable: false
+        },
+        {
+          text: this.$t('dataset.status'),
+          value: 'isConfirmed',
+          sortable: true
+        },
+        {
+          text: this.$t('dataset.action'),
+          value: 'action',
+          sortable: false
+        }
+      ]
+      return headers
     },
     headers() {
       const headers = [
@@ -234,12 +250,14 @@ export default Vue.extend({
       handler() {
         const childIds = _.flatMap(this.items, 'itemId') as string[]
         const articleIds = _.flatMap(this.items, 'articleId') as string[]
-        this.selectedChildArticleItems = this.selectedChildArticleItems
-          .filter((selItem)=> childIds.includes(selItem.itemId)) as ExampleDTO[]
-        this.selectedArticleItems = this.selectedArticleItems
-          .filter((selItem)=> articleIds.includes(selItem.itemId)) as ExampleArticleDTO[]
+        this.selectedChildArticleItems = this.selectedChildArticleItems.filter((selItem) =>
+          childIds.includes(selItem.itemId)
+        ) as ExampleDTO[]
+        this.selectedArticleItems = this.selectedArticleItems.filter((selItem) =>
+          articleIds.includes(selItem.itemId)
+        ) as ExampleArticleDTO[]
       },
-      deep: true,
+      deep: true
     },
     options: {
       handler() {
@@ -268,57 +286,69 @@ export default Vue.extend({
     this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
   },
   methods: {
-    onSelectArticleItems({item, value} : DatatableSelectArticleEventData) {
-      if(value) {
-        const hasExist : boolean = this.selectedArticleItems
-          .some((selItem) => selItem.itemId === item.itemId )
-        if(!hasExist && item) {
+    onSelectArticleItems({ item, value }: DatatableSelectArticleEventData) {
+      if (value) {
+        const hasExist: boolean = this.selectedArticleItems.some(
+          (selItem) => selItem.itemId === item.itemId
+        )
+        if (!hasExist && item) {
           this.selectedArticleItems.push(item)
         }
       } else {
-        this.selectedArticleItems = this.selectedArticleItems
-          .filter((selItem)=> selItem.itemId !== item.itemId)
+        this.selectedArticleItems = this.selectedArticleItems.filter(
+          (selItem) => selItem.itemId !== item.itemId
+        )
       }
-      this.selectedChildArticleItems = _.flatMap(this.selectedArticleItems, 
-        ({ data }) => data ) as ExampleDTO[]
-      this.$nextTick(()=> {
-        this.$emit('input', this.selectedChildArticleItems) 
+      this.selectedChildArticleItems = _.flatMap(
+        this.selectedArticleItems,
+        ({ data }) => data
+      ) as ExampleDTO[]
+      this.$nextTick(() => {
+        this.$emit('input', this.selectedChildArticleItems)
       })
     },
-    onSelectAllArticleItems({ items, value } : DatatableSelectArticleEventData) {
-      this.selectedArticleItems = value ? items : [] as ExampleArticleDTO[]; 
-      this.selectedChildArticleItems = _.flatMap(this.selectedArticleItems, 
-        ({ data }) => data ) as ExampleDTO[]
-      this.$nextTick(()=> {
-        this.$emit('input', this.selectedChildArticleItems) 
+    onSelectAllArticleItems({ items, value }: DatatableSelectArticleEventData) {
+      this.selectedArticleItems = value ? items : ([] as ExampleArticleDTO[])
+      this.selectedChildArticleItems = _.flatMap(
+        this.selectedArticleItems,
+        ({ data }) => data
+      ) as ExampleDTO[]
+      this.$nextTick(() => {
+        this.$emit('input', this.selectedChildArticleItems)
       })
     },
-    onSelectChildArticleItems({item, value} : DatatableSelectChildArticleEventData) {
-      if(value) {
-        const hasExist : boolean = this.selectedChildArticleItems
-          .some((selItem) => selItem.itemId === item.itemId )
-        if(!hasExist && item) {
+    onSelectChildArticleItems({ item, value }: DatatableSelectChildArticleEventData) {
+      if (value) {
+        const hasExist: boolean = this.selectedChildArticleItems.some(
+          (selItem) => selItem.itemId === item.itemId
+        )
+        if (!hasExist && item) {
           this.selectedChildArticleItems.push(item)
         }
-        const parent : undefined | ExampleArticleDTO = this.groupedItems
-          .find((selItem) =>  selItem.articleId === item.articleId)
-        if(parent) {
-          const hasParentExist : boolean = this.selectedArticleItems
-            .some((selItem) => selItem.itemId === parent.itemId) 
+        const parent: undefined | ExampleArticleDTO = this.groupedItems.find(
+          (selItem) => selItem.articleId === item.articleId
+        )
+        if (parent) {
+          const hasParentExist: boolean = this.selectedArticleItems.some(
+            (selItem) => selItem.itemId === parent.itemId
+          )
           !hasParentExist && this.selectedArticleItems.push(parent)
         }
       } else {
-        this.selectedChildArticleItems = this.selectedChildArticleItems
-          .filter((selItem) => selItem.itemId !== item.itemId )
-        const hasAnotherChild = this.selectedChildArticleItems
-          .some((selItem) => selItem.articleId === item.articleId )
-        if(!hasAnotherChild) {
-          this.selectedArticleItems = this.selectedArticleItems
-            .filter((selItem) => selItem.articleId !== item.articleId )
+        this.selectedChildArticleItems = this.selectedChildArticleItems.filter(
+          (selItem) => selItem.itemId !== item.itemId
+        )
+        const hasAnotherChild = this.selectedChildArticleItems.some(
+          (selItem) => selItem.articleId === item.articleId
+        )
+        if (!hasAnotherChild) {
+          this.selectedArticleItems = this.selectedArticleItems.filter(
+            (selItem) => selItem.articleId !== item.articleId
+          )
         }
       }
-      this.$nextTick(()=> {
-        this.$emit('input', this.selectedChildArticleItems) 
+      this.$nextTick(() => {
+        this.$emit('input', this.selectedChildArticleItems)
       })
     },
     toLabeling(item: ExampleDTO) {
@@ -334,37 +364,37 @@ export default Vue.extend({
 .article-datatable {
   .article-title {
     font-weight: 500;
-    font-size: .875rem;
+    font-size: 0.875rem;
   }
 
   .expanded-column {
-    padding: 0 !important; 
+    padding: 0 !important;
   }
 }
 
 .article-items-datatable {
   &.v-data-table {
-    border-radius: 0; 
+    border-radius: 0;
   }
-  
+
   &.theme--light.v-data-table {
     background-color: #f5f5f5;
 
     tbody tr {
-      &:nth-of-type(2n+1) {
+      &:nth-of-type(2n + 1) {
         background-color: #ddd;
       }
-    }   
+    }
   }
 
   .v-data-table__expand-icon {
-    opacity: 0; 
+    opacity: 0;
     visibility: hidden;
   }
 
-  th[role="columnheader"] {
+  th[role='columnheader'] {
     .v-simple-checkbox {
-      display: none; 
+      display: none;
     }
   }
 }

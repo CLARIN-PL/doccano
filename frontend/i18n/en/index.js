@@ -18,7 +18,7 @@ import statistics from './projects/statistics'
 import settings from './projects/settings'
 import annotation_toolbar from './projects/annotation/toolbar'
 import annotation_sidebar from './projects/annotation/sidebar'
-
+import questionnaires_main from "./questionnaires/main"
 
 
 export default {
@@ -41,5 +41,6 @@ export default {
   statistics,
   settings,
   annotation_toolbar,
-  annotation_sidebar
+  annotation_sidebar,
+  questionnaires_main
 }

@@ -26,7 +26,7 @@ export default {
     TheSideBar,
     TheHeader
   },
-  middleware: ['check-auth', 'auth', 'set-project'],
+  middleware: ['check-auth', 'auth', 'set-project', 'check-questionnaire'],
 
   data() {
     return {

@@ -37,9 +37,13 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import moment from 'moment'
 import { mdiAccount, mdiLock } from '@mdi/js'
+import { mapGetters, mapActions } from 'vuex'
 import { userNameRules, passwordRules } from '@/rules/index'
 import BaseCard from '@/components/utils/BaseCard.vue'
+import { history } from '~/store/user'
+import { hasValidLoginTime } from '~/utils/questionnaires'
 
 export default Vue.extend({
   components: {
@@ -64,14 +68,83 @@ export default Vue.extend({
       mdiLock
     }
   },
-
+  computed: {
+    ...mapGetters('user', ['getLogin', 'getQuestionnaire', 'getHistories'])
+  },
   methods: {
+    ...mapActions('user', [
+      'setUserId',
+      'setLogin',
+      'initQuestionnaire',
+      'setAnnotation',
+      'setQuestionnaire',
+      'addHistory'
+    ]),
+    async setUserData() {
+      const user = await this.$services.user.getMyProfile()
+      const userHistory = this.getHistories.find((hist: any) => hist.id === user.id)
+
+      if (user.id && !userHistory) {
+        this.setUserId(user.id)
+        this.addHistory({ ...history, id: user.id })
+      }
+
+      try {
+        const dateFormat = 'DD-MM-YYYY HH:mm:ss'
+        const loginTime = moment().format(dateFormat)
+        const lastLoginTime = this.getLogin.lastLoginTime
+        const lastLoginDay = parseInt(moment(lastLoginTime, dateFormat).format('DD'))
+        const todayDay = parseInt(moment().format('DD'))
+        let currentDiffDay = this.getLogin.lastLoginTime
+          ? moment(new Date()).diff(moment(lastLoginTime, dateFormat), 'days')
+          : 0
+        currentDiffDay = currentDiffDay === 0 ? todayDay - lastLoginDay : currentDiffDay
+
+        if (!hasValidLoginTime(new Date())) {
+          this.setAnnotation({
+            textCountToday: 0,
+            hasAnnotatedToday: false
+          })
+          this.setQuestionnaire({
+            toShow: [],
+            inProgress: [],
+            filled: []
+          })
+        }
+
+        if (!this.getLogin.firstLoginTime) {
+          this.setLogin({
+            firstLoginTime: loginTime,
+            isFirstLogin: true,
+            lastLoginTime: loginTime
+          })
+        } else {
+          this.setLogin({ isFirstLogin: false, lastLoginTime: loginTime })
+        }
+
+        if (currentDiffDay > 0) {
+          const { filled } = this.getQuestionnaire
+          const dailyQuestionnaireId = '4'
+          this.setAnnotation({
+            textCountToday: 0,
+            hasAnnotatedToday: false
+          })
+          this.setQuestionnaire({
+            filled: filled.filter((fill: any) => !fill.startsWith(dailyQuestionnaireId))
+          })
+        }
+        this.initQuestionnaire()
+      } catch (error) {
+        console.error(error)
+      }
+    },
     async tryLogin() {
       try {
         await this.login({
           username: this.username,
           password: this.password
         })
+        this.setUserData()
         this.$router.push(this.localePath('/projects'))
       } catch {
         this.showError = true

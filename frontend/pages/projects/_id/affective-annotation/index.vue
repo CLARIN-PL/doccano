@@ -100,8 +100,8 @@
             <v-col :cols="showArticleViewer ? 7 : 12" class="annotation-container">
               <v-card
                 v-shortkey="shortKeysCategory"
-                @shortkey="addOrRemoveCategory"
                 class="annotation-card"
+                @shortkey="addOrRemoveCategory"
               >
                 <v-card-title v-if="categoryTypes.length">
                   <label-group
@@ -262,6 +262,7 @@
 import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 import { mdiText, mdiFormatListBulleted } from '@mdi/js'
+import moment from 'moment'
 import LabelGroup from '@/components/tasks/textClassification/LabelGroup'
 import LabelSelect from '@/components/tasks/textClassification/LabelSelect'
 import LayoutText from '@/components/tasks/layout/LayoutText'
@@ -377,6 +378,7 @@ export default {
   computed: {
     ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId']),
     ...mapGetters('config', ['isRTL']),
+    ...mapGetters('user', ['getAnnotation']),
     shortKeysSpans() {
       return Object.fromEntries(this.spanTypes.map((item) => [item.id, [item.suffixKey]]))
     },
@@ -463,6 +465,24 @@ export default {
   },
 
   watch: {
+    getAnnotation: {
+      deep: true,
+      handler(val) {
+        const textBatchCount = 20
+        if(val.textCountToday > 0 && val.textCountToday%textBatchCount === 0) {
+          this.initQuestionnaire()
+          
+        }
+      }
+    },
+    getQuestionnaire: {
+      deep: true,
+      handler() {
+        if(valtoShow.length) {
+          this.$router.push("/questionnaires")
+        }
+      }
+    },
     '$route.query': '$fetch',
     enableAutoLabeling(val) {
       if (val) {
@@ -486,7 +506,8 @@ export default {
   },
 
   methods: {
-    ...mapActions('user', ['setRestingPeriod', 'calculateRestingPeriod']),
+    ...mapActions('user', ['setRestingPeriod', 'calculateRestingPeriod', 
+      'setAnnotation', 'initQuestionnaire', 'getQuestionnaire']),
 
     async checkRestingPeriod() {
       const restingEndTime = await this.calculateRestingPeriod()
@@ -750,7 +771,8 @@ export default {
       }
     },
     async confirm() {
-      if (this.project.isCombinationMode) {
+      const DATE_FORMAT = "DD-MM-YYYY HH:mm:ss"
+      if(this.project.isCombinationMode) {
         this.hasValidEntries.isSummaryMode = this.isAllAffectiveSummaryAdded()
         this.hasValidEntries.isOthersMode = this.isAllAffectiveOthersAdded()
         this.hasValidEntries.isEmotionsMode = this.isAllAffectiveEmotionsAdded()
@@ -766,6 +788,12 @@ export default {
         await this.$services.example.confirm(this.projectId, this.doc.id)
         await this.$fetch()
         this.updateProgress()
+        const textCountToday = this.doc.isConfirmed ? this.getAnnotation.textCountToday+1 : this.getAnnotation.textCountToday
+        this.setAnnotation({ 
+          hasAnnotatedToday: true, 
+          textCountToday,
+          lastAnnotationTime: moment().format(DATE_FORMAT)
+        })
         this.hasClickedConfirmButton = false
       }
     },

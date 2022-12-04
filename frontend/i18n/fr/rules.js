@@ -1,5 +1,8 @@
 export default {
   required: 'Obligatoire',
+  inputTextRules: {
+    numericOnly: "Veuillez n'utiliser que des caractères numériques (0-9)"
+  },
   colorRules: {
     colorRequired: 'La couleur est obligatoire'
   },

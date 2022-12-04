@@ -32,8 +32,7 @@ export default {
     TheSideBar,
     TheHeader
   },
-  middleware: ['check-auth', 'auth', 'check-admin'],
-
+  middleware: ['check-auth', 'auth', 'check-admin', 'check-questionnaire'],
   data() {
     return {
       drawerLeft: null,
