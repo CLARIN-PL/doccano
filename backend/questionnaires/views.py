@@ -1,10 +1,11 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from django.shortcuts import get_object_or_404
 
 from .serializers import QuestionnaireTypeSerializer, QuestionnaireSerializer, QuestionSerializer, AnswerSerializer, QuestionnaireStateSerializer
 from .models import QuestionnaireType, Questionnaire, Question, Answer, QuestionnaireState
 from rest_framework import filters, generics
 from rest_framework.permissions import IsAuthenticated
-from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly, IsProjectMember
+from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly
 
 from datetime import date
 
@@ -69,4 +70,18 @@ class QuestionnaireStateListAPI(generics.ListCreateAPIView):
         return queryset
 
     def perform_create(self, serializer):
-        serializer.save(finished_by=self.request.user)
+        questionnaire = get_object_or_404(Questionnaire, pk=self.kwargs["questionnaire_id"])
+        serializer.save(questionnaire=questionnaire, finished_by=self.request.user)
+
+
+class QuestionnaireFilledProgressListAPI(generics.ListAPIView):
+    serializer_class = QuestionnaireStateSerializer
+    permission_classes = [IsAuthenticated]
+    model = QuestionnaireState
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ["questionnaire", "finished_by"]
+    ordering_fields = ["finished_at"]
+
+    def get_queryset(self):
+        queryset = self.model.objects.filter(finished_by=self.request.user)
+        return queryset
