@@ -117,7 +117,7 @@ export default Vue.extend({
           return qType
         })
         .filter((qType) => {
-          const hasFilledSome = qType.intersections.length > 0
+          const hasFilledSome = qType.filledTypes.length > 0
           const todayDay = moment().format('DD-MM-YYYY')
           const finishedAt = qType.finishedAt
             ? moment(qType.finishedAt, 'YYYY-MM-DDThh:mm:ss').format('DD-MM-YYYY')

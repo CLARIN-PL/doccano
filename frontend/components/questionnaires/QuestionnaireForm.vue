@@ -336,6 +336,8 @@ export default {
         const hasClickedEverything = questions.every((question) =>
           question.required && question.isValid ? question.isClicked : true
         )
+        this.goToNextQuestionnaire()
+
         if (hasClickedEverything) {
           this.createQuestionnaireFinishedState()
           this.showWarning = false
@@ -363,6 +365,16 @@ export default {
         isWorkingNow: false
       })
     },
+    goToNextQuestionnaire() {
+      const { toShow } = this.getQuestionnaire
+      if (toShow.length) {
+        const toShowId = toShow[1].split('.')[0]
+        const { key } = qCategories.find((qc) => String(qc.id) === toShowId)
+        this.$router.push(this.localePath(`/questionnaires/${key}`))
+      } else {
+        this.$router.push(this.localePath('/projects'))
+      }
+    },
     onClickFinishButton() {
       const selectedQuestionnaire = this.formData.questionnaires[this.activeQuestionnaire]
       if (selectedQuestionnaire) {
@@ -370,10 +382,11 @@ export default {
         const hasClickedEverything = questions.every((question) =>
           question.required && question.isValid ? question.isClicked : true
         )
+        this.goToNextQuestionnaire()
         if (hasClickedEverything) {
           this.createQuestionnaireFinishedState()
           this.setQuestionnaireHistory()
-          this.$router.push(this.localePath('/questionnaires'))
+          this.goToNextQuestionnaire()
         } else {
           this.scrollToFaultyQuestion(questions)
         }
