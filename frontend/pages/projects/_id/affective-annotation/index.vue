@@ -245,6 +245,9 @@
                   @update:label="updateTag"
                   @remove:label="removeTag"
                 />
+                <v-btn block color="primary" @click="scrollToTop">
+                  {{ $i18n.t('generic.goToTop') }}
+                </v-btn>
               </v-card>
             </v-col>
           </v-row>
@@ -479,7 +482,7 @@ export default {
       deep: true,
       handler() {
         if(valtoShow.length) {
-          this.$router.push("/questionnaires")
+          this.$router.push(this.localePath('/questionnaires'))
         }
       }
     },
@@ -977,6 +980,12 @@ export default {
         )
         await this.list(this.doc.id)
       }
+    },
+    scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      })
     }
   }
 }

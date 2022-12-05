@@ -23,5 +23,6 @@ export default {
     message1: 'Merci pour votre travail!',
     message2: 'Vous pouvez continuer à annoter à :',
     message3: 'Veuillez actualiser cette page lorsque le temps de repos est terminé.'
-  }
+  },
+  goToTop: "Revenir en haut"
 }

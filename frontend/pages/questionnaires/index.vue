@@ -35,7 +35,7 @@ export default {
         const questionnaireId = toShow[0].split('.')[0]
         base.setQuestionnaire({ inProgress: [toShow[0]], isWorkingNow: true })
         const { key } = base.qCategories.find((k: any) => k.id === questionnaireId)
-        base.$router.push(`/questionnaires/${key}/`)
+        base.$router.push(base.localePath(`/questionnaires/${key}/`))
       }
     }
   }

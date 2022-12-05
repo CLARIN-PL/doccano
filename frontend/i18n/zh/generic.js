@@ -23,5 +23,6 @@ export default {
     message1: '感谢您的工作!',
     message2: '您可以在此日期继续注释:',
     message3: '请在休息时间结束后刷新此页面.'
-  }
+  },
+  goToTop: "返回顶部"
 }

@@ -37,7 +37,14 @@ export default {
   computed: {
     ...mapGetters('user', ['getQuestionnaire']),
     toShowCategoryKey() {
-      return this.$route.path.split("/")[2]
+      const localeCodes = this.$i18n.locales.map((locale) => "/" + locale.code + "/")
+      let indexToSplit = 2
+      for (let i = 0; i < localeCodes.length; i++) {
+        if (this.$route.path.includes(localeCodes[i])) {
+          indexToSplit = 3
+        }
+      }
+      return this.$route.path.split("/")[indexToSplit]
     },
     qCategoryId() {
       return this.qCategories.find((qCategory)=> qCategory.key === this.toShowCategoryKey).id
@@ -56,7 +63,7 @@ export default {
     validateQuestionnaire() {
       const {toShow} = this.getQuestionnaire
       if(toShow[0] !== this.toShowId) {
-        this.$router.push("/questionnaires")
+        this.$router.push(this.localePath('/questionnaires'))
       }
     },
   }
