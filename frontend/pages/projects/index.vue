@@ -42,6 +42,7 @@ import { ProjectDTO, ProjectListDTO } from '~/services/application/project/proje
 import FormDelete from '~/components/project/FormDelete.vue'
 
 export default Vue.extend({
+  name: 'Projects',
   components: {
     FormDelete,
     ProjectList,

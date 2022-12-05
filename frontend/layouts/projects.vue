@@ -17,6 +17,7 @@
 import TheHeader from '~/components/layout/TheHeader'
 
 export default {
+  name: 'Projects',
   components: {
     TheHeader
   }

@@ -485,9 +485,17 @@ export const qTypes = [
                                 options: [
                                     {
                                         text: "Lewicowe (rozwinięty interwencjonizm państwowy, wysokie podatki, wyższe podatki dla bogatszych, rozwinięta polityka socjalna)",
+                                        showSlider: true,
+                                        min: 1,
+                                        max: 10,
+                                        showTickLabels: true
                                     },
                                     {
                                         text: "Prawicowe (dominacja własności prywatnej, ograniczenie interwencjonizmu państwowego, niskie podatki, ograniczone ramy polityki socjalnej państwa)",
+                                        showSlider: true,
+                                        min: 1,
+                                        max: 10,
+                                        showTickLabels: true
                                     }
                                 ]
                             },
@@ -497,9 +505,18 @@ export const qTypes = [
                                 options: [
                                     {
                                         text: "Liberalne (akceptacja związków homoseksualnych, transseksualizmu, aborcji, egalitarność)",
+                                        showSlider: true,
+                                        min: 1,
+                                        max: 10,
+                                        showTickLabels: true
                                     },
                                     {
                                         text: "Konserwatywne (ważne wartości to rodzina, naród, tradycja, hierarchia społeczna)",
+                                        showSlider: true,
+                                        min: 1,
+                                        max: 10,
+                                        showTickLabels: true
+
                                     }
                                 ]
                             }

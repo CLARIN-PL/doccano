@@ -73,7 +73,7 @@ export default Vue.extend({
           }) && values.filter((val) => !!val).length
         : true
       this.$emit('input', values)
-      this.$emit('change', { ...this.passedData, hasFilledEverything, value: values })
+      this.$emit('change', { ...this.passedData, hasFilledEverything })
     },
     setFormData() {
       const option = this.options[0]

@@ -3,7 +3,7 @@
     <p>
       {{ header }}
       {{ question }}
-      <span v-if="required" class="red--text">*</span>
+      <span v-if="required && question" class="red--text">*</span>
     </p>
     {{ input }}
     <v-select
@@ -118,7 +118,7 @@ export default Vue.extend({
       const key = '_single-value_'
       const value = this.inputText ? `${this.input}${key}${this.inputText}` : this.input
       this.$emit('input', value)
-      this.$emit('change', { ...this.passedData, value })
+      this.$emit('change', { ...this.passedData })
     }
   }
 })

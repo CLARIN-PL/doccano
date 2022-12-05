@@ -238,9 +238,10 @@ export default {
     getFormDataKey(segQuIdx, segIdx, qIdx) {
       return `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}]`
     },
-    async onQuestionChange({ question, formDataKey, hasFilledEverything }) {
+    async onQuestionChange({ question, formDataKey, hasFilledEverything, isClicked }) {
       if (question && formDataKey) {
-        const isClicked = hasFilledEverything === undefined ? true : hasFilledEverything
+        hasFilledEverything = hasFilledEverything ?? true
+        isClicked = isClicked ?? hasFilledEverything
         const hasValue =
           typeof question.value !== 'undefined' && question.value !== null && question.value !== ''
         const { key } = question

@@ -193,6 +193,17 @@ export function mapQuestionnaireTypes(qTypes) {
                                 option.config = { numericOnly: !!option.numericOnly }
                             }
 
+
+                            if(option.showSlider) {
+                                option.config = {
+                                    min: option.min ?? 0,
+                                    max: option.max ?? 0,
+                                    minLabel: option.minLabel ?? "",
+                                    maxLabel: option.maxLabel ?? "",
+                                    showTickLabels: option.showTickLabels ?? true
+                                }
+                            }
+
                             return option
                         })
                     }
