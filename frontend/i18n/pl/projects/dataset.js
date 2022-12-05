@@ -2,7 +2,7 @@ export default {
   dataset: 'Zbiór danych',
   actions: 'Akcje',
   status: 'Status',
-  annotationConfirmationStatus: 'Stan adnotacji',
+  annotationConfirmationStatus: 'Stan anotacji',
   viewAllStatus: 'Wszystkie',
   viewConfirmedStatus: 'Potwierdzony',
   viewNotConfirmedStatus: 'Niepotwierdzone',
