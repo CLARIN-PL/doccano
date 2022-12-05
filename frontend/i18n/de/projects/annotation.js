@@ -170,9 +170,9 @@ export default {
       substatement10: "Unzensierte Wörter",
       substatement11: "Kontrast",
       substatement12: "Hat Merkmale eines Witzes",
-      substatement13: "absurd",
-      substatement14: "situativer Humor",
-      substatement15: "erbärmlicher Humor",
+      substatement13: "Absurd",
+      substatement14: "Situativer Humor",
+      substatement15: "Erbärmlicher Humor",
     }
   },
   noScaleLabels: 'Keine Skalenbeschriftungen gefunden. Bitte wenden Sie sich an den Administrator.'
