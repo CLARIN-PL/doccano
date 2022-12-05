@@ -1,6 +1,12 @@
 export default {
   locales: [
     {
+      name: 'Polish',
+      code: 'pl',
+      iso: 'pl-PL',
+      file: 'pl'
+    },
+    {
       name: 'English',
       code: 'en',
       iso: 'en-CA',
@@ -23,12 +29,6 @@ export default {
       code: 'de',
       iso: 'de-DE',
       file: 'de'
-    },
-    {
-      name: 'Polish',
-      code: 'pl',
-      iso: 'pl-PL',
-      file: 'pl'
     }
   ],
   lazy: true,
@@ -37,9 +37,5 @@ export default {
   vueI18n: {
     fallbackLocale: 'pl'
   },
-  detectBrowserLanguage: {
-    useCookie: true,
-    cookieKey: 'i18n_redirected',
-    onlyOnRoot: true // for SEO purposes
-  }
+  detectBrowserLanguage: false
 }
