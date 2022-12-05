@@ -277,7 +277,6 @@ export function getQuestionnairesToShow() {
                 const { firstLoginTime } = getters['user/getLogin']
                 const firstLoginTimeAtZero = moment(firstLoginTime, DATE_FORMAT).format("DD-MM-YYYY")+" 00:00:00"
                 const { hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
-                const { hasFinishedAll } = getters['user/getProject'] 
                 const monthDiff = moment(todayTime).diff(
                     moment(firstLoginTimeAtZero, DATE_FORMAT), 'months'
                 )
