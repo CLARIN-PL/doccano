@@ -128,7 +128,8 @@ export default {
       substatement5: "unfair generalization, stereotyping",
       substatement6: "disrespect",
       substatement7: "humiliation",
-      substatement8: "other"
+      substatement8: "other",
+      substatement8Question: "What kind?"
     }
   },
   humor: {

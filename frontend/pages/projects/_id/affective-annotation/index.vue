@@ -90,7 +90,7 @@
                 {{ doc.text }}
               </p>
             </v-col>
-            <v-col cols="12" md="3">
+            <v-col cols="12" md="3" class="d-sm-none d-md-block">
               <annotation-progress :progress="progress" />
             </v-col>
           </v-row>
