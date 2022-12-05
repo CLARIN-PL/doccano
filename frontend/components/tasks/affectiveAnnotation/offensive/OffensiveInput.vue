@@ -409,7 +409,7 @@ export default Vue.extend({
   methods: {
     setOriginalFormData() {
       const keys = ['subquestion3', 'subquestion4']
-      const showTextboxIndexes = {
+      const showTextboxIndexes: any = {
         subquestion3: [1, 2, 3, 4, 5, 6, 7, 8, 9],
         subquestion4: [8]
       }

@@ -408,11 +408,5 @@ export default {
 }
 
 .sticky {
-  position: fixed;
-  top: 90px;
-  min-width: 250px;
-  max-width: 270px;
-  overflow-x: visible;
-  z-index: 1;
 }
 </style>

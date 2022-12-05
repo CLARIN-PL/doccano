@@ -1,5 +1,5 @@
 <template>
-  <div class="affective-annotation" v-show="isLoaded">
+  <div v-show="isLoaded" class="affective-annotation">
     <layout-text
       v-if="doc.id"
       v-shortkey="shortKeysSpans"
@@ -86,7 +86,7 @@
           <toolbar-mobile :total="docs.count" class="d-flex d-sm-none header-toolbar --mobile" />
           <v-row v-show="hasStickyView">
             <v-col cols="12" md="9">
-              <p class="header-text" ref="entityText">
+              <p ref="entityText" class="header-text">
                 {{ doc.text }}
               </p>
             </v-col>
@@ -144,9 +144,9 @@
                 <v-divider />
                 <div class="annotation-card__text pa-4" :class="{ '--sticky': hasStickyView }">
                   <entity-editor
+                    ref="entityEditor"
                     class="entity-editor"
                     :class="{ '--transparent': hasStickyView }"
-                    ref="entityEditor"
                     :dark="$vuetify.theme.dark"
                     :rtl="isRTL"
                     :read-only="!canEdit"
@@ -171,8 +171,8 @@
               <v-divider />
               <v-card
                 v-if="isScaleImported"
-                class="pa-4 dimension-card"
                 ref="dimensionCard"
+                class="pa-4 dimension-card"
                 :style="`margin-top: ${
                   hasStickyView ? $refs.entityEditor.$el.clientHeight / 2 : 0
                 }px`"
@@ -197,8 +197,8 @@
                 />
                 <emotions-input
                   v-if="project.isEmotionsMode || project.isCombinationMode"
-                  class="mb-10"
                   ref="emotionsInput"
+                  class="mb-10"
                   :read-only="!canEdit"
                   :show-borders="project.isCombinationMode"
                   :show-errors="!hasValidEntries.isEmotionsMode && hasClickedConfirmButton"
@@ -218,8 +218,8 @@
                 />
                 <others-input
                   v-if="project.isOthersMode || project.isCombinationMode"
-                  class="mb-10"
                   ref="othersInput"
+                  class="mb-10"
                   :read-only="!canEdit"
                   :show-borders="project.isCombinationMode"
                   :show-errors="!hasValidEntries.isOthersMode && hasClickedConfirmButton"
@@ -245,9 +245,9 @@
                 />
                 <offensive-input
                   v-if="project.isOffensiveMode || project.isCombinationMode"
+                  ref="offensiveInput"
                   v-model="hasValidEntries.isOffensiveMode"
                   class="mb-10"
-                  ref="offensiveInput"
                   :show-borders="project.isCombinationMode"
                   :show-errors="hasClickedConfirmButton"
                   :project="project"
@@ -263,8 +263,8 @@
                 />
                 <humor-input
                   v-if="project.isHumorMode || project.isCombinationMode"
-                  v-model="hasValidEntries.isHumorMode"
                   ref="humorInput"
+                  v-model="hasValidEntries.isHumorMode"
                   class="mb-10"
                   :show-borders="project.isCombinationMode"
                   :show-errors="hasClickedConfirmButton"
