@@ -87,7 +87,7 @@ export default Vue.extend({
   methods: {
     async save() {
       await this.service.create(this.projectId, this.editedItem)
-      this.$router.push(`/projects/${this.projectId}/labels`)
+      this.$router.push(this.localePath(`/projects/${this.projectId}/labels`))
     },
 
     async saveAndAnother() {

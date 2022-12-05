@@ -5,6 +5,7 @@ export default function ({ store, route, redirect, app }) {
     const {toShow} = store.getters['user/getQuestionnaire']
     const isOnQuestionnairePage = route.path.includes("/questionnaires")
     const hasValidToShow = toShow && Array.isArray(toShow)
+    const locale = app.i18n.locale ?? 'pl'
     if(hasValidToShow && toShow.length) {
         const {isWorkingNow} = store.getters['user/getQuestionnaire']
         const isOnMainQuestionnairePage = isOnQuestionnairePage && route.path.split("/").length <= 2
@@ -12,7 +13,6 @@ export default function ({ store, route, redirect, app }) {
         const toShowCategoryId = toShowId.split(".")[0]
         const { key } = qCategories.find((qCategory)=> qCategory.id === toShowCategoryId )
         
-        const locale = app.i18n.locale ?? 'en'
         if(!isStaff && toShow.length && !isOnQuestionnairePage) {
             return redirect(locale + "/questionnaires")
         } 
@@ -22,7 +22,7 @@ export default function ({ store, route, redirect, app }) {
             }
         }
     } else if(hasValidToShow && !toShow.length && isOnQuestionnairePage)  {
-        return redirect("/projects")
+        return redirect(locale + "/projects")
     }
 
 }

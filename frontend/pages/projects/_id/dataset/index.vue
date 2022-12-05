@@ -13,8 +13,8 @@
         </v-col>
         <v-col cols="5">
           <action-menu
-            @upload="$router.push('dataset/import')"
-            @download="$router.push('dataset/export')"
+            @upload="$router.push(localePath('dataset/import'))"
+            @download="$router.push(localePath('dataset/export'))"
           />
           <v-btn
             class="text-capitalize ms-2"

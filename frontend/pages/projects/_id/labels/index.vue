@@ -23,8 +23,8 @@
     </v-tabs>
     <v-card-title>
       <action-menu
-        @create="$router.push('labels/add?type=' + labelType)"
-        @upload="$router.push('labels/import?type=' + labelType)"
+        @create="$router.push(localePath('labels/add?type=' + labelType))"
+        @upload="$router.push(localePath('labels/import?type=' + labelType))"
         @download="download"
       />
       <v-btn
@@ -191,7 +191,7 @@ export default Vue.extend({
     },
 
     editItem(item: LabelDTO) {
-      this.$router.push(`labels/${item.id}/edit?type=${this.labelType}`)
+      this.$router.push(this.localePath(`labels/${item.id}/edit?type=${this.labelType}`))
     }
   }
 })
