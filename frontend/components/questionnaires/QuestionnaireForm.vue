@@ -112,7 +112,7 @@
                   <v-spacer />
                   <v-btn v-if="activeQuestionnaire+1 < formData.questionnaires.length" 
                     color="primary" @click="onClickContinueButton">
-                    {{ $t('generic.continue') }}
+                    {{ $t('questionnaires_main.buttonFinish') }}
                   </v-btn>
                   <v-btn v-else color="primary" @click="onClickFinishButton">
                     {{ $t('questionnaires_main.buttonFinish') }}
