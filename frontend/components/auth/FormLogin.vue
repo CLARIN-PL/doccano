@@ -102,7 +102,8 @@ export default Vue.extend({
       this.questionnaires = _.cloneDeep(_.flatMap(questionnaireResponses, 'items'))
       this.questionnaireStates = _.cloneDeep(states.items)
 
-      const stateTypes = _.flatMap(this.questionnaireStates, 'questionnaire')
+      const stateTypes = [...new Set(_.flatMap(this.questionnaireStates, 'questionnaire'))]
+      console.log(stateTypes)
       const finishedCategories = _.flatMap(qCategories, 'types')
         .map((qType) => {
           qType.intersections = _.intersection(qType.questionnaires, stateTypes)
@@ -110,6 +111,7 @@ export default Vue.extend({
             qType.questionnaires.includes(state.questionnaire)
           )
           qType.finishedAt = state ? state.finishedAt : ''
+          qType.hasFinishedAll = qType.intersections.length === qType.questionnaires.length
 
           return qType
         })
@@ -119,9 +121,10 @@ export default Vue.extend({
           const finishedAt = qType.finishedAt
             ? moment(qType.finishedAt, 'YYYY-MM-DDThh:mm:ss').format('DD-MM-YYYY')
             : ''
+
           return qType.id.startsWith(dailyQuestionnaireId)
-            ? todayDay === finishedAt && isInside
-            : isInside
+            ? todayDay === finishedAt && isInside && qType.hasFinishedAll
+            : isInside && qType.hasFinishedAll
         })
 
       this.setQuestionnaire({
