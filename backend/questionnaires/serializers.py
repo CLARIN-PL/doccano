@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import QuestionnaireType, Questionnaire, Question, Answer
+from .models import QuestionnaireType, Questionnaire, Question, Answer, QuestionnaireState
 
 
 class QuestionnaireTypeSerializer(serializers.ModelSerializer):
@@ -48,4 +48,16 @@ class AnswerSerializer(serializers.ModelSerializer):
             "updated_at",
         )
         read_only_fields = ("user",)
+
+
+class QuestionnaireStateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuestionnaireState
+        fields = (
+            "id",
+            "questionnaire",
+            "finished_by",
+            "finished_at",
+        )
+        read_only_fields = ("id", "questionnaire", "finished_by", "finished_at")
     
