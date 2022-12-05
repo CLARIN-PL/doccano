@@ -1,85 +1,104 @@
 <template>
-  <div v-show="isLoaded">
-    <layout-text v-if="doc.id" v-shortkey="shortKeysSpans" @shortkey="changeSelectedLabel">
+  <div class="affective-annotation" v-show="isLoaded">
+    <layout-text
+      v-if="doc.id"
+      v-shortkey="shortKeysSpans"
+      class="layout-text"
+      :class="{ '--sticky': hasStickyView }"
+      @shortkey="changeSelectedLabel"
+    >
       <template #header>
-        <v-alert
-          :value="!canConfirm && hasClickedConfirmButton"
-          color="error"
-          dark
-          transition="scale-transition"
-          dismissible
-          @input="onConfirmationAlertClose"
-        >
-          {{ $t('errors.incompleteAffectiveAnnotation') }}
-        </v-alert>
-        <toolbar-laptop
-          :doc-id="doc.id"
-          :button-options="{
-            review: {
-              visible: true,
-              hasText: true,
-              text: {
-                checked: $t('annotation.checkedTooltip'),
-                notChecked: $t('annotation.notCheckedTooltip')
+        <div class="layout-text__header" :class="{ '--sticky': hasStickyView }">
+          <v-alert
+            :value="!canConfirm && hasClickedConfirmButton"
+            class="header-alert"
+            color="error"
+            dark
+            transition="scale-transition"
+            dismissible
+            @input="onConfirmationAlertClose"
+          >
+            {{ $t('errors.incompleteAffectiveAnnotation') }}
+          </v-alert>
+          <toolbar-laptop
+            :doc-id="doc.id"
+            :button-options="{
+              review: {
+                visible: true,
+                hasText: true,
+                text: {
+                  checked: $t('annotation.checkedTooltip'),
+                  notChecked: $t('annotation.notCheckedTooltip')
+                },
+                disabled: !canEdit
               },
-              disabled: !canEdit
-            },
-            filter: {
-              visible: showFilterButton
-            },
-            guideline: {
-              visible: true
-            },
-            comment: {
-              visible: true
-            },
-            autoLabeling: {
-              visible: showAutoLabeling
-            },
-            clear: {
-              visible: true,
-              disabled: !canEdit
-            },
-            pagination: {
-              visible: true,
-              disabled: {
-                first: !canNavigateBackward,
-                prev: !canNavigateBackward,
-                next: !canNavigateForward,
-                last: !canNavigateForward || !canSkipForward,
-                jump: !canSkipForward
+              filter: {
+                visible: showFilterButton
               },
-              tooltip: {
-                first: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
-                prev: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
-                next: canNavigateForward ? '' : $t('annotation.warningCheckedNavigation'),
-                prev: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
-                jump: ''
+              guideline: {
+                visible: true
               },
-              callback: {
-                next: annotateStartStates,
-                last: annotateStartStates
+              comment: {
+                visible: true
+              },
+              autoLabeling: {
+                visible: showAutoLabeling
+              },
+              clear: {
+                visible: true,
+                disabled: !canEdit
+              },
+              pagination: {
+                visible: true,
+                disabled: {
+                  first: !canNavigateBackward,
+                  prev: !canNavigateBackward,
+                  next: !canNavigateForward,
+                  last: !canNavigateForward || !canSkipForward,
+                  jump: !canSkipForward
+                },
+                tooltip: {
+                  first: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
+                  prev: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
+                  next: canNavigateForward ? '' : $t('annotation.warningCheckedNavigation'),
+                  prev: canNavigateBackward ? '' : $t('annotation.warningBackNavigation'),
+                  jump: ''
+                },
+                callback: {
+                  next: annotateStartStates,
+                  last: annotateStartStates
+                }
               }
-            }
-          }"
-          :enable-auto-labeling.sync="enableAutoLabeling"
-          :guideline-text="project.guideline"
-          :is-reviewd="doc.isConfirmed"
-          :total="docs.count"
-          :is-article-project="true"
-          :article-index="articleIndex"
-          :article-total="articleTotal"
-          class="d-none d-sm-block"
-          @click:clear-label="clear"
-          @click:review="confirm"
-        >
-          <v-spacer />
-        </toolbar-laptop>
-        <toolbar-mobile :total="docs.count" class="d-flex d-sm-none" />
+            }"
+            :enable-auto-labeling.sync="enableAutoLabeling"
+            :guideline-text="project.guideline"
+            :is-reviewd="doc.isConfirmed"
+            :total="docs.count"
+            :is-article-project="true"
+            :article-index="articleIndex"
+            :article-total="articleTotal"
+            class="d-none d-sm-block header-toolbar --desktop"
+            @click:clear-label="clear"
+            @click:review="confirm"
+          >
+            <v-spacer />
+          </toolbar-laptop>
+          <toolbar-mobile :total="docs.count" class="d-flex d-sm-none header-toolbar --mobile" />
+          <v-row v-show="hasStickyView">
+            <v-col cols="12" md="9">
+              <p class="header-text" ref="entityText">
+                {{ doc.text }}
+              </p>
+            </v-col>
+            <v-col cols="12" md="3">
+              <annotation-progress :progress="progress" />
+            </v-col>
+          </v-row>
+        </div>
       </template>
       <template #content>
-        <div>
-          <v-row>
+        <div class="layout-text__content" :class="{ '--expanded': hasStickyView }">
+          <v-row class="content__title">
             <v-col cols="12">
               <h3 class="mt-3 mb-2">
                 {{ doc.meta.meta.article_title }}
@@ -87,23 +106,22 @@
               <v-divider />
             </v-col>
           </v-row>
-          <v-row class="mt-3">
-            <v-col v-if="showArticleViewer" cols="5">
-              <div>
-                <toolbar-article
-                  :project="project"
-                  :article-items="currentWholeArticle.items"
-                  :current-article-item="doc"
-                />
-              </div>
+          <v-row class="mt-3 content__article">
+            <v-col v-if="showArticleViewer" cols="5" class="content-article__toolbar">
+              <toolbar-article
+                :project="project"
+                :article-items="currentWholeArticle.items"
+                :current-article-item="doc"
+              />
             </v-col>
-            <v-col :cols="showArticleViewer ? 7 : 12" class="annotation-container">
+            <v-col :cols="showArticleViewer ? 7 : 12" class="content-article__container">
               <v-card
                 v-shortkey="shortKeysCategory"
                 class="annotation-card"
+                :class="{ '--sticky': hasStickyView }"
                 @shortkey="addOrRemoveCategory"
               >
-                <v-card-title v-if="categoryTypes.length">
+                <v-card-title v-if="categoryTypes.length" class="annotation-card__title">
                   <label-group
                     v-if="labelOption === 0"
                     :read-only="!canEdit"
@@ -124,8 +142,11 @@
                   />
                 </v-card-title>
                 <v-divider />
-                <div class="annotation-text pa-4">
+                <div class="annotation-card__text pa-4" :class="{ '--sticky': hasStickyView }">
                   <entity-editor
+                    class="entity-editor"
+                    :class="{ '--transparent': hasStickyView }"
+                    ref="entityEditor"
                     :dark="$vuetify.theme.dark"
                     :rtl="isRTL"
                     :read-only="!canEdit"
@@ -148,9 +169,15 @@
                 </div>
               </v-card>
               <v-divider />
-              <v-card v-if="isScaleImported" class="pa-4 dimension-card">
+              <v-card
+                v-if="isScaleImported"
+                class="pa-4 dimension-card"
+                ref="dimensionCard"
+                :class="{ '--sticky': hasStickyView }"
+              >
                 <summary-input
                   v-if="project.isSummaryMode || project.isCombinationMode"
+                  ref="summaryInput"
                   class="mb-10"
                   :text="doc.text"
                   :tags="affectiveSummaryTags"
@@ -254,10 +281,12 @@
         </div>
       </template>
       <template #sidebar>
-        <annotation-progress :progress="progress" />
+        <div class="layout-text__sidebar">
+          <annotation-progress :progress="progress" />
+        </div>
       </template>
+      <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
     </layout-text>
-    <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
   </div>
 </template>
 
@@ -363,7 +392,8 @@ export default {
         isEmotionsMode: false,
         isOthersMode: false
       },
-      hasClickedConfirmButton: false
+      hasClickedConfirmButton: false,
+      hasStickyView: false
     }
   },
 
@@ -472,16 +502,15 @@ export default {
       deep: true,
       handler(val) {
         const textBatchCount = 20
-        if(val.textCountToday > 0 && val.textCountToday%textBatchCount === 0) {
+        if (val.textCountToday > 0 && val.textCountToday % textBatchCount === 0) {
           this.initQuestionnaire()
-          
         }
       }
     },
     getQuestionnaire: {
       deep: true,
       handler() {
-        if(valtoShow.length) {
+        if (valtoShow.length) {
           this.$router.push(this.localePath('/questionnaires'))
         }
       }
@@ -504,13 +533,37 @@ export default {
     }
   },
 
+  beforeMount() {
+    window.addEventListener('scroll', this.onScrollListener)
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.onScrollListener)
+  },
+
   mounted() {
     this.isLoaded = true
   },
 
   methods: {
-    ...mapActions('user', ['setRestingPeriod', 'calculateRestingPeriod', 
-      'setAnnotation', 'initQuestionnaire', 'getQuestionnaire']),
+    ...mapActions('user', [
+      'setRestingPeriod',
+      'calculateRestingPeriod',
+      'setAnnotation',
+      'initQuestionnaire',
+      'getQuestionnaire'
+    ]),
+
+    onScrollListener: _.debounce(function () {
+      if (this.isLoaded) {
+        const entityEditor = this.$refs.entityEditor
+        const margin = 100
+        if (entityEditor) {
+          const { bottom } = entityEditor.$el.getBoundingClientRect()
+          this.hasStickyView = bottom + margin < 100
+        }
+      }
+    }, 100),
 
     async checkRestingPeriod() {
       const restingEndTime = await this.calculateRestingPeriod()
@@ -774,8 +827,8 @@ export default {
       }
     },
     async confirm() {
-      const DATE_FORMAT = "DD-MM-YYYY HH:mm:ss"
-      if(this.project.isCombinationMode) {
+      const DATE_FORMAT = 'DD-MM-YYYY HH:mm:ss'
+      if (this.project.isCombinationMode) {
         this.hasValidEntries.isSummaryMode = this.isAllAffectiveSummaryAdded()
         this.hasValidEntries.isOthersMode = this.isAllAffectiveOthersAdded()
         this.hasValidEntries.isEmotionsMode = this.isAllAffectiveEmotionsAdded()
@@ -791,9 +844,11 @@ export default {
         await this.$services.example.confirm(this.projectId, this.doc.id)
         await this.$fetch()
         this.updateProgress()
-        const textCountToday = this.doc.isConfirmed ? this.getAnnotation.textCountToday+1 : this.getAnnotation.textCountToday
-        this.setAnnotation({ 
-          hasAnnotatedToday: true, 
+        const textCountToday = this.doc.isConfirmed
+          ? this.getAnnotation.textCountToday + 1
+          : this.getAnnotation.textCountToday
+        this.setAnnotation({
+          hasAnnotatedToday: true,
           textCountToday,
           lastAnnotationTime: moment().format(DATE_FORMAT)
         })
@@ -984,7 +1039,7 @@ export default {
     scrollToTop() {
       window.scrollTo({
         top: 0,
-        behavior: "smooth"
+        behavior: 'smooth'
       })
     }
   }
@@ -992,35 +1047,57 @@ export default {
 </script>
 
 <style lang="scss" >
-.annotation-text {
-  font-size: 1.1rem !important;
-  font-weight: 500;
-  line-height: 2rem;
-  font-family: 'Roboto', sans-serif !important;
-  opacity: 0.6;
-  margin-bottom: 20px;
+.affective-annotation {
+  .layout-text {
+    position: relative;
+    &__header {
+      &.--sticky {
+        position: sticky;
+        background-color: #fff;
+        padding: 20px;
+        top: 55px;
+        z-index: 1;
+        border: 1px solid #ddd;
+      }
 
-  > div > div > svg:last-of-type {
-    height: 0;
-    overflow: hidden;
+      .header-text {
+        font-size: 0.875rem;
+        margin: 10px 0 0;
+        line-height: 1.5;
+        max-height: 150px;
+        overflow-y: auto;
+      }
+    }
   }
 }
 
-.annotation-container {
+.content-article__container {
   position: relative;
-}
 
-.annotation-card {
-  position: sticky;
-  max-height: 250px;
-  overflow-x: visible;
-  top: 80px;
-  z-index: 1;
-}
+  .annotation-card__text {
+    font-size: 0.875rem;
 
-.dimension-card {
-  position: relative;
-  z-index: 0;
-  margin-top: 60px;
+    > div > div > svg:last-of-type {
+      height: 0;
+      overflow: hidden;
+    }
+
+    .entity-editor {
+      &.--transparent {
+        height: 0;
+        overflow: hidden;
+      }
+    }
+  }
+
+  .dimension-card {
+    position: relative;
+    z-index: 0;
+    margin-top: 60px;
+
+    &.--sticky {
+      top: 300px;
+    }
+  }
 }
 </style>
