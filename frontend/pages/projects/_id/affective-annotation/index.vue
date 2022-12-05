@@ -65,8 +65,8 @@
                   jump: ''
                 },
                 callback: {
-                  next: annotateStartStates,
-                  last: annotateStartStates
+                  next: onPaginationCallback,
+                  last: onPaginationCallback
                 }
               }
             }"
@@ -118,7 +118,7 @@
               <v-card
                 v-shortkey="shortKeysCategory"
                 class="annotation-card"
-                :class="{ '--sticky': hasStickyView }"
+                :class="{ '--hidden': hasStickyView }"
                 @shortkey="addOrRemoveCategory"
               >
                 <v-card-title v-if="categoryTypes.length" class="annotation-card__title">
@@ -173,6 +173,9 @@
                 v-if="isScaleImported"
                 class="pa-4 dimension-card"
                 ref="dimensionCard"
+                :style="`margin-top: ${
+                  hasStickyView ? $refs.entityEditor.$el.clientHeight / 2 : 0
+                }px`"
                 :class="{ '--sticky': hasStickyView }"
               >
                 <summary-input
@@ -397,12 +400,14 @@ export default {
         isOthersMode: false
       },
       hasClickedConfirmButton: false,
-      hasStickyView: false
+      hasStickyView: false,
+      firstView: true
     }
   },
 
   async fetch() {
     this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+    this.firstView = true
     await this.setProjectData()
     await this.setDoc()
     await this.setHasCheckedPreviousDoc()
@@ -561,17 +566,31 @@ export default {
     onScrollListener: _.debounce(function () {
       if (this.isLoaded) {
         const entityEditor = this.$refs.entityEditor
+        const dimensionCard = this.$refs[this.getDimensionComponentRef()]
         const margin = 100
         if (entityEditor) {
           const { bottom } = entityEditor.$el.getBoundingClientRect()
-          this.hasStickyView = bottom + margin < 100
+          this.hasStickyView = bottom - margin < 0
+        }
+
+        if (dimensionCard && this.isCombinationMode) {
+          const { y } = dimensionCard.$el.getBoundingClientRect()
+          if (this.hasStickyView && y < 0 && this.firstView) {
+            this.$refs[this.getDimensionComponentRef()].$el.scrollIntoView({
+              block: 'center',
+              behavior: 'smooth'
+            })
+            this.firstView = false
+          }
         }
       }
-    }, 100),
+    }, 50),
 
     getDimensionComponentRef() {
       let dimensionRef = 'summaryInput'
-      if (this.isSummaryMode) {
+      if (this.isCombinationMode) {
+        dimensionRef = 'summaryInput'
+      } else if (this.isSummaryMode) {
         dimensionRef = 'summaryInput'
       } else if (this.isEmotionsMode) {
         dimensionRef = 'emotionsInput'
@@ -610,6 +629,10 @@ export default {
       )
       const doc = docs.items[0]
       this.hasCheckedPreviousDoc = !!doc.isConfirmed
+    },
+    onPaginationCallback() {
+      this.scrollToTop()
+      this.annotateStartStates()
     },
     async annotateStartStates() {
       await this.setDoc()
@@ -1083,10 +1106,11 @@ export default {
 
       .header-text {
         font-size: 0.875rem;
-        margin: 10px 0 0;
+        margin: 15px 0 0;
         line-height: 1.5;
         max-height: 150px;
         overflow-y: auto;
+        opacity: 0.8;
       }
     }
   }
@@ -1100,6 +1124,10 @@ export default {
     font-weight: 500;
     font-family: 'Roboto', sans-serif !important;
     opacity: 0.6;
+
+    .--hidden {
+      display: none;
+    }
 
     > div > div > svg:last-of-type {
       height: 0;
@@ -1117,10 +1145,11 @@ export default {
   .dimension-card {
     position: relative;
     z-index: 0;
-    margin-top: 60px;
+    margin-top: 30px;
 
     &.--sticky {
-      top: 300px;
+      left: 0;
+      right: 0;
     }
   }
 }
