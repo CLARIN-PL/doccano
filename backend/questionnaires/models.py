@@ -35,4 +35,10 @@ class Answer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class QuestionnaireState(models.Model):
+    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="questionnaire_state")
+    finished_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    finished_at = models.DateTimeField(auto_now=True)
     
