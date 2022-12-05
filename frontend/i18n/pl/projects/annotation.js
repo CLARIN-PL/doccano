@@ -1,6 +1,6 @@
 export default {
-  checkedTooltip: 'Zaznaczone',
-  notCheckedTooltip: 'Niezaznaczone',
+  checkedTooltip: 'Zaakceptowane',
+  notCheckedTooltip: 'Zaakceptuj',
   markAsChecked: "Oznacz jako zaznaczone",
   markAsNotChecked: "Oznacz jako niezaznaczone",
   warningCheckedNavigation: "Proszę oznaczyć tekst jako zaznaczony przed przejściem do następnego tekstu.",
