@@ -3,6 +3,8 @@ export default {
   notCheckedTooltip: 'Zaakceptuj',
   markAsChecked: "Oznacz jako zaznaczone",
   markAsNotChecked: "Oznacz jako niezaznaczone",
+  clearAnnotationsTitle: "Wyczyść anotacje",
+  clearAnnotationsMessage: "Czy na pewno chcesz usunąć wszystkie anotacje?",
   warningCheckedNavigation: "Proszę oznaczyć tekst jako zaznaczony przed przejściem do następnego tekstu.",
   warningBackNavigation: "Przepraszamy, nie możesz przejść do wcześniej opisanego tekstu",
   selectFilterTooltip: 'Wybierz filtr',
