@@ -368,7 +368,7 @@ export default {
     goToNextQuestionnaire() {
       const { toShow } = this.getQuestionnaire
       if (toShow.length) {
-        const toShowId = toShow[1].split('.')[0]
+        const toShowId = toShow[0].split('.')[0]
         const { key } = qCategories.find((qc) => String(qc.id) === toShowId)
         this.$router.push(this.localePath(`/questionnaires/${key}`))
       } else {
