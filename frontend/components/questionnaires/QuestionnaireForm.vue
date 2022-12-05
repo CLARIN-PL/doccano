@@ -336,8 +336,6 @@ export default {
         const hasClickedEverything = questions.every((question) =>
           question.required && question.isValid ? question.isClicked : true
         )
-        this.goToNextQuestionnaire()
-
         if (hasClickedEverything) {
           this.createQuestionnaireFinishedState()
           this.showWarning = false
@@ -382,7 +380,6 @@ export default {
         const hasClickedEverything = questions.every((question) =>
           question.required && question.isValid ? question.isClicked : true
         )
-        this.goToNextQuestionnaire()
         if (hasClickedEverything) {
           this.createQuestionnaireFinishedState()
           this.setQuestionnaireHistory()
