@@ -1,9 +1,6 @@
 <template>
   <v-row align="center" justify="center" >
-    <v-col v-if="showGreetingCard" cols="8">
-      <greeting-card @click="onClickGreetingCardButton" />
-    </v-col>
-    <v-col v-else cols="8">
+    <v-col cols="8">
       <div ref="header">
         <v-alert
             v-model="showWarning"
@@ -180,7 +177,6 @@ export default {
       activeQuestionnaire: 0,
       isLoaded: false,
       showWarning: false,
-      showGreetingCard: false,
       formData: {
         questionnaires: []
       }
@@ -210,7 +206,6 @@ export default {
     },
     initialize() {
       this.showWarning = false
-      this.showGreetingCard = false
       this.mappedQTypes = mapQuestionnaireTypes(this.qTypes)
       this.$nextTick(() => {
         this.isLoaded = true
@@ -285,12 +280,6 @@ export default {
         return SliderInput
       }
     },
-    onClickGreetingCardButton() {
-      this.showGreetingCard = false
-      this.showWarning = false
-      this.activeQuestionnaire += 1
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    },
     scrollToFaultyQuestion(id, questions = []) {
       const firstErrorIndex = questions.findIndex((question) => !question.isClicked)
       this.showWarning = true
@@ -309,7 +298,9 @@ export default {
           question.required && question.isValid ? question.isClicked : true
         )
         if (hasClickedEverything) {
-          this.showGreetingCard = true
+          this.showWarning = false
+          this.activeQuestionnaire += 1
+          window.scrollTo({ top: 0, behavior: 'smooth' })
         } else {
           this.scrollToFaultyQuestion(this.activeQuestionnaire, questions)
         }
