@@ -619,37 +619,7 @@ export const qTypes = [
                                 min: 1,
                                 max: 7,
                                 value: -1
-                            }
-                        ]
-                    },
-                    {
-                        scales: {
-                            description: "",
-                            values: [
-                                {
-                                    text: "0 razy"
-                                },
-                                {
-                                    text: "1-2 razy"
-                                },
-                                {
-                                    text: "3 razy"
-                                },
-                                {
-                                    text: "4 razy"
-                                },
-                                {
-                                    text: "5 razy"
-                                },
-                                {
-                                    text: "6 razy"
-                                },
-                                {
-                                    text: "7 razy"
-                                }
-                            ]
-                        },
-                        questions: [
+                            },
                             {
                                 type: "radio",
                                 text: "Ile razy miałeś/aś drobne przeziębienie (np. takie które sprawiło, że czułeś/aś się niekomfortowo, ale nie zatrzymało Cię ono w łóżku ani nie spowodowało, że opuściłeś/aś pracę)?",
@@ -703,40 +673,11 @@ export const qTypes = [
                                         text: "7 razy"
                                     }
                                 ]
-                            }
-                        ]
-                    },
-                    {
-                        scales: {
-                            description: "",
-                            values: [
-                                {
-                                    text: "1 dzień"
-                                },
-                                {
-                                    text: "2 dni"
-                                },
-                                {
-                                    text: "3 dni"
-                                },
-                                {
-                                    text: "4 dni"
-                                },
-                                {
-                                    text: "5 dni"
-                                },
-                                {
-                                    text: "6 dni"
-                                },
-                                {
-                                    text: "7 dni"
-                                }
-                            ]
-                        },
-                        questions: [
+                            },
                             {
                                 type: "slider",
-                                text: "Jak długo na ogół trwało przeziębienie lub grypa, które przechodziłeś/aś?",
+                                text: "Jak długo na ogół trwało przeziębienie lub grypa, które przechodziłeś/aś (dni)?",
+                                alternateText: "Jak długo na ogół trwało przeziębienie lub grypa, które przechodziłeś/aś?",
                                 min: 1,
                                 max: 7,
                                 value: -1
@@ -1597,37 +1538,7 @@ export const qTypes = [
                                 min: 1,
                                 max: 7,
                                 value: -1
-                            }
-                        ]
-                    },
-                    {
-                        scales: {
-                            description: "",
-                            values: [
-                                {
-                                    text: "0 razy"
-                                },
-                                {
-                                    text: "1-2 razy"
-                                },
-                                {
-                                    text: "3 razy"
-                                },
-                                {
-                                    text: "4 razy"
-                                },
-                                {
-                                    text: "5 razy"
-                                },
-                                {
-                                    text: "6 razy"
-                                },
-                                {
-                                    text: "7 razy"
-                                }
-                            ]
-                        },
-                        questions: [
+                            },
                             {
                                 type: "radio",
                                 text: "Ile razy miałeś/aś drobne przeziębienie (np. takie które sprawiło, że czułeś/aś się niekomfortowo, ale nie zatrzymało Cię ono w łóżku ani nie spowodowało, że opuściłeś/aś pracę)?",
@@ -1681,40 +1592,11 @@ export const qTypes = [
                                         text: "7 razy"
                                     }
                                 ]
-                            }
-                        ]
-                    },
-                    {
-                        scales: {
-                            description: "",
-                            values: [
-                                {
-                                    text: "1 dzień"
-                                },
-                                {
-                                    text: "2 dni"
-                                },
-                                {
-                                    text: "3 dni"
-                                },
-                                {
-                                    text: "4 dni"
-                                },
-                                {
-                                    text: "5 dni"
-                                },
-                                {
-                                    text: "6 dni"
-                                },
-                                {
-                                    text: "7 dni"
-                                }
-                            ]
-                        },
-                        questions: [
+                            },
                             {
                                 type: "slider",
-                                text: "Jak długo na ogół trwało przeziębienie lub grypa, które przechodziłeś/aś?",
+                                text: "Jak długo na ogół trwało przeziębienie lub grypa, które przechodziłeś/aś (dni)?",
+                                alternateText: "Jak długo na ogół trwało przeziębienie lub grypa, które przechodziłeś/aś?",
                                 min: 1,
                                 max: 7,
                                 value: -1
