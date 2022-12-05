@@ -127,13 +127,15 @@ export function hasStore() {
     return !!window.$nuxt && !!window.$nuxt.$store
 }
 
-export function setQuestionnaireIds(qTypes, questionnaires, questions=[]) {
+export function setQuestionnaireIds(qTypes, questionnaires=[], questions=[], questionnaireStates=[]) {
     return qTypes.map((qType)=> {
         if(qType && qType.questionnaires) {
             qType.questionnaires = qType.questionnaires.map((que)=> {
-                const queId = questionnaires.find((q)=> q.name === que.name)
-                if(queId) {
-                    que.id = queId
+                const questionnaire = questionnaires.find((q)=> q.name === que.name)
+                if(questionnaire) {
+                    que.id = questionnaire.id
+                    que.type = questionnaire.questionnaireType
+                    que.isFinished = !!questionnaireStates.find((qs)=> qs.questionnaire === que.id)
                 }
                 que.segments = que.segments.map((segment)=> {
                     segment.questions = segment.questions.map((question)=> {

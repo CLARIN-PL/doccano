@@ -565,14 +565,6 @@ export default {
         if (entityEditor) {
           const { bottom } = entityEditor.$el.getBoundingClientRect()
           this.hasStickyView = bottom + margin < 100
-
-          const component = this.isCombinationMode
-            ? this.$refs.summaryInput
-            : this.getDimensionComponentRef()
-          console.log(component)
-          if (component && component.isVisible()) {
-            console.log('test')
-          }
         }
       }
     }, 100),
@@ -881,6 +873,7 @@ export default {
           lastAnnotationTime: moment().format(DATE_FORMAT)
         })
         this.hasClickedConfirmButton = false
+        this.scrollToTop()
       }
     },
     isAllAffectiveSummaryAdded() {
