@@ -33,9 +33,9 @@ export default {
   ],
   lazy: true,
   langDir: 'i18n/',
-  defaultLocale: 'en',
+  defaultLocale: 'pl',
   vueI18n: {
-    fallbackLocale: 'en'
+    fallbackLocale: 'pl'
   },
   detectBrowserLanguage: {
     useCookie: true,
