@@ -8,7 +8,7 @@ import {
   QuestionnaireTimeItemList} 
 from '~/domain/models/questionnaire/questionnaire'
 
-export type SearchOption = { [key: string]: string | (string | null)[] }
+export type SearchOption = { [key: string]: number | string | (string | null)[] }
 
 export interface QuestionnaireRepository {
   listTypes({ limit, offset, q }: SearchOption): Promise<QuestionnaireTypeItemList>

@@ -4,8 +4,8 @@
       {{ question }}
     </span>
     <span v-if="required && question" class="red--text">*</span>
-    <v-row align="center">
-      <v-col cols="12">
+    <v-row align="start" justify="center">
+      <v-col cols="12" align="start">
         <v-slider
           v-model="sliderValue"
           class="slider"

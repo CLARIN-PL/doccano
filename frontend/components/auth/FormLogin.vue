@@ -36,6 +36,7 @@
 </template>
 
 <script lang="ts">
+import { QuestionnaireTimeItem } from 'domain/models/questionnaire/questionnaire'
 import Vue from 'vue'
 import _ from 'lodash'
 import moment from 'moment'
@@ -65,8 +66,8 @@ export default Vue.extend({
       userNameRules,
       passwordRules,
       showError: false,
-      questionnaires: [],
-      questionnaireStates: [],
+      questionnaires: [] as any[],
+      questionnaireStates: [] as QuestionnaireTimeItem[],
       mdiAccount,
       mdiLock
     }
@@ -97,34 +98,34 @@ export default Vue.extend({
         limit
       })
 
-      const questionnaireResponses = await Promise.all(questionnairePromises)
-
+      const questionnaireResponses: any[] = await Promise.all(questionnairePromises)
+      // @ts-ignore
       this.questionnaires = _.cloneDeep(_.flatMap(questionnaireResponses, 'items'))
+      // @ts-ignore
       this.questionnaireStates = _.cloneDeep(states.items)
 
-      const stateTypes = [...new Set(_.flatMap(this.questionnaireStates, 'questionnaire'))]
-      console.log(stateTypes)
-      const finishedCategories = _.flatMap(qCategories, 'types')
+      const stateTypes: any[] = [...new Set(_.flatMap(this.questionnaireStates, 'questionnaire'))]
+      const finishedCategories: any[] = _.flatMap(qCategories, 'types')
         .map((qType) => {
-          qType.intersections = _.intersection(qType.questionnaires, stateTypes)
+          qType.filledTypes = _.intersection(qType.questionnaires, stateTypes)
           const state = this.questionnaireStates.find((state) =>
             qType.questionnaires.includes(state.questionnaire)
           )
           qType.finishedAt = state ? state.finishedAt : ''
-          qType.hasFinishedAll = qType.intersections.length === qType.questionnaires.length
+          qType.hasFinishedAll = qType.filledTypes.length === qType.questionnaires.length
 
           return qType
         })
         .filter((qType) => {
-          const isInside = qType.intersections.length > 0
+          const hasFilledSome = qType.intersections.length > 0
           const todayDay = moment().format('DD-MM-YYYY')
           const finishedAt = qType.finishedAt
             ? moment(qType.finishedAt, 'YYYY-MM-DDThh:mm:ss').format('DD-MM-YYYY')
             : ''
 
           return qType.id.startsWith(dailyQuestionnaireId)
-            ? todayDay === finishedAt && isInside && qType.hasFinishedAll
-            : isInside && qType.hasFinishedAll
+            ? todayDay === finishedAt && hasFilledSome && qType.hasFinishedAll
+            : hasFilledSome && qType.hasFinishedAll
         })
 
       this.setQuestionnaire({
