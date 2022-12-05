@@ -338,7 +338,6 @@ export default {
         )
         if (hasClickedEverything) {
           this.createQuestionnaireFinishedState()
-
           this.showWarning = false
           this.activeQuestionnaire += 1
           window.scrollTo({ top: 0, behavior: 'smooth' })

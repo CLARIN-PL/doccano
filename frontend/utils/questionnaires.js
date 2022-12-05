@@ -141,8 +141,8 @@ export function hasStore() {
 export function setQuestionnaireIds(qTypes, questionnaires=[], questions=[], questionnaireStates=[]) {
     return qTypes.map((qType)=> {
         if(qType && qType.questionnaires) {
-            qType.questionnaires = qType.questionnaires.map((que)=> {
-                const questionnaire = questionnaires.find((q)=> q.name === que.name)
+            qType.questionnaires = qType.questionnaires.map((que, queIdx)=> {
+                const questionnaire = questionnaires.find((q, qIdx)=> q.name === que.name || queIdx === qIdx)
                 if(questionnaire) {
                     que.id = questionnaire.id
                     que.type = questionnaire.questionnaireType
