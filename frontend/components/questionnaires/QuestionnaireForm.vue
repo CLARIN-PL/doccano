@@ -30,9 +30,6 @@
                     align="center"
                   >
                     <v-col>
-                      <header class="text-center" >
-                        <h2 class="mb-5">{{ questionnaire.name }}</h2>
-                      </header>
                       <p class="text-caption">
                         {{ questionnaire.description }}
                       </p>
