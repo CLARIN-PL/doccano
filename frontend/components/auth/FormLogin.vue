@@ -37,13 +37,14 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import _ from 'lodash'
 import moment from 'moment'
 import { mdiAccount, mdiLock } from '@mdi/js'
 import { mapGetters, mapActions } from 'vuex'
 import { userNameRules, passwordRules } from '@/rules/index'
 import BaseCard from '@/components/utils/BaseCard.vue'
 import { history } from '~/store/user'
-import { hasValidLoginTime } from '~/utils/questionnaires'
+import { qCategories, hasValidLoginTime } from '~/utils/questionnaires'
 
 export default Vue.extend({
   components: {
@@ -64,6 +65,8 @@ export default Vue.extend({
       userNameRules,
       passwordRules,
       showError: false,
+      questionnaires: [],
+      questionnaireStates: [],
       mdiAccount,
       mdiLock
     }
@@ -80,6 +83,51 @@ export default Vue.extend({
       'setQuestionnaire',
       'addHistory'
     ]),
+    async loadQuestionnaires() {
+      const ids = [1, 2, 3, 4, 5, 6]
+      const limit = 100
+      const dailyQuestionnaireId = '4'
+      const questionnairePromises = ids.map((id) => {
+        return this.$services.questionnaire.listQuestionnairesByTypeId({
+          questionnaireTypeId: id,
+          limit
+        })
+      })
+      const states = await this.$services.questionnaire.listFinishedQuestionnaires({
+        limit
+      })
+
+      const questionnaireResponses = await Promise.all(questionnairePromises)
+
+      this.questionnaires = _.cloneDeep(_.flatMap(questionnaireResponses, 'items'))
+      this.questionnaireStates = _.cloneDeep(states.items)
+
+      const stateTypes = _.flatMap(this.questionnaireStates, 'questionnaire')
+      const finishedCategories = _.flatMap(qCategories, 'types')
+        .map((qType) => {
+          qType.intersections = _.intersection(qType.questionnaires, stateTypes)
+          const state = this.questionnaireStates.find((state) =>
+            qType.questionnaires.includes(state.questionnaire)
+          )
+          qType.finishedAt = state ? state.finishedAt : ''
+
+          return qType
+        })
+        .filter((qType) => {
+          const isInside = qType.intersections.length > 0
+          const todayDay = moment().format('DD-MM-YYYY')
+          const finishedAt = qType.finishedAt
+            ? moment(qType.finishedAt, 'YYYY-MM-DDThh:mm:ss').format('DD-MM-YYYY')
+            : ''
+          return qType.id.startsWith(dailyQuestionnaireId)
+            ? todayDay === finishedAt && isInside
+            : isInside
+        })
+
+      this.setQuestionnaire({
+        filled: _.flatMap(finishedCategories, 'id')
+      })
+    },
     async setUserData() {
       const user = await this.$services.user.getMyProfile()
       const userHistory = this.getHistories.find((hist: any) => hist.id === user.id)
@@ -144,6 +192,7 @@ export default Vue.extend({
           username: this.username,
           password: this.password
         })
+        await this.loadQuestionnaires()
         this.setUserData()
         this.$router.push(this.localePath('/projects'))
       } catch {

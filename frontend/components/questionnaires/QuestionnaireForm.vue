@@ -337,10 +337,10 @@ export default {
           question.required && question.isValid ? question.isClicked : true
         )
         if (hasClickedEverything) {
+          this.createQuestionnaireFinishedState()
           this.showWarning = false
           this.activeQuestionnaire += 1
           window.scrollTo({ top: 0, behavior: 'smooth' })
-          this.createQuestionnaireFinishedState()
         } else {
           this.scrollToFaultyQuestion(this.activeQuestionnaire, questions)
         }

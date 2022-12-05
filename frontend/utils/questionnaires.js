@@ -38,6 +38,7 @@ export const qCategories = [
                 id: "1.1",
                 name: "Przed badaniem",
                 count: 3,
+                questionnaires: [1, 2, 3]
             }
         ]
     },
@@ -50,11 +51,13 @@ export const qCategories = [
                 id: "2.1",
                 name: "Przed i po badaniu (przed badaniem)",
                 count: 8,
+                questionnaires: [4, 5, 6, 7, 8, 9, 10, 11]
             },
             {
                 id: "2.2",
                 name: "Przed i po badaniu (po badaniu)",
                 count: 8,
+                questionnaires: [4, 5, 6, 7, 8, 9, 10, 11]
             }
         ]
     },
@@ -66,12 +69,14 @@ export const qCategories = [
             {
                 id: "3.1",
                 name: "Po pierwszym tygodniu",
-                count: 1
+                count: 1, 
+                questionnaires: [12]
             },
             {
                 id: "3.2",
                 name: "Na końcu badań",
-                count: 1
+                count: 1,
+                questionnaires: [12]
             }
         ]
     }, 
@@ -82,18 +87,22 @@ export const qCategories = [
         types: [
             {
                 id: "4.1",
-                name: "Rano (sen, stres)",
+                name: "Sen (rano)",
+                description: "Rano (sen, stres)",
                 count: 2,
+                questionnaires: [13, 14]
             },
             {
                 id: "4.2",
                 name: "Wieczorem (stres, zdrowie)",
-                count: 2
+                count: 2, 
+                questionnaires: [15, 16]
             },
             {
                 id: "4.3",
                 name: "W przerwie (emocje)",
-                count: 1
+                questionnaires: [17],
+                count: 1,
             },
         ]
     },
@@ -106,6 +115,7 @@ export const qCategories = [
                 id: "5.1",
                 name: "Ankieta na koniec badania",
                 count: 1,
+                questionnaires: [18]
             }
         ]
     },
@@ -118,6 +128,7 @@ export const qCategories = [
                 id: "6.1",
                 name: "Ankieta po 2 tygodniach badania",
                 count: 1,
+                questionnaires: [19]
             }
         ]
     }
