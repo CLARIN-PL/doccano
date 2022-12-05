@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-y open-on-hover>
     <template #activator="{ on }">
-      <v-btn :color="`${buttonColor} text-capitalize`" v-on="on">
+      <v-btn :color="`${buttonColor} text-transform-none`" v-on="on">
         {{ text }}
         <v-icon>{{ mdiMenuDown }}</v-icon>
       </v-btn>
@@ -47,3 +47,9 @@ export default Vue.extend({
   }
 })
 </script>
+
+<style>
+.text-transform-none {
+  text-transform: none;
+}
+</style>
