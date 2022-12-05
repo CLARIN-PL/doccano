@@ -1,4 +1,7 @@
-import { AnswerReadItem, AnswerWriteItem,  QuestionItem, QuestionItemList, QuestionnaireItem, QuestionnaireItemList, QuestionnaireTypeItem, QuestionnaireTypeItemList } from '~/domain/models/questionnaire/questionnaire'
+import { AnswerReadItem, AnswerWriteItem,  
+  QuestionItem, QuestionItemList, QuestionnaireItem, 
+  QuestionnaireItemList, QuestionnaireTimeItem, QuestionnaireTimeItemList, 
+  QuestionnaireTypeItem, QuestionnaireTypeItemList } from '~/domain/models/questionnaire/questionnaire'
 
 
 export class QuestionnaireTypeDTO {
@@ -55,6 +58,20 @@ export class AnswerReadDTO {
     }
 }
 
+export class QuestionnaireTimeItemDTO {
+  id: number
+  questionnaire: number
+  finishedBy: number
+  finishedAt: String
+
+  constructor(item: QuestionnaireTimeItem) {
+    this.id = item.id
+    this.questionnaire = item.questionnaire
+    this.finishedBy = item.finishedBy
+    this.finishedAt = item.finishedAt
+  }
+}
+  
 export type AnswerWriteDTO = Pick<
 AnswerWriteItem,
   | 'id'
@@ -74,6 +91,20 @@ export class QuestionnaireTypeListDTO {
       this.next = item.next
       this.previous = item.previous
       this.items = item.items.map((_) => new QuestionnaireTypeDTO(_))
+    }
+  }
+  
+  export class QuestionnaireTimeItemListDTO {
+    count: number
+    next: string | null
+    previous: string | null
+    items: QuestionnaireTimeItemDTO[]
+  
+    constructor(item: QuestionnaireTimeItemList) {
+      this.count = item.count
+      this.next = item.next
+      this.previous = item.previous
+      this.items = item.items.map((_) => new QuestionnaireTimeItemDTO(_))
     }
   }
   

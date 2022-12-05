@@ -317,7 +317,7 @@ export default Vue.extend({
         })
         const hasFilledCheckedTextboxes = val.subquestion3.every((substatement: any) => {
           const hasCheckedAndFilled = substatement.isChecked
-            ? substatement.isChecked && !!substatement.answer
+            ? substatement.isChecked && !!substatement.answer && substatement.answer !== '-'
             : true
           return hasCheckedAndFilled
         })

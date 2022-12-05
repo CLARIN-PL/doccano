@@ -195,6 +195,7 @@
                 <emotions-input
                   v-if="project.isEmotionsMode || project.isCombinationMode"
                   class="mb-10"
+                  ref="emotionsInput"
                   :read-only="!canEdit"
                   :show-borders="project.isCombinationMode"
                   :show-errors="!hasValidEntries.isEmotionsMode && hasClickedConfirmButton"
@@ -215,6 +216,7 @@
                 <others-input
                   v-if="project.isOthersMode || project.isCombinationMode"
                   class="mb-10"
+                  ref="othersInput"
                   :read-only="!canEdit"
                   :show-borders="project.isCombinationMode"
                   :show-errors="!hasValidEntries.isOthersMode && hasClickedConfirmButton"
@@ -242,6 +244,7 @@
                   v-if="project.isOffensiveMode || project.isCombinationMode"
                   v-model="hasValidEntries.isOffensiveMode"
                   class="mb-10"
+                  ref="offensiveInput"
                   :show-borders="project.isCombinationMode"
                   :show-errors="hasClickedConfirmButton"
                   :project="project"
@@ -258,6 +261,7 @@
                 <humor-input
                   v-if="project.isHumorMode || project.isCombinationMode"
                   v-model="hasValidEntries.isHumorMode"
+                  ref="humorInput"
                   class="mb-10"
                   :show-borders="project.isCombinationMode"
                   :show-errors="hasClickedConfirmButton"
@@ -561,9 +565,33 @@ export default {
         if (entityEditor) {
           const { bottom } = entityEditor.$el.getBoundingClientRect()
           this.hasStickyView = bottom + margin < 100
+
+          const component = this.isCombinationMode
+            ? this.$refs.summaryInput
+            : this.getDimensionComponentRef()
+          console.log(component)
+          if (component && component.isVisible()) {
+            console.log('test')
+          }
         }
       }
     }, 100),
+
+    getDimensionComponentRef() {
+      let dimensionRef = 'summaryInput'
+      if (this.isSummaryMode) {
+        dimensionRef = 'summaryInput'
+      } else if (this.isEmotionsMode) {
+        dimensionRef = 'emotionsInput'
+      } else if (this.isOthersMode) {
+        dimensionRef = 'othersInput'
+      } else if (this.isHumorMode) {
+        dimensionRef = 'humorInput'
+      } else if (this.isOffensiveMode) {
+        dimensionRef = 'offensiveInput'
+      }
+      return this.$refs[dimensionRef]
+    },
 
     async checkRestingPeriod() {
       const restingEndTime = await this.calculateRestingPeriod()
@@ -1075,7 +1103,10 @@ export default {
   position: relative;
 
   .annotation-card__text {
-    font-size: 0.875rem;
+    font-size: 1.1rem !important;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif !important;
+    opacity: 0.6;
 
     > div > div > svg:last-of-type {
       height: 0;

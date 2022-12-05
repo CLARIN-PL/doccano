@@ -1,6 +1,7 @@
-import { QuestionnaireListDTO, QuestionListDTO, QuestionnaireTypeListDTO, AnswerWriteDTO, AnswerReadDTO } from './questionnaireData'
+import { QuestionnaireListDTO, QuestionListDTO, QuestionnaireTypeListDTO, AnswerWriteDTO, AnswerReadDTO,
+  QuestionnaireTimeItemDTO, QuestionnaireTimeItemListDTO } from './questionnaireData'
 import { QuestionnaireRepository, SearchOption } from '~/domain/models/questionnaire/questionnaireRepository'
-import { AnswerWriteItem } from '~/domain/models/questionnaire/questionnaire'
+import { AnswerWriteItem, QuestionnaireTimeItem, QuestionnaireTimeItemList } from '~/domain/models/questionnaire/questionnaire'
 
 export class QuestionnaireApplicationService {
   constructor(private readonly repository: QuestionnaireRepository) {}
@@ -32,6 +33,15 @@ export class QuestionnaireApplicationService {
     }
   }
 
+  public async listFinishedQuestionnaires(options: SearchOption): Promise<QuestionnaireTimeItemList> {
+    try {
+      const items = await this.repository.listFinishedQuestionnaires(options)
+      return new QuestionnaireTimeItemListDTO(items)
+    } catch (e: any) {
+      throw new Error(e.response.data.detail)
+    }
+  }
+
   public async createAnswer(item: AnswerWriteDTO): Promise<AnswerReadDTO> {
     try {
       const answer = this.toWriteModel(item)
@@ -51,6 +61,16 @@ export class QuestionnaireApplicationService {
       throw new Error(e.response.data.detail)
     }
   }
+
+  public async createQuestionnaireFinishedState(questionnaireId: number): Promise<QuestionnaireTimeItem> {
+    try {
+      const response = await this.repository.createQuestionnaireFinishedState(questionnaireId)
+      return new QuestionnaireTimeItemDTO(response)
+    } catch (e: any) {
+      throw new Error(e.response.data.detail)
+    }
+  }
+
 
   private toWriteModel(item: AnswerWriteDTO): AnswerWriteItem {
     return new AnswerWriteItem(
