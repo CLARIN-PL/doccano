@@ -291,9 +291,7 @@ export function getQuestionnairesToShow() {
                 } else if(questionnaireType.id === "2.1") {
                     isShowing = !isFilled
                 } else if(questionnaireType.id === "2.2") {
-                    isShowing = !isFilled 
-                                && hasFinishedAll 
-                                && hasPassedResearchTime
+                    isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "3.1") {
                     const weekDiff = moment(todayTime)
                                     .diff(moment(firstLoginTimeAtZero, DATE_FORMAT), 'weeks')
@@ -314,9 +312,7 @@ export function getQuestionnairesToShow() {
                                             && textCountToday%TEXT_BATCH_COUNT === 0
                     isShowing = !isFilled && hasAnnotatedBatch
                 } else if(questionnaireType.id === "5.1") {
-                    isShowing = !isFilled 
-                                && hasFinishedAll
-                                && hasPassedResearchTime
+                    isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "6.1") {
                     const weekDiff = moment(todayTime)
                                     .diff(moment(firstLoginTimeAtZero, DATE_FORMAT), 'weeks')
