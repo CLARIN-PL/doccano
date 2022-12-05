@@ -128,7 +128,8 @@ export default {
       substatement5: "Niesprawiedliwe uogólnianie, stereotypy",
       substatement6: "Lekceważenie",
       substatement7: "Upokorzenie",
-      substatement8: "Inne"
+      substatement8: "Inne",
+      substatement8Question: "Jakie?",
     }
   },
   humor: {

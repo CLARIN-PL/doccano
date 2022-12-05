@@ -127,7 +127,8 @@ export default {
       substatement5: "généralisation injuste, stéréotypes",
       substatement6: "manque de respect",
       substatement7: "humiliation",
-      substatement8: "autre"
+      substatement8: "autre",
+      substatement8Question: "Laquelle ?"
     }
   },
   humor: {
