@@ -45,17 +45,6 @@
                                 <p >
                                   {{ segment.scales.description }}
                                 </p>
-                                <p class="mt-5">
-                                  <v-spacer />
-                                  <ul class="hide-list-style">
-                                    <li 
-                                      v-for="(segmentScaleValue, segScalIdx) in segment.scales.values" 
-                                      :key="`segmentScaleValue-${segScalIdx}`">
-                                      {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
-                                    </li>
-                                  </ul>
-                                  <v-spacer />
-                                </p>
                               </div>
 
                               <div v-if="segment.questions">
@@ -117,9 +106,9 @@
                   </v-card>
                 </v-col>
                 <v-col cols="4" class="sticky-container">
-                  <v-card class="sticky">
+                  <v-card v-if="questionnaire.segments[0].scales" class="sticky">
                     <v-card-text>
-                      <div v-if="questionnaire.segments[0].scales" class="segment-description-container text-caption">
+                      <div class="segment-description-container text-caption">
                         <ul class="hide-list-style">
                           <li 
                             v-for="(segmentScaleValue, segScalIdx) in questionnaire.segments[0].scales.values" 
@@ -385,6 +374,8 @@ export default {
 .sticky {
   position: fixed;
   top: 90px;
+  min-width: 250px;
+  max-width: 270px;
   overflow-x: visible;
   z-index: 1;
 }

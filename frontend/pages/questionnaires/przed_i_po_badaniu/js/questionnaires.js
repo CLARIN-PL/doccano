@@ -404,7 +404,7 @@ export const qTypes = [
                 segments: [
                     {
                         scales: {
-                            description: "Pytania zawarte w tej skali dotyczą Twoich myśli i odczuć związanych z doświadczanymi w ostatnim miesiącu zdarzeniami. Mimo znacznych podobieństw są to różne pytania i każde z nich należy traktować oddzielnie. W każdym pytaniu wskaż — jak często myślałeś/aś i odczuwałeś/aś w podany sposób, wykorzystując poniższą skalę:",
+                            description: "Pytania zawarte w tej skali dotyczą Twoich myśli i odczuć związanych z doświadczanymi w ostatnim miesiącu zdarzeniami. Mimo znacznych podobieństw są to różne pytania i każde z nich należy traktować oddzielnie. W każdym pytaniu wskaż — jak często myślałeś/aś i odczuwałeś/aś w podany sposób, wykorzystując skalę po prawej stronie:",
                             values: [
                                 {
                                     value: 0,
@@ -1323,7 +1323,7 @@ export const qTypes = [
                 segments: [
                     {
                         scales: {
-                            description: "Pytania zawarte w tej skali dotyczą Twoich myśli i odczuć związanych z doświadczanymi w ostatnim miesiącu zdarzeniami. Mimo znacznych podobieństw są to różne pytania i każde z nich należy traktować oddzielnie. W każdym pytaniu wskaż — jak często myślałeś/aś i odczuwałeś/aś w podany sposób, wykorzystując poniższą skalę:",
+                            description: "Pytania zawarte w tej skali dotyczą Twoich myśli i odczuć związanych z doświadczanymi w ostatnim miesiącu zdarzeniami. Mimo znacznych podobieństw są to różne pytania i każde z nich należy traktować oddzielnie. W każdym pytaniu wskaż — jak często myślałeś/aś i odczuwałeś/aś w podany sposób, wykorzystując skalę po prawej stronie:",
                             values: [
                                 {
                                     value: 0,

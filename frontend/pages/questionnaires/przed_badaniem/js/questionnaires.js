@@ -515,7 +515,7 @@ export const qTypes = [
                 segments: [
                     {
                         scales: {
-                            description: "Pytania od Q1 do Q32 należy oceniać w skali całkowitoliczbowej od 1 do 5, gdzie:",
+                            description: "Pytania od Q1 do Q32 należy oceniać w skali całkowitoliczbowej od 1 do 5.",
                             values: [
                                 {
                                     value: 1,
