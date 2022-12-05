@@ -11,8 +11,8 @@ export default function ({ store, route, redirect, app }) {
         const toShowId = toShow[0]
         const toShowCategoryId = toShowId.split(".")[0]
         const { key } = qCategories.find((qCategory)=> qCategory.id === toShowCategoryId )
+        const locale = app.i18n.locale ?? 'pl'
         
-        const locale = app.i18n.locale ?? 'en'
         if(!isStaff && toShow.length && !isOnQuestionnairePage) {
             return redirect(locale + "/questionnaires")
         } 

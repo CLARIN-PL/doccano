@@ -199,7 +199,7 @@ export const qTypes = [
                                         text: "Mężczyzna",
                                     },
                                     {
-                                        text: "Niebinarny",
+                                        text: "Niebinarna",
                                     },
                                     {
                                         text: "Wolę się samookreślić (odpowiedź otwarta)", 
@@ -213,13 +213,13 @@ export const qTypes = [
                             {
                                 type: "text",
                                 header: "[Wiek]",
-                                text: "Jaki jest Pana/Pani wiek w latach (proszę wpisać tylko liczbę)?",
+                                text: "Jaki jest Twój wiek w latach (proszę wpisać tylko liczbę)?",
                                 numericOnly: true,
                             },
                             {
                                 type: "text",
                                 header: "[Narodowość]",
-                                text: "Jakiej jest Pani/Pana narodowości? (np. Polak)",
+                                text: "Jakiej jesteś narodowości? (np. polska)",
                             },
                             {
                                 type: "radio",
@@ -237,7 +237,7 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 header: "[Dzieci]",
-                                text: "Czy ma Pani/Pan dzieci w wieku poniżej 18 lat?",
+                                text: "Czy masz dzieci w wieku poniżej 18 lat?",
                                 options: [
                                     {
                                         text: "Tak: proszę wymienić liczbę dzieci w polu odpowiedzi otwartej (tu odpowiedź otwarta)",
@@ -252,7 +252,7 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 header: "[Opieka]",
-                                text: "Czy ma Pani/Pan inne obowiązki związane z opieką nad dziećmi?",
+                                text: "Czy masz inne obowiązki związane z opieką nad dziećmi?",
                                 options: [
                                     {
                                         text: "Tak",
@@ -361,19 +361,19 @@ export const qTypes = [
                                 text: "Jaki jest Twój status związku?",
                                 options: [
                                     {
-                                        text: "Samotny",
+                                        text: "Samotny/a",
                                     },
                                     {
-                                        text: "W związku, ale nie mieszkam razem",
+                                        text: "W związku, ale nie mieszkamy razem",
                                     },
                                     {
                                         text: "Zamężna lub mieszkająca razem",
                                     },
                                     {
-                                        text: "Owdowiały",
+                                        text: "Owdowiały/a",
                                     },
                                     {
-                                        text: "Rozwiedziony lub w separacji",
+                                        text: "Rozwiedziony/a lub w separacji",
                                     },
                                     {
                                         text: "Inne (proszę określić) (odpowiedź otwarta)",
@@ -384,13 +384,13 @@ export const qTypes = [
                             {
                                 type: "text",
                                 header: "[Wielkość gospodarstwa domowego]",
-                                text: "Ile osób, łącznie z Panem/Panią, mieszka w gospodarstwie domowym?",
+                                text: "Ile osób, łącznie z Tobą, mieszka w gospodarstwie domowym?",
                                 numericOnly: true,
                             },
                             {
                                 type: "radio",
                                 header: "[Wykształcenie]",
-                                text: "Jaki jest Pana(i) poziom wykształcenia?",
+                                text: "Jaki jest Twój poziom wykształcenia?",
                                 options: [
                                     {
                                         text: "Podstawowe"
@@ -457,7 +457,7 @@ export const qTypes = [
                             {
                                 type: "radio",
                                 header: "[Religia]",
-                                text: "Czy jest Pan(i) osobą religijną?",
+                                text: "Czy jesteś osobą religijną?",
                                 options: [
                                     {
                                         text: "Nie"
@@ -515,7 +515,7 @@ export const qTypes = [
                 segments: [
                     {
                         scales: {
-                            description: "Pytania od Q1 do Q32 należy oceniać w skali całkowitoliczbowej od 1 do 5, gdzie:",
+                            description: "Pytania od Q1 do Q32 należy oceniać w skali całkowitoliczbowej od 1 do 5.",
                             values: [
                                 {
                                     value: 1,

@@ -248,7 +248,7 @@ export default {
             this.uploadedFiles = []
             this.isImporting = false
             if (this.errors.length === 0) {
-              this.$router.push(`/projects/${this.$route.params.id}/dataset`)
+              this.$router.push(this.localePath(`/projects/${this.$route.params.id}/dataset`))
             }
           }
         }

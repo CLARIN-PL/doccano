@@ -61,7 +61,7 @@ export default Vue.extend({
           await this.uploadScaleTypeFile(project)
         }
       } 
-      this.$router.push(`/projects/${project.id}`)
+      this.$router.push(this.localePath(`/projects/${project.id}`))
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
       })

@@ -55,7 +55,7 @@ export default Vue.extend({
     async upload(file: File) {
       try {
         await this.service.upload(this.projectId, file)
-        this.$router.push(`/projects/${this.projectId}/labels`)
+        this.$router.push(this.localePath(`/projects/${this.projectId}/labels`))
       } catch (e) {
         this.errorMessage = e.message
       }

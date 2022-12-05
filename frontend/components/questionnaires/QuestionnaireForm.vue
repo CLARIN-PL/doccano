@@ -1,9 +1,6 @@
 <template>
   <v-row align="center" justify="center" >
-    <v-col v-if="showGreetingCard" cols="8">
-      <greeting-card @click="onClickGreetingCardButton" />
-    </v-col>
-    <v-col v-else cols="8">
+    <v-col cols="9">
       <div ref="header">
         <v-alert
             v-model="showWarning"
@@ -26,99 +23,104 @@
               v-for="(questionnaire, qIdx) in formData.questionnaires"
               :key="`questionnaire-window-${qIdx}`"
             >
-              <v-card flat>
-                <v-card-text>
-                  <v-row
-                    class="mb-4"
-                    align="center"
-                  >
-                    <v-col>
-                      <header class="text-center" >
-                        <h2 class="mb-5">{{ questionnaire.name }}</h2>
-                      </header>
-                      <p class="text-caption">
-                        {{ questionnaire.description }}
-                      </p>
-                      <ul class="pa-0">
-                        <li
-                          v-for="(segment, segIdx) in questionnaire.segments"
-                          :key="`segment-${segIdx}`"
-                          class="hide-list-style"
-                        >
-                          <div v-if="segment.scales" class="segment-description-container text-caption">
-                            <p >
-                              {{ segment.scales.description }}
-                            </p>
-                            <p class="mt-5">
-                              <v-spacer />
-                              <ul class="hide-list-style">
-                                <li 
-                                  v-for="(segmentScaleValue, segScalIdx) in segment.scales.values" 
-                                  :key="`segmentScaleValue-${segScalIdx}`">
-                                  {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
-                                </li>
-                              </ul>
-                              <v-spacer />
-                            </p>
-                          </div>
+              <v-row align="top" justify="center" >
+                <v-col cols="8">
+                  <v-card>
+                    <v-card-text>
+                      <v-row
+                        class="mb-4"
+                        align="center"
+                      >
+                        <v-col>
+                          <p class="text-caption">
+                            {{ questionnaire.description }}
+                          </p>
+                          <ul class="pa-0">
+                            <li
+                              v-for="(segment, segIdx) in questionnaire.segments"
+                              :key="`segment-${segIdx}`"
+                              class="hide-list-style"
+                            >
+                              <div v-if="segment.scales" class="segment-description-container text-caption">
+                                <p >
+                                  {{ segment.scales.description }}
+                                </p>
+                              </div>
 
-                          <div v-if="segment.questions">
-                            <ol :class="segment.prependIndex ? 'segment-question hide-list-style' : 'segment-question'">
-                                <li 
-                                  v-for="(segmentQuestion, segQuIdx) in segment.questions" 
-                                  :ref="`question_${qIdx}_${segQuIdx}`"
-                                  :key="`segmentQuestion-${segQuIdx}`"
-                                >
-                                  <div v-if="segmentQuestion.id" class="question-container">
-                                    <span v-if="segment.prependIndex">
-                                      {{ segment.prependIndex+(segQuIdx+1) }}
-                                    </span>
-                                    <component 
-                                      :is="getComponent(segmentQuestion.type)"
-                                      v-model="segmentQuestion.value"
-                                      :header="segmentQuestion.header"
-                                      :required="segmentQuestion.required"
-                                      :question="segmentQuestion.text"
-                                      :options="segmentQuestion.options"
-                                      :config="segmentQuestion.config"
-                                      :is-clicked="segmentQuestion.isClicked"
-                                      :is-submitting="segmentQuestion.isSubmitting"
-                                      :error-message="segmentQuestion.errorMessage"
-                                      :read-only="segmentQuestion.readOnly"
-                                      :passed-data="{
-                                          question: segmentQuestion, 
-                                          formDataKey: getFormDataKey(segQuIdx, segIdx, qIdx)
-                                        }"
-                                      @change="onQuestionChange"
-                                    />
-                                  </div>
-                                  <p v-else>
-                                    {{ $t('questionnaires_main.errorDataMapping') }}
-                                  </p>
-                                </li>
-                            </ol>
-                          </div>
-                          
-                          <v-divider v-if="segIdx < questionnaire.segments.length-1" class="mt-10 mb-10" />
-                        </li>
-                      </ul>
-                      <!-- eslint-disable-next-line vue/no-v-html -->
-                      <footer v-html="questionnaire.footer" />
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-                <v-divider />
-                <v-card-actions>
-                  <v-spacer />
-                  <v-btn v-if="activeQuestionnaire+1 < formData.questionnaires.length" 
-                    color="primary" @click="onClickContinueButton">
-                    {{ $t('generic.continue') }}
-                  </v-btn>
-                  <v-btn v-else color="primary" @click="onClickFinishButton">
-                    {{ $t('questionnaires_main.buttonFinish') }}
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
+                              <div v-if="segment.questions">
+                                <ol :class="segment.prependIndex ? 'segment-question hide-list-style' : 'segment-question'">
+                                    <li 
+                                      v-for="(segmentQuestion, segQuIdx) in segment.questions" 
+                                      :ref="`question_${qIdx}_${segQuIdx}`"
+                                      :key="`segmentQuestion-${segQuIdx}`"
+                                    >
+                                      <div v-if="segmentQuestion.id" class="question-container">
+                                        <span v-if="segment.prependIndex">
+                                          {{ segment.prependIndex+(segQuIdx+1) }}
+                                        </span>
+                                        <component 
+                                          :is="getComponent(segmentQuestion.type)"
+                                          v-model="segmentQuestion.value"
+                                          :header="segmentQuestion.header"
+                                          :required="segmentQuestion.required"
+                                          :question="segmentQuestion.text"
+                                          :options="segmentQuestion.options"
+                                          :config="segmentQuestion.config"
+                                          :is-clicked="segmentQuestion.isClicked"
+                                          :is-submitting="segmentQuestion.isSubmitting"
+                                          :error-message="segmentQuestion.errorMessage"
+                                          :read-only="segmentQuestion.readOnly"
+                                          :passed-data="{
+                                              question: segmentQuestion, 
+                                              formDataKey: getFormDataKey(segQuIdx, segIdx, qIdx)
+                                            }"
+                                          @change="onQuestionChange"
+                                        />
+                                      </div>
+                                      <p v-else>
+                                        {{ $t('questionnaires_main.errorDataMapping') }}
+                                      </p>
+                                    </li>
+                                </ol>
+                              </div>
+                              
+                              <v-divider v-if="segIdx < questionnaire.segments.length-1" class="mt-10 mb-10" />
+                            </li>
+                          </ul>
+                          <!-- eslint-disable-next-line vue/no-v-html -->
+                          <footer v-html="questionnaire.footer" />
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
+                    <v-divider />
+                    <v-card-actions>
+                      <v-spacer />
+                      <v-btn v-if="activeQuestionnaire+1 < formData.questionnaires.length" 
+                        color="primary" @click="onClickContinueButton">
+                        {{ $t('questionnaires_main.buttonFinish') }}
+                      </v-btn>
+                      <v-btn v-else color="primary" @click="onClickFinishButton">
+                        {{ $t('questionnaires_main.buttonFinish') }}
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-col>
+                <v-col cols="4" class="sticky-container">
+                  <v-card v-if="questionnaire.segments[0].scales" class="sticky">
+                    <v-card-text>
+                      <div class="segment-description-container text-caption">
+                        <ul class="hide-list-style">
+                          <li 
+                            v-for="(segmentScaleValue, segScalIdx) in questionnaire.segments[0].scales.values" 
+                            :key="`segmentScaleValue-${segScalIdx}`">
+                            {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
+                          </li>
+                        </ul>
+                      </div>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
             </v-window-item>
           </v-window>
         </v-col>
@@ -180,7 +182,6 @@ export default {
       activeQuestionnaire: 0,
       isLoaded: false,
       showWarning: false,
-      showGreetingCard: false,
       formData: {
         questionnaires: []
       }
@@ -210,7 +211,6 @@ export default {
     },
     initialize() {
       this.showWarning = false
-      this.showGreetingCard = false
       this.mappedQTypes = mapQuestionnaireTypes(this.qTypes)
       this.$nextTick(() => {
         this.isLoaded = true
@@ -285,12 +285,6 @@ export default {
         return SliderInput
       }
     },
-    onClickGreetingCardButton() {
-      this.showGreetingCard = false
-      this.showWarning = false
-      this.activeQuestionnaire += 1
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    },
     scrollToFaultyQuestion(id, questions = []) {
       const firstErrorIndex = questions.findIndex((question) => !question.isClicked)
       this.showWarning = true
@@ -309,7 +303,9 @@ export default {
           question.required && question.isValid ? question.isClicked : true
         )
         if (hasClickedEverything) {
-          this.showGreetingCard = true
+          this.showWarning = false
+          this.activeQuestionnaire += 1
+          window.scrollTo({ top: 0, behavior: 'smooth' })
         } else {
           this.scrollToFaultyQuestion(this.activeQuestionnaire, questions)
         }
@@ -357,6 +353,8 @@ export default {
 <style lang="scss">
 .questionnaire-window {
   padding: 20px;
+  position: relative;
+  z-index: 0;
 }
 
 .segment-description-container,
@@ -367,5 +365,18 @@ export default {
 .hide-list-style {
   list-style: none;
   padding-left: 0 !important;
+}
+
+.sticky-container {
+  z-index: 0;
+}
+
+.sticky {
+  position: fixed;
+  top: 90px;
+  min-width: 250px;
+  max-width: 270px;
+  overflow-x: visible;
+  z-index: 1;
 }
 </style>

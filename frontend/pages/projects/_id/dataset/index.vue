@@ -6,7 +6,7 @@
           <v-btn 
             v-if="!showTableAnnButton"
             :disabled="!enableTableAnnButton"
-            color="ms-4 my-1 mb-2 primary text-capitalize" 
+            color="ms-4 my-1 mb-2 primary text-transform-none"
             @click="toLabeling">
             {{ $t('home.startAnnotation') }}
           </v-btn>
@@ -70,7 +70,7 @@
       <v-btn 
         v-if="!showTableAnnButton"
         :disabled="!enableTableAnnButton"
-        color="ms-4 my-1 mb-2 primary text-capitalize" 
+        color="ms-4 my-1 mb-2 primary text-transform-none"
         @click="toLabeling">
         {{ $t('home.startAnnotation') }}
       </v-btn>
@@ -295,5 +295,9 @@ export default Vue.extend({
 <style scoped>
 ::v-deep .v-dialog {
   width: 800px;
+}
+
+.text-transform-none {
+  text-transform: none;
 }
 </style>

@@ -191,7 +191,7 @@ export default Vue.extend({
     },
 
     editItem(item: LabelDTO) {
-      this.$router.push(`labels/${item.id}/edit?type=${this.labelType}`)
+      this.$router.push(this.localePath(`labels/${item.id}/edit?type=${this.labelType}`))
     }
   }
 })

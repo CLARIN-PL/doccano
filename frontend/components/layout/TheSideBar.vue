@@ -2,7 +2,7 @@
   <v-list dense>
     <v-btn 
       v-if="showAnnotationButton"
-      color="ms-4 my-1 mb-2 primary text-capitalize" 
+      color="ms-4 my-1 mb-2 primary text-transform-none"
       nuxt 
       @click="toLabeling"
     >
@@ -150,3 +150,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.text-transform-none {
+  text-transform: none;
+}
+</style>

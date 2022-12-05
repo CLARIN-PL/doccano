@@ -3,6 +3,8 @@ export default {
   notCheckedTooltip: 'Not Checked',
   markAsChecked: "Mark as checked",
   markAsNotChecked: "Mark as not checked",
+  clearAnnotationsTitle: "Clear annotations",
+  clearAnnotationsMessage: "Are you sure you want to delete all annotations?",
   warningCheckedNavigation: "Please mark the text as checked before continuing to the next text.",
   warningBackNavigation: "Sorry, you cannot go to previously annotated text",
   selectFilterTooltip: 'Select a Filter',
@@ -169,9 +171,9 @@ export default {
       substatement10: "Uncensored words",
       substatement11: "Contrast",
       substatement12: "Has characteristics of a joke",
-      substatement13: "absurd",
-      substatement14: "situational humor",
-      substatement15: "pathetic humor",
+      substatement13: "Absurd",
+      substatement14: "Situational humor",
+      substatement15: "Pathetic humor",
     }
   },
   noScaleLabels: 'No scale labels found. Please contact the administrator.'

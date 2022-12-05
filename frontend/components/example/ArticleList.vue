@@ -85,7 +85,7 @@
       <v-btn
         v-if="showAnnotationButton"
         small
-        color="primary text-capitalize mr-5"
+        color="primary mr-5 text-transform-none"
         @click="toLabeling(item.data[0])"
       >
         {{ $t('dataset.startAnnotation') }}
@@ -397,5 +397,9 @@ export default Vue.extend({
       display: none;
     }
   }
+}
+
+.text-transform-none {
+  text-transform: none;
 }
 </style>

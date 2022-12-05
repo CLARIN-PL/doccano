@@ -4,6 +4,8 @@ export default {
   selectFilterTooltip: '过滤',
   markAsChecked: "标记为选中",
   markAsNotChecked: "标记为未选中",
+  clearAnnotationsTitle: "清晰的注解",
+  clearAnnotationsMessage: "您确定要删除所有注释吗?",
   warningCheckedNavigation: "请在继续下一个文本之前将文本标记为已检查。",
   warningBackNavigation: "抱歉, 您不能转到以前注释的文本",
   filterOption1: '全部',

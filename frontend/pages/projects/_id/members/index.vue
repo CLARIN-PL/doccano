@@ -76,7 +76,7 @@ export default Vue.extend({
     try {
       this.items = await this.$services.member.list(this.projectId)
     } catch (e) {
-      this.$router.push(`/projects/${this.projectId}`)
+      this.$router.push(this.localePath(`/projects/${this.projectId}`))
     } finally {
       this.isLoading = false
     }

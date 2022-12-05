@@ -4,6 +4,8 @@ export default {
   selectFilterTooltip: 'Wähle einen Filter',
   markAsChecked: "Als geprüft markieren",
   markAsNotChecked: "Als nicht geprüft markieren",
+  clearAnnotationsTitle: "Klare anmerkungen",
+  clearAnnotationsMessage: "Möchten Sie wirklich alle Anmerkungen löschen?",
   warningCheckedNavigation: "Bitte markieren Sie den Text als markiert, bevor Sie mit dem nächsten Text fortfahren.",
   warningBackNavigation: "Entschuldigung, Sie können nicht zu zuvor kommentiertem Text wechseln",
   filterOption1: 'Alle',
@@ -168,9 +170,9 @@ export default {
       substatement10: "Unzensierte Wörter",
       substatement11: "Kontrast",
       substatement12: "Hat Merkmale eines Witzes",
-      substatement13: "absurd",
-      substatement14: "situativer Humor",
-      substatement15: "erbärmlicher Humor",
+      substatement13: "Absurd",
+      substatement14: "Situativer Humor",
+      substatement15: "Erbärmlicher Humor",
     }
   },
   noScaleLabels: 'Keine Skalenbeschriftungen gefunden. Bitte wenden Sie sich an den Administrator.'

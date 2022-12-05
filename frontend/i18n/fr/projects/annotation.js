@@ -4,6 +4,8 @@ export default {
   selectFilterTooltip: 'Sélectionnez un filtre',
   markAsChecked: "Marquer comme coché",
   markAsNotChecked: "Marquer comme non coché",
+  clearAnnotationsTitle: "Effacer les annotations",
+  clearAnnotationsMessage: "Voulez-vous vraiment supprimer toutes les annotations?",
   warningCheckedNavigation: "Veuillez marquer le texte comme coché avant de passer au texte suivant.",
   warningBackNavigation: "Désolé, vous ne pouvez pas accéder au texte précédemment annoté",
   filterOption1: 'Tous',
@@ -168,9 +170,9 @@ export default {
       substatement10: " Mots non censurés ",
       substatement11: " Contraste ",
       substatement12: "Présente les caractéristiques d'une blague",
-      substatement13: "absurde",
-      substatement14: "humour situationnel",
-      substatement15: "humour pathétique",
+      substatement13: "Absurde",
+      substatement14: "Humour situationnel",
+      substatement15: "Humour pathétique",
     }
   },
   noScaleLabels : "Aucune étiquette d'échelle n'a été trouvée. Veuillez contacter l'administrateur."
