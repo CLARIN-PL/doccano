@@ -517,8 +517,11 @@ export default {
               questionnaireTypeId: 1,
               limit: 1
             })
-            const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
-            const firstQuestionnaireEverDate = moment(firstQuestionnaireEver).format('DD-MM-YYYY')
+            let firstQuestionnaireEverDate = null
+            if (questionnaireStates) {
+              const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
+              firstQuestionnaireEverDate = moment(firstQuestionnaireEver).format('DD-MM-YYYY')
+            }
             this.initQuestionnaire(firstQuestionnaireEverDate)
           })
         }
