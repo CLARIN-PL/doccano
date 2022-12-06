@@ -512,7 +512,15 @@ export default {
       handler(val) {
         const textBatchCount = 20
         if (val.textCountToday > 0 && val.textCountToday % textBatchCount === 0) {
-          this.initQuestionnaire()
+          this.$nextTick(async () => {
+            const questionnaireStates = await this.$services.questionnaire.listFinishedQuestionnaires({
+              questionnaireTypeId: 1,
+              limit: 1
+            })
+            const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
+            const firstQuestionnaireEverDate = moment(firstQuestionnaireEver).format('DD-MM-YYYY')
+            this.initQuestionnaire(firstQuestionnaireEverDate)
+          })
         }
       }
     },
