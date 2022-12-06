@@ -318,7 +318,6 @@ export function hasValidLoginTime(givenTime) {
 }
 
 export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
-    console.log(firstQuestionnaireEverStr)
     const qTypes = getQuestionnaireTypes()
     const todayTime = new Date()
     let getters = null
@@ -360,9 +359,6 @@ export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
                     isShowing = !isFilled
                 } else if(questionnaireType.id === "2.2") {
                     isShowing = !isFilled && hasPassedResearchTime
-                    console.log("todayTime", todayTime)
-                    console.log("hasPassedResearchTime", hasPassedResearchTime)
-                    console.log("2.2 isShowing: ", isShowing)
                 } else if(questionnaireType.id === "3.1") {
                     const weekDiff = Math.abs(moment(todayTime)
                                     .diff(moment(defaultTime, DATE_FORMAT), 'weeks'))
@@ -370,9 +366,6 @@ export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
                     isShowing = !isFilled && hasPassedOneWeek
                 } else if(questionnaireType.id === "3.2") {
                     isShowing = !isFilled && hasPassedResearchTime
-                    console.log("todayTime", todayTime)
-                    console.log("hasPassedResearchTime", hasPassedResearchTime)
-                    console.log("3.2 isShowing: ", isShowing)
                 } else if(questionnaireType.id === "4.1") {
                     isShowing = !isFilled && !hasAnnotatedToday
                 }  else if(questionnaireType.id === "4.2") {
@@ -387,9 +380,6 @@ export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
                     isShowing = !isFilled && hasAnnotatedBatch
                 } else if(questionnaireType.id === "5.1") {
                     isShowing = !isFilled && hasPassedResearchTime
-                    console.log("todayTime", todayTime)
-                    console.log("hasPassedResearchTime", hasPassedResearchTime)
-                    console.log("5.1 isShowing: ", isShowing)
                 } else if(questionnaireType.id === "6.1") {
                     const weekDiff = Math.abs(moment(todayTime)
                                     .diff(moment(defaultTime, DATE_FORMAT), 'weeks'))
