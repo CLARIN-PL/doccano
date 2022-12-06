@@ -172,9 +172,9 @@ export const actions = {
     const endTime = moment(startTime).add(5, 'm').format('DD-MM-YYYY HH:mm:ss')
     commit('setRestingPeriod', endTime)
   },
-  initQuestionnaire({commit}) {
+  initQuestionnaire({commit}, firstQuestionnaireEverDate) {
     if(hasStore()) {
-      const toShow = getQuestionnairesToShow()
+      const toShow = getQuestionnairesToShow(firstQuestionnaireEverDate)
       commit('setQuestionnaire', { toShow, inProgress: [], isWorkingNow: false })
     }
   },

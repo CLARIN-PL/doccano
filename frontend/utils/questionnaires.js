@@ -317,7 +317,7 @@ export function hasValidLoginTime(givenTime) {
     return hasValidLoginTime
 }
 
-export function getQuestionnairesToShow() {
+export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
     const qTypes = getQuestionnaireTypes()
     const todayTime = new Date()
     let getters = null
@@ -335,13 +335,20 @@ export function getQuestionnairesToShow() {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { firstLoginTime } = getters['user/getLogin']
                 const { firstAnnotationTime } = getters['user/getAnnotation']
+                let firstQuestionnaireEverDate = new Date()
+                if (firstQuestionnaireEverStr) {
+                    firstQuestionnaireEverDate = moment(firstQuestionnaireEverStr, 'DD-MM-YYYY').toDate()
+                }
                 const firstLoginTimeAtZero = moment(firstLoginTime, DATE_FORMAT).format("DD-MM-YYYY")+" 00:00:00"
                 const { hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
                 const defaultTime = firstAnnotationTime || firstLoginTimeAtZero
-                const monthDiff = Math.abs(moment(todayTime).diff(
-                    moment(defaultTime, DATE_FORMAT), 'months'
+                const monthDiff1 = Math.abs(moment(todayTime).diff(
+                    moment(firstLoginTimeAtZero, DATE_FORMAT), 'months'
                 ))
-                const hasPassedResearchTime = monthDiff >= RESEARCH_TIME_IN_MONTHS
+                const monthDiff2 = Math.abs(moment(todayTime).diff(
+                    moment(firstQuestionnaireEverDate), 'months'
+                ))
+                const hasPassedResearchTime = monthDiff2 >= RESEARCH_TIME_IN_MONTHS || monthDiff1 >= RESEARCH_TIME_IN_MONTHS
                 let isShowing = false
                 if(questionnaireType.id === '1.1') {
                     const hourDiff = Math.abs(moment(firstLoginTime, DATE_FORMAT)
