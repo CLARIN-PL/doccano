@@ -6,6 +6,7 @@ export const qTypes = [
             {
                 name: "SWLS-A",
                 language: "pl",
+                typeId: "2.1",
                 type: "dobrostan: satysfakcja z życia",
                 segments: [
                     {
@@ -84,6 +85,7 @@ export const qTypes = [
             },
             {
                 name: "SPANE",
+                typeId: "2.1",
                 language: "pl",
                 type: "dobrostan: afekt",
                 segments: [
@@ -204,6 +206,7 @@ export const qTypes = [
             },
             {
                 name: "Skala Prosperowania",
+                typeId: "2.1",
                 language: "pl",
                 type: "dobrostan: skala prosperowania",
                 segments: [
@@ -304,6 +307,7 @@ export const qTypes = [
             },
             {
                 name: "Kwestionariusz Zdrowia Pacjenta PHQ-9 (PHQ-9)",
+                typeId: "2.1",
                 language: "pl",
                 type: "depresja",
                 segments: [
@@ -399,6 +403,7 @@ export const qTypes = [
             },
             {
                 name: "Kwestionariusz PSS",
+                typeId: "2.1",
                 language: "pl",
                 type: "stres",
                 segments: [
@@ -505,6 +510,7 @@ export const qTypes = [
             },
             {
                 name: "Physical Health Questionnaire",
+                typeId: "2.1",
                 language: "pl",
                 type: "zdrowie",
                 segments: [
@@ -688,6 +694,7 @@ export const qTypes = [
             },
             {
                 name: "List of RESS-EMA Items",
+                typeId: "2.1",
                 language: "pl",
                 type: "regulacja emocji",
                 segments: [
@@ -833,6 +840,7 @@ export const qTypes = [
             {
                 name: "PAQ",
                 language: "pl",
+                typeId: "2.1",
                 type: "alexytymia",
                 segments: [
                     {
@@ -924,6 +932,7 @@ export const qTypes = [
         questionnaires: [
             {
                 name: "SWLS-A",
+                typeId: "2.2",
                 language: "pl",
                 type: "dobrostan: satysfakcja z życia",
                 segments: [
@@ -1004,6 +1013,7 @@ export const qTypes = [
             {
                 name: "SPANE",
                 language: "pl",
+                typeId: "2.2",
                 type: "dobrostan: afekt",
                 segments: [
                     {
@@ -1124,6 +1134,7 @@ export const qTypes = [
             {
                 name: "Skala Prosperowania",
                 language: "pl",
+                typeId: "2.2",
                 type: "dobrostan: skala prosperowania",
                 segments: [
                     {
@@ -1224,6 +1235,7 @@ export const qTypes = [
             {
                 name: "Kwestionariusz Zdrowia Pacjenta PHQ-9 (PHQ-9)",
                 language: "pl",
+                typeId: "2.2",
                 type: "depresja",
                 segments: [
                     {
@@ -1319,6 +1331,7 @@ export const qTypes = [
             {
                 name: "Kwestionariusz PSS",
                 language: "pl",
+                typeId: "2.2",
                 type: "stres",
                 segments: [
                     {
@@ -1425,6 +1438,7 @@ export const qTypes = [
             {
                 name: "Physical Health Questionnaire",
                 language: "pl",
+                typeId: "2.2",
                 type: "zdrowie",
                 segments: [
                     {
@@ -1608,6 +1622,7 @@ export const qTypes = [
             {
                 name: "List of RESS-EMA Items",
                 language: "pl",
+                typeId: "2.2",
                 type: "regulacja emocji",
                 segments: [
                     {
@@ -1752,6 +1767,7 @@ export const qTypes = [
             {
                 name: "PAQ",
                 language: "pl",
+                typeId: "2.2",
                 type: "alexytymia",
                 segments: [
                     {

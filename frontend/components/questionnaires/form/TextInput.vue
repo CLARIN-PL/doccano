@@ -1,9 +1,13 @@
 <template>
   <v-container class="widget">
     <v-row v-if="question" class="widget__question" align="center">
-      {{ header }}
-      {{ question }}
-      <span v-if="required" class="red--text"> * </span>
+      <v-col cols="12">
+        <span>
+          {{ header }}
+          {{ question }}
+          <span v-if="required" class="red--text"> * </span>
+        </span>
+      </v-col>
     </v-row>
     <v-row class="widget__answer" justify="center" align="center">
       <v-col :cols="12" class="widget__textfield" @click="textfieldClickHandler">
@@ -30,7 +34,7 @@
         </v-card-title>
         <v-card-text class="widget-dialog__text">
           <p class="widget-dialog__warning">{{ dialogErrorMessage }}</p>
-          <v-row justify="center" align="center">
+          <v-row justify="center" align="start">
             <v-col cols="10">
               <v-text-field
                 v-model.trim="text"
@@ -49,7 +53,7 @@
                 color="primary"
                 height="55px"
                 class="ma-0"
-                :disabled="!value"
+                :disabled="!text"
                 @click="submitAnswer"
               >
                 <v-icon>{{ mdiSend }}</v-icon>
@@ -216,6 +220,7 @@ export default {
   }
 
   &__textfield {
+    padding: 12px 0;
     .v-input {
       font-size: 0.8rem;
     }

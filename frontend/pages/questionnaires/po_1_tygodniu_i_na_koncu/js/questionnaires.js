@@ -6,6 +6,7 @@ export const qTypes = [
             {
                 name: "Ankieta zwrotna",
                 language: "pl",
+                typeId: "3.1",
                 type: "ankieta zwrotna",
                 description: "Celem ankiety jest zebranie informacji zwrotnej dotyczącej przeprowadzanego badania po to, aby móc ulepszyć procedury w przyszłości.",
                 segments: [
@@ -36,6 +37,7 @@ export const qTypes = [
             {
                 name: "Ankieta zwrotna",
                 language: "pl",
+                typeId: "3.2",
                 type: "ankieta zwrotna",
                 description: "Celem ankiety jest zebranie informacji zwrotnej dotyczącej przeprowadzanego badania po to, aby móc ulepszyć procedury w przyszłości.",
                 segments: [

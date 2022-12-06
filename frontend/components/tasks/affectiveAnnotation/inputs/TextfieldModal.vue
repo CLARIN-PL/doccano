@@ -12,7 +12,7 @@
           dense
           outlined
           readonly
-          :value="showDialog ? '' : value"
+          :value="showDialog || text === emptyTextFlag ? '' : text"
           :rules="rulesTextfield"
           hide-details="auto"
         />
@@ -41,7 +41,7 @@
                 color="primary"
                 height="55px"
                 class="ma-0"
-                :disabled="!value"
+                :disabled="!text"
                 @click="submitAnswer"
               >
                 <v-icon>{{ mdiSend }}</v-icon>
@@ -92,6 +92,7 @@ export default {
   data() {
     return {
       mdiSend,
+      emptyTextFlag: '-',
       enableTextfield: true,
       showDialog: false,
       dialogErrorMessage: ''
@@ -101,7 +102,7 @@ export default {
   computed: {
     text: {
       get() {
-        return this.value
+        return this.value === this.emptyTextFlag ? '' : this.value
       },
       set(val) {
         this.$emit('input', val)

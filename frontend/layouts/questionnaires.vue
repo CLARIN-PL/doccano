@@ -17,9 +17,10 @@
 import TheHeader from '~/components/layout/TheHeader'
 
 export default {
+  name: 'Questionnaires',
   components: {
     TheHeader
   },
-  middleware: ['check-auth', 'auth', 'check-questionnaire'],
+  middleware: ['check-auth', 'auth', 'check-questionnaire']
 }
 </script>

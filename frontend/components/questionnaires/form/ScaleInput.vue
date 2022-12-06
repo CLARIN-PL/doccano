@@ -5,7 +5,7 @@
     </small>
     <p>
       {{ question }}
-      <span v-if="required" class="red--text">*</span>
+      <span v-if="required && question" class="red--text">*</span>
     </p>
     <v-radio-group v-model="input">
       <v-radio
@@ -65,7 +65,7 @@ export default Vue.extend({
       set(val) {
         const base: any = this
         base.$emit('input', val)
-        base.$emit('change', { ...base.passedData, value: val })
+        base.$emit('change', { ...base.passedData })
       }
     }
   }

@@ -6,6 +6,7 @@ export const qTypes = [
             {
                 name: "Sen (rano)",
                 language: "pl",
+                typeId: "4.1",
                 segments: [
                     {
                         scales: {
@@ -62,6 +63,7 @@ export const qTypes = [
             {
                 name: "Stres (rano)",
                 language: "pl",
+                typeId: "4.1",
                 segments: [
                     {
                         description: "Poniżej podano kilka stwierdzeń, z którymi możesz się zgadzać lub nie. Używając skali 0 do 4 wskaż, w jakim stopniu zgadzasz się z każdym stwierdzeniem. Bądź szczery w swoich odpowiedziach.",
@@ -117,6 +119,7 @@ export const qTypes = [
             {
                 name: "Stres (wieczorem)",
                 language: "pl",
+                typeId: "4.2",
                 segments: [
                     {
                         scales: {
@@ -166,6 +169,7 @@ export const qTypes = [
             {
                 name: "Zdrowie (wieczorem)",
                 language: "pl",
+                typeId: "4.2",
                 segments: [
                     {
                         scales: {
@@ -207,12 +211,13 @@ export const qTypes = [
         ]
     },
     {
-        name: "W przerwie (emocje)",
+        name: "Emocje (w przerwie)",
         id: "4.3",
         questionnaires: [
             {
                 name: "Emocje (w przerwie)",
                 language: "pl",
+                typeId: "4.3",
                 segments: [
                     {
                         questions: [

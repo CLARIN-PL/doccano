@@ -60,6 +60,28 @@ export class ExampleItem {
   }
 }
 
+export class ExampleStateItem {
+  id: number
+  example: number
+  
+  @Expose({ name: "confirmed_at"})
+  confirmedAt: String
+
+  @Expose({name: "confirmed_by"})
+  confirmedBy: number
+}
+
+export class ExampleStateItemList {
+  count: number
+  next: string | null
+  prev: string | null
+
+  @Type(() => ExampleStateItem)
+  @Expose({ name: 'results' })
+  items: ExampleStateItem[]
+}
+
+
 export class ExampleItemList {
   count: number
   next: string | null

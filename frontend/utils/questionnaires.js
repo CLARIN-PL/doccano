@@ -27,6 +27,8 @@ import _ from 'lodash'
 const RESEARCH_TIME_IN_MONTHS = 3
 const TEXT_BATCH_COUNT = 20
 const DATE_FORMAT = "DD-MM-YYYY HH:mm:ss"
+const DATE_ONLY_FORMAT = "DD-MM-YYYY"
+const SERVER_DATE_FORMAT = "YYYY-MM-DDTHH:mm:ss"
 
 export const qCategories = [
     {
@@ -38,6 +40,7 @@ export const qCategories = [
                 id: "1.1",
                 name: "Przed badaniem",
                 count: 3,
+                questionnaires: [1, 2, 3]
             }
         ]
     },
@@ -50,11 +53,13 @@ export const qCategories = [
                 id: "2.1",
                 name: "Przed i po badaniu (przed badaniem)",
                 count: 8,
+                questionnaires: [4, 5, 6, 7, 8, 9, 10, 11]
             },
             {
                 id: "2.2",
                 name: "Przed i po badaniu (po badaniu)",
                 count: 8,
+                questionnaires: [4, 5, 6, 7, 8, 9, 10, 11]
             }
         ]
     },
@@ -66,12 +71,14 @@ export const qCategories = [
             {
                 id: "3.1",
                 name: "Po pierwszym tygodniu",
-                count: 1
+                count: 1, 
+                questionnaires: [12]
             },
             {
                 id: "3.2",
                 name: "Na końcu badań",
-                count: 1
+                count: 1,
+                questionnaires: [12]
             }
         ]
     }, 
@@ -82,18 +89,22 @@ export const qCategories = [
         types: [
             {
                 id: "4.1",
-                name: "Rano (sen, stres)",
+                name: "Sen (rano)",
+                description: "Rano (sen, stres)",
                 count: 2,
+                questionnaires: [13, 14]
             },
             {
                 id: "4.2",
                 name: "Wieczorem (stres, zdrowie)",
-                count: 2
+                count: 2, 
+                questionnaires: [15, 16]
             },
             {
                 id: "4.3",
                 name: "W przerwie (emocje)",
-                count: 1
+                questionnaires: [17],
+                count: 1,
             },
         ]
     },
@@ -106,6 +117,7 @@ export const qCategories = [
                 id: "5.1",
                 name: "Ankieta na koniec badania",
                 count: 1,
+                questionnaires: [18]
             }
         ]
     },
@@ -118,6 +130,7 @@ export const qCategories = [
                 id: "6.1",
                 name: "Ankieta po 2 tygodniach badania",
                 count: 1,
+                questionnaires: [19]
             }
         ]
     }
@@ -127,13 +140,48 @@ export function hasStore() {
     return !!window.$nuxt && !!window.$nuxt.$store
 }
 
-export function setQuestionnaireIds(qTypes, questionnaires, questions=[]) {
+export function setQuestionnaireIds(qTypes, questionnaires=[], questions=[], questionnaireStates=[]) {
+    questionnaireStates = _.sortBy(questionnaireStates, 'finishedAt')
+    const getters = window.$nuxt.$store.getters
+    const { textCountToday } =  getters ? getters['user/getAnnotation'] : 0
     return qTypes.map((qType)=> {
         if(qType && qType.questionnaires) {
-            qType.questionnaires = qType.questionnaires.map((que)=> {
-                const queId = questionnaires.find((q)=> q.name === que.name)
-                if(queId) {
-                    que.id = queId
+            qType.questionnaires = qType.questionnaires.map((que, queIdx)=> {
+                let questionnaire = questionnaires.find((q)=> q.name === que.name)
+                // hacky, should be removed later
+                if(!questionnaire) {
+                    questionnaire = questionnaires.find((q, qIdx)=> q && queIdx === qIdx)
+                }
+                if(questionnaire) {
+                    que.questionnaire = questionnaire
+                    que.id = questionnaire.id
+                    que.type = questionnaire.questionnaireType
+                    const states = questionnaireStates.filter((qs)=> qs.questionnaire === que.id)
+                    const state = states.length ? states[0]: null
+                    que.isFinished = !!state
+                    if(state) {
+                        que.isFinished = true
+                        que.finishedAt = state.finishedAt
+                        que.finishedAtDate = moment(state.finishedAt, SERVER_DATE_FORMAT).format(DATE_ONLY_FORMAT)
+                    }
+                    if(state && String(que.typeId).startsWith("4")) {
+                        const todayStates = states.filter((state)=> moment(new Date()).format(DATE_ONLY_FORMAT) 
+                        === moment(state.finishedAt, SERVER_DATE_FORMAT).format(DATE_ONLY_FORMAT))
+                        const isFinishedToday = !!todayStates.length
+                        que.isFinishedToday = isFinishedToday
+                        que.isFinished = !!state && isFinishedToday
+
+                        if(String(que.typeId) === "4.3") {
+                            que.isFinished = todayStates.length*TEXT_BATCH_COUNT === textCountToday
+                            que.isFinishedToday = que.isFinished
+                        }
+                    }
+                    if(state && que.typeId === "2.2") {
+                        que.isFinished = states.length > 1
+                    }
+                    if(state && que.typeId === "3.2") {
+                        que.isFinished = states.length > 1
+                    }
                 }
                 que.segments = que.segments.map((segment)=> {
                     segment.questions = segment.questions.map((question)=> {
@@ -193,6 +241,17 @@ export function mapQuestionnaireTypes(qTypes) {
                                 option.config = { numericOnly: !!option.numericOnly }
                             }
 
+
+                            if(option.showSlider) {
+                                option.config = {
+                                    min: option.min ?? 0,
+                                    max: option.max ?? 0,
+                                    minLabel: option.minLabel ?? "",
+                                    maxLabel: option.maxLabel ?? "",
+                                    showTickLabels: option.showTickLabels ?? true
+                                }
+                            }
+
                             return option
                         })
                     }
@@ -250,15 +309,15 @@ export function hasValidLoginTime(givenTime) {
     }
     if(getters) {
         const { lastLoginTime } = getters['user/getLogin']
-        const diffTime = moment(givenTime).diff(
+        const diffTime = Math.abs(moment(givenTime).diff(
             moment(lastLoginTime, DATE_FORMAT), 'days'
-        )
+        ))
         hasValidLoginTime = diffTime >= 0
     }
     return hasValidLoginTime
 }
 
-export function getQuestionnairesToShow() {
+export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
     const qTypes = getQuestionnaireTypes()
     const todayTime = new Date()
     let getters = null
@@ -275,16 +334,25 @@ export function getQuestionnairesToShow() {
                 let isFilled = filled.includes(questionnaireType.id)
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { firstLoginTime } = getters['user/getLogin']
+                const { firstAnnotationTime } = getters['user/getAnnotation']
+                let firstQuestionnaireEverDate = new Date()
+                if (firstQuestionnaireEverStr) {
+                    firstQuestionnaireEverDate = moment(firstQuestionnaireEverStr, 'DD-MM-YYYY').toDate()
+                }
                 const firstLoginTimeAtZero = moment(firstLoginTime, DATE_FORMAT).format("DD-MM-YYYY")+" 00:00:00"
                 const { hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
-                const monthDiff = moment(todayTime).diff(
+                const defaultTime = firstAnnotationTime || firstLoginTimeAtZero
+                const monthDiff1 = Math.abs(moment(todayTime).diff(
                     moment(firstLoginTimeAtZero, DATE_FORMAT), 'months'
-                )
-                const hasPassedResearchTime = monthDiff >= RESEARCH_TIME_IN_MONTHS
+                ))
+                const monthDiff2 = Math.abs(moment(todayTime).diff(
+                    moment(firstQuestionnaireEverDate), 'months'
+                ))
+                const hasPassedResearchTime = monthDiff2 >= RESEARCH_TIME_IN_MONTHS || monthDiff1 >= RESEARCH_TIME_IN_MONTHS
                 let isShowing = false
                 if(questionnaireType.id === '1.1') {
-                    const hourDiff = moment(firstLoginTime, DATE_FORMAT)
-                                        .diff(moment(todayTime), 'hours')
+                    const hourDiff = Math.abs(moment(firstLoginTime, DATE_FORMAT)
+                                        .diff(moment(todayTime), 'hours'))
                     const isFirstSignIn = hourDiff < .5
                     isShowing = !isFilled && isFirstSignIn
                 } else if(questionnaireType.id === "2.1") {
@@ -292,8 +360,8 @@ export function getQuestionnairesToShow() {
                 } else if(questionnaireType.id === "2.2") {
                     isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "3.1") {
-                    const weekDiff = moment(todayTime)
-                                    .diff(moment(firstLoginTimeAtZero, DATE_FORMAT), 'weeks')
+                    const weekDiff = Math.abs(moment(todayTime)
+                                    .diff(moment(defaultTime, DATE_FORMAT), 'weeks'))
                     const hasPassedOneWeek = weekDiff >= 1
                     isShowing = !isFilled && hasPassedOneWeek
                 } else if(questionnaireType.id === "3.2") {
@@ -313,8 +381,8 @@ export function getQuestionnairesToShow() {
                 } else if(questionnaireType.id === "5.1") {
                     isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "6.1") {
-                    const weekDiff = moment(todayTime)
-                                    .diff(moment(firstLoginTimeAtZero, DATE_FORMAT), 'weeks')
+                    const weekDiff = Math.abs(moment(todayTime)
+                                    .diff(moment(defaultTime, DATE_FORMAT), 'weeks'))
                     const hasPassedTwoWeeks = weekDiff >= 2
                     isShowing = !isFilled && hasPassedTwoWeeks
                 }

@@ -1,7 +1,11 @@
 import { plainToInstance } from 'class-transformer'
 import ApiService from '@/services/api.service'
 import { QuestionnaireRepository, SearchOption } from '~/domain/models/questionnaire/questionnaireRepository'
-import { QuestionnaireTypeItemList, QuestionnaireItemList, QuestionItemList, AnswerReadItem, AnswerWriteItem } 
+import { QuestionnaireTypeItemList, QuestionnaireItemList, QuestionItemList, 
+  AnswerReadItem, 
+  AnswerWriteItem, 
+  QuestionnaireTimeItem,
+  QuestionnaireTimeItemList } 
 from "~/domain/models/questionnaire/questionnaire"
 
 export class APIQuestionnaireRepository implements QuestionnaireRepository {
@@ -26,6 +30,19 @@ export class APIQuestionnaireRepository implements QuestionnaireRepository {
     const response = await this.request.get(url)
     return plainToInstance(QuestionItemList, response.data)
   }
+
+  async listFinishedQuestionnaires({ limit = '10', offset = '0', q = '' }: SearchOption): 
+  Promise<QuestionnaireTimeItemList> {
+  const url = `/questionnaire_filled_progress?limit=${limit}&offset=${offset}&q=${q}`
+  const response = await this.request.get(url)
+  return plainToInstance(QuestionnaireTimeItemList, response.data)
+}
+
+async createQuestionnaireFinishedState(questionnaireId : number): Promise<QuestionnaireTimeItem> {
+  const url = `/questionnaire_states/${questionnaireId}`
+  const response = await this.request.post(url)
+  return plainToInstance(QuestionnaireTimeItem, response.data)
+}
 
   async createAnswer(item: AnswerWriteItem): Promise<AnswerReadItem> {
     const url = `/answers/${item.question}`

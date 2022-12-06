@@ -127,7 +127,8 @@ export default {
       substatement5: "Unfaire Verallgemeinerung, Stereotypisierung",
       substatement6: "Respektlosigkeit",
       substatement7: "Erniedrigung",
-      substatement8: "Sonstiges"
+      substatement8: "Sonstiges",
+      substatement8Question: "Welche Art?"
     }
   },
   humor: {

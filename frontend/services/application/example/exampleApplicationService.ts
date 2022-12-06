@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer'
-import { ExampleDTO, ExampleListDTO } from './exampleData'
+import { ExampleDTO, ExampleListDTO, ExampleStateListDTO } from './exampleData'
 import { ExampleRepository, SearchOption } from '~/domain/models/example/exampleRepository'
 import { ExampleItem } from '~/domain/models/example/example'
 
@@ -90,6 +90,15 @@ export class ExampleApplicationService {
 
   public async annotateStartStates(projectId: string, exampleId: number): Promise<void> {
     await this.repository.annotateStartStates(projectId, exampleId)
+  }
+
+  public async listStates(projectId: string, exampleId: number): Promise<ExampleStateListDTO> {
+    try {
+      const item = await this.repository.listStates(projectId, exampleId)
+      return new ExampleStateListDTO(item)
+    } catch (e: any) {
+      throw new Error(e.response.data.detail)
+    }
   }
 
   private toModel(item: ExampleDTO): ExampleItem {

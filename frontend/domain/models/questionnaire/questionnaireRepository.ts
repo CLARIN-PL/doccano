@@ -3,10 +3,12 @@ import {
   QuestionnaireTypeItemList, 
   QuestionnaireItemList, 
   AnswerReadItem, 
-  AnswerWriteItem} 
+  AnswerWriteItem,
+  QuestionnaireTimeItem,
+  QuestionnaireTimeItemList} 
 from '~/domain/models/questionnaire/questionnaire'
 
-export type SearchOption = { [key: string]: string | (string | null)[] }
+export type SearchOption = { [key: string]: number | string | (string | null)[] }
 
 export interface QuestionnaireRepository {
   listTypes({ limit, offset, q }: SearchOption): Promise<QuestionnaireTypeItemList>
@@ -15,8 +17,12 @@ export interface QuestionnaireRepository {
 
   listQuestionsByQuestionnaireId({ questionnaireId, limit, offset, q }: SearchOption): Promise<QuestionItemList>
 
+  listFinishedQuestionnaires({limit, offset, q}: SearchOption): Promise<QuestionnaireTimeItemList>
+
   createAnswer(item: AnswerWriteItem): Promise<AnswerReadItem>
 
   updateAnswer(item: AnswerWriteItem): Promise<AnswerReadItem>
+
+  createQuestionnaireFinishedState(questionnaireId: number): Promise<QuestionnaireTimeItem>
 
 }

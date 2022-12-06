@@ -33,6 +33,7 @@
 
 <script lang="ts">
 import _ from 'lodash'
+import moment from 'moment'
 import Vue from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 import ProjectList from '@/components/project/ProjectList.vue'
@@ -42,6 +43,7 @@ import { ProjectDTO, ProjectListDTO } from '~/services/application/project/proje
 import FormDelete from '~/components/project/FormDelete.vue'
 
 export default Vue.extend({
+  name: 'Projects',
   components: {
     FormDelete,
     ProjectList,
@@ -146,12 +148,21 @@ export default Vue.extend({
       }
       const hasFinishedAll = this.projects.items.length === 0
       this.setProject({ hasFinishedAll })
-      this.checkQuestionnaire()
+      await this.checkQuestionnaire()
       this.isLoading = false
     },
 
-    checkQuestionnaire() {
-      this.initQuestionnaire()
+    async checkQuestionnaire() {
+      const questionnaireStates = await this.$services.questionnaire.listFinishedQuestionnaires({
+        questionnaireTypeId: 1,
+        limit: 1
+      })
+      let firstQuestionnaireEverDate = null
+      if (questionnaireStates && questionnaireStates.items.length > 0) {
+        const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
+        firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format('DD-MM-YYYY')
+      }
+      this.initQuestionnaire(firstQuestionnaireEverDate)
       if (!this.isStaff && this.getQuestionnaire.toShow.length) {
         this.$router.push(this.localePath('/questionnaires'))
       }

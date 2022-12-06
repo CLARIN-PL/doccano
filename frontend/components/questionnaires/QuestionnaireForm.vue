@@ -1,18 +1,15 @@
 <template>
-  <v-row align="center" justify="center" >
+  <v-row align="center" justify="center">
     <v-col cols="9">
       <div ref="header">
-        <v-alert
-            v-model="showWarning"
-            color="error"
-            dark
-            transition="scale-transition"
-            dismissible
-            >
-        {{ $t('errors.incompleteAffectiveAnnotation') }}
+        <v-alert v-model="showWarning" color="error" dark transition="scale-transition" dismissible>
+          {{ $t('errors.incompleteAffectiveAnnotation') }}
         </v-alert>
       </div>
-      <div v-if="formData.questionnaires && formData.questionnaires.length && isLoaded" class="questionnaire-container">
+      <div
+        v-if="formData.questionnaires && formData.questionnaires.length && isLoaded"
+        class="questionnaire-container"
+      >
         <v-col>
           <v-window
             v-model="activeQuestionnaire"
@@ -23,14 +20,11 @@
               v-for="(questionnaire, qIdx) in formData.questionnaires"
               :key="`questionnaire-window-${qIdx}`"
             >
-              <v-row align="top" justify="center" >
+              <v-row align="top" justify="center">
                 <v-col cols="8">
                   <v-card>
                     <v-card-text>
-                      <v-row
-                        class="mb-4"
-                        align="center"
-                      >
+                      <v-row class="mb-4" align="center">
                         <v-col>
                           <p class="text-caption">
                             {{ questionnaire.description }}
@@ -41,50 +35,62 @@
                               :key="`segment-${segIdx}`"
                               class="hide-list-style"
                             >
-                              <div v-if="segment.scales" class="segment-description-container text-caption">
-                                <p >
+                              <div
+                                v-if="segment.scales"
+                                class="segment-description-container text-caption"
+                              >
+                                <p>
                                   {{ segment.scales.description }}
                                 </p>
                               </div>
 
                               <div v-if="segment.questions">
-                                <ol :class="segment.prependIndex ? 'segment-question hide-list-style' : 'segment-question'">
-                                    <li 
-                                      v-for="(segmentQuestion, segQuIdx) in segment.questions" 
-                                      :ref="`question_${qIdx}_${segQuIdx}`"
-                                      :key="`segmentQuestion-${segQuIdx}`"
-                                    >
-                                      <div v-if="segmentQuestion.id" class="question-container">
-                                        <span v-if="segment.prependIndex">
-                                          {{ segment.prependIndex+(segQuIdx+1) }}
-                                        </span>
-                                        <component 
-                                          :is="getComponent(segmentQuestion.type)"
-                                          v-model="segmentQuestion.value"
-                                          :header="segmentQuestion.header"
-                                          :required="segmentQuestion.required"
-                                          :question="segmentQuestion.text"
-                                          :options="segmentQuestion.options"
-                                          :config="segmentQuestion.config"
-                                          :is-clicked="segmentQuestion.isClicked"
-                                          :is-submitting="segmentQuestion.isSubmitting"
-                                          :error-message="segmentQuestion.errorMessage"
-                                          :read-only="segmentQuestion.readOnly"
-                                          :passed-data="{
-                                              question: segmentQuestion, 
-                                              formDataKey: getFormDataKey(segQuIdx, segIdx, qIdx)
-                                            }"
-                                          @change="onQuestionChange"
-                                        />
-                                      </div>
-                                      <p v-else>
-                                        {{ $t('questionnaires_main.errorDataMapping') }}
-                                      </p>
-                                    </li>
+                                <ol
+                                  :class="
+                                    segment.prependIndex
+                                      ? 'segment-question hide-list-style'
+                                      : 'segment-question'
+                                  "
+                                >
+                                  <li
+                                    v-for="(segmentQuestion, segQuIdx) in segment.questions"
+                                    :ref="`question_${qIdx}_${segQuIdx}`"
+                                    :key="`segmentQuestion-${segQuIdx}`"
+                                  >
+                                    <div v-if="segmentQuestion.id" class="question-container">
+                                      <span v-if="segment.prependIndex">
+                                        {{ segment.prependIndex + (segQuIdx + 1) }}
+                                      </span>
+                                      <component
+                                        :is="getComponent(segmentQuestion.type)"
+                                        v-model="segmentQuestion.value"
+                                        :header="segmentQuestion.header"
+                                        :required="segmentQuestion.required"
+                                        :question="segmentQuestion.text"
+                                        :options="segmentQuestion.options"
+                                        :config="segmentQuestion.config"
+                                        :is-clicked="segmentQuestion.isClicked"
+                                        :is-submitting="segmentQuestion.isSubmitting"
+                                        :error-message="segmentQuestion.errorMessage"
+                                        :read-only="segmentQuestion.readOnly"
+                                        :passed-data="{
+                                          question: segmentQuestion,
+                                          formDataKey: getFormDataKey(segQuIdx, segIdx, qIdx)
+                                        }"
+                                        @change="onQuestionChange"
+                                      />
+                                    </div>
+                                    <p v-else>
+                                      {{ $t('questionnaires_main.errorDataMapping') }}
+                                    </p>
+                                  </li>
                                 </ol>
                               </div>
-                              
-                              <v-divider v-if="segIdx < questionnaire.segments.length-1" class="mt-10 mb-10" />
+
+                              <v-divider
+                                v-if="segIdx < questionnaire.segments.length - 1"
+                                class="mt-10 mb-10"
+                              />
                             </li>
                           </ul>
                           <!-- eslint-disable-next-line vue/no-v-html -->
@@ -95,8 +101,11 @@
                     <v-divider />
                     <v-card-actions>
                       <v-spacer />
-                      <v-btn v-if="activeQuestionnaire+1 < formData.questionnaires.length" 
-                        color="primary" @click="onClickContinueButton">
+                      <v-btn
+                        v-if="activeQuestionnaire + 1 < formData.questionnaires.length"
+                        color="primary"
+                        @click="onClickContinueButton"
+                      >
                         {{ $t('questionnaires_main.buttonFinish') }}
                       </v-btn>
                       <v-btn v-else color="primary" @click="onClickFinishButton">
@@ -106,13 +115,15 @@
                   </v-card>
                 </v-col>
                 <v-col cols="4" class="sticky-container">
-                  <v-card v-if="questionnaire.segments[0].scales" class="sticky">
+                  <v-card v-if="questionnaire.segments[0].scales" :class="(showWarning) ? 'sticky-offset' : 'sticky'">
                     <v-card-text>
                       <div class="segment-description-container text-caption">
                         <ul class="hide-list-style">
-                          <li 
-                            v-for="(segmentScaleValue, segScalIdx) in questionnaire.segments[0].scales.values" 
-                            :key="`segmentScaleValue-${segScalIdx}`">
+                          <li
+                            v-for="(segmentScaleValue, segScalIdx) in questionnaire.segments[0]
+                              .scales.values"
+                            :key="`segmentScaleValue-${segScalIdx}`"
+                          >
                             {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
                           </li>
                         </ul>
@@ -125,14 +136,17 @@
           </v-window>
         </v-col>
       </div>
-      <div v-else-if="formData.questionnaires && !formData.questionnaires.length && isLoaded" class="align-right">
+      <div
+        v-else-if="formData.questionnaires && !formData.questionnaires.length && isLoaded"
+        class="align-right"
+      >
         <v-card>
           <v-card-text>
-          {{ $t('questionnaires_main.errorNotFound') }}
+            {{ $t('questionnaires_main.errorNotFound') }}
           </v-card-text>
-          <v-divider/>
+          <v-divider />
           <v-card-actions>
-            <v-spacer/>
+            <v-spacer />
             <v-btn color="primary" @click="onClickFinishButton">
               {{ $t('questionnaires_main.buttonFinish') }}
             </v-btn>
@@ -140,10 +154,7 @@
         </v-card>
       </div>
       <div v-else-if="!isLoaded">
-        <v-progress-circular
-          indeterminate
-          color="primary"
-        ></v-progress-circular>
+        <v-progress-circular indeterminate color="primary"></v-progress-circular>
       </div>
     </v-col>
   </v-row>
@@ -179,6 +190,7 @@ export default {
       mappedQTypes: [],
       questionnaires: [],
       questions: [],
+      questionnaireStates: [],
       activeQuestionnaire: 0,
       isLoaded: false,
       showWarning: false,
@@ -207,7 +219,19 @@ export default {
     setFormData() {
       const selectedQType = this.mappedQTypes.find((qType) => qType.id === this.toShowId)
       const formData = selectedQType ? _.cloneDeep(selectedQType) : { questionnaires: [] }
-      this.formData = setQuestionnaireIds([formData], this.questionnaires, this.questions)[0]
+      this.formData = setQuestionnaireIds(
+        [formData],
+        this.questionnaires,
+        this.questions,
+        this.questionnaireStates
+      )[0]
+      const toFillQuestionnaireId = this.formData.questionnaires.findIndex((q) => !q.isFinished)
+      if (~toFillQuestionnaireId) {
+        this.activeQuestionnaire = toFillQuestionnaireId
+      } else {
+        this.setQuestionnaireHistory()
+        this.$router.push(this.localePath('/questionnaires'))
+      }
     },
     initialize() {
       this.showWarning = false
@@ -229,18 +253,24 @@ export default {
           limit
         })
       })
+      const questionnaireStates = await this.$services.questionnaire.listFinishedQuestionnaires({
+        questionnaireTypeId: typeId,
+        limit
+      })
       const responses = await Promise.all(promises)
       const questions = _.flatMap(responses, 'items')
 
       this.questionnaires = _.cloneDeep(questionnaires.items)
       this.questions = _.cloneDeep(questions)
+      this.questionnaireStates = _.cloneDeep(questionnaireStates.items)
     },
     getFormDataKey(segQuIdx, segIdx, qIdx) {
       return `questionnaires[${qIdx}].segments[${segIdx}].questions[${segQuIdx}]`
     },
-    async onQuestionChange({ question, formDataKey, hasFilledEverything }) {
+    async onQuestionChange({ question, formDataKey, hasFilledEverything, isClicked }) {
       if (question && formDataKey) {
-        const isClicked = hasFilledEverything === undefined ? true : hasFilledEverything
+        hasFilledEverything = hasFilledEverything ?? true
+        isClicked = isClicked ?? hasFilledEverything
         const hasValue =
           typeof question.value !== 'undefined' && question.value !== null && question.value !== ''
         const { key } = question
@@ -295,6 +325,10 @@ export default {
         this.$refs.header.scrollIntoView({ behavior: 'smooth' })
       }
     },
+    async createQuestionnaireFinishedState() {
+      const selectedQuestionnaire = this.formData.questionnaires[this.activeQuestionnaire]
+      await this.$services.questionnaire.createQuestionnaireFinishedState(selectedQuestionnaire.id)
+    },
     onClickContinueButton() {
       const selectedQuestionnaire = this.formData.questionnaires[this.activeQuestionnaire]
       if (selectedQuestionnaire) {
@@ -303,6 +337,7 @@ export default {
           question.required && question.isValid ? question.isClicked : true
         )
         if (hasClickedEverything) {
+          this.createQuestionnaireFinishedState()
           this.showWarning = false
           this.activeQuestionnaire += 1
           window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -311,7 +346,7 @@ export default {
         }
       }
     },
-    resetQuestionnaire() {
+    setQuestionnaireHistory() {
       const { toShow, filled } = this.getQuestionnaire
       const { textCountToday } = this.getAnnotation
       const specialCombinations = [['4.3', textCountToday]]
@@ -328,6 +363,16 @@ export default {
         isWorkingNow: false
       })
     },
+    goToNextQuestionnaire() {
+      const { toShow } = this.getQuestionnaire
+      if (toShow.length) {
+        const toShowId = toShow[0].split('.')[0]
+        const { key } = qCategories.find((qc) => String(qc.id) === toShowId)
+        this.$router.push(this.localePath(`/questionnaires/${key}`))
+      } else {
+        this.$router.push(this.localePath('/projects'))
+      }
+    },
     onClickFinishButton() {
       const selectedQuestionnaire = this.formData.questionnaires[this.activeQuestionnaire]
       if (selectedQuestionnaire) {
@@ -336,13 +381,14 @@ export default {
           question.required && question.isValid ? question.isClicked : true
         )
         if (hasClickedEverything) {
-          this.resetQuestionnaire()
-          this.$router.push(this.localePath('/questionnaires'))
+          this.createQuestionnaireFinishedState()
+          this.setQuestionnaireHistory()
+          this.goToNextQuestionnaire()
         } else {
           this.scrollToFaultyQuestion(questions)
         }
       } else {
-        this.resetQuestionnaire()
+        this.setQuestionnaireHistory()
         this.$router.push(this.localePath('/questionnaires'))
       }
     }
@@ -374,6 +420,15 @@ export default {
 .sticky {
   position: fixed;
   top: 90px;
+  min-width: 250px;
+  max-width: 270px;
+  overflow-x: visible;
+  z-index: 1;
+}
+
+.sticky-offset {
+  position: fixed;
+  top: 200px;
   min-width: 250px;
   max-width: 270px;
   overflow-x: visible;

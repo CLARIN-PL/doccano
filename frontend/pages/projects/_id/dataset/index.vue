@@ -1,13 +1,14 @@
 <template>
   <v-card>
     <v-card-title v-if="isProjectAdmin">
-      <v-row >
-        <v-col cols="12" align="right" >
-          <v-btn 
+      <v-row>
+        <v-col cols="12" align="right">
+          <v-btn
             v-if="!showTableAnnButton"
             :disabled="!enableTableAnnButton"
             color="ms-4 my-1 mb-2 primary text-transform-none"
-            @click="toLabeling">
+            @click="toLabeling"
+          >
             {{ $t('home.startAnnotation') }}
           </v-btn>
         </v-col>
@@ -67,11 +68,12 @@
         @view-not-confirmed="isConfirmed = false"
       />
       <v-spacer />
-      <v-btn 
+      <v-btn
         v-if="!showTableAnnButton"
         :disabled="!enableTableAnnButton"
         color="ms-4 my-1 mb-2 primary text-transform-none"
-        @click="toLabeling">
+        @click="toLabeling"
+      >
         {{ $t('home.startAnnotation') }}
       </v-btn>
     </v-card-title>
@@ -120,7 +122,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import _ from 'lodash'
-import { mapActions } from "vuex"
+import { mapActions } from 'vuex'
+import moment from 'moment'
 import ArticleList from '@/components/example/ArticleList.vue'
 import DocumentList from '@/components/example/DocumentList.vue'
 import FormDelete from '@/components/example/FormDelete.vue'
@@ -154,13 +157,16 @@ export default Vue.extend({
   data() {
     return {
       dialogDelete: false,
+      dateFormat: 'DD-MM-YYYY',
+      serverDateFormat: 'YYYY-MM-DDTHH:mm:ss',
+      savedDateFormat: 'DD-MM-YYYY HH:mm:ss',
       dialogDeleteAll: false,
       project: {} as ProjectDTO,
       item: { items: [] as ExampleDTO[] } as ExampleListDTO,
       selected: [] as ExampleDTO[],
       isLoading: false,
       isProjectAdmin: false,
-      isConfirmed: '',
+      isConfirmed: ''
     }
   },
 
@@ -169,7 +175,7 @@ export default Vue.extend({
   },
 
   computed: {
-    annotationConfirmationOptions() : any[] {
+    annotationConfirmationOptions(): any[] {
       return [
         {
           title: this.$t('dataset.viewAllStatus'),
@@ -182,7 +188,7 @@ export default Vue.extend({
         {
           title: this.$t('annotation.notCheckedTooltip'),
           event: 'view-not-confirmed'
-        },
+        }
       ]
     },
     canDelete(): boolean {
@@ -191,17 +197,17 @@ export default Vue.extend({
     projectId(): string {
       return this.$route.params.id
     },
-    enableTableAnnButton() : boolean {
-      return this.isProjectAdmin ? this.hasItems : (this.hasItems && this.hasUnannotatedItem)
+    enableTableAnnButton(): boolean {
+      return this.isProjectAdmin ? this.hasItems : this.hasItems && this.hasUnannotatedItem
     },
-    showTableAnnButton() : boolean {
+    showTableAnnButton(): boolean {
       return this.isArticleTask && this.isProjectAdmin && !this.isAffectiveAnnotation
     },
     isArticleTask(): boolean {
       const articleTasks = ['ArticleAnnotation', 'AffectiveAnnotation']
       return articleTasks.includes(this.project.projectType)
     },
-    isAffectiveAnnotation() : boolean {
+    isAffectiveAnnotation(): boolean {
       return this.project.projectType === 'AffectiveAnnotation'
     },
     isImageTask(): boolean {
@@ -210,10 +216,10 @@ export default Vue.extend({
     isAudioTask(): boolean {
       return this.project.projectType === 'Speech2text'
     },
-    hasItems() : boolean {
+    hasItems(): boolean {
       return !!this.item.items.length
     },
-    hasUnannotatedItem() : boolean {
+    hasUnannotatedItem(): boolean {
       return !!this.item.items.find((item: any) => !item.isConfirmed)
     },
     itemKey(): string {
@@ -222,7 +228,7 @@ export default Vue.extend({
       } else {
         return 'text'
       }
-    },
+    }
   },
 
   watch: {
@@ -243,28 +249,62 @@ export default Vue.extend({
   methods: {
     ...mapActions('user', ['setAnnotation']),
     async toLabeling() {
-      const itemToAnnotate : undefined | ExampleDTO = this.hasUnannotatedItem 
+      const itemToAnnotate: undefined | ExampleDTO = this.hasUnannotatedItem
         ? this.item.items.find((item: any) => !item.isConfirmed)
         : this.item.items[0]
       const index = itemToAnnotate ? this.item.items.indexOf(itemToAnnotate) : 0
-      const page = ( index + 1).toString()
+      const page = (index + 1).toString()
       await this.startAnnotation()
       this.movePage({ page })
     },
     startAnnotation() {
-      const item = this.hasUnannotatedItem ? 
-        this.item.items.find((item: any) => !item.isConfirmed)
+      const item = this.hasUnannotatedItem
+        ? this.item.items.find((item: any) => !item.isConfirmed)
         : this.item.items[0]
-      if(item && !item.isConfirmed) {
+      if (item && !item.isConfirmed) {
         this.$services.example.annotateStartStates(this.projectId, item.id)
       }
     },
     async loadData() {
       this.isLoading = true
-      const query = {...this.$route.query, ...{
-        isChecked: this.isConfirmed
-      }}
+      const query = {
+        ...this.$route.query,
+        ...{
+          isChecked: this.isConfirmed
+        }
+      }
       this.item = await this.$services.example.list(this.projectId, query)
+
+      const limit = 100
+      const requests = this.item.items
+        .filter((item: any) => item.isConfirmed)
+        .map((item: any) => this.$services.example.listStates(this.projectId, item.id))
+        .splice(0, limit)
+      const promises = await Promise.all(requests)
+      const states = [..._.flatMap(promises, 'items')]
+
+      const todayStates = states.filter(
+        (state) =>
+          moment(new Date()).format(this.dateFormat) ===
+          moment(state.confirmedAt, this.serverDateFormat).format(this.dateFormat)
+      )
+
+      const firstAnnotationTime = todayStates.length
+        ? moment(todayStates[0].confirmedAt, this.serverDateFormat).format(this.savedDateFormat)
+        : ''
+      const lastAnnotationTime = todayStates.length
+        ? moment(todayStates[todayStates.length - 1].confirmedAt, this.serverDateFormat).format(
+            this.savedDateFormat
+          )
+        : ''
+
+      this.setAnnotation({
+        hasAnnotatedToday: !!todayStates.length,
+        firstAnnotationTime,
+        lastAnnotationTime,
+        textCountToday: todayStates.length
+      })
+
       this.isLoading = false
     },
     async remove() {
@@ -287,7 +327,7 @@ export default Vue.extend({
         path: this.localePath(this.project.pageLink),
         query
       })
-    },
+    }
   }
 })
 </script>

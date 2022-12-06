@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer'
 import ApiService from '@/services/api.service'
 import { ExampleRepository, SearchOption } from '~/domain/models/example/exampleRepository'
-import { ExampleItem, ExampleItemList } from '~/domain/models/example/example'
+import { ExampleItem, ExampleItemList, ExampleStateItemList } from '~/domain/models/example/example'
 
 export class APIExampleRepository implements ExampleRepository {
   constructor(private readonly request = ApiService) {}
@@ -47,6 +47,12 @@ export class APIExampleRepository implements ExampleRepository {
     const url = `/projects/${projectId}/examples/${exampleId}`
     const response = await this.request.get(url)
     return plainToInstance(ExampleItem, response.data)
+  }
+
+  async listStates(projectId: string, exampleId: number): Promise<ExampleStateItemList> {
+    const url = `/projects/${projectId}/examples/${exampleId}/states`
+    const response = await this.request.get(url)
+    return plainToInstance(ExampleStateItemList, response.data)
   }
 
   async confirm(projectId: string, exampleId: number): Promise<void> {

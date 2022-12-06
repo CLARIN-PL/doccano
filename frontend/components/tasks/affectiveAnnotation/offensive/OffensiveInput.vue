@@ -91,7 +91,7 @@
                                         @change="onLabelChange(substatement, `subquestion3`, idx)" />
 
                                     <textfield-modal
-                                        v-if="substatement.isChecked"
+                                        v-if="substatement.isChecked && substatement.showTextbox"
                                         v-model="substatement.answer"
                                         :required="true"
                                         :readonly="readOnly"
@@ -127,6 +127,21 @@
                                             class="subquestions-item__checkbox"
                                             @change="onLabelChange(substatement, `subquestion4`, idx)"
                                         />
+
+                                    <textfield-modal
+                                        v-if="substatement.showTextbox && substatement.isChecked"
+                                        v-model="substatement.answer"
+                                        :required="true"
+                                        :readonly="readOnly"
+                                        :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
+                                        :question="$t(`annotation.offensive.subquestion4.substatement${(idx+1)}Question`)"
+                                        :full-question="`
+                                            ${$t(`annotation.offensive.subquestion4.substatement${(idx+1)}Question`)}
+                                             (${$t(`annotation.offensive.subquestion4.substatement${(idx+1)}`)})`"
+                                        :rules="[rules.required]"
+                                        class="subquestions-item__textfield"
+                                        @submit="onLabelChange(substatement, `subquestion4`, idx)"
+                                    />
                                     </p>
                                     </li>
                             </ul>
@@ -152,376 +167,388 @@ export default Vue.extend({
   },
   props: {
     project: {
-        type: Object,
-        default: () => {}
+      type: Object,
+      default: () => {}
     },
     value: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false
     },
     doc: {
-        type: Object,
-        default: () => {}
+      type: Object,
+      default: () => {}
     },
     readOnly: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false
     },
     showErrors: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false
     },
     showBorders: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false
     },
     scales: {
-        type: Array,
-        default: () => []
+      type: Array,
+      default: () => []
     },
     scaleTypes: {
-        type: Array,
-        default: () => []
+      type: Array,
+      default: () => []
     },
     textLabels: {
-        type: Array,
-        default: () => []
+      type: Array,
+      default: () => []
     }
   },
-    data() {
-        return {
-            polishAnnotation,
-            isLoaded: false,
-            rules: {
-                required: (value : any) => !!value || this.$i18n.t('rules.required'),
-            },
-            formData: {
-                subquestion1: {
-                    value: 0,
-                    isClicked: false,
-                    isSubmitting: false,
-                },
-                subquestion2: {
-                    value: 0,
-                    isClicked: false,
-                    isSubmitting: false,
-                },
-                subquestion3: [],
-                subquestion4: []
-            },
-            originalFormData: {
-                subquestion1: {
-                    value: 0,
-                    isClicked: false,
-                    isSubmitting: false,
-                },
-                subquestion2: {
-                    value: 0,
-                    isClicked: false,
-                    isSubmitting: false,
-                },
-                subquestion3: [],
-                subquestion4: []
-            }
-        }
-    },
-    computed: {
-        hasProperScaleTypes() : boolean {
-            const scaleLabels = [this.polishAnnotation.offensive.subquestion1, this.polishAnnotation.offensive.subquestion2]
-            const scaleTypeTexts = _.flatMap(this.scaleTypes, 'text')
-            return _.intersectionBy(scaleLabels, scaleTypeTexts).length > 0
+  data() {
+    return {
+      polishAnnotation,
+      isLoaded: false,
+      rules: {
+        required: (value: any) => !!value || this.$i18n.t('rules.required')
+      },
+      formData: {
+        subquestion1: {
+          value: 0,
+          isClicked: false,
+          isSubmitting: false
         },
-        scaleValues() : any[] {
-            return this.scales.map((scale: any) => {
-                const scaleType : any = this.scaleTypes.find((scaleType: any) => scaleType.id === scale.label) || {}
-                return {
-                    ...scale,
-                    ...scaleType,
-                    scaleTypeId: scale.label
-                }
-            })
+        subquestion2: {
+          value: 0,
+          isClicked: false,
+          isSubmitting: false
         },
-        textLabelValues() : any[] {
-            return this.textLabels.map((textLabel: any) => {
-                const substatementQuestion = textLabel.question
-                const annotation = _.cloneDeep(this.polishAnnotation.offensive) as any
-                let substatementKey = ''
-                Object.keys(annotation).forEach((subKey: string) => {
-                    if(typeof annotation[subKey] === 'object') {
-                        Object.keys(annotation[subKey]).every((subKey2: string) => {
-                            let isKey = annotation[subKey][subKey2] === textLabel.question
-                            if(textLabel.question.includes(" - ")) {
-                                const questions = textLabel.question.split(" - ")
-                                isKey =
-                                    annotation[subKey].question === questions[0]
-                                    && annotation[subKey][subKey2] === questions[1]
-                            }
-                            if(isKey) {
-                                substatementKey = `${subKey}.${subKey2}`
-                            }
-                            return !isKey
-                        })
-                    }
-                })
-                return {
-                    ...textLabel,
-                    substatementQuestion,
-                    substatementKey
-                }
-            })
+        subquestion3: [],
+        subquestion4: []
+      },
+      originalFormData: {
+        subquestion1: {
+          value: 0,
+          isClicked: false,
+          isSubmitting: false
         },
-        zeroToTenLabels() : number[] {
-            return Array.from(Array(11).keys())
+        subquestion2: {
+          value: 0,
+          isClicked: false,
+          isSubmitting: false
         },
-        hasFilledTopQuestions() : boolean {
-            return !!this.formData.subquestion1.value || 
-                !!this.formData.subquestion2.value; 
-        },
-    },
-    watch: {
-        doc() {
-            this.formData = _.cloneDeep(this.originalFormData)
-            this.$forceUpdate()
-        },
-        formData: {
-            deep: true,
-            handler(val: any) {
-                const scaleKeys = ['subquestion1', 'subquestion2']
-                const labelKeys = ['subquestion3', 'subquestion4']
-                const hasFilledScales = scaleKeys.some((scaleKey)=> {
-                    return val[scaleKey].isClicked
-                })
-                const hasFilledAllScalesZeros = scaleKeys.every((scaleKey)=> {
-                    return val[scaleKey].value === 0
-                })
-                const hasFilledAtLeastOneTextbox = labelKeys.some((labelKey)=> {
-                    return val[labelKey].some((formData: any )=> formData.isChecked)
-                })
-                const hasFilledCheckedTextboxes = val.subquestion3.every((substatement: any) => {
-                    const hasCheckedAndFilled = substatement.isChecked ? substatement.isChecked && !!substatement.answer : true
-                    return hasCheckedAndFilled
-                })
-                const canConfirm =  hasFilledAllScalesZeros ? 
-                    hasFilledScales  : 
-                    hasFilledScales 
-                        && hasFilledAtLeastOneTextbox 
-                        && hasFilledCheckedTextboxes
-                
-                this.isLoaded && this.$emit('input', canConfirm)
-            }
-        },
-        scaleValues: {
-            deep: true,
-            handler(val) {
-                if(val.length) {
-                    const keys = ['subquestion1', 'subquestion2']
-                    keys.forEach((key)=> {
-                        const polishAnnotation : any = _.get(this.polishAnnotation.offensive, key)
-                        const scaleValue = val.find((scale: any)=> scale.text === polishAnnotation)
-                        if(scaleValue) {
-                            _.set(this.formData, `${key}.value`, scaleValue.scale)
-                            _.set(this.formData, `${key}.isClicked`, true)
-                            _.set(this.formData, `${key}.isSubmitting`, false)
-                        } 
-                    })
-                } else {
-                    this.formData = {
-                        ...this.formData, 
-                        ...{
-                            subquestion1: _.cloneDeep(this.originalFormData.subquestion1),
-                            subquestion2: _.cloneDeep(this.originalFormData.subquestion2),
-                        }
-                    }
-                }
-            }
-        },
-        textLabelValues: {
-            deep: true,
-            handler(val) {
-                if(val.length) {
-                    const keys = ['subquestion3', 'subquestion4']
-                    val.forEach((textLabel : any) => {
-                        const substatementIndex = textLabel.substatementKey.split('.substatement')[1]
-                        const subquestionIndex = textLabel.substatementKey.split(".")[0]
-                        const formDataKey = `${subquestionIndex}[${parseInt(substatementIndex)-1}]`
-                        const formData = _.get(this.formData, formDataKey)
-                        if(formData) {
-                            _.set(this.formData, `${formDataKey}.isChecked`, !!textLabel.text)
-                            _.set(this.formData, `${formDataKey}.isSubmitting`, false)
-                            _.set(this.formData, `${formDataKey}.answer`, textLabel.text)
-                        } 
-                    }) 
-                    keys.forEach((key)=> {
-                        // @ts-ignore
-                        const subquestionLength = this.formData[key].length
-                        for(let i : number= 0; i < subquestionLength; i++) {
-                            const substatementKey = `${key}.substatement${i+1}`
-                            const isStored = val.find((textLabel: any)=> textLabel.substatementKey === substatementKey)
-                            if(!isStored) {
-                                // @ts-ignore
-                                this.formData[key][i].answer = ''
-                                // @ts-ignore
-                                this.formData[key][i].isSubmitting = false
-                            }
-                        }
-                    })
-                } else {
-                    this.formData = {
-                        ...this.formData, 
-                        ...{
-                            subquestion3: _.cloneDeep(this.originalFormData.subquestion3),
-                            subquestion4: _.cloneDeep(this.originalFormData.subquestion4)
-                        }
-                    }
-                }            
-
-            }
-        }
-    },
-    async created() {
-        await this.setOriginalFormData()
-        this.$nextTick(()=> {
-            this.formData = _.cloneDeep(this.originalFormData)
-        })
-    },
-    mounted() {
-        this.isLoaded = true;
-    },
-    methods: {
-        setOriginalFormData() {
-            const keys = ['subquestion3', 'subquestion4']
-            const annotation : any = this.polishAnnotation.offensive
-            keys.forEach((key)=> {
-                let subquestionLength = 0
-                const substatement = Object.keys(annotation[key])
-                    .reverse()
-                    .find((annKey)=> annKey.includes('substatement'))
-                if(substatement) {
-                    subquestionLength = parseInt(substatement.replace( /^\D+/g, ''))
-                }
-                for(let i = 0; i < subquestionLength; i++) {
-                    // @ts-ignore
-                    this.originalFormData[key].push({
-                        isSubmitting: false,
-                        isChecked: false,
-                        answer: key === 'subquestion4' ? undefined : ""
-                    })
-                }
-            })
-        },
-        onScaleChange: _.debounce(function (formDataKey: string) {
-            // @ts-ignore
-            const base = this as any
-            _.set(base.formData, `${formDataKey}.isClicked`, true)
-            const formData : any = _.get(base.formData, formDataKey) 
-            const labelQuestion : string = base.polishAnnotation.offensive[formDataKey]
-            const scaleLabel : any = base.scaleTypes.find((scaleType: any)=> scaleType.text === labelQuestion)
-            if(scaleLabel && base.isLoaded && !formData.isSubmitting) {
-                _.set(base.formData, `${formData.isSubmitting}`, true)
-                base.$emit('update:scale', scaleLabel.id, formData.value)
-            } 
-        }, 100),
-        onLabelChange(substatement: any, key: string, index: number) {
-            const formDataKey = `${key}[${index}]`
-            const labelQuestionKey = `${key}.substatement${index+1}`
-            const formData = _.get(this.formData, formDataKey)
-            const labelQuestion = _.get(this.polishAnnotation.offensive, labelQuestionKey)
-            const parentQuestion = _.get(this.polishAnnotation.offensive, key+'.question')
-            const question = `${parentQuestion} - ${labelQuestion}`
-
-            const textLabelValue = this.textLabelValues.find((textLabel : any) => textLabel.question === question)
-            let eventName = textLabelValue ? 'update:label' : 'add:label'
-            eventName = substatement.isChecked ? eventName : 'remove:label'
-            if(!_.isEmpty(formData) && labelQuestion) {
-                const answer = formData.answer === undefined ? labelQuestion : formData.answer
-                if(eventName === 'add:label' && answer) {
-                    this.$emit(eventName, question, answer)
-                } else if(eventName === 'update:label' && textLabelValue) {
-                    const substatementId = textLabelValue.id
-                    this.$emit(eventName, substatementId, answer)
-                } else if(eventName === 'remove:label' && textLabelValue) {
-                    const substatementId = textLabelValue.id
-                    this.$emit(eventName, substatementId)
-                }
-                _.set(this.formData, formDataKey+".isSubmitting", !!answer)
-            } 
-        }
+        subquestion3: [],
+        subquestion4: []
+      }
     }
+  },
+  computed: {
+    hasProperScaleTypes(): boolean {
+      const scaleLabels = [
+        this.polishAnnotation.offensive.subquestion1,
+        this.polishAnnotation.offensive.subquestion2
+      ]
+      const scaleTypeTexts = _.flatMap(this.scaleTypes, 'text')
+      return _.intersectionBy(scaleLabels, scaleTypeTexts).length > 0
+    },
+    scaleValues(): any[] {
+      return this.scales.map((scale: any) => {
+        const scaleType: any =
+          this.scaleTypes.find((scaleType: any) => scaleType.id === scale.label) || {}
+        return {
+          ...scale,
+          ...scaleType,
+          scaleTypeId: scale.label
+        }
+      })
+    },
+    textLabelValues(): any[] {
+      return this.textLabels.map((textLabel: any) => {
+        const substatementQuestion = textLabel.question
+        const annotation = _.cloneDeep(this.polishAnnotation.offensive) as any
+        let substatementKey = ''
+        Object.keys(annotation).forEach((subKey: string) => {
+          if (typeof annotation[subKey] === 'object') {
+            Object.keys(annotation[subKey]).every((subKey2: string) => {
+              let isKey = annotation[subKey][subKey2] === textLabel.question
+              if (textLabel.question.includes(' - ')) {
+                const questions = textLabel.question.split(' - ')
+                isKey =
+                  annotation[subKey].question === questions[0] &&
+                  annotation[subKey][subKey2] === questions[1]
+              }
+              if (isKey) {
+                substatementKey = `${subKey}.${subKey2}`
+              }
+              return !isKey
+            })
+          }
+        })
+        return {
+          ...textLabel,
+          substatementQuestion,
+          substatementKey
+        }
+      })
+    },
+    zeroToTenLabels(): number[] {
+      return Array.from(Array(11).keys())
+    },
+    hasFilledTopQuestions(): boolean {
+      return !!this.formData.subquestion1.value || !!this.formData.subquestion2.value
+    }
+  },
+  watch: {
+    doc() {
+      this.formData = _.cloneDeep(this.originalFormData)
+      this.$forceUpdate()
+    },
+    formData: {
+      deep: true,
+      handler(val: any) {
+        const scaleKeys = ['subquestion1', 'subquestion2']
+        const labelKeys = ['subquestion3', 'subquestion4']
+        const hasFilledScales = scaleKeys.some((scaleKey) => {
+          return val[scaleKey].isClicked
+        })
+        const hasFilledAllScalesZeros = scaleKeys.every((scaleKey) => {
+          return val[scaleKey].value === 0
+        })
+        const hasFilledAtLeastOneTextbox = labelKeys.some((labelKey) => {
+          return val[labelKey].some((formData: any) => formData.isChecked)
+        })
+        const hasFilledCheckedTextboxes = val.subquestion3.every((substatement: any) => {
+          const hasCheckedAndFilled = substatement.isChecked
+            ? substatement.isChecked && !!substatement.answer && substatement.answer !== '-'
+            : true
+          return hasCheckedAndFilled
+        })
+        const canConfirm = hasFilledAllScalesZeros
+          ? hasFilledScales
+          : hasFilledScales && hasFilledAtLeastOneTextbox && hasFilledCheckedTextboxes
+
+        this.isLoaded && this.$emit('input', canConfirm)
+      }
+    },
+    scaleValues: {
+      deep: true,
+      handler(val) {
+        if (val.length) {
+          const keys = ['subquestion1', 'subquestion2']
+          keys.forEach((key) => {
+            const polishAnnotation: any = _.get(this.polishAnnotation.offensive, key)
+            const scaleValue = val.find((scale: any) => scale.text === polishAnnotation)
+            if (scaleValue) {
+              _.set(this.formData, `${key}.value`, scaleValue.scale)
+              _.set(this.formData, `${key}.isClicked`, true)
+              _.set(this.formData, `${key}.isSubmitting`, false)
+            }
+          })
+        } else {
+          this.formData = {
+            ...this.formData,
+            ...{
+              subquestion1: _.cloneDeep(this.originalFormData.subquestion1),
+              subquestion2: _.cloneDeep(this.originalFormData.subquestion2)
+            }
+          }
+        }
+      }
+    },
+    textLabelValues: {
+      deep: true,
+      handler(val) {
+        if (val.length) {
+          const keys = ['subquestion3', 'subquestion4']
+          val.forEach((textLabel: any) => {
+            const substatementIndex = textLabel.substatementKey.split('.substatement')[1]
+            const subquestionIndex = textLabel.substatementKey.split('.')[0]
+            const formDataKey = `${subquestionIndex}[${parseInt(substatementIndex) - 1}]`
+            const formData = _.get(this.formData, formDataKey)
+            if (formData) {
+              _.set(this.formData, `${formDataKey}.isChecked`, !!textLabel.text)
+              _.set(this.formData, `${formDataKey}.isSubmitting`, false)
+              _.set(this.formData, `${formDataKey}.answer`, textLabel.text)
+            }
+          })
+          keys.forEach((key) => {
+            // @ts-ignore
+            const subquestionLength = this.formData[key].length
+            for (let i: number = 0; i < subquestionLength; i++) {
+              const substatementKey = `${key}.substatement${i + 1}`
+              const isStored = val.find(
+                (textLabel: any) => textLabel.substatementKey === substatementKey
+              )
+              if (!isStored) {
+                // @ts-ignore
+                this.formData[key][i].answer = ''
+                // @ts-ignore
+                this.formData[key][i].isSubmitting = false
+              }
+            }
+          })
+        } else {
+          this.formData = {
+            ...this.formData,
+            ...{
+              subquestion3: _.cloneDeep(this.originalFormData.subquestion3),
+              subquestion4: _.cloneDeep(this.originalFormData.subquestion4)
+            }
+          }
+        }
+      }
+    }
+  },
+  async created() {
+    await this.setOriginalFormData()
+    this.$nextTick(() => {
+      this.formData = _.cloneDeep(this.originalFormData)
+    })
+  },
+  mounted() {
+    this.isLoaded = true
+  },
+  methods: {
+    setOriginalFormData() {
+      const keys = ['subquestion3', 'subquestion4']
+      const showTextboxIndexes: any = {
+        subquestion3: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+        subquestion4: [8]
+      }
+      const annotation: any = this.polishAnnotation.offensive
+      keys.forEach((key) => {
+        let subquestionLength = 0
+        const substatement = Object.keys(annotation[key])
+          .reverse()
+          .find((annKey) => annKey.includes('substatement'))
+        if (substatement) {
+          subquestionLength = parseInt(substatement.replace(/^\D+/g, ''))
+        }
+        for (let i = 0; i < subquestionLength; i++) {
+          // @ts-ignore
+          this.originalFormData[key].push({
+            isSubmitting: false,
+            isChecked: false,
+            showTextbox: showTextboxIndexes[key].includes(i + 1),
+            answer: ''
+          })
+        }
+      })
+    },
+    onScaleChange: _.debounce(function (formDataKey: string) {
+      // @ts-ignore
+      const base = this as any
+      _.set(base.formData, `${formDataKey}.isClicked`, true)
+      const formData: any = _.get(base.formData, formDataKey)
+      const labelQuestion: string = base.polishAnnotation.offensive[formDataKey]
+      const scaleLabel: any = base.scaleTypes.find(
+        (scaleType: any) => scaleType.text === labelQuestion
+      )
+      if (scaleLabel && base.isLoaded && !formData.isSubmitting) {
+        _.set(base.formData, `${formData.isSubmitting}`, true)
+        base.$emit('update:scale', scaleLabel.id, formData.value)
+      }
+    }, 100),
+    onLabelChange(substatement: any, key: string, index: number) {
+      const formDataKey = `${key}[${index}]`
+      const labelQuestionKey = `${key}.substatement${index + 1}`
+      const formData = _.get(this.formData, formDataKey)
+      const labelQuestion = _.get(this.polishAnnotation.offensive, labelQuestionKey)
+      const parentQuestion = _.get(this.polishAnnotation.offensive, key + '.question')
+      const question = `${parentQuestion} - ${labelQuestion}`
+
+      const textLabelValue = this.textLabelValues.find(
+        (textLabel: any) => textLabel.question === question
+      )
+      let eventName = textLabelValue ? 'update:label' : 'add:label'
+      eventName = substatement.isChecked ? eventName : 'remove:label'
+      if (!_.isEmpty(formData) && labelQuestion) {
+        const textfieldAnswer = formData.showTextbox && !formData.answer ? '-' : formData.answer
+        const answer = formData.showTextbox ? textfieldAnswer : labelQuestion
+        if (eventName === 'add:label' && answer) {
+          this.$emit(eventName, question, answer)
+        } else if (eventName === 'update:label' && textLabelValue) {
+          const substatementId = textLabelValue.id
+          this.$emit(eventName, substatementId, answer)
+        } else if (eventName === 'remove:label' && textLabelValue) {
+          const substatementId = textLabelValue.id
+          this.$emit(eventName, substatementId)
+        }
+        _.set(this.formData, formDataKey + '.isSubmitting', !!answer)
+      }
+    }
+  }
 })
 </script>
 <style lang="scss">
 .offensive-input {
-    overflow-y: auto;
+  overflow-y: auto;
 
-    &.--bordered {
-        border: 2px solid #ddd;
-        border-radius: 2px;  
+  &.--bordered {
+    border: 2px solid #ddd;
+    border-radius: 2px;
 
-        &.--has-error {
-            border: 2px solid red;
-        }
+    &.--has-error {
+      border: 2px solid red;
     }
-
+  }
 }
 
 .widget {
-    font-size: .8rem;
+  font-size: 0.8rem;
 
-    &__title {
-        font-size: 1rem;
-        font-weight: bold;
-        margin-bottom: 10px; 
-    }
+  &__title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
 
-    &__questions {
-        padding: none;
-    }
+  &__questions {
+    padding: none;
+  }
 }
 
 .questions-item {
-    opacity: .3;
+  opacity: 0.3;
 
-    &.--visible {
-        opacity: 1;
+  &.--visible {
+    opacity: 1;
+  }
+
+  &__slider {
+    display: flex;
+
+    .v-slider__tick-label {
+      font-size: 0.8rem;
     }
 
-    &__slider {
-        display: flex;
+    .slider-text {
+      color: gray;
+      margin-top: 5px;
 
-        .v-slider__tick-label {
-            font-size: .8rem;
-        }
+      &.--start {
+        margin-right: 10px;
+      }
 
-        .slider-text {
-            color: gray;
-            margin-top: 5px; 
-
-            &.--start {
-                margin-right: 10px;
-            }
-
-            &.--end {
-                margin-left: 10px;
-            }
-        }
+      &.--end {
+        margin-left: 10px;
+      }
     }
-
+  }
 }
 
 .subquestions {
-    list-style-type: none;
-    padding: 0;
-    
-    &__item {
-        .subquestions-item__checkbox {
-            .v-label {
-                font-size: .8rem;
-            }
+  list-style-type: none;
+  padding: 0;
 
-            .v-input__slot {
-                margin: 0
-            }
-        }
+  &__item {
+    .subquestions-item__checkbox {
+      .v-label {
+        font-size: 0.8rem;
+      }
+
+      .v-input__slot {
+        margin: 0;
+      }
     }
+  }
 }
 </style>

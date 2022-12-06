@@ -130,7 +130,8 @@ export default {
       substatement5: "不公平的概括, 陈规定型",
       substatement6: "不尊重",
       substatement7: "羞辱",
-      substatement8: "其他"
+      substatement8: "其他",
+      substatement8Question:"什么类型？"
     }
   },
   humor: {

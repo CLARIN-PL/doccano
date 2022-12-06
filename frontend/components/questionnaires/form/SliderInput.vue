@@ -3,9 +3,9 @@
     <span>
       {{ question }}
     </span>
-    <span v-if="required" class="red--text">*</span>
-    <v-row align="center">
-      <v-col>
+    <span v-if="required && question" class="red--text">*</span>
+    <v-row align="start" justify="center">
+      <v-col cols="12" align="start">
         <v-slider
           v-model="sliderValue"
           class="slider"
@@ -55,7 +55,7 @@ export default Vue.extend({
       default: ''
     },
     value: {
-      type: Number,
+      type: [String, Number],
       default: -1
     },
     passedData: {
@@ -90,26 +90,35 @@ export default Vue.extend({
         .map((_, idx) => (start + idx).toString())
     }
   },
+  created() {
+    // @ts-ignore
+    this.parseValue()
+  },
   mounted() {
     // @ts-ignore
     this.isLoaded = true
   },
   methods: {
+    parseValue() {
+      const base: any = this
+      const pattern = /^[0-9]+$/
+      const isNumber = pattern.test(base.value)
+      base.sliderValue = isNumber ? base.value : base.config.min
+    },
     onSliderValueChange(val: any) {
       const base: any = this
       if (base.isLoaded) {
         base.$emit('input', val)
-        base.$emit('change', { ...base.passedData, value: val })
+        base.$emit('change', { ...base.passedData })
       }
     }
   }
 })
 </script>
 <style lang="scss">
-.v-input__prepend-outer {
-  width: 150px !important;
-}
-.v-input__append-outer {
-  width: 300px !important;
+.slider-input {
+  .v-slider__tick-label {
+    font-size: 0.875rem;
+  }
 }
 </style>

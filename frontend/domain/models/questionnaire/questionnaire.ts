@@ -52,6 +52,17 @@ export class AnswerWriteItem {
     }
 }
 
+export class QuestionnaireTimeItem {
+  id: number
+  questionnaire: number
+  
+  @Expose({ name: 'finished_by' })
+  finishedBy: number
+
+  @Expose({ name: 'finished_at' })
+  finishedAt: String
+}
+
 export class QuestionnaireTypeItemList {
     count: number
     next: string | null
@@ -60,6 +71,17 @@ export class QuestionnaireTypeItemList {
     @Type(() => QuestionnaireTypeItem)
     @Expose({ name: 'results' })
     items: QuestionnaireTypeItem[]
+  }
+
+
+  export class QuestionnaireTimeItemList {
+    count: number
+    next: string | null
+    previous: string | null
+  
+    @Type(() => QuestionnaireTimeItem)
+    @Expose({ name: 'results' })
+    items: QuestionnaireTimeItem[]
   }
 
 

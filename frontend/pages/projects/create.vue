@@ -56,23 +56,28 @@ export default Vue.extend({
     async create() {
       const projectItem = this.getProjectItem()
       const project = await this.$services.project.create(projectItem)
-      if(project.projectType === 'AffectiveAnnotation') {
+      if (project.projectType === 'AffectiveAnnotation') {
         if (!project.isSummaryMode) {
           await this.uploadScaleTypeFile(project)
         }
-      } 
+      }
       this.$router.push(this.localePath(`/projects/${project.id}`))
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
       })
     },
-    getProjectItem() : ProjectWriteDTO {
-      const editedItem : any = _.cloneDeep(this.editedItem)
-      if(this.editedItem.affectiveProjectMode) {
+    getProjectItem(): ProjectWriteDTO {
+      const editedItem: any = _.cloneDeep(this.editedItem)
+      if (this.editedItem.affectiveProjectMode) {
         editedItem[this.editedItem.affectiveProjectMode] = true
       }
-      const affectiveProjectModes = ['isHumorMode', 'isSummaryMode', 'isEmotionsMode',
-        'isOthersMode', 'isOffensiveMode']
+      const affectiveProjectModes = [
+        'isHumorMode',
+        'isSummaryMode',
+        'isEmotionsMode',
+        'isOthersMode',
+        'isOffensiveMode'
+      ]
       affectiveProjectModes.forEach((key: string) => {
         const mode = editedItem[key] || false
         editedItem[key] = this.editedItem.isCombinationMode ? false : mode
@@ -80,22 +85,22 @@ export default Vue.extend({
       delete editedItem.affectiveProjectMode
       return editedItem
     },
-    async getBlobScaleData(project: ProjectDTO) {
-      let fdata = []
-      if(project.isCombinationMode) {
+    async getBlobScaleData(project: ProjectDTO): Promise<Blob[]> {
+      let fdata = [] as Blob[]
+      if (project.isCombinationMode) {
         const paths = {
           isEmotionsMode: '/formats/affective_annotation/affective_emotions_scales.json',
           isOthersMode: '/formats/affective_annotation/affective_others_scales.json',
           isHumorMode: '/formats/affective_annotation/affective_humor_scales.json',
           isOffensiveMode: '/formats/affective_annotation/affective_offensive_scales.json'
         }
-        const requests = Object.values(paths).map((path)=> fetch(path))
+        const requests = Object.values(paths).map((path) => fetch(path))
         const responses = await Promise.all(requests)
         const blobPromises = responses.map(async (response) => await response.blob())
         const blobs = await Promise.all(blobPromises)
         return [...blobs.flat()]
       } else {
-        let selectedFile = ""
+        let selectedFile = ''
         if (project.isEmotionsMode) {
           selectedFile = '/formats/affective_annotation/affective_emotions_scales.json'
         }
@@ -114,10 +119,10 @@ export default Vue.extend({
       return fdata
     },
     async uploadScaleTypeFile(project: ProjectDTO) {
-      const fdatas : Blob[] = await this.getBlobScaleData(project)
-      fdatas.forEach(async (fdata, index)=> {
+      const fdatas: Blob[] = await this.getBlobScaleData(project)
+      fdatas.forEach(async (fdata, index) => {
         const fname = `scales_${index}.json`
-        const fmetadata = { type: "application/JSON" }
+        const fmetadata = { type: 'application/JSON' }
         const file = new File([fdata], fname, fmetadata)
         try {
           const projectId = project.id.toString()
