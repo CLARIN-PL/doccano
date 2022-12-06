@@ -115,7 +115,7 @@
                   </v-card>
                 </v-col>
                 <v-col cols="4" class="sticky-container">
-                  <v-card v-if="questionnaire.segments[0].scales" class="sticky">
+                  <v-card v-if="questionnaire.segments[0].scales" :class="(showWarning) ? 'sticky-offset' : 'sticky'">
                     <v-card-text>
                       <div class="segment-description-container text-caption">
                         <ul class="hide-list-style">
@@ -420,6 +420,15 @@ export default {
 .sticky {
   position: fixed;
   top: 90px;
+  min-width: 250px;
+  max-width: 270px;
+  overflow-x: visible;
+  z-index: 1;
+}
+
+.sticky-offset {
+  position: fixed;
+  top: 200px;
   min-width: 250px;
   max-width: 270px;
   overflow-x: visible;
