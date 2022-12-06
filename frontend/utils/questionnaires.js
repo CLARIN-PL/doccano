@@ -146,7 +146,22 @@ export function setQuestionnaireIds(qTypes, questionnaires=[], questions=[], que
                 if(questionnaire) {
                     que.id = questionnaire.id
                     que.type = questionnaire.questionnaireType
-                    que.isFinished = !!questionnaireStates.find((qs)=> qs.questionnaire === que.id)
+                    que.isFinished = !!questionnaireStates.find((qs)=> {
+                        if (
+                            qs.questionnaire === que.id && (
+                                que.name === 'Sen (rano)' || que.name === 'Stres (rano)' ||
+                                que.name === 'Stres (wieczorem)' || que.name === 'Zdrowie (wieczorem)'
+                            )
+                        ) {
+                            const finishedAt = moment(qs.finishedAt).format(DATE_FORMAT)
+                            const today = moment().format(DATE_FORMAT)
+                            if (today === finishedAt) {
+                                return false
+                            }
+                            return true
+                        }
+                        return qs.questionnaire === que.id
+                    })
                 }
                 que.segments = que.segments.map((segment)=> {
                     segment.questions = segment.questions.map((question)=> {
@@ -324,6 +339,8 @@ export function getQuestionnairesToShow() {
                     isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "4.1") {
                     isShowing = !isFilled && !hasAnnotatedToday
+                    console.log(hasAnnotatedToday, "hasAnnotatedToday")
+                    console.log(isShowing, "isShowing")
                 }  else if(questionnaireType.id === "4.2") {
                     const currentHour = todayTime.getHours()
                     const isEvening = currentHour >= 17 && currentHour < 23
