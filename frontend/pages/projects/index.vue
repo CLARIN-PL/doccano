@@ -158,7 +158,7 @@ export default Vue.extend({
         limit: 1
       })
       let firstQuestionnaireEverDate = null
-      if (questionnaireStates) {
+      if (questionnaireStates && questionnaireStates.items.length > 0) {
         const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
         firstQuestionnaireEverDate = moment(firstQuestionnaireEver).format('DD-MM-YYYY')
       }

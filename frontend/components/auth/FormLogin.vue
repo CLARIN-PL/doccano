@@ -307,12 +307,12 @@ export default Vue.extend({
                     questionnaireTypeId: 1,
                     limit: 1
                   })
-				  let firstQuestionnaireEverDate = null
-				  if (questionnaireStates) {
-					  const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
-					  firstQuestionnaireEverDate = moment(firstQuestionnaireEver).format('DD-MM-YYYY')
+                  let firstQuestionnaireEverDate = null
+                  if (questionnaireStates && questionnaireStates.items.length > 0) {
+                    const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
+                    firstQuestionnaireEverDate = moment(firstQuestionnaireEver).format('DD-MM-YYYY')
                   }
-				  await this.initQuestionnaire(firstQuestionnaireEverDate)
+                  await this.initQuestionnaire(firstQuestionnaireEverDate)
                 })
                 this.$router.push(this.localePath('/projects'))
               }
