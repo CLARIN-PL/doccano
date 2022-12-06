@@ -346,9 +346,9 @@ export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
                     moment(firstLoginTimeAtZero, DATE_FORMAT), 'months'
                 ))
                 const monthDiff2 = Math.abs(moment(todayTime).diff(
-                    moment(firstQuestionnaireEverDate, DATE_FORMAT), 'months'
+                    moment(firstQuestionnaireEverDate), 'months'
                 ))
-                const hasPassedResearchTime = monthDiff1 >= RESEARCH_TIME_IN_MONTHS || monthDiff2 >= RESEARCH_TIME_IN_MONTHS
+                const hasPassedResearchTime = monthDiff2 >= RESEARCH_TIME_IN_MONTHS || monthDiff1 >= RESEARCH_TIME_IN_MONTHS
                 let isShowing = false
                 if(questionnaireType.id === '1.1') {
                     const hourDiff = Math.abs(moment(firstLoginTime, DATE_FORMAT)
