@@ -86,6 +86,7 @@ export default Vue.extend({
       'addHistory'
     ]),
     async loadQuestionnaires() {
+      this.isLoaded = false
       try {
         const ids = _.flatMap(qCategories, 'id')
         const limit = 100
@@ -223,20 +224,14 @@ export default Vue.extend({
           filled: [..._.flatMap(finishedCategories, 'filledId')],
           toShow: []
         })
-        this.isLoaded = true
+        this.$nextTick(() => {
+          this.isLoaded = true
+        })
       } catch (error) {
         console.error(error)
       }
     },
-    async setUserData() {
-      const user = await this.$services.user.getMyProfile()
-      const userHistory = this.getHistories.find((hist: any) => hist.id === user.id)
-
-      if (user.id && !userHistory) {
-        this.setUserId(user.id)
-        this.addHistory({ ...history, id: user.id })
-      }
-
+    setUserData() {
       try {
         const dateFormat = 'DD-MM-YYYY HH:mm:ss'
         const loginTime = moment().format(dateFormat)
@@ -248,7 +243,7 @@ export default Vue.extend({
           : 0
         currentDiffDay = currentDiffDay === 0 ? todayDay - lastLoginDay : currentDiffDay
 
-        if (!hasValidLoginTime(new Date())) {
+        if (lastLoginTime && !hasValidLoginTime(new Date())) {
           this.setAnnotation({
             textCountToday: 0,
             hasAnnotatedToday: false
@@ -281,10 +276,18 @@ export default Vue.extend({
             filled: filled.filter((fill: any) => !fill.startsWith(dailyQuestionnaireId))
           })
         }
-        this.initQuestionnaire()
       } catch (error) {
         console.error(error)
       }
+    },
+    async initUserData() {
+      const user = await this.$services.user.getMyProfile()
+      const userHistory = this.getHistories.find((hist: any) => hist.id === user.id)
+      if (user.id && !userHistory) {
+        this.setUserId(user.id)
+        this.addHistory({ ...history, id: user.id })
+      }
+      this.isLoaded = true
     },
     async tryLogin() {
       try {
@@ -292,11 +295,15 @@ export default Vue.extend({
           username: this.username,
           password: this.password
         })
-        await this.loadQuestionnaires()
-        this.$forceUpdate()
+        await this.initUserData()
         this.$nextTick(async () => {
+          this.isLoaded && (await this.loadQuestionnaires())
+          this.$forceUpdate()
           if (this.isLoaded) {
             await this.setUserData()
+            this.$nextTick(async () => {
+              await this.initQuestionnaire()
+            })
             this.$router.push(this.localePath('/projects'))
           }
         })
