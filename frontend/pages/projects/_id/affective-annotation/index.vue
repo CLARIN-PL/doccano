@@ -737,7 +737,6 @@ export default {
         this.categories = await this.$services.textClassification.list(this.projectId, docId)
         this.textLabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
         this.scales = await this.$services.affectiveScale.list(this.projectId, docId)
-
         this.setAffectiveList()
       }
     },

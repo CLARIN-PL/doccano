@@ -95,7 +95,7 @@ export default Vue.extend({
         const serverDateFormat = 'YYYY-MM-DDThh:mm:ss'
         const dateFormat = 'DD-MM-YYYY'
         const savedDateFormat = 'DD-MM-YYYY hh:mm:ss'
-        let todayAtRestQuestionnairesIds = []
+        let todayAtRestQuestionnairesIds: any[] = []
         const todayDate = moment().format(dateFormat)
         const qTypes = _.flatMap(qCategories, 'types')
         const { hasAnnotatedToday } = this.getAnnotation
@@ -111,7 +111,7 @@ export default Vue.extend({
 
         const questionnaireResponses: any[] = await Promise.all(questionnairePromises)
         this.questionnaires = _.cloneDeep(_.flatMap(questionnaireResponses, 'items'))
-        const questionnaireStates = _.sortBy(states.items, 'finishedAt').map((state) => {
+        const questionnaireStates: any[] = _.sortBy(states.items, 'finishedAt').map((state) => {
           state.finishedAtDate = state.finishedAt
             ? moment(state.finishedAt, serverDateFormat).format(dateFormat)
             : ''
@@ -169,7 +169,7 @@ export default Vue.extend({
             )
             const hasPassedResearchTime = monthDiff >= researchTimeInMonths
 
-            qType.filledId = qType.id
+            qType.filledId = [qType.id]
             if (qType.id === '1.1') {
               qType.hasFinishedAllTypes = hasFinishedAllTypes
             } else if (qType.id === '2.1') {
@@ -199,8 +199,9 @@ export default Vue.extend({
               const firstTodayAtRestQuestionnaire = todayAtRestQuestionnairesIds.length
                 ? todayAtRestQuestionnairesIds[0]
                 : {}
-              console.log(firstTodayAtRestQuestionnaire)
-              qType.filledId = firstTodayAtRestQuestionnaire.restId
+              qType.filledId = todayAtRestQuestionnairesIds.length
+                ? _.flatMap(todayAtRestQuestionnairesIds, 'restId')
+                : [qType.id]
               qType.hasFinishedAllTypes =
                 hasFinishedAllTypes && firstTodayAtRestQuestionnaire.finishedAtDate
               todayAtRestQuestionnairesIds.splice(0, 1)
@@ -222,7 +223,7 @@ export default Vue.extend({
           })
 
         await this.setQuestionnaire({
-          filled: _.flatMap(finishedCategories, 'filledId'),
+          filled: [..._.flatMap(finishedCategories, 'filledId')],
           toShow: []
         })
         this.isLoaded = true

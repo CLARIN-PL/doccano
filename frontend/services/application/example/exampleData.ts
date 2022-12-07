@@ -1,9 +1,23 @@
 import { Expose } from 'class-transformer'
-import { ExampleItem, ExampleMetaItem, ExampleItemList } from '~/domain/models/example/example'
+import { ExampleItem,ExampleStateItem, ExampleStateItemList, ExampleMetaItem, ExampleItemList } from '~/domain/models/example/example'
 
 export class ExampleMetadataDTO {
   key: string
   value: string
+}
+
+export class ExampleStateDTO {
+  id: number
+  example: number
+  confirmedAt: String
+  confirmedBy: number
+
+  constructor(item: ExampleStateItem) {
+    this.id = item.id
+    this.example = item.example
+    this.confirmedAt = item.confirmedAt
+    this.confirmedBy = item.confirmedBy
+  }
 }
 
 export class ExampleDTO {
@@ -55,6 +69,21 @@ export class ExampleArticleDTO {
   @Expose({ name: 'publish_datetime' })
   publishDatetime: string 
 }
+
+export class ExampleStateListDTO {
+  count: number
+  next: string | null
+  prev: string | null
+  items: ExampleStateDTO[]
+
+  constructor(item: ExampleStateItemList) {
+    this.count = item.count
+    this.next = item.next
+    this.prev = item.prev
+    this.items = item.items.map((_) => new ExampleStateDTO(_))
+  }
+}
+
 
 export class ExampleListDTO {
   count: number

@@ -1,4 +1,4 @@
-import { ExampleItem, ExampleItemList } from '~/domain/models/example/example'
+import { ExampleItem, ExampleItemList, ExampleStateItemList } from '~/domain/models/example/example'
 
 export type SearchOption = { [key: string]: string | (string | null)[] }
 
@@ -20,4 +20,6 @@ export interface ExampleRepository {
   confirm(projectId: string, exampleId: number): Promise<void>
 
   annotateStartStates(projectId: string, exampleId: number): Promise<void>
+
+  listStates(projectId: string, exampleId: number): Promise<ExampleStateItemList>
 }
