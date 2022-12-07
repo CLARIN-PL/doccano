@@ -163,9 +163,8 @@ export default Vue.extend({
             qType.hasFinishedToday = !!todayQStates.length
             qType.hasFinishedAllTypesToday = !!todayQStates.length && hasFinishedAllTypes
 
-            const monthDiff = moment(new Date()).diff(
-              moment(qType.finishedAt, dateFormat),
-              'months'
+            const monthDiff = Math.abs(
+              moment(new Date()).diff(moment(qType.finishedAt, dateFormat), 'months')
             )
             const hasPassedResearchTime = monthDiff >= researchTimeInMonths
 
@@ -178,9 +177,8 @@ export default Vue.extend({
               qType.hasFinishedAllTypes =
                 hasFinishedAllTypes && qType.filledTypes.length === qType.questionnaires.length * 2
             } else if (qType.id === '3.1') {
-              const weekDiff = moment(new Date()).diff(
-                moment(qType.finishedAt, savedDateFormat),
-                'weeks'
+              const weekDiff = Math.abs(
+                moment(new Date()).diff(moment(qType.finishedAt, savedDateFormat), 'weeks')
               )
               const hasPassedOneWeek = weekDiff >= 1
               qType.hasFinishedAllTypes = hasFinishedAllTypes && hasPassedOneWeek
@@ -208,9 +206,8 @@ export default Vue.extend({
             } else if (qType.id === '5.1') {
               qType.hasFinishedAllTypes = hasFinishedAllTypes && hasPassedResearchTime
             } else if (qType.id === '6.1') {
-              const weekDiff = moment(new Date()).diff(
-                moment(qType.finishedAt, dateFormat),
-                'weeks'
+              const weekDiff = Math.abs(
+                moment(new Date()).diff(moment(qType.finishedAt, dateFormat), 'weeks')
               )
               const hasPassedTwoWeeks = weekDiff >= 2
               qType.hasFinishedAllTypes = hasFinishedAllTypes && hasPassedTwoWeeks
@@ -247,7 +244,7 @@ export default Vue.extend({
         const lastLoginDay = parseInt(moment(lastLoginTime, dateFormat).format('DD'))
         const todayDay = parseInt(moment().format('DD'))
         let currentDiffDay = this.getLogin.lastLoginTime
-          ? moment(new Date()).diff(moment(lastLoginTime, dateFormat), 'days')
+          ? Math.abs(moment(new Date()).diff(moment(lastLoginTime, dateFormat), 'days'))
           : 0
         currentDiffDay = currentDiffDay === 0 ? todayDay - lastLoginDay : currentDiffDay
 
