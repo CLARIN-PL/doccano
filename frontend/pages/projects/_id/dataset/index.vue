@@ -289,11 +289,19 @@ export default Vue.extend({
           moment(state.confirmedAt, this.serverDateFormat).format(this.dateFormat)
       )
 
+      const firstAnnotationTime = todayStates.length
+        ? moment(todayStates[0].confirmedAt, this.serverDateFormat).format(this.savedDateFormat)
+        : ''
+      const lastAnnotationTime = todayStates.length
+        ? moment(todayStates[todayStates.length - 1].confirmedAt, this.serverDateFormat).format(
+            this.savedDateFormat
+          )
+        : ''
+
       this.setAnnotation({
         hasAnnotatedToday: !!todayStates.length,
-        lastAnnotationTime: todayStates.length
-          ? moment(todayStates[0].confirmedAt, this.serverDateFormat).format(this.savedDateFormat)
-          : '',
+        firstAnnotationTime,
+        lastAnnotationTime,
         textCountToday: todayStates.length
       })
 

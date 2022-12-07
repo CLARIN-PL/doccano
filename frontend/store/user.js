@@ -27,6 +27,7 @@ export const history =
   annotation: {
     textCountToday: 0,
     hasAnnotatedToday: false,
+    firstAnnotationTime: "",
     lastAnnotationTime: "",
   },
   questionnaire: {

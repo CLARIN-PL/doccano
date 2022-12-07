@@ -328,6 +328,7 @@ export function getQuestionnairesToShow() {
                 let isFilled = filled.includes(questionnaireType.id)
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { firstLoginTime } = getters['user/getLogin']
+                const { firstAnnotationTime } = getters['user/getAnnotation']
                 const firstLoginTimeAtZero = moment(firstLoginTime, DATE_FORMAT).format("DD-MM-YYYY")+" 00:00:00"
                 const { hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
                 const monthDiff = Math.abs(moment(todayTime).diff(
@@ -345,8 +346,9 @@ export function getQuestionnairesToShow() {
                 } else if(questionnaireType.id === "2.2") {
                     isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "3.1") {
+                    const time = firstAnnotationTime ?? firstLoginTimeAtZero
                     const weekDiff = Math.abs(moment(todayTime)
-                                    .diff(moment(firstLoginTimeAtZero, DATE_FORMAT), 'weeks'))
+                                    .diff(moment(time, DATE_FORMAT), 'weeks'))
                     const hasPassedOneWeek = weekDiff >= 1
                     isShowing = !isFilled && hasPassedOneWeek
                 } else if(questionnaireType.id === "3.2") {
@@ -366,8 +368,9 @@ export function getQuestionnairesToShow() {
                 } else if(questionnaireType.id === "5.1") {
                     isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "6.1") {
+                    const time = firstAnnotationTime ?? firstLoginTimeAtZero
                     const weekDiff = Math.abs(moment(todayTime)
-                                    .diff(moment(firstLoginTimeAtZero, DATE_FORMAT), 'weeks'))
+                                    .diff(moment(time, DATE_FORMAT), 'weeks'))
                     const hasPassedTwoWeeks = weekDiff >= 2
                     isShowing = !isFilled && hasPassedTwoWeeks
                 }

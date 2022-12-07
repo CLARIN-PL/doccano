@@ -566,22 +566,10 @@ export default {
     onScrollListener: _.debounce(function () {
       if (this.isLoaded) {
         const entityEditor = this.$refs.entityEditor
-        const dimensionCard = this.$refs[this.getDimensionComponentRef()]
         const margin = 100
         if (entityEditor) {
           const { bottom } = entityEditor.$el.getBoundingClientRect()
           this.hasStickyView = bottom - margin < 0
-        }
-
-        if (dimensionCard && this.isCombinationMode) {
-          const { y } = dimensionCard.$el.getBoundingClientRect()
-          if (this.hasStickyView && y < 0 && this.firstView) {
-            this.$refs[this.getDimensionComponentRef()].$el.scrollIntoView({
-              block: 'center',
-              behavior: 'smooth'
-            })
-            this.firstView = false
-          }
         }
       }
     }, 50),
@@ -889,9 +877,12 @@ export default {
         const textCountToday = this.doc.isConfirmed
           ? this.getAnnotation.textCountToday + 1
           : this.getAnnotation.textCountToday
+
+        const { firstAnnotationTime } = this.getAnnotation
         this.setAnnotation({
           hasAnnotatedToday: true,
           textCountToday,
+          firstAnnotationTime: firstAnnotationTime ?? moment().format(DATE_FORMAT),
           lastAnnotationTime: moment().format(DATE_FORMAT)
         })
         this.hasClickedConfirmButton = false
