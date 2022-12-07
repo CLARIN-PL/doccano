@@ -27,6 +27,8 @@ import _ from 'lodash'
 const RESEARCH_TIME_IN_MONTHS = 3
 const TEXT_BATCH_COUNT = 20
 const DATE_FORMAT = "DD-MM-YYYY HH:mm:ss"
+const DATE_ONLY_FORMAT = "DD-MM-YYYY"
+const SERVER_DATE_FORMAT = "YYYY-MM-DDTHH:mm:ss"
 
 export const qCategories = [
     {
@@ -139,14 +141,41 @@ export function hasStore() {
 }
 
 export function setQuestionnaireIds(qTypes, questionnaires=[], questions=[], questionnaireStates=[]) {
+    questionnaireStates = _.sortBy(questionnaireStates, 'finishedAt')
+    const getters = window.$nuxt.$store.getters
+    const { textCountToday } =  getters ? getters['user/getAnnotation'] : 0
     return qTypes.map((qType)=> {
         if(qType && qType.questionnaires) {
             qType.questionnaires = qType.questionnaires.map((que, queIdx)=> {
-                const questionnaire = questionnaires.find((q, qIdx)=> q.name === que.name || queIdx === qIdx)
+                let questionnaire = questionnaires.find((q)=> q.name === que.name)
+                // hacky, should be removed later
+                if(!questionnaire) {
+                    questionnaire = questionnaires.find((q, qIdx)=> q && queIdx === qIdx)
+                }
                 if(questionnaire) {
+                    que.questionnaire = questionnaire
                     que.id = questionnaire.id
                     que.type = questionnaire.questionnaireType
-                    que.isFinished = !!questionnaireStates.find((qs)=> qs.questionnaire === que.id)
+                    const states = questionnaireStates.filter((qs)=> qs.questionnaire === que.id)
+                    const state = states.length ? states[0]: null
+                    que.isFinished = !!state
+                    if(state) {
+                        que.isFinished = true
+                        que.finishedAt = state.finishedAt
+                        que.finishedAtDate = moment(state.finishedAt, SERVER_DATE_FORMAT).format(DATE_ONLY_FORMAT)
+                    }
+                    if(state && String(que.typeId).startsWith("4")) {
+                        const todayStates = states.filter((state)=> moment(new Date()).format(DATE_ONLY_FORMAT) 
+                        === moment(state.finishedAt, SERVER_DATE_FORMAT).format(DATE_ONLY_FORMAT))
+                        const isFinishedToday = !!todayStates.length
+                        que.isFinishedToday = isFinishedToday
+                        que.isFinished = !!state && isFinishedToday
+
+                        if(String(que.typeId) === "4.3") {
+                            que.isFinished = todayStates.length*TEXT_BATCH_COUNT === textCountToday
+                            que.isFinishedToday = que.isFinished
+                        }
+                    }
                 }
                 que.segments = que.segments.map((segment)=> {
                     segment.questions = segment.questions.map((question)=> {

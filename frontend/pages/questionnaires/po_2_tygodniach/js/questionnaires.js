@@ -6,6 +6,7 @@ export const qTypes = [
             {
                 name: "Ankieta po 2 tygodniach badania",
                 language: "pl",
+                typeId: "6.1",
                 segments: [
                     {
                         scales: {

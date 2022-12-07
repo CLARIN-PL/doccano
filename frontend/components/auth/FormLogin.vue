@@ -61,6 +61,7 @@ export default Vue.extend({
   data() {
     return {
       valid: false,
+      isLoaded: false,
       username: '',
       password: '',
       userNameRules,
@@ -73,7 +74,7 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapGetters('user', ['getLogin', 'getQuestionnaire', 'getHistories'])
+    ...mapGetters('user', ['getLogin', 'getQuestionnaire', 'getHistories', 'getAnnotation'])
   },
   methods: {
     ...mapActions('user', [
@@ -85,52 +86,149 @@ export default Vue.extend({
       'addHistory'
     ]),
     async loadQuestionnaires() {
-      const ids = [1, 2, 3, 4, 5, 6]
-      const limit = 100
-      const dailyQuestionnaireId = '4'
-      const questionnairePromises = ids.map((id) => {
-        return this.$services.questionnaire.listQuestionnairesByTypeId({
-          questionnaireTypeId: id,
+      try {
+        const ids = _.flatMap(qCategories, 'id')
+        const limit = 100
+        const atRestQuestionnaireId = '4.3'
+        const textBatchCount = 20
+        const researchTimeInMonths = 3
+        const serverDateFormat = 'YYYY-MM-DDThh:mm:ss'
+        const dateFormat = 'DD-MM-YYYY'
+        const savedDateFormat = 'DD-MM-YYYY hh:mm:ss'
+        let todayAtRestQuestionnairesIds = []
+        const todayDate = moment().format(dateFormat)
+        const qTypes = _.flatMap(qCategories, 'types')
+        const { hasAnnotatedToday } = this.getAnnotation
+        const questionnairePromises = ids.map((id) => {
+          return this.$services.questionnaire.listQuestionnairesByTypeId({
+            qTypeId: id,
+            limit
+          })
+        })
+        const states = await this.$services.questionnaire.listFinishedQuestionnaires({
           limit
         })
-      })
-      const states = await this.$services.questionnaire.listFinishedQuestionnaires({
-        limit
-      })
 
-      const questionnaireResponses: any[] = await Promise.all(questionnairePromises)
-      // @ts-ignore
-      this.questionnaires = _.cloneDeep(_.flatMap(questionnaireResponses, 'items'))
-      // @ts-ignore
-      this.questionnaireStates = _.cloneDeep(states.items)
-
-      const stateTypes: any[] = [...new Set(_.flatMap(this.questionnaireStates, 'questionnaire'))]
-      const finishedCategories: any[] = _.flatMap(qCategories, 'types')
-        .map((qType) => {
-          qType.filledTypes = _.intersection(qType.questionnaires, stateTypes)
-          const state = this.questionnaireStates.find((state) =>
-            qType.questionnaires.includes(state.questionnaire)
-          )
-          qType.finishedAt = state ? state.finishedAt : ''
-          qType.hasFinishedAll = qType.filledTypes.length === qType.questionnaires.length
-
-          return qType
-        })
-        .filter((qType) => {
-          const hasFilledSome = qType.filledTypes.length > 0
-          const todayDay = moment().format('DD-MM-YYYY')
-          const finishedAt = qType.finishedAt
-            ? moment(qType.finishedAt, 'YYYY-MM-DDThh:mm:ss').format('DD-MM-YYYY')
+        const questionnaireResponses: any[] = await Promise.all(questionnairePromises)
+        this.questionnaires = _.cloneDeep(_.flatMap(questionnaireResponses, 'items'))
+        const questionnaireStates = _.sortBy(states.items, 'finishedAt').map((state) => {
+          state.finishedAtDate = state.finishedAt
+            ? moment(state.finishedAt, serverDateFormat).format(dateFormat)
             : ''
-
-          return qType.id.startsWith(dailyQuestionnaireId)
-            ? todayDay === finishedAt && hasFilledSome && qType.hasFinishedAll
-            : hasFilledSome && qType.hasFinishedAll
+          return state
         })
+        this.questionnaireStates = _.cloneDeep(questionnaireStates)
 
-      this.setQuestionnaire({
-        filled: _.flatMap(finishedCategories, 'id')
-      })
+        const groupedStatesByFinishedAtDate = _.groupBy(this.questionnaireStates, 'finishedAtDate')
+        const todayFilledQuestionnaires = groupedStatesByFinishedAtDate[todayDate]
+        const atRestQType = qTypes.find((qType) => qType.id === atRestQuestionnaireId)
+        if (todayFilledQuestionnaires && todayFilledQuestionnaires.length) {
+          const atRestQuestionnaires = todayFilledQuestionnaires.filter((q) =>
+            atRestQType.questionnaires.includes(q.questionnaire)
+          )
+          todayAtRestQuestionnairesIds = atRestQuestionnaires.map((q, index) => {
+            q.restId = `${atRestQuestionnaireId}_${(index + 1) * textBatchCount}`
+            return q
+          })
+          todayAtRestQuestionnairesIds = _.sortBy(
+            todayAtRestQuestionnairesIds,
+            'finishedAt'
+          ).reverse()
+        }
+
+        const stateTypes: any[] = [...new Set(_.flatMap(this.questionnaireStates, 'questionnaire'))]
+        const finishedCategories: any[] = qTypes
+          .map((qType) => {
+            qType.filledTypes = _.intersection(qType.questionnaires, stateTypes)
+            qType.filledTypesUnique = [...new Set(_.intersection(stateTypes, qType.questionnaires))]
+            const hasFinishedAllTypes = qType.filledTypes.length === qType.questionnaires.length
+
+            const qStates = this.questionnaireStates
+              .filter((state) => qType.questionnaires.includes(state.questionnaire))
+              .reverse()
+            const todayQStates = this.questionnaireStates.filter(
+              (state) =>
+                qType.questionnaires.includes(state.questionnaire) &&
+                moment(state.finishedAt, serverDateFormat).format(dateFormat) === todayDate
+            )
+
+            if (qStates.length) {
+              const state = qStates[0]
+              qType.finishedAt = state ? state.finishedAt : ''
+              qType.finishedAtDate = qType.finishedAt
+                ? moment(qType.finishedAt, serverDateFormat).format(dateFormat)
+                : ''
+            }
+
+            qType.hasFinishedToday = !!todayQStates.length
+            qType.hasFinishedAllTypesToday = !!todayQStates.length && hasFinishedAllTypes
+
+            const monthDiff = moment(new Date()).diff(
+              moment(qType.finishedAt, dateFormat),
+              'months'
+            )
+            const hasPassedResearchTime = monthDiff >= researchTimeInMonths
+
+            qType.filledId = qType.id
+            if (qType.id === '1.1') {
+              qType.hasFinishedAllTypes = hasFinishedAllTypes
+            } else if (qType.id === '2.1') {
+              qType.hasFinishedAllTypes = hasFinishedAllTypes
+            } else if (qType.id === '2.2') {
+              qType.hasFinishedAllTypes =
+                hasFinishedAllTypes && qType.filledTypes.length === qType.questionnaires.length * 2
+            } else if (qType.id === '3.1') {
+              const weekDiff = moment(new Date()).diff(
+                moment(qType.finishedAt, savedDateFormat),
+                'weeks'
+              )
+              const hasPassedOneWeek = weekDiff >= 1
+              qType.hasFinishedAllTypes = hasFinishedAllTypes && hasPassedOneWeek
+            } else if (qType.id === '3.2') {
+              qType.hasFinishedAllTypes =
+                hasFinishedAllTypes &&
+                hasPassedResearchTime &&
+                qType.filledTypes.length === qType.questionnaires.length * 2
+            } else if (qType.id === '4.1') {
+              qType.hasFinishedAllTypes = hasFinishedAllTypes && todayQStates.length
+            } else if (qType.id === '4.2') {
+              const currentHour = new Date().getHours()
+              const isEvening = currentHour >= 17 && currentHour < 23
+              qType.hasFinishedAllTypes = hasFinishedAllTypes && isEvening && hasAnnotatedToday
+            } else if (qType.id === '4.3') {
+              const firstTodayAtRestQuestionnaire = todayAtRestQuestionnairesIds.length
+                ? todayAtRestQuestionnairesIds[0]
+                : {}
+              console.log(firstTodayAtRestQuestionnaire)
+              qType.filledId = firstTodayAtRestQuestionnaire.restId
+              qType.hasFinishedAllTypes =
+                hasFinishedAllTypes && firstTodayAtRestQuestionnaire.finishedAtDate
+              todayAtRestQuestionnairesIds.splice(0, 1)
+            } else if (qType.id === '5.1') {
+              qType.hasFinishedAllTypes = hasFinishedAllTypes && hasPassedResearchTime
+            } else if (qType.id === '6.1') {
+              const weekDiff = moment(new Date()).diff(
+                moment(qType.finishedAt, dateFormat),
+                'weeks'
+              )
+              const hasPassedTwoWeeks = weekDiff >= 2
+              qType.hasFinishedAllTypes = hasFinishedAllTypes && hasPassedTwoWeeks
+            }
+
+            return qType
+          })
+          .filter((qType) => {
+            return qType.hasFinishedAllTypes
+          })
+
+        await this.setQuestionnaire({
+          filled: _.flatMap(finishedCategories, 'filledId'),
+          toShow: []
+        })
+        this.isLoaded = true
+      } catch (error) {
+        console.error(error)
+      }
     },
     async setUserData() {
       const user = await this.$services.user.getMyProfile()
@@ -197,8 +295,13 @@ export default Vue.extend({
           password: this.password
         })
         await this.loadQuestionnaires()
-        this.setUserData()
-        this.$router.push(this.localePath('/projects'))
+        this.$forceUpdate()
+        this.$nextTick(async () => {
+          if (this.isLoaded) {
+            await this.setUserData()
+            this.$router.push(this.localePath('/projects'))
+          }
+        })
       } catch {
         this.showError = true
       }
