@@ -307,7 +307,6 @@ export function getQuestionnairesToShow() {
     catch(error) {
         console.error(error)
     }
-    console.log(toShow)
     return toShow
 }
 

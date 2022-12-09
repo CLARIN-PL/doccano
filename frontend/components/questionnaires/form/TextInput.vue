@@ -162,8 +162,6 @@ export default {
           passedData = JSON.parse(JSON.stringify(this.passedData))
           passedData.question.value = this.text
         }
-        console.log(this.text)
-        console.log(passedData)
         this.$emit('change', { ...passedData, value: this.text })
         this.$emit('submit', this.text)
       } else {
