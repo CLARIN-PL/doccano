@@ -15,7 +15,7 @@
       <v-dialog v-model="dialogDelete">
         <form-delete :selected="selected" @cancel="dialogDelete = false" @remove="remove" />
       </v-dialog>
-      <v-spacer/>
+      <v-spacer />
       <v-btn
         class="text-capitalize ms-2 white--text"
         color="teal"
@@ -50,7 +50,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import Vue from 'vue'
-import { DATE_FORMAT_DDMMYYYY } from '~/settings'
+import { DATE_FORMAT_DDMMYYYY, DATETIME_FORMAT_DDMMYYHHMMSS } from '~/settings'
 import { mapGetters, mapActions } from 'vuex'
 import ProjectList from '@/components/project/ProjectList.vue'
 import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
@@ -111,42 +111,43 @@ export default Vue.extend({
 
   methods: {
     ...mapActions('user', [
-      'setRestingPeriod',
-      'calculateRestingPeriod',
-      'setCurrentlyAllowedProjectId',
+      'setRest',
+      'getRest',
+      'canClearRestingPeriod',
       'setProject',
       'initQuestionnaire'
     ]),
 
     async checkRestingPeriod() {
-      const restingEndTime = await this.calculateRestingPeriod()
-      if (restingEndTime === null) {
+      const { startTime, endTime } = this.getRest
+      const hasRestTimeSet = startTime && endTime
+      if (hasRestTimeSet && this.canClearRestingPeriod()) {
+        this.showRestingMessage = !this.isStaff && !this.getQuestionnaire.toShow.length
+        this.restingEndTime = moment(endTime).format(DATETIME_FORMAT_DDMMYYHHMMSS)
+      } else {
         this.showRestingMessage = false
         this.restingEndTime = ''
-      } else {
-        this.showRestingMessage = !this.isStaff && !this.getQuestionnaire.toShow.length
-        this.restingEndTime = restingEndTime
       }
     },
-
     countTotalTextsAnnotated(progressList: MyProgressList) {
       try {
-        this.totalTextsAnnotated = progressList.results.reduce((subtotal, prog: MyProgress) => subtotal + prog.complete, 0)
+        this.totalTextsAnnotated = progressList.results.reduce(
+          (subtotal, prog: MyProgress) => subtotal + prog.complete,
+          0
+        )
       } catch {
         this.totalTextsAnnotated = 0
       }
     },
 
-    findNextProjectIdToAnnotate(progressList: MyProgressList) {
-      try {
-        const progress = progressList.results.find(
-          (projectProgress: MyProgress) => projectProgress.remaining > 0
-        )
-        const nextProjectIdToAnnotate = progress?.project_id || -1
-        this.setCurrentlyAllowedProjectId(nextProjectIdToAnnotate)
-      } catch {
-        this.setCurrentlyAllowedProjectId(-1)
-      }
+    setCurrentlyAllowedProjectId(progressList: MyProgressList) {
+      const progress = progressList.results.find(
+        (projectProgress: MyProgress) => projectProgress.remaining > 0
+      )
+      const nextProjectIdToAnnotate = progress?.project_id || -1
+      this.setProject({
+        currentlyAllowedProjectId: nextProjectIdToAnnotate
+      })
     },
 
     async getProjectData() {
@@ -158,7 +159,7 @@ export default Vue.extend({
       } else {
         const progresses = await this.$services.metrics.fetchMyProgresses()
         this.countTotalTextsAnnotated(progresses)
-        this.findNextProjectIdToAnnotate(progresses)
+        this.setCurrentlyAllowedProjectId(progresses)
         const items = projects.items
           .map((projectItem: ProjectDTO) => {
             const progress = progresses.results.find(

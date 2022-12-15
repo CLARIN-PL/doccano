@@ -8,6 +8,7 @@ import {
   DATETIME_FORMAT_DDMMYYHHMMSS,
 } from '~/settings/'
 
+
 export const state = () => ({
   id: null,
   histories: []
@@ -18,6 +19,7 @@ export const history =
   id: null,
   rest: {
     userId: null,
+    startTime: "",
     endTime: ""
   },
   login: {
@@ -46,17 +48,6 @@ export const history =
 export const mutations = {
   setUserId(state, userId) {
     state.id = userId
-  },
-  setCurrentlyAllowedProjectId(state, projectId) {
-    state.currentlyAllowedProjectId = projectId
-  },
-  setRestingPeriod(state, endTime) {
-    state.restingUserId = state.id
-    state.restingEndTime = endTime
-  },
-  clearRestingPeriod(state) {
-    state.restingUserId = null
-    state.restingEndTime = null
   },
   setHistories(state, histories) {
     state.histories = _.cloneDeep(histories)
@@ -144,9 +135,6 @@ export const actions = {
   setUserId({commit}, userId) {
     commit('setUserId', userId)
   },
-  setCurrentlyAllowedProjectId({ commit }, projectId) {
-    commit('setCurrentlyAllowedProjectId', projectId)
-  },
   setAnnotation({ commit }, annotation) {
     commit('setAnnotation', annotation)
   },
@@ -171,31 +159,23 @@ export const actions = {
   setProject({ commit }, project) {
     commit('setProject', project)
   },
-  setRestingPeriod({ commit }) {
-    const startTime = new Date()
-    const endTime = moment(startTime).add(5, 'm').format(DATETIME_FORMAT_DDMMYYHHMMSS)
-    commit('setRestingPeriod', endTime)
-  },
   initQuestionnaire({commit}) {
     if(hasStore()) {
       const toShow = getQuestionnairesToShow()
       commit('setQuestionnaire', { toShow, inProgress: [], isWorkingNow: false })
     }
   },
-  calculateRestingPeriod({ commit, getters }) {
-    const currentTime = new Date()
-    const { endTime, userId } = getters.rest
-    const currentUserId = getters.getUserId
-    const canClearRestingPeriod = currentTime >= endTime
-    if (canClearRestingPeriod) {
-      commit('clearRestingPeriod')
-    }
-    if (userId !== null && currentUserId === userId && !canClearRestingPeriod) {
-      return moment(endTime).format(DATETIME_FORMAT_DDMMYYHHMMSS)
-    }
-    return null
+  canClearRestingPeriod({ getters }) {
+    const { endTime, userId } = getters.getRest
+    const hasSameUserId = getters.getUserId === userId
+    const hasPassedTime = currentTime >= endTime
+    return hasSameUserId && hasPassedTime
   },
-  init({ commit }, userId) {
+  getRestEndTime({  getters }) {
+    const { endTime } = getters.getRest
+    return moment(endTime).format(DATETIME_FORMAT_DDMMYYHHMMSS)
+  },
+  initUser({ commit }, userId) {
     commit('setUserId', userId)
   },
   clear({ commit }) {
