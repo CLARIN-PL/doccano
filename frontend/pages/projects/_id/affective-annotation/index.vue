@@ -318,7 +318,7 @@ import OthersScales from '@/static/formats/affective_annotation/affective_others
 import OffensiveInput from '@/components/tasks/affectiveAnnotation/offensive/OffensiveInput.vue'
 import HumorInput from '@/components/tasks/affectiveAnnotation/humor/HumorInput.vue'
 import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
-import { DATETIME_FORMAT_DDMMYYHHMMSS, DATE_FORMAT_DDMMYYYY } from '~/settings'
+import { DATETIME_FORMAT_DDMMYYYYHHMMSS, DATE_FORMAT_DDMMYYYY } from '~/settings'
 
 export default {
   components: {
@@ -550,6 +550,8 @@ export default {
     ...mapActions('user', [
       'setRest',
       'getRest',
+      'getProject',
+      'setProject',
       'canClearRestingPeriod',
       'setAnnotation',
       'initQuestionnaire',
@@ -605,7 +607,7 @@ export default {
     checkRestingPeriod() {
       const hasRested = this.canClearRestingPeriod()
       const { endTime } = this.getRest
-      const restingEndTime = moment(endTime).format(DATETIME_FORMAT_DDMMYYHHMMSS)
+      const restingEndTime = moment(endTime).format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
       if (this.canClearRestingPeriod()) {
         this.showRestingMessage = false
         this.restingEndTime = ''
@@ -861,15 +863,19 @@ export default {
     },
     async updateProgress() {
       const restTimeInMinutes = 5
+      const { completedProjectsCount } = this.getProject
       this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
       if (this.progress.complete === this.progress.total) {
         const endTime = moment(new Date())
           .add(restTimeInMinutes, 'm')
-          .format(DATETIME_FORMAT_DDMMYYHHMMSS)
+          .format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
         this.setRest({
           userId: this.getUserId,
           startTime: new Date(),
           endTime
+        })
+        this.setProject({
+          completedProjectsCount: completedProjectsCount + 1
         })
         this.$router.push(this.localePath('/projects'))
       }
@@ -895,8 +901,9 @@ export default {
         const { firstAnnotationTime } = this.getAnnotation
         this.setAnnotation({
           hasAnnotatedToday: true,
-          firstAnnotationTime: firstAnnotationTime ?? moment().format(DATETIME_FORMAT_DDMMYYHHMMSS),
-          lastAnnotationTime: moment().format(DATETIME_FORMAT_DDMMYYHHMMSS)
+          firstAnnotationTime:
+            firstAnnotationTime ?? moment().format(DATETIME_FORMAT_DDMMYYYYHHMMSS),
+          lastAnnotationTime: moment().format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
         })
         this.hasClickedConfirmButton = false
         this.scrollToTop()

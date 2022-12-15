@@ -47,7 +47,7 @@ import BaseCard from '@/components/utils/BaseCard.vue'
 import { history } from '~/store/user'
 import { qCategories, hasValidLoginTime } from '~/utils/questionnaires'
 import {
-  DATETIME_FORMAT_DDMMYYHHMMSS,
+  DATETIME_FORMAT_DDMMYYYYHHMMSS,
   DATE_FORMAT_DDMMYYYY,
   DATETIME_FORMAT_YYYYMMDDTHHMMSS
 } from '~/settings/'
@@ -232,15 +232,15 @@ export default Vue.extend({
     },
     setUserData() {
       try {
-        const loginTime = moment().format(DATETIME_FORMAT_DDMMYYHHMMSS)
+        const loginTime = moment().format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
         const lastLoginTime = this.getLogin.lastLoginTime
         const lastLoginDay = parseInt(
-          moment(lastLoginTime, DATETIME_FORMAT_DDMMYYHHMMSS).format('DD')
+          moment(lastLoginTime, DATETIME_FORMAT_DDMMYYYYHHMMSS).format('DD')
         )
         const todayDay = parseInt(moment().format('DD'))
         let currentDiffDay = this.getLogin.lastLoginTime
           ? Math.abs(
-              moment(new Date()).diff(moment(lastLoginTime, DATETIME_FORMAT_DDMMYYHHMMSS), 'days')
+              moment(new Date()).diff(moment(lastLoginTime, DATETIME_FORMAT_DDMMYYYYHHMMSS), 'days')
             )
           : 0
         currentDiffDay = currentDiffDay === 0 ? todayDay - lastLoginDay : currentDiffDay

@@ -47,7 +47,7 @@ import BigNumberCard from '@/components/utils/BigNumberCard.vue'
 import { MyProgress, MyProgressList } from '~/domain/models/metrics/metrics'
 import { ProjectDTO, ProjectListDTO } from '~/services/application/project/projectData'
 import FormDelete from '~/components/project/FormDelete.vue'
-import { DATE_FORMAT_DDMMYYYY, DATETIME_FORMAT_DDMMYYHHMMSS } from '~/settings'
+import { DATE_FORMAT_DDMMYYYY, DATETIME_FORMAT_DDMMYYYYHHMMSS } from '~/settings'
 
 export default Vue.extend({
   name: 'Projects',
@@ -77,6 +77,7 @@ export default Vue.extend({
 
   async fetch() {
     await this.getProjectData()
+    await this.checkQuestionnaire()
   },
 
   computed: {
@@ -104,6 +105,7 @@ export default Vue.extend({
       'getRest',
       'canClearRestingPeriod',
       'setProject',
+      'setQuestionnaire',
       'initQuestionnaire'
     ]),
 
@@ -112,7 +114,7 @@ export default Vue.extend({
       const hasRestTimeSet = startTime && endTime
       if (hasRestTimeSet && this.canClearRestingPeriod()) {
         this.showRestingMessage = !this.isStaff && !this.getQuestionnaire.toShow.length
-        this.restingEndTime = moment(endTime).format(DATETIME_FORMAT_DDMMYYHHMMSS)
+        this.restingEndTime = moment(endTime).format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
       } else {
         this.showRestingMessage = false
         this.restingEndTime = ''
@@ -170,7 +172,6 @@ export default Vue.extend({
       ).length
       const hasFinishedAll = this.projects.items.length === 0
       this.setProject({ hasFinishedAll, completedProjectsCount })
-      await this.checkQuestionnaire()
       this.isLoading = false
     },
 
@@ -179,14 +180,16 @@ export default Vue.extend({
         questionnaireTypeId: 1,
         limit: 1
       })
-      let firstQuestionnaireEverDate = null
       if (questionnaireStates && questionnaireStates.items.length > 0) {
         const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
-        firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format(
+        const firstQuestionnaireFilledDate = moment(String(firstQuestionnaireEver)).format(
           DATE_FORMAT_DDMMYYYY
         )
+        this.setQuestionnaire({
+          firstQuestionnaireFilledDate
+        })
       }
-      this.initQuestionnaire(firstQuestionnaireEverDate)
+      await this.initQuestionnaire()
       if (!this.isStaff && this.getQuestionnaire.toShow.length) {
         this.$router.push(this.localePath('/questionnaires'))
       }

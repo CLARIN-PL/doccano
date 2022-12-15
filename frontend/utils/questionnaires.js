@@ -2,10 +2,9 @@ import moment from 'moment'
 import _ from 'lodash'
 import { 
     RESEARCH_TIME_IN_MONTHS, 
-    DATETIME_FORMAT_DDMMYYHHMMSS, 
+    DATETIME_FORMAT_DDMMYYYYHHMMSS, 
     DATETIME_FORMAT_YYYYMMDDTHHMMSS, 
     DATE_FORMAT_DDMMYYYY, 
-    TEXT_BATCH_COUNT
 } from "~/settings/"
 
 /*
@@ -144,7 +143,7 @@ export function hasStore() {
 export function setQuestionnaireIds(qTypes, questionnaires=[], questions=[], questionnaireStates=[]) {
     questionnaireStates = _.sortBy(questionnaireStates, 'finishedAt')
     const getters = window.$nuxt.$store.getters
-    const { textCountToday } =  getters ? getters['user/getAnnotation'] : 0
+    const { completedProjectsCount } =  getters ? getters['user/getProject'] : 0
     return qTypes.map((qType)=> {
         if(qType && qType.questionnaires) {
             qType.questionnaires = qType.questionnaires.map((que, queIdx)=> {
@@ -171,11 +170,11 @@ export function setQuestionnaireIds(qTypes, questionnaires=[], questions=[], que
                         const isFinishedToday = !!todayStates.length
                         que.isFinishedToday = isFinishedToday
                         que.isFinished = !!state && isFinishedToday
+                    }
 
-                        if(String(que.typeId) === "4.3") {
-                            que.isFinished = todayStates.length*TEXT_BATCH_COUNT === textCountToday
-                            que.isFinishedToday = que.isFinished
-                        }
+                    if(String(que.typeId) === "4.3") {
+                        que.isFinished = states.length === completedProjectsCount
+                        que.isFinishedToday = que.isFinished
                     }
                     if(state && que.typeId === "2.2") {
                         que.isFinished = states.length > 1
@@ -311,7 +310,7 @@ export function hasValidLoginTime(givenTime) {
     if(getters) {
         const { lastLoginTime } = getters['user/getLogin']
         const diffTime = Math.abs(moment(givenTime).diff(
-            moment(lastLoginTime, DATETIME_FORMAT_DDMMYYHHMMSS), 'days'
+            moment(lastLoginTime, DATETIME_FORMAT_DDMMYYYYHHMMSS), 'days'
         ))
         hasValidLoginTime = diffTime >= 0
     }
@@ -339,13 +338,13 @@ export function getQuestionnairesToShow() {
                 const { firstQuestionnaireFilledTime } = getters['user/getQuestionnaire']
 
                 const firstQuestionnaireEverDate = firstQuestionnaireFilledTime 
-                                                ? moment(firstQuestionnaireFilledTime, DATETIME_FORMAT_DDMMYYHHMMSS).toDate() 
+                                                ? moment(firstQuestionnaireFilledTime, DATETIME_FORMAT_DDMMYYYYHHMMSS).toDate() 
                                                 : new Date() 
-                const firstLoginTimeAtZero = moment(firstLoginTime, DATETIME_FORMAT_DDMMYYHHMMSS).format(DATE_FORMAT_DDMMYYYY)+" 00:00:00"
-                const { hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
+                const firstLoginTimeAtZero = moment(firstLoginTime, DATETIME_FORMAT_DDMMYYYYHHMMSS).format(DATE_FORMAT_DDMMYYYY)+" 00:00:00"
+                const { hasAnnotatedToday } = getters['user/getAnnotation']
                 const defaultTime = firstAnnotationTime || firstLoginTimeAtZero
                 const monthDiff1 = Math.abs(moment(todayTime).diff(
-                    moment(firstLoginTimeAtZero, DATETIME_FORMAT_DDMMYYHHMMSS), 'months'
+                    moment(firstLoginTimeAtZero, DATETIME_FORMAT_DDMMYYYYHHMMSS), 'months'
                 ))
                 const monthDiff2 = Math.abs(moment(todayTime).diff(
                     moment(firstQuestionnaireEverDate), 'months', true
@@ -353,7 +352,7 @@ export function getQuestionnairesToShow() {
                 const hasPassedResearchTime = monthDiff2 >= RESEARCH_TIME_IN_MONTHS || monthDiff1 >= RESEARCH_TIME_IN_MONTHS
                 let isShowing = false
                 if(questionnaireType.id === '1.1') {
-                    const hourDiff = Math.abs(moment(firstLoginTime, DATETIME_FORMAT_DDMMYYHHMMSS)
+                    const hourDiff = Math.abs(moment(firstLoginTime, DATETIME_FORMAT_DDMMYYYYHHMMSS)
                                         .diff(moment(todayTime), 'hours'))
                     const isFirstSignIn = hourDiff < .5
                     isShowing = !isFilled && isFirstSignIn
@@ -363,7 +362,7 @@ export function getQuestionnairesToShow() {
                     isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "3.1") {
                     const weekDiff = Math.abs(moment(todayTime)
-                                    .diff(moment(defaultTime, DATETIME_FORMAT_DDMMYYHHMMSS), 'weeks'))
+                                    .diff(moment(defaultTime, DATETIME_FORMAT_DDMMYYYYHHMMSS), 'weeks'))
                     const hasPassedOneWeek = weekDiff >= 1
                     isShowing = !isFilled && hasPassedOneWeek
                 } else if(questionnaireType.id === "3.2") {
@@ -375,16 +374,15 @@ export function getQuestionnairesToShow() {
                     const isEvening = currentHour >= 17 && currentHour < 23
                     isShowing = !isFilled && isEvening && hasAnnotatedToday
                 } else if(questionnaireType.id === "4.3") {
-                    isFilled = !!filled.find((fill)=> fill === `4.3_${textCountToday}`)
+                    isFilled = !!filled.find((fill)=> fill === `4.3_${completedProjectsCount}`)
                     const hasAnnotatedBatch = hasAnnotatedToday 
-                                            && textCountToday > 0 
-                                            && textCountToday%TEXT_BATCH_COUNT === 0
+                                            && completedProjectsCount > 0 
                     isShowing = !isFilled && hasAnnotatedBatch
                 } else if(questionnaireType.id === "5.1") {
                     isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "6.1") {
                     const weekDiff = Math.abs(moment(todayTime)
-                                    .diff(moment(defaultTime, DATETIME_FORMAT_DDMMYYHHMMSS), 'weeks'))
+                                    .diff(moment(defaultTime, DATETIME_FORMAT_DDMMYYYYHHMMSS), 'weeks'))
                     const hasPassedTwoWeeks = weekDiff >= 2
                     isShowing = !isFilled && hasPassedTwoWeeks
                 }

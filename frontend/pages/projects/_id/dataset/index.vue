@@ -136,7 +136,7 @@ import ActionMenu from '~/components/example/ActionMenu.vue'
 import { ProjectDTO } from '~/services/application/project/projectData'
 import {
   DATE_FORMAT_DDMMYYYY,
-  DATETIME_FORMAT_DDMMYYHHMMSS,
+  DATETIME_FORMAT_DDMMYYYYHHMMSS,
   DATETIME_FORMAT_YYYYMMDDTHHMMSS
 } from '~/settings/'
 
@@ -300,7 +300,7 @@ export default Vue.extend({
         ? moment(
             todayStates[todayStates.length - 1].confirmedAt,
             DATETIME_FORMAT_YYYYMMDDTHHMMSS
-          ).format(DATETIME_FORMAT_DDMMYYHHMMSS)
+          ).format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
         : ''
 
       this.setAnnotation({
