@@ -106,7 +106,11 @@ export default Vue.extend({
     }, 1000)
   },
 
-  created() {
+  async created() {
+    await this.toggleRestingModal()
+  },
+
+  mounted() {
     this.checkRestingPeriod()
   },
 
@@ -118,15 +122,23 @@ export default Vue.extend({
       'initQuestionnaire'
     ]),
 
-    checkRestingPeriod() {
-      const { startTime, endTime } = this.getRest
-      const hasRestTimeSet = startTime && endTime
-      if (hasRestTimeSet && this.canClearRestingPeriod()) {
-        this.showRestingMessage = !this.isStaff && !this.getQuestionnaire.toShow.length
-        this.restingEndTime = moment(endTime).format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
-      } else {
+    async toggleRestingModal() {
+      const { endTime } = this.getRest
+      const canClearRestingPeriod = await this.canClearRestingPeriod()
+      if (canClearRestingPeriod) {
         this.showRestingMessage = false
         this.restingEndTime = ''
+      } else {
+        this.showRestingMessage = !this.isStaff && !this.getQuestionnaire.toShow.length
+        this.restingEndTime = moment(endTime).format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
+      }
+    },
+    checkRestingPeriod() {
+      if (this.restingEndTime) {
+        setInterval(function () {
+          const hasPassed = new Date() > this.restingEndTime
+          hasPassed && this.hideRestingModal()
+        }, 1000)
       }
     },
     countTotalTextsAnnotated(progressList: MyProgressList) {

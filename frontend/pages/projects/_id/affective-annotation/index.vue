@@ -519,8 +519,8 @@ export default {
   },
 
   async created() {
-    const hasRested = this.canClearRestingPeriod()
-    if (hasRested) {
+    const canClearRestingPeriod = await this.canClearRestingPeriod()
+    if (canClearRestingPeriod) {
       await this.hideRestingModal()
       await this.setLabelData()
       this.setAffectiveProjectScaleDataDict()
@@ -533,6 +533,7 @@ export default {
 
   mounted() {
     this.isLoaded = true
+    this.checkRestingPeriod()
   },
 
   methods: {
@@ -553,6 +554,14 @@ export default {
       const restingEndTime = moment(endTime).format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
       this.isRestingModalShown = !this.isProjectAdmin
       this.restingEndTime = restingEndTime
+    },
+    checkRestingPeriod() {
+      if (this.restingEndTime) {
+        setInterval(function () {
+          const hasPassed = new Date() > this.restingEndTime
+          hasPassed && this.hideRestingModal()
+        }, 1000)
+      }
     },
     async setHasCheckedPreviousDoc() {
       const query = this.$route.query.q || ''
@@ -804,7 +813,9 @@ export default {
       this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
       const hasFinishedProject = this.progress.complete === this.progress.total
       if (hasFinishedProject) {
-        const endTime = moment(new Date()).add(restTimeInMinutes, 'm').toDate()
+        const endTime = moment(new Date())
+          .add(restTimeInMinutes, 'm')
+          .format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
         this.setRest({
           userId: this.getUserId,
           startTime: new Date(),
@@ -814,7 +825,6 @@ export default {
           completedProjectsCount: completedProjectsCount + 1
         })
         await this.initQuestionnaire()
-        console.log(this.getQuestionnaire.toShow)
         setTimeout(() => {
           this.$router.push(this.localePath('/projects'))
         }, 100)
