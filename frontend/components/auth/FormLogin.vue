@@ -211,7 +211,6 @@ export default Vue.extend({
               qType.filledId = todayAtRestQuestionnairesIds.length
                 ? _.flatMap(todayAtRestQuestionnairesIds, 'restId')
                 : [qType.id]
-              console.log(qType.filledId)
               qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
             }
 

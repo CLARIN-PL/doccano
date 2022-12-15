@@ -4,7 +4,7 @@ import {
   getQuestionnairesToShow } 
 from "@/utils/questionnaires"
 import {
-  DATETIME_FORMAT_DDMMYYYYHHMMSS,
+  DATETIME_FORMAT_DDMMYYYYHHMMSS, 
 } from '~/settings/'
 
 
@@ -169,13 +169,9 @@ export const actions = {
   canClearRestingPeriod({ getters }) {
     const currentTime = new Date()
     const { endTime, userId } = getters.getRest
-    const hasSameUserId = getters.getUserId === userId
-    const hasPassedTime = currentTime >= endTime
+    const hasSameUserId = userId ? getters.getUserId === userId : true
+    const hasPassedTime = endTime ? currentTime >= moment(endTime, DATETIME_FORMAT_DDMMYYYYHHMMSS).toDate() : true
     return hasSameUserId && hasPassedTime
-  },
-  getRestEndTime({  getters }) {
-    const { endTime } = getters.getRest
-    return moment(endTime).format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
   },
   initUser({ commit }, userId) {
     commit('setUserId', userId)
