@@ -154,32 +154,29 @@ export default Vue.extend({
     async getProjectData() {
       this.isLoading = true
       const projects = await this.$services.project.list(this.$route.query)
+      let items = projects.items
       if (this.isStaff) {
         this.projects = _.cloneDeep(projects)
       } else {
         const progresses = await this.$services.metrics.fetchMyProgresses()
         this.countTotalTextsAnnotated(progresses)
         this.setCurrentlyAllowedProjectId(progresses)
-        const items = projects.items
-          .map((projectItem: ProjectDTO) => {
-            const progress = progresses.results.find(
-              (prog: MyProgress) => prog.project_id === projectItem.id
-            )
-            projectItem.isCompleted =
-              progress && progress.total > 0 ? progress.remaining === 0 : true
-            return projectItem
-          })
-          .filter((projectItem) => !projectItem.isCompleted)
+        items = projects.items.map((projectItem: ProjectDTO) => {
+          const progress = progresses.results.find(
+            (prog: MyProgress) => prog.project_id === projectItem.id
+          )
+          projectItem.isCompleted = progress && progress.total > 0 ? progress.remaining === 0 : true
+          return projectItem
+        })
+        const incompleteProjectItems = items.filter((projectItem) => !projectItem.isCompleted)
         this.projects = {
           ...projects,
           ...{
-            items
+            items: incompleteProjectItems
           }
         }
       }
-      const completedProjectsCount = projects.items.filter(
-        (item: ProjectDTO) => item.isCompleted
-      ).length
+      const completedProjectsCount = items.filter((item: ProjectDTO) => item.isCompleted).length
       const hasFinishedAll = this.projects.items.length === 0
       this.setProject({ hasFinishedAll, completedProjectsCount })
       this.isLoading = false
