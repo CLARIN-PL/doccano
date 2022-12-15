@@ -1,5 +1,12 @@
 import moment from 'moment'
 import _ from 'lodash'
+import { 
+    RESEARCH_TIME_IN_MONTHS, 
+    DATETIME_FORMAT_DDMMYYHHMMSS, 
+    DATETIME_FORMAT_YYYYMMDDTHHMMSS, 
+    DATE_FORMAT_DDMMYYYY, 
+    TEXT_BATCH_COUNT
+} from "~/settings/"
 
 /*
     Questionnaire types: 
@@ -23,12 +30,6 @@ import _ from 'lodash'
     5. Ankieta na koniec badania
     6. Ankieta po 2 tygodniach badania
 */ 
-
-const RESEARCH_TIME_IN_MONTHS = 2.5
-const TEXT_BATCH_COUNT = 20
-const DATE_FORMAT = "DD-MM-YYYY HH:mm:ss"
-const DATE_ONLY_FORMAT = "DD-MM-YYYY"
-const SERVER_DATE_FORMAT = "YYYY-MM-DDTHH:mm:ss"
 
 export const qCategories = [
     {
@@ -162,11 +163,11 @@ export function setQuestionnaireIds(qTypes, questionnaires=[], questions=[], que
                     if(state) {
                         que.isFinished = true
                         que.finishedAt = state.finishedAt
-                        que.finishedAtDate = moment(state.finishedAt, SERVER_DATE_FORMAT).format(DATE_ONLY_FORMAT)
+                        que.finishedAtDate = moment(state.finishedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(DATE_ONLY_FORMAT)
                     }
                     if(state && String(que.typeId).startsWith("4")) {
                         const todayStates = states.filter((state)=> moment(new Date()).format(DATE_ONLY_FORMAT) 
-                        === moment(state.finishedAt, SERVER_DATE_FORMAT).format(DATE_ONLY_FORMAT))
+                        === moment(state.finishedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(DATE_ONLY_FORMAT))
                         const isFinishedToday = !!todayStates.length
                         que.isFinishedToday = isFinishedToday
                         que.isFinished = !!state && isFinishedToday
@@ -310,14 +311,14 @@ export function hasValidLoginTime(givenTime) {
     if(getters) {
         const { lastLoginTime } = getters['user/getLogin']
         const diffTime = Math.abs(moment(givenTime).diff(
-            moment(lastLoginTime, DATE_FORMAT), 'days'
+            moment(lastLoginTime, DATETIME_FORMAT_DDMMYYHHMMSS), 'days'
         ))
         hasValidLoginTime = diffTime >= 0
     }
     return hasValidLoginTime
 }
 
-export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
+export function getQuestionnairesToShow() {
     const qTypes = getQuestionnaireTypes()
     const todayTime = new Date()
     let getters = null
@@ -335,15 +336,16 @@ export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { firstLoginTime } = getters['user/getLogin']
                 const { firstAnnotationTime } = getters['user/getAnnotation']
-                let firstQuestionnaireEverDate = new Date()
-                if (firstQuestionnaireEverStr) {
-                    firstQuestionnaireEverDate = moment(firstQuestionnaireEverStr, 'DD-MM-YYYY').toDate()
-                }
-                const firstLoginTimeAtZero = moment(firstLoginTime, DATE_FORMAT).format("DD-MM-YYYY")+" 00:00:00"
+                const { firstQuestionnaireFilledTime } = getters['user/getQuestionnaire']
+
+                let firstQuestionnaireEverDate = firstQuestionnaireFilledTime 
+                                                ? moment(firstQuestionnaireFilledTime, DATE_FORMAT_DDMMYYYY).toDate() 
+                                                : new Date() 
+                const firstLoginTimeAtZero = moment(firstLoginTime, DATETIME_FORMAT_DDMMYYHHMMSS).format(DATE_FORMAT_DDMMYYYY)+" 00:00:00"
                 const { hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
                 const defaultTime = firstAnnotationTime || firstLoginTimeAtZero
                 const monthDiff1 = Math.abs(moment(todayTime).diff(
-                    moment(firstLoginTimeAtZero, DATE_FORMAT), 'months', true
+                    moment(firstLoginTimeAtZero, DATETIME_FORMAT_DDMMYYHHMMSS), 'months'
                 ))
                 const monthDiff2 = Math.abs(moment(todayTime).diff(
                     moment(firstQuestionnaireEverDate), 'months', true
@@ -351,7 +353,7 @@ export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
                 const hasPassedResearchTime = monthDiff2 >= RESEARCH_TIME_IN_MONTHS || monthDiff1 >= RESEARCH_TIME_IN_MONTHS
                 let isShowing = false
                 if(questionnaireType.id === '1.1') {
-                    const hourDiff = Math.abs(moment(firstLoginTime, DATE_FORMAT)
+                    const hourDiff = Math.abs(moment(firstLoginTime, DATETIME_FORMAT_DDMMYYHHMMSS)
                                         .diff(moment(todayTime), 'hours'))
                     const isFirstSignIn = hourDiff < .5
                     isShowing = !isFilled && isFirstSignIn
@@ -361,7 +363,7 @@ export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
                     isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "3.1") {
                     const weekDiff = Math.abs(moment(todayTime)
-                                    .diff(moment(defaultTime, DATE_FORMAT), 'weeks'))
+                                    .diff(moment(defaultTime, DATETIME_FORMAT_DDMMYYHHMMSS), 'weeks'))
                     const hasPassedOneWeek = weekDiff >= 1
                     isShowing = !isFilled && hasPassedOneWeek
                 } else if(questionnaireType.id === "3.2") {
@@ -382,7 +384,7 @@ export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
                     isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "6.1") {
                     const weekDiff = Math.abs(moment(todayTime)
-                                    .diff(moment(defaultTime, DATE_FORMAT), 'weeks'))
+                                    .diff(moment(defaultTime, DATETIME_FORMAT_DDMMYYHHMMSS), 'weeks'))
                     const hasPassedTwoWeeks = weekDiff >= 2
                     isShowing = !isFilled && hasPassedTwoWeeks
                 }

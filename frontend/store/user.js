@@ -4,24 +4,29 @@ import {
   hasStore, 
   getQuestionnairesToShow } 
 from "@/utils/questionnaires"
+import {
+  DATETIME_FORMAT_DDMMYYHHMMSS,
+} from '~/settings/'
 
 export const state = () => ({
   id: null,
-  currentlyAllowedProjectId: -1,
-  restingUserId: null,
-  restingEndTime: null,
   histories: []
 })
 
 export const history = 
 {
   id: null,
+  rest: {
+    userId: null,
+    endTime: ""
+  },
   login: {
     firstLoginTime: "",
     lastLoginTime: "",
     isFirstLogin: false,
   },
   project: {
+    currentlyAllowedProjectId: -1,
     hasFinishedAll: false
   },
   annotation: {
@@ -76,6 +81,13 @@ export const mutations = {
       state.histories.splice(index, 1, { ...userHistory, questionnaire: {...userHistory.questionnaire, ...questionnaire} })
     }
   },
+  setRest(state, rest) {
+    const userHistory = state.histories.find((hist)=> hist.id === state.id)
+    if(userHistory) {
+      const index = state.histories.indexOf(userHistory)
+      state.histories.splice(index, 1, { ...userHistory, login: {...userHistory.rest, ...rest} })
+    }
+  },
   setLogin(state, login) {
     const userHistory = state.histories.find((hist)=> hist.id === state.id)
     if(userHistory) {
@@ -103,23 +115,12 @@ export const getters = {
   getUserId(state) {
     return state.id
   },
-  getAnnotatedTextCount(state) {
-    return state.annotatedTextCount
-  },
-  getCurrentlyAllowedProjectId(state) {
-    return state.currentlyAllowedProjectId
-  },
-  getRestingUserId(state) {
-    return state.restingUserId
-  },
-  getRestingEndTime(state) {
-    if (state.restingEndTime !== null) {
-      return moment(state.restingEndTime, 'DD-MM-YYYY HH:mm:ss').toDate()
-    }
-    return null
-  },
   getHistories(state) {
     return state.histories
+  },
+  getRest() {
+    const { rest } = state.histories.find((hist)=> hist.id === state.id ) || history
+    return rest 
   },
   getQuestionnaire(state) {
     const { questionnaire } = state.histories.find((hist)=> hist.id === state.id ) || history
@@ -152,6 +153,9 @@ export const actions = {
   setLogin({ commit }, login) {
     commit('setLogin', login)
   },
+  setRest({ commit }, rest) {
+    commit('setRest', rest)
+  },
   addHistory({ commit }, history) {
     commit('addHistory', history)
   },
@@ -169,28 +173,25 @@ export const actions = {
   },
   setRestingPeriod({ commit }) {
     const startTime = new Date()
-    const endTime = moment(startTime).add(5, 'm').format('DD-MM-YYYY HH:mm:ss')
+    const endTime = moment(startTime).add(5, 'm').format(DATETIME_FORMAT_DDMMYYHHMMSS)
     commit('setRestingPeriod', endTime)
   },
-  initQuestionnaire({commit}, firstQuestionnaireEverDate) {
+  initQuestionnaire({commit}) {
     if(hasStore()) {
-      const toShow = getQuestionnairesToShow(firstQuestionnaireEverDate)
+      const toShow = getQuestionnairesToShow()
       commit('setQuestionnaire', { toShow, inProgress: [], isWorkingNow: false })
     }
   },
   calculateRestingPeriod({ commit, getters }) {
     const currentTime = new Date()
-    const restingEndTime = getters.getRestingEndTime
+    const { endTime, userId } = getters.rest
     const currentUserId = getters.getUserId
-    const restingUserId = getters.getRestingUserId
-    let isRestingPeriodCleared = false
-
-    if (currentTime >= restingEndTime) {
+    const canClearRestingPeriod = currentTime >= endTime
+    if (canClearRestingPeriod) {
       commit('clearRestingPeriod')
-      isRestingPeriodCleared = true
     }
-    if (restingUserId !== null && currentUserId === restingUserId && !isRestingPeriodCleared) {
-      return moment(restingEndTime).format('DD-MM-YYYY HH:mm:ss')
+    if (userId !== null && currentUserId === userId && !canClearRestingPeriod) {
+      return moment(endTime).format(DATETIME_FORMAT_DDMMYYHHMMSS)
     }
     return null
   },
@@ -199,8 +200,6 @@ export const actions = {
   },
   clear({ commit }) {
     commit('setUserId', null)
-    commit('currentlyAllowedProjectId', -1)
-    commit('restingUserId', null)
-    commit('restingEndTime', null)
+    commit('setHistories', [])
   }
 }

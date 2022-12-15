@@ -50,6 +50,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import Vue from 'vue'
+import { DATE_FORMAT_DDMMYYYY } from '~/settings'
 import { mapGetters, mapActions } from 'vuex'
 import ProjectList from '@/components/project/ProjectList.vue'
 import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
@@ -193,7 +194,9 @@ export default Vue.extend({
       let firstQuestionnaireEverDate = null
       if (questionnaireStates && questionnaireStates.items.length > 0) {
         const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
-        firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format('DD-MM-YYYY')
+        firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format(
+          DATE_FORMAT_DDMMYYYY
+        )
       }
       this.initQuestionnaire(firstQuestionnaireEverDate)
       if (!this.isStaff && this.getQuestionnaire.toShow.length) {
