@@ -86,6 +86,7 @@ export default Vue.extend({
     ...mapActions('user', [
       'setUserId',
       'setLogin',
+      'setProject',
       'initQuestionnaire',
       'setAnnotation',
       'setQuestionnaire',
@@ -118,6 +119,18 @@ export default Vue.extend({
         return state
       })
       this.questionnaireStates = _.cloneDeep(questionnaireStates)
+    },
+    async setProjectData() {
+      const projects = await this.$services.project.list({ limit: 100 })
+      const progresses = await this.$services.metrics.fetchMyProgresses()
+      const items = projects.items.map((projectItem: any) => {
+        const progress = progresses.results.find((prog: any) => prog.project_id === projectItem.id)
+        projectItem.isCompleted = progress && progress.total > 0 ? progress.remaining === 0 : true
+        return projectItem
+      })
+      const completedProjectsCount = items.filter((item: any) => item.isCompleted).length
+      const hasFinishedAll = items.length === 0
+      await this.setProject({ hasFinishedAll, completedProjectsCount })
     },
     async loadQuestionnaires() {
       this.isLoading = true
@@ -303,6 +316,21 @@ export default Vue.extend({
       }
       this.isLoading = false
     },
+    async setFirstQuestionnaireFilledDate() {
+      const questionnaireStates = await this.$services.questionnaire.listFinishedQuestionnaires({
+        questionnaireTypeId: 1,
+        limit: 1
+      })
+      if (questionnaireStates && questionnaireStates.items.length > 0) {
+        const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
+        const firstQuestionnaireFilledDate = moment(String(firstQuestionnaireEver)).format(
+          DATE_FORMAT_DDMMYYYY
+        )
+        this.setQuestionnaire({
+          firstQuestionnaireFilledDate
+        })
+      }
+    },
     async tryLogin() {
       try {
         await this.login({
@@ -313,25 +341,12 @@ export default Vue.extend({
         setTimeout(() => {
           this.$nextTick(async () => {
             !this.isLoading && (await this.loadQuestionnaires())
-            this.$forceUpdate()
             setTimeout(async () => {
               if (!this.isLoading) {
                 await this.setUserData()
-                this.$nextTick(async () => {
-                  const questionnaireStates =
-                    await this.$services.questionnaire.listFinishedQuestionnaires({
-                      questionnaireTypeId: 1,
-                      limit: 1
-                    })
-                  let firstQuestionnaireEverDate = null
-                  if (questionnaireStates && questionnaireStates.items.length > 0) {
-                    const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
-                    firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format(
-                      DATE_FORMAT_DDMMYYYY
-                    )
-                  }
-                  await this.initQuestionnaire(firstQuestionnaireEverDate)
-                })
+                await this.setProjectData()
+                this.setFirstQuestionnaireFilledDate()
+                await this.initQuestionnaire()
                 this.$router.push(this.localePath('/projects'))
               }
             }, 100)
