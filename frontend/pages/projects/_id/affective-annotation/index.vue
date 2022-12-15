@@ -392,7 +392,7 @@ export default {
   computed: {
     ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId']),
     ...mapGetters('config', ['isRTL']),
-    ...mapGetters('user', ['getAnnotation']),
+    ...mapGetters('user', ['getAnnotation', 'getRest', 'getProject', 'getQuestionnaire']),
     shortKeysSpans() {
       return Object.fromEntries(this.spanTypes.map((item) => [item.id, [item.suffixKey]]))
     },
@@ -504,7 +504,7 @@ export default {
     },
     getQuestionnaire: {
       deep: true,
-      handler() {
+      handler(val) {
         if (val.toShow.length) {
           this.$router.push(this.localePath('/questionnaires'))
         }
@@ -538,13 +538,10 @@ export default {
   methods: {
     ...mapActions('user', [
       'setRest',
-      'getRest',
-      'getProject',
       'setProject',
       'canClearRestingPeriod',
       'setAnnotation',
       'initQuestionnaire',
-      'getQuestionnaire',
       'setQuestionnaire'
     ]),
 
@@ -805,7 +802,8 @@ export default {
       const restTimeInMinutes = 5
       const { completedProjectsCount } = this.getProject
       this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
-      if (this.progress.complete === this.progress.total) {
+      const hasFinishedProject = this.progress.complete === this.progress.total
+      if (hasFinishedProject) {
         const endTime = moment(new Date()).add(restTimeInMinutes, 'm').toDate()
         this.setRest({
           userId: this.getUserId,
@@ -815,7 +813,11 @@ export default {
         this.setProject({
           completedProjectsCount: completedProjectsCount + 1
         })
-        this.$router.push(this.localePath('/projects'))
+        await this.initQuestionnaire()
+        console.log(this.getQuestionnaire.toShow)
+        setTimeout(() => {
+          this.$router.push(this.localePath('/projects'))
+        }, 100)
       }
     },
     async confirm() {

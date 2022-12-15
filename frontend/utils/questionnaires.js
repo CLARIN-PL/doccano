@@ -162,16 +162,16 @@ export function setQuestionnaireIds(qTypes, questionnaires=[], questions=[], que
                     if(state) {
                         que.isFinished = true
                         que.finishedAt = state.finishedAt
-                        que.finishedAtDate = moment(state.finishedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(DATE_ONLY_FORMAT)
+                        que.finishedAtDate = moment(state.finishedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(DATE_FORMAT_DDMMYYYY)
                     }
+
                     if(state && String(que.typeId).startsWith("4")) {
-                        const todayStates = states.filter((state)=> moment(new Date()).format(DATE_ONLY_FORMAT) 
-                        === moment(state.finishedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(DATE_ONLY_FORMAT))
+                        const todayStates = states.filter((state)=> moment(new Date()).format(DATE_FORMAT_DDMMYYYY) 
+                        === moment(state.finishedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(DATE_FORMAT_DDMMYYYY))
                         const isFinishedToday = !!todayStates.length
                         que.isFinishedToday = isFinishedToday
                         que.isFinished = !!state && isFinishedToday
                     }
-
                     if(String(que.typeId) === "4.3") {
                         que.isFinished = states.length === completedProjectsCount
                         que.isFinishedToday = que.isFinished

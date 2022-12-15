@@ -100,6 +100,8 @@ export default Vue.extend({
   },
 
   computed: {
+    ...mapGetters('auth', ['isStaff']),
+    ...mapGetters('user', ['getProject']),
     headers() {
       return [
         { text: this.$t('generic.name'), value: 'name' },
@@ -139,17 +141,10 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapGetters('auth', ['isStaff']),
-    ...mapGetters('user', ['getCurrentlyAllowedProjectId']),
-
     enableProjectLink(projectId: Number) {
-      const isStaff = this.isStaff()
-      if (isStaff) {
-        return true
-      } else {
-        const firstProjectId = this.getCurrentlyAllowedProjectId()
-        return !this.isLoading && projectId === firstProjectId
-      }
+      const firstProjectId = this.getProject.currentlyAllowedProjectId
+      const isClickable = this.isStaff ? true : !this.isLoading && projectId === firstProjectId
+      return isClickable
     },
     updateQuery(payload: any) {
       this.$emit('update:query', payload)

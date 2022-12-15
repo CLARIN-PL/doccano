@@ -20,7 +20,8 @@
       </v-btn>
       <v-btn
         v-if="agreeText"
-        :disabled="disabled"
+        :loading="loading"
+        :disabled="disabled || loading"
         class="text-none"
         text
         data-test="delete-button"
@@ -50,6 +51,10 @@ export default Vue.extend({
       default: ''
     },
     disabled: {
+      type: Boolean,
+      default: false
+    },
+    loading: {
       type: Boolean,
       default: false
     }

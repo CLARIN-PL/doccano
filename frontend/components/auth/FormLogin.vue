@@ -1,6 +1,7 @@
 <template>
   <base-card
-    :disabled="!valid"
+    :disabled="!valid || isLoading"
+    :loading="isLoading"
     :title="$t('user.login')"
     :agree-text="$t('user.login')"
     @agree="tryLogin"
@@ -66,7 +67,7 @@ export default Vue.extend({
   data() {
     return {
       valid: false,
-      isLoaded: false,
+      isLoading: false,
       username: '',
       password: '',
       userNameRules,
@@ -119,10 +120,9 @@ export default Vue.extend({
       this.questionnaireStates = _.cloneDeep(questionnaireStates)
     },
     async loadQuestionnaires() {
-      this.isLoaded = false
+      this.isLoading = true
       try {
         const atRestQuestionnaireId = '4.3'
-        const textBatchCount = 20
         let todayAtRestQuestionnairesIds: any[] = []
         const todayDate = moment().format(DATE_FORMAT_DDMMYYYY)
         const qTypes = _.flatMap(qCategories, 'types')
@@ -137,7 +137,7 @@ export default Vue.extend({
             atRestQType.questionnaires.includes(q.questionnaire)
           )
           todayAtRestQuestionnairesIds = atRestQuestionnaires.map((q: any, index) => {
-            q.restId = `${atRestQuestionnaireId}_${(index + 1) * textBatchCount}`
+            q.restId = `${atRestQuestionnaireId}_${index + 1}`
             return q
           })
           todayAtRestQuestionnairesIds = _.sortBy(
@@ -213,6 +213,7 @@ export default Vue.extend({
               qType.filledId = todayAtRestQuestionnairesIds.length
                 ? _.flatMap(todayAtRestQuestionnairesIds, 'restId')
                 : [qType.id]
+              console.log(qType.filledId)
               qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
             }
 
@@ -227,7 +228,7 @@ export default Vue.extend({
           toShow: []
         })
         this.$nextTick(() => {
-          this.isLoaded = true
+          this.isLoading = false
         })
       } catch (error) {
         console.error(error)
@@ -301,7 +302,7 @@ export default Vue.extend({
           this.setHistory({ ...history, ...userHistory })
         }
       }
-      this.isLoaded = true
+      this.isLoading = false
     },
     async tryLogin() {
       try {
@@ -312,10 +313,10 @@ export default Vue.extend({
         await this.initUserData()
         setTimeout(() => {
           this.$nextTick(async () => {
-            this.isLoaded && (await this.loadQuestionnaires())
+            !this.isLoading && (await this.loadQuestionnaires())
             this.$forceUpdate()
             setTimeout(async () => {
-              if (this.isLoaded) {
+              if (!this.isLoading) {
                 await this.setUserData()
                 this.$nextTick(async () => {
                   const questionnaireStates =
