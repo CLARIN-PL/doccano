@@ -1,11 +1,10 @@
 import moment from 'moment'
 import _ from "lodash"
 import { 
-  hasStore, 
   getQuestionnairesToShow } 
 from "@/utils/questionnaires"
 import {
-  DATETIME_FORMAT_DDMMYYHHMMSS,
+  DATETIME_FORMAT_DDMMYYYYHHMMSS,
 } from '~/settings/'
 
 
@@ -160,10 +159,8 @@ export const actions = {
     commit('setProject', project)
   },
   initQuestionnaire({commit}) {
-    if(hasStore()) {
-      const toShow = getQuestionnairesToShow()
-      commit('setQuestionnaire', { toShow, inProgress: [], isWorkingNow: false })
-    }
+    const toShow = getQuestionnairesToShow()
+    commit('setQuestionnaire', { toShow, inProgress: [], isWorkingNow: false })
   },
   canClearRestingPeriod({ getters }) {
     const { endTime, userId } = getters.getRest
@@ -173,7 +170,7 @@ export const actions = {
   },
   getRestEndTime({  getters }) {
     const { endTime } = getters.getRest
-    return moment(endTime).format(DATETIME_FORMAT_DDMMYYHHMMSS)
+    return moment(endTime).format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
   },
   initUser({ commit }, userId) {
     commit('setUserId', userId)
