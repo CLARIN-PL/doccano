@@ -571,8 +571,9 @@ export default {
 
   methods: {
     ...mapActions('user', [
-      'setRestingPeriod',
-      'calculateRestingPeriod',
+      'setRest',
+      'getRest',
+      'canClearRestingPeriod',
       'setAnnotation',
       'initQuestionnaire',
       'getQuestionnaire'
@@ -608,16 +609,17 @@ export default {
     },
 
     async checkRestingPeriod() {
-      const restingEndTime = await this.calculateRestingPeriod()
-      if (restingEndTime === null) {
+      const hasRested = this.canClearRestingPeriod()
+      const { endTime } = this.getRest
+      const restingEndTime = moment(endTime).format(DATETIME_FORMAT_DDMMYYHHMMSS)
+      if (this.canClearRestingPeriod()) {
         this.showRestingMessage = false
         this.restingEndTime = ''
-        return true
       } else {
         this.showRestingMessage = !this.isProjectAdmin
         this.restingEndTime = restingEndTime
-        return false
       }
+      return hasRested
     },
     async setHasCheckedPreviousDoc() {
       const query = this.$route.query.q || ''
@@ -867,7 +869,11 @@ export default {
       this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
 
       if (this.progress.complete === this.progress.total) {
-        this.setRestingPeriod()
+        this.setRest({
+          userId: this.getUserId,
+          startTime: new Date(),
+          endTime: moment(new Date()).add(5, 'm').format(DATETIME_FORMAT_DDMMYYHHMMSS)
+        })
         this.$router.push(this.localePath('/projects'))
       }
     },
