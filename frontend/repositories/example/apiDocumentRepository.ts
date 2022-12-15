@@ -15,10 +15,14 @@ export class APIExampleRepository implements ExampleRepository {
     return plainToInstance(ExampleItemList, response.data)
   }
 
-  async articleIds(projectId: string, limit = '999999'): Promise<Array<string>> {
+  async fetchArticleIds(projectId: string, limit = '999999'): Promise<Array<string>> {
     const url = `/projects/${projectId}/article_ids?limit=${limit}&offset=0`
-    const response = await this.request.get(url)
-    return response.data.results.map((i: any) => i.article_id)
+    let results = []
+    if(projectId) {
+      const response = await this.request.get(url)
+      results = response.data.results.map((i: any) => i.article_id)
+    }
+    return results
   }
 
   async create(projectId: string, item: ExampleItem): Promise<ExampleItem> {

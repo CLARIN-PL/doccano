@@ -59,7 +59,7 @@ export default Vue.extend({
   },
   layout: 'projects',
 
-  middleware: ['check-auth', 'auth'],
+  middleware: ['check-auth', 'auth', 'check-questionnaire'],
 
   data() {
     return {
@@ -77,12 +77,12 @@ export default Vue.extend({
 
   async fetch() {
     await this.getProjectData()
-    await this.checkQuestionnaire()
+    await this.setQuestionnaireFilledDate()
   },
 
   computed: {
     ...mapGetters('auth', ['isStaff']),
-    ...mapGetters('user', ['getQuestionnaire']),
+    ...mapGetters('user', ['getQuestionnaire', 'getRest']),
     canDelete(): boolean {
       return this.selected.length > 0
     }
@@ -101,8 +101,6 @@ export default Vue.extend({
 
   methods: {
     ...mapActions('user', [
-      'setRest',
-      'getRest',
       'canClearRestingPeriod',
       'setProject',
       'setQuestionnaire',
@@ -175,7 +173,7 @@ export default Vue.extend({
       this.isLoading = false
     },
 
-    async checkQuestionnaire() {
+    async setQuestionnaireFilledDate() {
       const questionnaireStates = await this.$services.questionnaire.listFinishedQuestionnaires({
         questionnaireTypeId: 1,
         limit: 1
@@ -188,10 +186,6 @@ export default Vue.extend({
         this.setQuestionnaire({
           firstQuestionnaireFilledDate
         })
-      }
-      await this.initQuestionnaire()
-      if (!this.isStaff && this.getQuestionnaire.toShow.length) {
-        this.$router.push(this.localePath('/questionnaires'))
       }
     },
 

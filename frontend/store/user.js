@@ -75,7 +75,7 @@ export const mutations = {
     const userHistory = state.histories.find((hist)=> hist.id === state.id)
     if(userHistory) {
       const index = state.histories.indexOf(userHistory)
-      state.histories.splice(index, 1, { ...userHistory, login: {...userHistory.rest, ...rest} })
+      state.histories.splice(index, 1, { ...userHistory, rest: {...userHistory.rest, ...rest} })
     }
   },
   setLogin(state, login) {

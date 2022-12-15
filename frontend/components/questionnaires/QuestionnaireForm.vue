@@ -20,7 +20,7 @@
               v-for="(questionnaire, qIdx) in formData.questionnaires"
               :key="`questionnaire-window-${qIdx}`"
             >
-              <v-row align="top" justify="center">
+              <v-row align="center" justify="center">
                 <v-col cols="8">
                   <v-card>
                     <v-card-text>
