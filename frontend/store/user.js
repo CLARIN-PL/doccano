@@ -54,7 +54,7 @@ export const mutations = {
   addHistory(state, history) {
     state.histories = state.histories.concat(history)
   },
-  replaceHistory(state, history) {
+  setHistory(state, history) {
     const userHistory = state.histories.find((hist)=> hist.id === history.id)
     if(userHistory) {
       const index = state.histories.indexOf(userHistory)
@@ -108,7 +108,11 @@ export const getters = {
   getHistories(state) {
     return state.histories
   },
-  getRest() {
+  getHistory(state) {
+    const hist = state.histories.find((hist)=> hist.id === state.id ) || history
+    return hist
+  },
+  getRest(state) {
     const { rest } = state.histories.find((hist)=> hist.id === state.id ) || history
     return rest 
   },
@@ -146,8 +150,8 @@ export const actions = {
   addHistory({ commit }, history) {
     commit('addHistory', history)
   },
-  replaceHistory({ commit }, history) {
-    commit('replaceHistory', history)
+  setHistory({ commit }, history) {
+    commit('setHistory', history)
   },
   removeHistory({ commit }, history) {
     commit('removeHistory', history)
@@ -163,6 +167,7 @@ export const actions = {
     commit('setQuestionnaire', { toShow, inProgress: [], isWorkingNow: false })
   },
   canClearRestingPeriod({ getters }) {
+    const currentTime = new Date()
     const { endTime, userId } = getters.getRest
     const hasSameUserId = getters.getUserId === userId
     const hasPassedTime = currentTime >= endTime

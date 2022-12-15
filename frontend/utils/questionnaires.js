@@ -334,22 +334,23 @@ export function getQuestionnairesToShow() {
                 let isFilled = filled.includes(questionnaireType.id)
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { firstLoginTime } = getters['user/getLogin']
-                const { firstAnnotationTime } = getters['user/getAnnotation']
-                const { firstQuestionnaireFilledTime } = getters['user/getQuestionnaire']
-
-                const firstQuestionnaireEverDate = firstQuestionnaireFilledTime 
+                const { completedProjectsCount} = getters['user/getProject']
+                const { firstAnnotationTime, hasAnnotatedToday } = getters['user/getAnnotation']
+                let { firstQuestionnaireFilledTime } = getters['user/getQuestionnaire']
+                firstQuestionnaireFilledTime = firstQuestionnaireFilledTime 
                                                 ? moment(firstQuestionnaireFilledTime, DATETIME_FORMAT_DDMMYYYYHHMMSS).toDate() 
                                                 : new Date() 
                 const firstLoginTimeAtZero = moment(firstLoginTime, DATETIME_FORMAT_DDMMYYYYHHMMSS).format(DATE_FORMAT_DDMMYYYY)+" 00:00:00"
-                const { hasAnnotatedToday } = getters['user/getAnnotation']
                 const defaultTime = firstAnnotationTime || firstLoginTimeAtZero
-                const monthDiff1 = Math.abs(moment(todayTime).diff(
+                const firstLoginTimeMonthDiff = Math.abs(moment(todayTime).diff(
                     moment(firstLoginTimeAtZero, DATETIME_FORMAT_DDMMYYYYHHMMSS), 'months'
                 ))
-                const monthDiff2 = Math.abs(moment(todayTime).diff(
-                    moment(firstQuestionnaireEverDate), 'months', true
+                const firstQuestionnaireFilledMonthDiff = Math.abs(moment(todayTime).diff(
+                    moment(firstQuestionnaireFilledTime), 'months', 
                 ))
-                const hasPassedResearchTime = monthDiff2 >= RESEARCH_TIME_IN_MONTHS || monthDiff1 >= RESEARCH_TIME_IN_MONTHS
+                const hasPassedResearchTime = firstQuestionnaireFilledMonthDiff >= RESEARCH_TIME_IN_MONTHS 
+                    || firstLoginTimeMonthDiff >= RESEARCH_TIME_IN_MONTHS
+
                 let isShowing = false
                 if(questionnaireType.id === '1.1') {
                     const hourDiff = Math.abs(moment(firstLoginTime, DATETIME_FORMAT_DDMMYYYYHHMMSS)

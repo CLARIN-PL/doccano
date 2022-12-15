@@ -84,43 +84,40 @@
           </toolbar-laptop>
           <toolbar-mobile
             :total="docs.count"
-            :disable-prev="!canNavigateBackward"
-            :disable-next="!canNavigateForward"
+            :config="{
+              disabled: {
+                prev: !canNavigateBackward,
+                next: !canNavigateForward
+              }
+            }"
             class="d-flex d-sm-none header-toolbar --mobile"
           />
-          <v-card>
-            <v-card-text>
-              <v-row>
-                <v-col cols="12" md="9">
-                  <p ref="entityText" class="header-text">
-                    {{ doc.text }}
-                  </p>
-                </v-col>
-                <v-col cols="12" md="3" class="d-sm-none d-md-block text-center">
-                  <v-btn class="btn-toggle" plain x-small color="info" @click="toggleProgressBar">
-                    {{ $t('annotation_sidebar.progress.toggle') }}
-                  </v-btn>
-                  <annotation-progress
-                    :class="showProgressBar ? 'd-block' : 'd-none'"
-                    :progress="progress"
-                  />
-                </v-col>
-              </v-row>
-            </v-card-text>
-          </v-card>
+          <v-row
+            class="additional-content"
+            :class="{ '--shown': hasStickyView, '--mobile': $vuetify.breakpoint.xs }"
+          >
+            <v-col cols="12" md="9">
+              <p ref="entityText" class="header-text">
+                {{ doc.text }}
+              </p>
+            </v-col>
+            <v-col cols="12" md="3" class="d-none d-xs-none d-md-block">
+              <annotation-progress :progress="progress" />
+            </v-col>
+          </v-row>
         </div>
       </template>
       <template #content>
         <div class="layout-text__content --expanded">
           <v-row class="mt-3 content__article">
-            <v-col v-if="showArticleViewer" cols="5" class="content-article__toolbar">
+            <v-col v-if="showArticleViewer" cols="12" md="5" class="content-article__toolbar">
               <toolbar-article
                 :project="project"
                 :article-items="currentWholeArticle.items"
                 :current-article-item="doc"
               />
             </v-col>
-            <v-col :cols="showArticleViewer ? 7 : 12" class="content-article__container">
+            <v-col :md="showArticleViewer ? 7 : 12" cols="12" class="content-article__container">
               <v-card
                 v-shortkey="shortKeysCategory"
                 class="annotation-card --hidden"
@@ -263,7 +260,12 @@
           </v-row>
         </div>
       </template>
-      <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
+      <template #sidebar>
+        <div class="layout-text__sidebar">
+          <annotation-progress :progress="progress" />
+        </div>
+      </template>
+      <resting-period-modal v-if="isRestingModalShown" :end-time="restingEndTime" />
     </layout-text>
   </div>
 </template>
@@ -359,7 +361,7 @@ export default {
       affectiveSummaryImpressions: [],
       affectiveOthersWishToAuthor: [],
       affectiveOthersTmp: {},
-      showRestingMessage: false,
+      isRestingModalShown: false,
       restingEndTime: '',
       hasCheckedPreviousDoc: false,
       hasValidEntries: {
@@ -371,13 +373,13 @@ export default {
       },
       hasClickedConfirmButton: false,
       showProgressBar: true,
-      firstView: true
+      firstView: true,
+      hasStickyView: false
     }
   },
 
   async fetch() {
     this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
-    this.firstView = true
     await this.setProjectData()
     await this.setDoc()
     await this.setHasCheckedPreviousDoc()
@@ -503,7 +505,7 @@ export default {
     getQuestionnaire: {
       deep: true,
       handler() {
-        if (valtoShow.length) {
+        if (val.toShow.length) {
           this.$router.push(this.localePath('/questionnaires'))
         }
       }
@@ -517,12 +519,15 @@ export default {
   },
 
   async created() {
-    const hasRested = await this.checkRestingPeriod()
+    const hasRested = this.canClearRestingPeriod()
     if (hasRested) {
+      await this.hideRestingModal()
       await this.setLabelData()
       this.setAffectiveProjectScaleDataDict()
       this.setAffectiveProjectScaleData()
       await this.list(this.doc.id)
+    } else {
+      this.showRestingModal()
     }
   },
 
@@ -546,19 +551,11 @@ export default {
     toggleProgressBar() {
       this.showProgressBar = !this.showProgressBar
     },
-
-    checkRestingPeriod() {
-      const hasRested = this.canClearRestingPeriod()
+    showRestingModal() {
       const { endTime } = this.getRest
       const restingEndTime = moment(endTime).format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
-      if (this.canClearRestingPeriod()) {
-        this.showRestingMessage = false
-        this.restingEndTime = ''
-      } else {
-        this.showRestingMessage = !this.isProjectAdmin
-        this.restingEndTime = restingEndTime
-      }
-      return hasRested
+      this.isRestingModalShown = !this.isProjectAdmin
+      this.restingEndTime = restingEndTime
     },
     async setHasCheckedPreviousDoc() {
       const query = this.$route.query.q || ''
@@ -809,9 +806,7 @@ export default {
       const { completedProjectsCount } = this.getProject
       this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
       if (this.progress.complete === this.progress.total) {
-        const endTime = moment(new Date())
-          .add(restTimeInMinutes, 'm')
-          .format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
+        const endTime = moment(new Date()).add(restTimeInMinutes, 'm').toDate()
         this.setRest({
           userId: this.getUserId,
           startTime: new Date(),
@@ -1048,6 +1043,21 @@ export default {
   .layout-text {
     position: relative;
     &__header {
+      .additional-content {
+        display: none;
+        transform: scaleY(0);
+
+        &.--shown {
+          display: flex;
+          transform: scaleY(100%);
+          transition: transform 1s ease-in;
+        }
+
+        &.--mobile {
+          padding-bottom: 60px;
+        }
+      }
+
       &.--sticky {
         position: sticky;
 
@@ -1083,7 +1093,9 @@ export default {
     opacity: 0.6;
 
     .--hidden {
-      display: none;
+      height: 0;
+      overflow: hidden;
+      transition: height 0.5s 1s;
     }
 
     > div > div > svg:last-of-type {

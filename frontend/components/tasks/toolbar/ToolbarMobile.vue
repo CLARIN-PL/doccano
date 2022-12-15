@@ -1,11 +1,11 @@
 <template>
   <v-bottom-navigation app absolute hide-on-scroll>
-    <v-btn :disabled="isFirstPage" @click="updatePage(page - 1)">
+    <v-btn :disabled="isFirstPage || config.disabled.prev" @click="updatePage(page - 1)">
       <span>Prev</span>
       <v-icon>{{ mdiChevronLeft }}</v-icon>
     </v-btn>
 
-    <v-btn :disabled="isLastPage" @click="updatePage(page + 1)">
+    <v-btn :disabled="isLastPage || config.disabled.next" @click="updatePage(page + 1)">
       <span>Next</span>
       <v-icon>{{ mdiChevronRight }}</v-icon>
     </v-btn>
@@ -18,6 +18,17 @@ import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 
 export default Vue.extend({
   props: {
+    config: {
+      type: Object,
+      default() {
+        return {
+          disabled: {
+            next: false,
+            prev: false
+          }
+        }
+      }
+    },
     total: {
       type: Number,
       default: 1,
