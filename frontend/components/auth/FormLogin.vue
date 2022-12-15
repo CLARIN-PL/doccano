@@ -37,12 +37,6 @@
 
 <script lang="ts">
 import { QuestionnaireTimeItem } from 'domain/models/questionnaire/questionnaire'
-
-import {
-  DATETIME_FORMAT_DDMMYYHHMMSS,
-  DATE_FORMAT_DDMMYYYY,
-  DATETIME_FORMAT_YYYYMMDDTHHMMSS
-} from '~/settings'
 import Vue from 'vue'
 import _ from 'lodash'
 import moment from 'moment'
@@ -52,6 +46,11 @@ import { userNameRules, passwordRules } from '@/rules/index'
 import BaseCard from '@/components/utils/BaseCard.vue'
 import { history } from '~/store/user'
 import { qCategories, hasValidLoginTime } from '~/utils/questionnaires'
+import {
+  DATETIME_FORMAT_DDMMYYHHMMSS,
+  DATE_FORMAT_DDMMYYYY,
+  DATETIME_FORMAT_YYYYMMDDTHHMMSS
+} from '~/settings/'
 
 export default Vue.extend({
   components: {
@@ -256,7 +255,6 @@ export default Vue.extend({
     checkLoginDataValidity(lastLoginTime: String) {
       if (lastLoginTime && !hasValidLoginTime(new Date())) {
         this.setAnnotation({
-          textCountToday: 0,
           hasAnnotatedToday: false
         })
         this.setQuestionnaire({
@@ -282,7 +280,6 @@ export default Vue.extend({
         const { filled } = this.getQuestionnaire
         const dailyQuestionnaireId = '4'
         this.setAnnotation({
-          textCountToday: 0,
           hasAnnotatedToday: false
         })
         this.setQuestionnaire({

@@ -301,7 +301,6 @@
 import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 import { mdiText, mdiFormatListBulleted } from '@mdi/js'
-import { DATETIME_FORMAT_DDMMYYHHMMSS, DATE_FORMAT_DDMMYYYY } from '~/settings'
 import moment from 'moment'
 import LabelGroup from '@/components/tasks/textClassification/LabelGroup'
 import LabelSelect from '@/components/tasks/textClassification/LabelSelect'
@@ -319,6 +318,7 @@ import OthersScales from '@/static/formats/affective_annotation/affective_others
 import OffensiveInput from '@/components/tasks/affectiveAnnotation/offensive/OffensiveInput.vue'
 import HumorInput from '@/components/tasks/affectiveAnnotation/humor/HumorInput.vue'
 import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
+import { DATETIME_FORMAT_DDMMYYHHMMSS, DATE_FORMAT_DDMMYYYY } from '~/settings'
 
 export default {
   components: {
@@ -508,29 +508,6 @@ export default {
   },
 
   watch: {
-    getAnnotation: {
-      deep: true,
-      handler(val) {
-        const textBatchCount = 20
-        if (val.textCountToday > 0 && val.textCountToday % textBatchCount === 0) {
-          this.$nextTick(async () => {
-            const questionnaireStates =
-              await this.$services.questionnaire.listFinishedQuestionnaires({
-                questionnaireTypeId: 1,
-                limit: 1
-              })
-            let firstQuestionnaireEverDate = null
-            if (questionnaireStates && questionnaireStates.items.length > 0) {
-              const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
-              firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format(
-                DATE_FORMAT_DDMMYYYY
-              )
-            }
-            this.initQuestionnaire(firstQuestionnaireEverDate)
-          })
-        }
-      }
-    },
     getQuestionnaire: {
       deep: true,
       handler() {
@@ -548,7 +525,7 @@ export default {
   },
 
   async created() {
-    const hasRested = this.checkRestingPeriod()
+    const hasRested = await this.checkRestingPeriod()
     if (hasRested) {
       await this.setLabelData()
       this.setAffectiveProjectScaleDataDict()
@@ -576,7 +553,8 @@ export default {
       'canClearRestingPeriod',
       'setAnnotation',
       'initQuestionnaire',
-      'getQuestionnaire'
+      'getQuestionnaire',
+      'setQuestionnaire'
     ]),
 
     onScrollListener: _.debounce(function () {
@@ -589,6 +567,22 @@ export default {
         }
       }
     }, 50),
+
+    async setQuestionnaireFilledTime() {
+      const questionnaireStates = await this.$services.questionnaire.listFinishedQuestionnaires({
+        questionnaireTypeId: 1,
+        limit: 1
+      })
+      if (questionnaireStates && questionnaireStates.items.length > 0) {
+        const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
+        const firstQuestionnaireFilledTime = moment(String(firstQuestionnaireEver)).format(
+          DATE_FORMAT_DDMMYYYY
+        )
+        this.setQuestionnaire({
+          firstQuestionnaireFilledTime
+        })
+      }
+    },
 
     getDimensionComponentRef() {
       let dimensionRef = 'summaryInput'
@@ -608,7 +602,7 @@ export default {
       return this.$refs[dimensionRef]
     },
 
-    async checkRestingPeriod() {
+    checkRestingPeriod() {
       const hasRested = this.canClearRestingPeriod()
       const { endTime } = this.getRest
       const restingEndTime = moment(endTime).format(DATETIME_FORMAT_DDMMYYHHMMSS)
@@ -866,13 +860,16 @@ export default {
       }
     },
     async updateProgress() {
+      const restTimeInMinutes = 5
       this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
-
       if (this.progress.complete === this.progress.total) {
+        const endTime = moment(new Date())
+          .add(restTimeInMinutes, 'm')
+          .format(DATETIME_FORMAT_DDMMYYHHMMSS)
         this.setRest({
           userId: this.getUserId,
           startTime: new Date(),
-          endTime: moment(new Date()).add(5, 'm').format(DATETIME_FORMAT_DDMMYYHHMMSS)
+          endTime
         })
         this.$router.push(this.localePath('/projects'))
       }
@@ -894,14 +891,10 @@ export default {
         await this.$services.example.confirm(this.projectId, this.doc.id)
         await this.$fetch()
         this.updateProgress()
-        const textCountToday = this.doc.isConfirmed
-          ? this.getAnnotation.textCountToday + 1
-          : this.getAnnotation.textCountToday
 
         const { firstAnnotationTime } = this.getAnnotation
         this.setAnnotation({
           hasAnnotatedToday: true,
-          textCountToday,
           firstAnnotationTime: firstAnnotationTime ?? moment().format(DATETIME_FORMAT_DDMMYYHHMMSS),
           lastAnnotationTime: moment().format(DATETIME_FORMAT_DDMMYYHHMMSS)
         })

@@ -124,11 +124,6 @@ import Vue from 'vue'
 import _ from 'lodash'
 import { mapActions } from 'vuex'
 import moment from 'moment'
-import {
-  DATE_FORMAT_DDMMYYYY,
-  DATETIME_FORMAT_DDMMYYHHMMSS,
-  DATETIME_FORMAT_YYYYMMDDTHHMMSS
-} from '~/settings/'
 import ArticleList from '@/components/example/ArticleList.vue'
 import DocumentList from '@/components/example/DocumentList.vue'
 import FormDelete from '@/components/example/FormDelete.vue'
@@ -139,6 +134,11 @@ import AudioList from '~/components/example/AudioList.vue'
 import { ExampleListDTO, ExampleDTO } from '~/services/application/example/exampleData'
 import ActionMenu from '~/components/example/ActionMenu.vue'
 import { ProjectDTO } from '~/services/application/project/projectData'
+import {
+  DATE_FORMAT_DDMMYYYY,
+  DATETIME_FORMAT_DDMMYYHHMMSS,
+  DATETIME_FORMAT_YYYYMMDDTHHMMSS
+} from '~/settings/'
 
 export default Vue.extend({
   components: {
@@ -306,8 +306,7 @@ export default Vue.extend({
       this.setAnnotation({
         hasAnnotatedToday: !!todayStates.length,
         firstAnnotationTime,
-        lastAnnotationTime,
-        textCountToday: todayStates.length
+        lastAnnotationTime
       })
 
       this.isLoading = false

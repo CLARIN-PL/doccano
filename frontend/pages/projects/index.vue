@@ -40,7 +40,6 @@
 import _ from 'lodash'
 import moment from 'moment'
 import Vue from 'vue'
-import { DATE_FORMAT_DDMMYYYY, DATETIME_FORMAT_DDMMYYHHMMSS } from '~/settings'
 import { mapGetters, mapActions } from 'vuex'
 import ProjectList from '@/components/project/ProjectList.vue'
 import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
@@ -48,6 +47,7 @@ import BigNumberCard from '@/components/utils/BigNumberCard.vue'
 import { MyProgress, MyProgressList } from '~/domain/models/metrics/metrics'
 import { ProjectDTO, ProjectListDTO } from '~/services/application/project/projectData'
 import FormDelete from '~/components/project/FormDelete.vue'
+import { DATE_FORMAT_DDMMYYYY, DATETIME_FORMAT_DDMMYYHHMMSS } from '~/settings'
 
 export default Vue.extend({
   name: 'Projects',
@@ -107,7 +107,7 @@ export default Vue.extend({
       'initQuestionnaire'
     ]),
 
-    async checkRestingPeriod() {
+    checkRestingPeriod() {
       const { startTime, endTime } = this.getRest
       const hasRestTimeSet = startTime && endTime
       if (hasRestTimeSet && this.canClearRestingPeriod()) {
@@ -165,8 +165,11 @@ export default Vue.extend({
           }
         }
       }
+      const completedProjectsCount = projects.items.filter(
+        (item: ProjectDTO) => item.isCompleted
+      ).length
       const hasFinishedAll = this.projects.items.length === 0
-      this.setProject({ hasFinishedAll })
+      this.setProject({ hasFinishedAll, completedProjectsCount })
       await this.checkQuestionnaire()
       this.isLoading = false
     },
