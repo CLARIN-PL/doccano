@@ -351,8 +351,8 @@ export default {
     },
     setQuestionnaireHistory() {
       const { toShow, filled } = this.getQuestionnaire
-      const { completedCount } = this.getProject
-      const specialCombinations = [['4.3', completedCount]]
+      const { completedProjectsCount } = this.getProject
+      const specialCombinations = [['4.3', completedProjectsCount]]
       const specialCombinationIds = specialCombinations.map((sc) => sc[0])
       let id = this.toShowId
       if (specialCombinationIds.includes(this.toShowId)) {

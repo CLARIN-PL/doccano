@@ -88,7 +88,8 @@ export default Vue.extend({
       'initQuestionnaire',
       'setAnnotation',
       'setQuestionnaire',
-      'addHistory'
+      'addHistory',
+      'setHistory'
     ]),
     async setQuestionnaireData() {
       const ids = _.flatMap(qCategories, 'id')
@@ -293,6 +294,10 @@ export default Vue.extend({
       if (user.id && !userHistory) {
         this.setUserId(user.id)
         this.addHistory({ ...history, id: user.id })
+      } else if (userHistory) {
+        if (Object.keys(history).length !== Object.keys(userHistory).length) {
+          this.setHistory({ ...history, ...userHistory })
+        }
       }
       this.isLoaded = true
     },
