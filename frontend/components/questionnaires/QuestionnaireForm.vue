@@ -115,21 +115,23 @@
                     </v-card-actions>
                   </v-card>
                 </v-col>
-                <v-col
-                  v-if="(questionnaire.segments[0].scales && questionnaire.segments[0].scales.values)"
-                  cols="4"
-                  class="sticky-col overflow-visible"
-                >
-                  <v-card class="sticky">
-                    <v-card-text class="text-caption">
-                      <ul class="hide-list-style">
-                        <li
-                          v-for="(segmentScaleValue, segScalIdx) in questionnaire.segments[0].scales.values"
-                          :key="`segmentScaleValue-${segScalIdx}`"
-                        >
-                          {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
-                        </li>
-                      </ul>
+                <v-col cols="4" class="sticky-container">
+                  <v-card
+                    v-if="questionnaire.segments[0].scales"
+                    :class="showWarning ? 'sticky-offset' : 'sticky'"
+                  >
+                    <v-card-text>
+                      <div class="segment-description-container text-caption">
+                        <ul class="hide-list-style">
+                          <li
+                            v-for="(segmentScaleValue, segScalIdx) in questionnaire.segments[0]
+                              .scales.values"
+                            :key="`segmentScaleValue-${segScalIdx}`"
+                          >
+                            {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
+                          </li>
+                        </ul>
+                      </div>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -208,7 +210,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['getQuestionnaire', 'getAnnotation']),
+    ...mapGetters('user', ['getQuestionnaire', 'getProject']),
     toShowId() {
       return this.getQuestionnaire.toShow[0]
     }
@@ -350,8 +352,8 @@ export default {
     },
     setQuestionnaireHistory() {
       const { toShow, filled } = this.getQuestionnaire
-      const { textCountToday } = this.getAnnotation
-      const specialCombinations = [['4.3', textCountToday]]
+      const { completedCount } = this.getProject
+      const specialCombinations = [['4.3', completedCount]]
       const specialCombinationIds = specialCombinations.map((sc) => sc[0])
       let id = this.toShowId
       if (specialCombinationIds.includes(this.toShowId)) {

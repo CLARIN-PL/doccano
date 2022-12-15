@@ -338,8 +338,8 @@ export function getQuestionnairesToShow() {
                 const { firstAnnotationTime } = getters['user/getAnnotation']
                 const { firstQuestionnaireFilledTime } = getters['user/getQuestionnaire']
 
-                let firstQuestionnaireEverDate = firstQuestionnaireFilledTime 
-                                                ? moment(firstQuestionnaireFilledTime, DATE_FORMAT_DDMMYYYY).toDate() 
+                const firstQuestionnaireEverDate = firstQuestionnaireFilledTime 
+                                                ? moment(firstQuestionnaireFilledTime, DATETIME_FORMAT_DDMMYYHHMMSS).toDate() 
                                                 : new Date() 
                 const firstLoginTimeAtZero = moment(firstLoginTime, DATETIME_FORMAT_DDMMYYHHMMSS).format(DATE_FORMAT_DDMMYYYY)+" 00:00:00"
                 const { hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']

@@ -29,10 +29,10 @@ export const history =
   },
   project: {
     currentlyAllowedProjectId: -1,
+    completedProjectsCount: 0,
     hasFinishedAll: false
   },
   annotation: {
-    textCountToday: 0,
     hasAnnotatedToday: false,
     firstAnnotationTime: "",
     lastAnnotationTime: "",
