@@ -124,6 +124,11 @@ import Vue from 'vue'
 import _ from 'lodash'
 import { mapActions } from 'vuex'
 import moment from 'moment'
+import {
+  DATE_FORMAT_DDMMYYYY,
+  DATETIME_FORMAT_DDMMYYHHMMSS,
+  DATETIME_FORMAT_YYYYMMDDTHHMMSS
+} from '~/settings/'
 import ArticleList from '@/components/example/ArticleList.vue'
 import DocumentList from '@/components/example/DocumentList.vue'
 import FormDelete from '@/components/example/FormDelete.vue'
@@ -157,9 +162,6 @@ export default Vue.extend({
   data() {
     return {
       dialogDelete: false,
-      dateFormat: 'DD-MM-YYYY',
-      serverDateFormat: 'YYYY-MM-DDTHH:mm:ss',
-      savedDateFormat: 'DD-MM-YYYY HH:mm:ss',
       dialogDeleteAll: false,
       project: {} as ProjectDTO,
       item: { items: [] as ExampleDTO[] } as ExampleListDTO,
@@ -285,17 +287,20 @@ export default Vue.extend({
 
       const todayStates = states.filter(
         (state) =>
-          moment(new Date()).format(this.dateFormat) ===
-          moment(state.confirmedAt, this.serverDateFormat).format(this.dateFormat)
+          moment(new Date()).format(DATE_FORMAT_DDMMYYYY) ===
+          moment(state.confirmedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(DATE_FORMAT_DDMMYYYY)
       )
 
       const firstAnnotationTime = todayStates.length
-        ? moment(todayStates[0].confirmedAt, this.serverDateFormat).format(this.savedDateFormat)
-        : ''
-      const lastAnnotationTime = todayStates.length
-        ? moment(todayStates[todayStates.length - 1].confirmedAt, this.serverDateFormat).format(
+        ? moment(todayStates[0].confirmedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(
             this.savedDateFormat
           )
+        : ''
+      const lastAnnotationTime = todayStates.length
+        ? moment(
+            todayStates[todayStates.length - 1].confirmedAt,
+            DATETIME_FORMAT_YYYYMMDDTHHMMSS
+          ).format(DATETIME_FORMAT_DDMMYYHHMMSS)
         : ''
 
       this.setAnnotation({

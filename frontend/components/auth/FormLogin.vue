@@ -37,6 +37,12 @@
 
 <script lang="ts">
 import { QuestionnaireTimeItem } from 'domain/models/questionnaire/questionnaire'
+
+import {
+  DATETIME_FORMAT_DDMMYYHHMMSS,
+  DATE_FORMAT_DDMMYYYY,
+  DATETIME_FORMAT_YYYYMMDDTHHMMSS
+} from '~/settings'
 import Vue from 'vue'
 import _ from 'lodash'
 import moment from 'moment'
@@ -88,8 +94,6 @@ export default Vue.extend({
     async setQuestionnaireData() {
       const ids = _.flatMap(qCategories, 'id')
       const limit = 100
-      const serverDateFormat = 'YYYY-MM-DDThh:mm:ss'
-      const dateFormat = 'DD-MM-YYYY'
       const questionnairePromises = ids.map((id) => {
         return this.$services.questionnaire.listQuestionnairesByTypeId({
           qTypeId: id,
@@ -104,7 +108,9 @@ export default Vue.extend({
       this.questionnaires = _.cloneDeep(_.flatMap(questionnaireResponses, 'items'))
       const questionnaireStates: any[] = _.sortBy(states.items, 'finishedAt').map((state: any) => {
         state.finishedAtDate = state.finishedAt
-          ? moment(String(state.finishedAt), serverDateFormat).format(dateFormat)
+          ? moment(String(state.finishedAt), DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(
+              DATE_FORMAT_DDMMYYYY
+            )
           : ''
         return state
       })
@@ -115,10 +121,8 @@ export default Vue.extend({
       try {
         const atRestQuestionnaireId = '4.3'
         const textBatchCount = 20
-        const serverDateFormat = 'YYYY-MM-DDThh:mm:ss'
-        const dateFormat = 'DD-MM-YYYY'
         let todayAtRestQuestionnairesIds: any[] = []
-        const todayDate = moment().format(dateFormat)
+        const todayDate = moment().format(DATE_FORMAT_DDMMYYYY)
         const qTypes = _.flatMap(qCategories, 'types')
 
         await this.setQuestionnaireData()
@@ -170,14 +174,18 @@ export default Vue.extend({
             const todayQStates = this.questionnaireStates.filter(
               (state) =>
                 qType.questionnaires.includes(state.questionnaire) &&
-                moment(String(state.finishedAt), serverDateFormat).format(dateFormat) === todayDate
+                moment(String(state.finishedAt), DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(
+                  DATE_FORMAT_DDMMYYYY
+                ) === todayDate
             )
 
             if (qStates.length) {
               const state = qStates[0]
               qType.finishedAt = state ? state.finishedAt : ''
               qType.finishedAtDate = qType.finishedAt
-                ? moment(qType.finishedAt, serverDateFormat).format(dateFormat)
+                ? moment(qType.finishedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(
+                    DATE_FORMAT_DDMMYYYY
+                  )
                 : ''
             }
 
@@ -225,13 +233,16 @@ export default Vue.extend({
     },
     setUserData() {
       try {
-        const dateFormat = 'DD-MM-YYYY HH:mm:ss'
-        const loginTime = moment().format(dateFormat)
+        const loginTime = moment().format(DATETIME_FORMAT_DDMMYYHHMMSS)
         const lastLoginTime = this.getLogin.lastLoginTime
-        const lastLoginDay = parseInt(moment(lastLoginTime, dateFormat).format('DD'))
+        const lastLoginDay = parseInt(
+          moment(lastLoginTime, DATETIME_FORMAT_DDMMYYHHMMSS).format('DD')
+        )
         const todayDay = parseInt(moment().format('DD'))
         let currentDiffDay = this.getLogin.lastLoginTime
-          ? Math.abs(moment(new Date()).diff(moment(lastLoginTime, dateFormat), 'days'))
+          ? Math.abs(
+              moment(new Date()).diff(moment(lastLoginTime, DATETIME_FORMAT_DDMMYYHHMMSS), 'days')
+            )
           : 0
         currentDiffDay = currentDiffDay === 0 ? todayDay - lastLoginDay : currentDiffDay
 
@@ -303,14 +314,17 @@ export default Vue.extend({
               if (this.isLoaded) {
                 await this.setUserData()
                 this.$nextTick(async () => {
-                  const questionnaireStates = await this.$services.questionnaire.listFinishedQuestionnaires({
-                    questionnaireTypeId: 1,
-                    limit: 1
-                  })
+                  const questionnaireStates =
+                    await this.$services.questionnaire.listFinishedQuestionnaires({
+                      questionnaireTypeId: 1,
+                      limit: 1
+                    })
                   let firstQuestionnaireEverDate = null
                   if (questionnaireStates && questionnaireStates.items.length > 0) {
                     const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
-                    firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format('DD-MM-YYYY')
+                    firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format(
+                      DATE_FORMAT_DDMMYYYY
+                    )
                   }
                   await this.initQuestionnaire(firstQuestionnaireEverDate)
                 })

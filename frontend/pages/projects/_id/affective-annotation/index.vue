@@ -301,6 +301,7 @@
 import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 import { mdiText, mdiFormatListBulleted } from '@mdi/js'
+import { DATETIME_FORMAT_DDMMYYHHMMSS, DATE_FORMAT_DDMMYYYY } from '~/settings'
 import moment from 'moment'
 import LabelGroup from '@/components/tasks/textClassification/LabelGroup'
 import LabelSelect from '@/components/tasks/textClassification/LabelSelect'
@@ -513,14 +514,17 @@ export default {
         const textBatchCount = 20
         if (val.textCountToday > 0 && val.textCountToday % textBatchCount === 0) {
           this.$nextTick(async () => {
-            const questionnaireStates = await this.$services.questionnaire.listFinishedQuestionnaires({
-              questionnaireTypeId: 1,
-              limit: 1
-            })
+            const questionnaireStates =
+              await this.$services.questionnaire.listFinishedQuestionnaires({
+                questionnaireTypeId: 1,
+                limit: 1
+              })
             let firstQuestionnaireEverDate = null
             if (questionnaireStates && questionnaireStates.items.length > 0) {
               const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
-              firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format('DD-MM-YYYY')
+              firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format(
+                DATE_FORMAT_DDMMYYYY
+              )
             }
             this.initQuestionnaire(firstQuestionnaireEverDate)
           })
@@ -868,7 +872,6 @@ export default {
       }
     },
     async confirm() {
-      const DATE_FORMAT = 'DD-MM-YYYY HH:mm:ss'
       if (this.project.isCombinationMode) {
         this.hasValidEntries.isSummaryMode = this.isAllAffectiveSummaryAdded()
         this.hasValidEntries.isOthersMode = this.isAllAffectiveOthersAdded()
@@ -893,8 +896,8 @@ export default {
         this.setAnnotation({
           hasAnnotatedToday: true,
           textCountToday,
-          firstAnnotationTime: firstAnnotationTime ?? moment().format(DATE_FORMAT),
-          lastAnnotationTime: moment().format(DATE_FORMAT)
+          firstAnnotationTime: firstAnnotationTime ?? moment().format(DATETIME_FORMAT_DDMMYYHHMMSS),
+          lastAnnotationTime: moment().format(DATETIME_FORMAT_DDMMYYHHMMSS)
         })
         this.hasClickedConfirmButton = false
         this.scrollToTop()
