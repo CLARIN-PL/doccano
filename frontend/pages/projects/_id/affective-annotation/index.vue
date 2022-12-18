@@ -880,8 +880,13 @@ export default {
           completedProjectsCount: completedProjectsCount + 1
         })
         await this.initQuestionnaire()
+        console.log(this.getQuestionnaire.toShow)
         setTimeout(() => {
-          this.$router.push(this.localePath('/projects'))
+          if (this.getQuestionnaire.toShow.length) {
+            this.$router.push(this.localePath('/questionnaires'))
+          } else {
+            this.$router.push(this.localePath('/projects'))
+          }
         }, 100)
       }
     },

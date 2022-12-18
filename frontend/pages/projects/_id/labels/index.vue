@@ -23,8 +23,8 @@
     </v-tabs>
     <v-card-title>
       <action-menu
-        @create="$router.push('labels/add?type=' + labelType)"
-        @upload="$router.push('labels/import?type=' + labelType)"
+        @create="$router.push(localePath('labels/add?type=' + labelType))"
+        @upload="$router.push(localePath('labels/import?type=' + labelType))"
         @download="download"
       />
       <v-btn
@@ -90,7 +90,8 @@ export default Vue.extend({
 
     hasMultiType(): boolean {
       if ('projectType' in this.project) {
-        return (this.isIntentDetectionAndSlotFilling ||
+        return (
+          this.isIntentDetectionAndSlotFilling ||
           this.isArticleAnnotation ||
           this.isAffectiveAnnotation ||
           !!this.project.useRelation

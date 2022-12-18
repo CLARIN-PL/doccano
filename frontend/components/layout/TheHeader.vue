@@ -40,7 +40,7 @@
         <v-list-item
           v-for="(item, index) in items"
           :key="index"
-          @click="$router.push('/demo/' + item.link)"
+          @click="$router.push(localePath('/demo/' + item.link))"
         >
           <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>

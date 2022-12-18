@@ -65,3 +65,18 @@ export const passwordRules = (msg) => {
 export const templateNameRules = () => {
   return [(v) => !!v || 'Name is required']
 }
+
+export const requiredRules = (msg) => {
+  return [
+    (item) => !!item || msg.required
+  ]
+}
+
+export const numericOnlyRules = (msg) => {
+  return [
+    (value) => {
+      const pattern = /^[0-9]+$/
+      return pattern.test(value) || msg.inputTextRules.numericOnly
+      }
+  ]
+}

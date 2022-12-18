@@ -119,7 +119,7 @@ export default Vue.extend({
       this.questionnaireStates = _.cloneDeep(questionnaireStates)
     },
     async setProjectData() {
-      const projects = await this.$services.project.list({ limit: 100 })
+      const projects = await this.$services.project.list({ limit: '100' })
       const progresses = await this.$services.metrics.fetchMyProgresses()
       const items = projects.items.map((projectItem: any) => {
         const progress = progresses.results.find((prog: any) => prog.project_id === projectItem.id)
@@ -147,6 +147,7 @@ export default Vue.extend({
           const atRestQuestionnaires = todayFilledQuestionnaires.filter((q) =>
             atRestQType.questionnaires.includes(q.questionnaire)
           )
+          console.log(atRestQuestionnaires)
           todayAtRestQuestionnairesIds = atRestQuestionnaires.map((q: any, index) => {
             q.restId = `${atRestQuestionnaireId}_${index + 1}`
             return q
@@ -171,10 +172,6 @@ export default Vue.extend({
             qType.filledTypesOnlyDouble = qType.filledTypesUnique.filter((fType: String) => {
               return qType.filledTypes.filter((fType2: String) => fType === fType2).length > 1
             })
-            qType.filledTypesOnlyOnce = _.difference(
-              qType.filledTypesUnique,
-              qType.filledTypesOnlyDouble
-            )
             qType.filledTypesToday = _.intersection(
               qType.questionnaires,
               _.flatMap(todayFilledQuestionnaires, 'questionnaire')
@@ -211,11 +208,11 @@ export default Vue.extend({
             if (qType.id === '2.2') {
               qType.hasFinishedAllTypes =
                 qType.hasFinishedAllTypes &&
-                qType.filledTypesOnlyDouble.length * 2 >= qType.questionnaires.length * 2
+                qType.filledTypesOnlyDouble.length >= qType.questionnaires.length
             } else if (qType.id === '3.2') {
               qType.hasFinishedAllTypes =
                 qType.hasFinishedAllTypes &&
-                qType.filledTypesOnlyDouble.length * 2 >= qType.questionnaires.length * 2
+                qType.filledTypesOnlyDouble.length >= qType.questionnaires.length
             } else if (qType.id === '4.1') {
               qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
             } else if (qType.id === '4.2') {
