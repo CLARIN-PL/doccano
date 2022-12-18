@@ -166,7 +166,11 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { qCategories, setQuestionnaireIds, mapQuestionnaireTypes } from '~/utils/questionnaires'
+import {
+  qCategories,
+  setQuestionnaireData,
+  getMappedQuestionnaireTypes
+} from '~/utils/questionnaires'
 import ScaleInput from '~/components/questionnaires/form/ScaleInput.vue'
 import RadioInput from '~/components/questionnaires/form/RadioInput.vue'
 import TextInput from '~/components/questionnaires/form/TextInput.vue'
@@ -223,7 +227,7 @@ export default {
     setFormData() {
       const selectedQType = this.mappedQTypes.find((qType) => qType.id === this.toShowId)
       const formData = selectedQType ? _.cloneDeep(selectedQType) : { questionnaires: [] }
-      this.formData = setQuestionnaireIds(
+      this.formData = setQuestionnaireData(
         [formData],
         this.questionnaires,
         this.questions,
@@ -239,7 +243,7 @@ export default {
     },
     initialize() {
       this.showWarning = false
-      this.mappedQTypes = mapQuestionnaireTypes(this.qTypes)
+      this.mappedQTypes = getMappedQuestionnaireTypes(this.qTypes, this.$i18n.t('rules'))
       this.$nextTick(() => {
         this.isLoaded = true
       })

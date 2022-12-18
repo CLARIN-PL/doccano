@@ -6,6 +6,11 @@ import {
     DATETIME_FORMAT_YYYYMMDDTHHMMSS, 
     DATE_FORMAT_DDMMYYYY, 
 } from "~/settings/"
+import {
+    requiredRules,
+    numericOnlyRules, 
+} from "~/rules"
+
 
 /*
     Questionnaire types: 
@@ -140,10 +145,66 @@ export function hasStore() {
     return !!window.$nuxt && !!window.$nuxt.$store
 }
 
-export function setQuestionnaireIds(qTypes, questionnaires=[], questions=[], questionnaireStates=[]) {
-    questionnaireStates = _.sortBy(questionnaireStates, 'finishedAt')
+function setQuestionnaireFinishedData(questionnaire, questionnaireStates=[]) {
     const getters = window.$nuxt.$store.getters
     const { completedProjectsCount } =  getters ? getters['user/getProject'] : 0
+    const que = questionnaire
+    const states = questionnaireStates.filter((qs)=> qs.questionnaire === que.id)
+    const state = states.length ? states[0]: null
+    que.isFinished = !!state
+    if(state) {
+        que.isFinished = true
+        que.finishedAt = state.finishedAt
+        que.finishedAtDate = moment(state.finishedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(DATE_FORMAT_DDMMYYYY)
+    }
+    if(state && que.typeId === "2.2") {
+        que.isFinished = states.length > 1
+    }
+    if(state && que.typeId === "3.2") {
+        que.isFinished = states.length > 1
+    }
+    if(state && String(que.typeId).startsWith("4")) {
+        const todayStates = states.filter((state)=> moment(new Date()).format(DATE_FORMAT_DDMMYYYY) 
+        === moment(state.finishedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(DATE_FORMAT_DDMMYYYY))
+        const isFinishedToday = !!todayStates.length
+        que.isFinishedToday = isFinishedToday
+        que.isFinished = !!state && isFinishedToday
+    }
+    if(String(que.typeId) === "4.3") {
+        que.isFinished = states.length === completedProjectsCount
+        que.isFinishedToday = que.isFinished
+    }
+    return que
+}
+
+function setQuestionnaireSegmentsData(questionnaire, questions=[]) {
+    const que = questionnaire
+    que.segments = que.segments.map((segment)=> {
+        segment.questions = segment.questions.map((question)=> {
+            let qItem = questions.find((quest)=> question.text === quest.questionText)
+            if(question.header) {
+                qItem = questions.find((quest)=> question.header === quest.questionText)
+            }
+            if(question.alternateText) {
+                qItem = questions.find((quest)=> question.alternateText === quest.questionText)
+            }
+            if(qItem) {
+                question.id = qItem.id
+                question.questionnaireId = qItem.questionnaire
+                question.isValid = true
+            } else {
+                question.isClicked = true
+                question.isValid = false
+            }
+            return question
+        })
+        return segment
+    })
+    return que 
+}
+
+export function setQuestionnaireData(qTypes, questionnaires=[], questions=[], questionnaireStates=[]) {
+    questionnaireStates = _.sortBy(questionnaireStates, 'finishedAt')
     return qTypes.map((qType)=> {
         if(qType && qType.questionnaires) {
             qType.questionnaires = qType.questionnaires.map((que, queIdx)=> {
@@ -156,54 +217,10 @@ export function setQuestionnaireIds(qTypes, questionnaires=[], questions=[], que
                     que.questionnaire = questionnaire
                     que.id = questionnaire.id
                     que.type = questionnaire.questionnaireType
-                    const states = questionnaireStates.filter((qs)=> qs.questionnaire === que.id)
-                    const state = states.length ? states[0]: null
-                    que.isFinished = !!state
-                    if(state) {
-                        que.isFinished = true
-                        que.finishedAt = state.finishedAt
-                        que.finishedAtDate = moment(state.finishedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(DATE_FORMAT_DDMMYYYY)
-                    }
-
-                    if(state && String(que.typeId).startsWith("4")) {
-                        const todayStates = states.filter((state)=> moment(new Date()).format(DATE_FORMAT_DDMMYYYY) 
-                        === moment(state.finishedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(DATE_FORMAT_DDMMYYYY))
-                        const isFinishedToday = !!todayStates.length
-                        que.isFinishedToday = isFinishedToday
-                        que.isFinished = !!state && isFinishedToday
-                    }
-                    if(String(que.typeId) === "4.3") {
-                        que.isFinished = states.length === completedProjectsCount
-                        que.isFinishedToday = que.isFinished
-                    }
-                    if(state && que.typeId === "2.2") {
-                        que.isFinished = states.length > 1
-                    }
-                    if(state && que.typeId === "3.2") {
-                        que.isFinished = states.length > 1
-                    }
+                    que = setQuestionnaireFinishedData(que, questionnaireStates)
                 }
-                que.segments = que.segments.map((segment)=> {
-                    segment.questions = segment.questions.map((question)=> {
-                        let qItem = questions.find((quest)=> question.text === quest.questionText)
-                        if(question.header) {
-                            qItem = questions.find((quest)=> question.header === quest.questionText)
-                        }
-                        if(question.alternateText) {
-                            qItem = questions.find((quest)=> question.alternateText === quest.questionText)
-                        }
-                        if(qItem) {
-                            question.id = qItem.id
-                            question.questionnaireId = qItem.questionnaire
-                            question.isValid = true
-                        } else {
-                            question.isClicked = true
-                            question.isValid = false
-                        }
-                        return question
-                    })
-                    return segment
-                })
+
+                que = setQuestionnaireSegmentsData(que, questions)
                 return que
             })
         }
@@ -211,81 +228,102 @@ export function setQuestionnaireIds(qTypes, questionnaires=[], questions=[], que
     })
 }
 
-export function mapQuestionnaireTypes(qTypes) {
+function getMappedQuestionOptions(question) {
+    const options = question.options.map((option)=> {
+        option.value = option.value === undefined ? option.text : option.value
+        
+        if(option.dynamicSelectInput) {
+            option.dynamicSelectInput.options = option.dynamicSelectInput.options.map((opt)=> {
+                opt.value = opt.value === undefined ? opt.text : opt.value
+                return opt
+            })
+        }
+
+        if(option.showTextbox) {
+            option.config = { numericOnly: !!option.numericOnly }
+        }
+
+        if(option.showSlider) {
+            option.config = {
+                min: option.min ?? 0,
+                max: option.max ?? 0,
+                minLabel: option.minLabel ?? "",
+                maxLabel: option.maxLabel ?? "",
+                showTickLabels: option.showTickLabels ?? true
+            }
+        }
+
+        return option
+    })
+    return options
+}
+
+function getQuestionScaleOptions(question) {
+    let min = question.min || 0
+    const max = question.max || 0
+    const options = Array.isArray(question.options) ? question.options : []
+    while(min <= max) {
+        options.push({
+            text: min.toString(),
+            value: min.toString()
+        })
+        min++
+    }
+    return options
+}
+
+function getQuestionSliderConfig(question) {
+    const config = {
+        min: question.min,
+        max: question.max,
+        minLabel: question.minLabel,
+        maxLabel: question.maxLabel,
+        showTickLabels: question.showTickLabels ?? true
+    }
+    return config  
+}
+
+function getQuestionRules(question={}, i18nRules={}) {
+    const rules = []
+    if(question.required) {
+        rules.push(requiredRules(i18nRules))
+    }
+    if(question.numericOnly) {
+        rules.push(numericOnlyRules(i18nRules))
+    }
+    return rules
+}
+
+export function getMappedQuestionnaireTypes(qTypes=[], i18nRules={}) {
     const numberInputs = ['slider', 'scale']
     return qTypes.map((qType)=> {
         qType.questionnaires = qType.questionnaires.map((questionnaire)=> {
             questionnaire.segments = questionnaire.segments.map((segment)=> {
                 segment.questions = segment.questions.map((question)=> {
                     question.key = 0
-                    question.required = question.required === undefined ? true : question.required
-                    question.readOnly = question.readOnly === undefined ? false : question.readOnly
-                    question.errorMessage = ""
+                    question.required = question.required ?? true
+                    question.readOnly = question.readOnly ?? false
                     question.isSubmitting = false
                     question.isClicked = false
                     question.value = numberInputs.includes(question.type) ? 0 : ""
                     question.config = {}
 
                     if(question.options) {
-                        question.options = question.options.map((option)=> {
-                            option.value = option.value === undefined ? option.text : option.value
-                            
-                            if(option.dynamicSelectInput) {
-                                option.dynamicSelectInput.options = option.dynamicSelectInput.options.map((opt)=> {
-                                    opt.value = opt.value === undefined ? opt.text : opt.value
-                                    return opt
-                                })
-                            }
-
-                            if(option.showTextbox) {
-                                option.config = { numericOnly: !!option.numericOnly }
-                            }
-
-
-                            if(option.showSlider) {
-                                option.config = {
-                                    min: option.min ?? 0,
-                                    max: option.max ?? 0,
-                                    minLabel: option.minLabel ?? "",
-                                    maxLabel: option.maxLabel ?? "",
-                                    showTickLabels: option.showTickLabels ?? true
-                                }
-                            }
-
-                            return option
-                        })
+                        question.options = getMappedQuestionOptions(question)
                     }
 
                     if(question.type === 'scale') {
-                        let min = question.min
-                        question.options = []
-                        while(min <= question.max) {
-                            question.options.push({
-                                text: min.toString(),
-                                value: min.toString()
-                            })
-                            min++
-                        }
+                        question.options = getQuestionScaleOptions(question)
                     } else if(question.type === "slider") {
-                        question.config = {
-                            min: question.min,
-                            max: question.max,
-                            minLabel: question.minLabel,
-                            maxLabel: question.maxLabel,
-                            showTickLabels: question.showTickLabels ?? true
-                        }
+                        question.config = getQuestionSliderConfig(question)
                     } else if(question.type === "text" || question.type === "radio") {
                         question.config = {
                             numericOnly: question.numericOnly ?? false
                         }
                     }
-                    
-                    question.rules = []
-                    if(question.required) {
-                        const requiredCheck = (item) => !!item
-                        question.rules.push(requiredCheck)
-                    }
 
+                    question.rules = getQuestionRules(question, i18nRules)
+                    
                     return question
                 })
                 return segment
@@ -332,13 +370,13 @@ export function getQuestionnairesToShow() {
         if(getters) {
             qTypes.forEach((questionnaireType) => {
                 let isFilled = filled.includes(questionnaireType.id)
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { firstLoginTime } = getters['user/getLogin']
                 const { completedProjectsCount} = getters['user/getProject']
                 const { firstAnnotationTime, hasAnnotatedToday } = getters['user/getAnnotation']
                 let { firstQuestionnaireFilledTime } = getters['user/getQuestionnaire']
                 firstQuestionnaireFilledTime = firstQuestionnaireFilledTime 
-                                                ? moment(firstQuestionnaireFilledTime, DATETIME_FORMAT_DDMMYYYYHHMMSS).toDate() 
+                                                ? moment(firstQuestionnaireFilledTime, 
+                                                    DATETIME_FORMAT_DDMMYYYYHHMMSS).toDate() 
                                                 : new Date() 
                 const firstLoginTimeAtZero = moment(firstLoginTime, DATETIME_FORMAT_DDMMYYYYHHMMSS).format(DATE_FORMAT_DDMMYYYY)+" 00:00:00"
                 const defaultTime = firstAnnotationTime || firstLoginTimeAtZero

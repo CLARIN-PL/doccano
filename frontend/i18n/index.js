@@ -1,4 +1,5 @@
-export default {
+
+const options = {
   locales: [
     {
       name: 'Polish',
@@ -39,3 +40,5 @@ export default {
   },
   detectBrowserLanguage: false
 }
+
+export default options

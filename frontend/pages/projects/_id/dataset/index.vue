@@ -314,7 +314,7 @@ export default Vue.extend({
 
       const firstAnnotationTime = todayStates.length
         ? moment(todayStates[0].confirmedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(
-            this.savedDateFormat
+            DATETIME_FORMAT_DDMMYYYYHHMMSS
           )
         : ''
       const lastAnnotationTime = todayStates.length

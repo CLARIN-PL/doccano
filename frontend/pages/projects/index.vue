@@ -1,7 +1,11 @@
 <template>
   <v-card>
     <v-card-title v-if="isStaff">
-      <v-btn class="text-capitalize" color="primary" @click.stop="$router.push('projects/create')">
+      <v-btn
+        class="text-capitalize"
+        color="primary"
+        @click.stop="$router.push(localePath('projects/create'))"
+      >
         {{ $t('generic.create') }}
       </v-btn>
       <v-btn
@@ -57,7 +61,7 @@ import BigNumberCard from '@/components/utils/BigNumberCard.vue'
 import { MyProgress, MyProgressList } from '~/domain/models/metrics/metrics'
 import { ProjectDTO, ProjectListDTO } from '~/services/application/project/projectData'
 import FormDelete from '~/components/project/FormDelete.vue'
-import { DATE_FORMAT_DDMMYYYY, DATETIME_FORMAT_DDMMYYYYHHMMSS } from '~/settings'
+import { DATE_FORMAT_DDMMYYYY } from '~/settings'
 
 export default Vue.extend({
   name: 'Projects',
@@ -69,7 +73,7 @@ export default Vue.extend({
   },
   layout: 'projects',
 
-  middleware: ['check-auth', 'auth', 'check-questionnaire'],
+  middleware: ['check-auth', 'auth'],
 
   data() {
     return {
@@ -107,7 +111,10 @@ export default Vue.extend({
   },
 
   async created() {
-    await this.toggleRestingModal()
+    await this.checkQuestionnaire()
+    this.$nextTick(() => {
+      this.toggleRestingModal()
+    })
   },
 
   mounted() {
@@ -122,6 +129,16 @@ export default Vue.extend({
       'initQuestionnaire'
     ]),
 
+    async checkQuestionnaire() {
+      if (!this.isStaff) {
+        await this.initQuestionnaire()
+        this.$nextTick(() => {
+          const hasQuestionnaire = !!this.getQuestionnaire.toShow.length
+          hasQuestionnaire && this.$router.push(this.localePath('/questionnaires'))
+        })
+      }
+    },
+
     async toggleRestingModal() {
       const { endTime } = this.getRest
       const canClearRestingPeriod = await this.canClearRestingPeriod()
@@ -130,14 +147,15 @@ export default Vue.extend({
         this.restingEndTime = ''
       } else {
         this.showRestingMessage = !this.isStaff && !this.getQuestionnaire.toShow.length
-        this.restingEndTime = moment(endTime).format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
+        this.restingEndTime = endTime
       }
     },
     checkRestingPeriod() {
-      if (this.restingEndTime) {
+      const base: any = this
+      if (base.restingEndTime) {
         setInterval(function () {
-          const hasPassed = new Date() > this.restingEndTime
-          hasPassed && this.hideRestingModal()
+          const hasPassed = new Date() > base.restingEndTime
+          hasPassed && base.hideRestingModal()
         }, 1000)
       }
     },
