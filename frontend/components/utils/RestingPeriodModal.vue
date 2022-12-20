@@ -1,9 +1,5 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    fullscreen
-    persistent
-  >
+  <v-dialog v-model="dialog" fullscreen persistent>
     <v-card>
       <v-card-title>
         <p>{{ $t('generic.restingMessage.title') }}</p>
@@ -15,8 +11,12 @@
 
         <v-row justify="end">
           <button class="mr-5" @click="signout">
-            <v-icon class="button-logout-icon" :style="{ display: 'inline' }">{{ mdiLogout }}</v-icon>
-            <div class="button-logout-text" :style="{ display: 'inline' }">{{ $t('user.signOut') }}</div>
+            <v-icon class="button-logout-icon" :style="{ display: 'inline' }">{{
+              mdiLogout
+            }}</v-icon>
+            <div class="button-logout-text" :style="{ display: 'inline' }">
+              {{ $t('user.signOut') }}
+            </div>
           </button>
         </v-row>
       </v-card-text>

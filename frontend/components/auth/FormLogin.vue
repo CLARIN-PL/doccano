@@ -134,7 +134,7 @@ export default Vue.extend({
       this.isLoading = true
       try {
         const atRestQuestionnaireId = '4.3'
-        let todayAtRestQuestionnairesIds: any[] = []
+        let atRestQuestionnairesIds: any[] = []
         const todayDate = moment().format(DATE_FORMAT_DDMMYYYY)
         const qTypes = _.flatMap(qCategories, 'types')
 
@@ -143,20 +143,14 @@ export default Vue.extend({
         const groupedStatesByFinishedAtDate = _.groupBy(this.questionnaireStates, 'finishedAtDate')
         const todayFilledQuestionnaires = groupedStatesByFinishedAtDate[todayDate]
         const atRestQType = qTypes.find((qType) => qType.id === atRestQuestionnaireId)
-        if (todayFilledQuestionnaires && todayFilledQuestionnaires.length) {
-          const atRestQuestionnaires = todayFilledQuestionnaires.filter((q) =>
-            atRestQType.questionnaires.includes(q.questionnaire)
-          )
-          console.log(atRestQuestionnaires)
-          todayAtRestQuestionnairesIds = atRestQuestionnaires.map((q: any, index) => {
-            q.restId = `${atRestQuestionnaireId}_${index + 1}`
-            return q
-          })
-          todayAtRestQuestionnairesIds = _.sortBy(
-            todayAtRestQuestionnairesIds,
-            'finishedAt'
-          ).reverse()
-        }
+        const atRestQuestionnaires = this.questionnaireStates.filter((q) =>
+          atRestQType.questionnaires.includes(q.questionnaire)
+        )
+        atRestQuestionnairesIds = atRestQuestionnaires.map((q: any, index) => {
+          q.restId = `${atRestQuestionnaireId}_${index + 1}`
+          return q
+        })
+        atRestQuestionnairesIds = _.sortBy(atRestQuestionnairesIds, 'finishedAt').reverse()
         const stateTypes: any[] = _.flatMap(this.questionnaireStates, 'questionnaire')
         const uniqueStateTypes: any[] = [
           ...new Set(_.flatMap(this.questionnaireStates, 'questionnaire'))
@@ -218,8 +212,8 @@ export default Vue.extend({
             } else if (qType.id === '4.2') {
               qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
             } else if (qType.id === '4.3') {
-              qType.filledId = todayAtRestQuestionnairesIds.length
-                ? _.flatMap(todayAtRestQuestionnairesIds, 'restId')
+              qType.filledId = atRestQuestionnairesIds.length
+                ? _.flatMap(atRestQuestionnairesIds, 'restId')
                 : [qType.id]
               qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
             }
@@ -290,11 +284,15 @@ export default Vue.extend({
       if (currentDiffDay > 0) {
         const { filled } = this.getQuestionnaire
         const dailyQuestionnaireId = '4'
+        const atRestQuestionnaireId = '4.3'
         this.setAnnotation({
           hasAnnotatedToday: false
         })
         this.setQuestionnaire({
-          filled: filled.filter((fill: any) => !fill.startsWith(dailyQuestionnaireId))
+          filled: filled.filter(
+            (fill: any) =>
+              !fill.startsWith(dailyQuestionnaireId) && !fill.startsWith(atRestQuestionnaireId)
+          )
         })
       }
     },
