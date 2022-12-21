@@ -27,7 +27,7 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="showDialog" scrollable persistent width="600" class="widget-dialog">
+    <v-dialog v-model="showDialog" scrollable width="600" class="widget-dialog">
       <v-card>
         <v-card-title class="widget-dialog__title">
           {{ fullQuestion || question }}

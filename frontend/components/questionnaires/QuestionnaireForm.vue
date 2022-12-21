@@ -54,7 +54,7 @@
                                 >
                                   <li
                                     v-for="(segmentQuestion, segQuIdx) in segment.questions"
-                                    :ref="`question_${qIdx}_${segQuIdx}`"
+                                    :ref="`question_${qIdx}_${segIdx}_${segQuIdx}`"
                                     :key="`segmentQuestion-${segQuIdx}`"
                                   >
                                     <div v-if="segmentQuestion.id" class="question-container">
@@ -280,14 +280,14 @@ export default {
         hasFilledEverything = hasFilledEverything ?? true
         isClicked = isClicked ?? hasFilledEverything
         const hasValue =
-          typeof question.value !== 'undefined' && question.value !== null && question.value !== ''
+          question.value !== undefined && question.value !== null && question.value !== ''
         const { key } = question
         _.set(this.formData, `${formDataKey}`, {
           ...question,
           ...{
             key: key + 1,
             isSubmitting: true,
-            isClicked
+            isClicked: !!isClicked
           }
         })
         this.$forceUpdate()
@@ -323,14 +323,17 @@ export default {
         return SliderInput
       }
     },
-    scrollToFaultyQuestion(id, questions = []) {
-      const firstErrorIndex = questions.findIndex((question) => !question.isClicked)
+    scrollToFaultyQuestion(questions = []) {
+      const firstError = questions.find((question) => !question.isClicked)
       this.showWarning = true
-      const component = this.$refs[`question_${id}_${firstErrorIndex}`]
-      if (component && component[0]) {
-        component[0].scrollIntoView({ behavior: 'smooth' })
-      } else {
-        this.$refs.header.scrollIntoView({ behavior: 'smooth' })
+      if (firstError) {
+        const componentName = `question_${firstError.queIdx}_${firstError.seqIdx}_${firstError.idx}`
+        const component = this.$refs[componentName]
+        if (component && component[0]) {
+          component[0].scrollIntoView({ behavior: 'smooth' })
+        } else {
+          this.$refs.header.scrollIntoView({ behavior: 'smooth' })
+        }
       }
     },
     async createQuestionnaireFinishedState() {
@@ -350,7 +353,7 @@ export default {
           this.activeQuestionnaire += 1
           window.scrollTo({ top: 0, behavior: 'smooth' })
         } else {
-          this.scrollToFaultyQuestion(this.activeQuestionnaire, questions)
+          this.scrollToFaultyQuestion(questions)
         }
       }
     },

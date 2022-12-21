@@ -246,13 +246,7 @@ function getMappedQuestionOptions(question) {
         }
 
         if(option.showSlider) {
-            option.config = {
-                min: option.min ?? 0,
-                max: option.max ?? 0,
-                minLabel: option.minLabel ?? "",
-                maxLabel: option.maxLabel ?? "",
-                showTickLabels: option.showTickLabels ?? true
-            }
+            option.config = getQuestionSliderConfig(option)
         }
 
         return option
@@ -299,10 +293,13 @@ function getQuestionRules(question={}, i18nRules={}) {
 export function getMappedQuestionnaireTypes(qTypes=[], i18nRules={}) {
     const numberInputs = ['slider', 'scale']
     return qTypes.map((qType)=> {
-        qType.questionnaires = qType.questionnaires.map((questionnaire)=> {
-            questionnaire.segments = questionnaire.segments.map((segment)=> {
-                segment.questions = segment.questions.map((question)=> {
+        qType.questionnaires = qType.questionnaires.map((questionnaire, queIdx)=> {
+            questionnaire.segments = questionnaire.segments.map((segment, segIdx)=> {
+                segment.questions = segment.questions.map((question, questionIdx)=> {
                     question.key = 0
+                    question.idx = questionIdx
+                    question.seqIdx = segIdx
+                    question.queIdx = queIdx
                     question.required = question.required ?? true
                     question.readOnly = question.readOnly ?? false
                     question.isSubmitting = false
