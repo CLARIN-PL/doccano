@@ -18,7 +18,7 @@
           outlined
           readonly
           :value="showDialog ? '' : value"
-          :rules="textFieldRules"
+          :rules="rules"
           hide-details="auto"
         />
         <span v-show="errorMessage" class="error-message">
@@ -41,7 +41,7 @@
                 outlined
                 autofocus
                 :hint="$t('labels.clickEnter')"
-                :rules="textFieldRules"
+                :rules="rules"
                 @blur="onBlurTextField"
                 @keyup.enter="submitAnswer"
               />
@@ -134,19 +134,6 @@ export default {
       showDialog: false,
       dialogErrorMessage: '',
       text: ''
-    }
-  },
-
-  computed: {
-    textFieldRules() {
-      const { numericOnly } = this.config
-      const numericOnlyRules = [
-        (value) => {
-          const pattern = /^[0-9]+$/
-          return pattern.test(value) || this.$i18n.t('rules.inputTextRules.numericOnly')
-        }
-      ]
-      return numericOnly ? this.rules.concat(numericOnlyRules) : this.rules
     }
   },
   watch: {
