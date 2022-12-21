@@ -171,7 +171,7 @@ export const actions = {
     const { endTime, userId } = getters.getRest
     const hasSameUserId = userId ? getters.getUserId === userId : true
     const hasPassedTime = endTime ? currentTime >= moment(endTime, DATETIME_FORMAT_DDMMYYYYHHMMSS).toDate() : true
-    return hasSameUserId && hasPassedTime
+    return hasSameUserId ? hasPassedTime : true 
   },
   initUser({ commit }, userId) {
     commit('setUserId', userId)

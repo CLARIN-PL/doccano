@@ -1,11 +1,7 @@
 <template>
   <v-card>
     <v-card-title v-if="isStaff">
-      <v-btn
-        class="text-capitalize"
-        color="primary"
-        @click.stop="$router.push(localePath('projects/create'))"
-      >
+      <v-btn class="text-capitalize" color="primary" @click.stop="$router.push('projects/create')">
         {{ $t('generic.create') }}
       </v-btn>
       <v-btn
@@ -91,6 +87,7 @@ export default Vue.extend({
   },
 
   async fetch() {
+    await this.checkQuestionnaire()
     await this.getProjectData()
     await this.setQuestionnaireFilledDate()
   },
@@ -110,11 +107,8 @@ export default Vue.extend({
     }, 1000)
   },
 
-  async created() {
-    await this.checkQuestionnaire()
-    this.$nextTick(() => {
-      this.toggleRestingModal()
-    })
+  created() {
+    this.toggleRestingModal()
   },
 
   mounted() {

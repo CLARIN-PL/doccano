@@ -333,20 +333,18 @@ export default Vue.extend({
           password: this.password
         })
         await this.initUserData()
-        setTimeout(() => {
-          this.$nextTick(async () => {
-            !this.isLoading && (await this.loadQuestionnaires())
-            setTimeout(async () => {
-              if (!this.isLoading) {
-                await this.setUserData()
-                await this.setProjectData()
-                this.setFirstQuestionnaireFilledDate()
-                await this.initQuestionnaire()
-                this.$router.push(this.localePath('/projects'))
-              }
-            }, 100)
-          })
-        }, 100)
+        this.$nextTick( () => {
+          setTimeout(async () => {
+            if (!this.isLoading) {
+              await this.setUserData()
+              await this.setProjectData()
+              !this.isLoading && (await this.loadQuestionnaires())
+              this.setFirstQuestionnaireFilledDate()
+              await this.initQuestionnaire()
+              this.$router.push(this.localePath('/projects'))
+            }
+          }, 100)
+        })
       } catch {
         this.showError = true
       }
