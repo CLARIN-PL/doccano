@@ -9,6 +9,7 @@
     <v-select
       v-model="input"
       :items="options"
+      :rules="rules"
       :disabled="readOnly || isSubmitting"
       :placeholder="$t('questionnaires_main.inputSelectPlaceholder')"
       dense
@@ -17,6 +18,7 @@
     <text-input
       v-if="selectedOption.showTextbox"
       v-model="inputText"
+      :rules="selectedOption.rules"
       :read-only="isSubmitting"
       :question="selectedOption.question || selectedOption.text"
       :full-question="selectedOption.question || selectedOption.text"
@@ -68,6 +70,10 @@ export default Vue.extend({
       default: ''
     },
     options: {
+      type: Array,
+      default: () => []
+    },
+    rules: {
       type: Array,
       default: () => []
     },

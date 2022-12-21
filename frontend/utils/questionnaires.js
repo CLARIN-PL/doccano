@@ -235,12 +235,14 @@ function getMappedQuestionOptions(question) {
         if(option.dynamicSelectInput) {
             option.dynamicSelectInput.options = option.dynamicSelectInput.options.map((opt)=> {
                 opt.value = opt.value === undefined ? opt.text : opt.value
+                opt.rules = getQuestionRules(opt)
                 return opt
             })
         }
 
         if(option.showTextbox) {
             option.config = { numericOnly: !!option.numericOnly }
+            option.rules = getQuestionRules(option)
         }
 
         if(option.showSlider) {
@@ -284,12 +286,12 @@ function getQuestionSliderConfig(question) {
 }
 
 function getQuestionRules(question={}, i18nRules={}) {
-    const rules = []
+    let rules = []
     if(question.required) {
-        rules.push(requiredRules(i18nRules))
+        rules = rules.concat(...requiredRules(i18nRules))
     }
     if(question.numericOnly) {
-        rules.push(numericOnlyRules(i18nRules))
+        rules = rules.concat(...numericOnlyRules(i18nRules))
     }
     return rules
 }
@@ -316,7 +318,11 @@ export function getMappedQuestionnaireTypes(qTypes=[], i18nRules={}) {
                         question.options = getQuestionScaleOptions(question)
                     } else if(question.type === "slider") {
                         question.config = getQuestionSliderConfig(question)
-                    } else if(question.type === "text" || question.type === "radio") {
+                    } else if(question.type === "text") {
+                        question.config = {
+                            numericOnly: question.numericOnly ?? false
+                        }
+                    } else if(question.type === "radio") {
                         question.config = {
                             numericOnly: question.numericOnly ?? false
                         }

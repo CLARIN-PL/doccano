@@ -73,6 +73,7 @@
                                         :is-clicked="segmentQuestion.isClicked"
                                         :is-submitting="segmentQuestion.isSubmitting"
                                         :error-message="segmentQuestion.errorMessage"
+                                        :rules="segmentQuestion.rules"
                                         :read-only="segmentQuestion.readOnly"
                                         :passed-data="{
                                           question: segmentQuestion,
@@ -233,7 +234,7 @@ export default {
         this.questions,
         this.questionnaireStates
       )[0]
-      const toFillQuestionnaireId = this.formData.questionnaires.findIndex((q) => !q.isFinished)
+      const toFillQuestionnaireId = this.formData.questionnaires.findIndex((q) => q)
       if (~toFillQuestionnaireId) {
         this.activeQuestionnaire = toFillQuestionnaireId
       } else {

@@ -232,7 +232,11 @@ export default Vue.extend({
         this.polishAnnotation.humor.subquestion2
       ]
       const scaleTypeTexts = _.flatMap(this.scaleTypes, 'text')
-      return _.intersectionBy(scaleLabels, scaleTypeTexts).length > 0
+      const hasProperScaleTypes = _.intersectionBy(scaleLabels, scaleTypeTexts).length > 0
+      if (!hasProperScaleTypes) {
+        this.$emit('input', true)
+      }
+      return hasProperScaleTypes
     },
     scaleValues(): any[] {
       return this.scales.map((scale: any) => {

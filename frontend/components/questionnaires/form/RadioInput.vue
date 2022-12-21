@@ -27,6 +27,7 @@
               "
               v-model="inputText"
               :is-clicked="isClicked"
+              :rules="selectedOption.rules"
               :is-submitting="isSubmitting"
               :config="option.config"
               :full-question="option.question || option.text"
