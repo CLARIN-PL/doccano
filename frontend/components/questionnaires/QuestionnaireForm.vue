@@ -234,7 +234,7 @@ export default {
         this.questions,
         this.questionnaireStates
       )[0]
-      const toFillQuestionnaireId = this.formData.questionnaires.findIndex((q) => q)
+      const toFillQuestionnaireId = this.formData.questionnaires.findIndex((q) => !q.isFinished)
       if (~toFillQuestionnaireId) {
         this.activeQuestionnaire = toFillQuestionnaireId
       } else {
