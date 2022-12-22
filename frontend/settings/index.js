@@ -1,4 +1,4 @@
-export const RESEARCH_TIME_IN_MONTHS = 3
+export const RESEARCH_TIME_IN_MONTHS = 2.5
 export const TEXT_BATCH_COUNT = 20
 export const DATETIME_FORMAT_DDMMYYYYHHMMSS = "DD-MM-YYYY HH:mm:ss"
 export const DATE_FORMAT_DDMMYYYY = "DD-MM-YYYY"

@@ -228,21 +228,21 @@ export function setQuestionnaireData(qTypes, questionnaires=[], questions=[], qu
     })
 }
 
-function getMappedQuestionOptions(question) {
+function getMappedQuestionOptions(question, i18nRules={}) {
     const options = question.options.map((option)=> {
         option.value = option.value === undefined ? option.text : option.value
         
         if(option.dynamicSelectInput) {
             option.dynamicSelectInput.options = option.dynamicSelectInput.options.map((opt)=> {
                 opt.value = opt.value === undefined ? opt.text : opt.value
-                opt.rules = getQuestionRules(opt)
+                opt.rules = getQuestionRules(opt, i18nRules)
                 return opt
             })
         }
 
         if(option.showTextbox) {
             option.config = { numericOnly: !!option.numericOnly }
-            option.rules = getQuestionRules(option)
+            option.rules = getQuestionRules(option, i18nRules)
         }
 
         if(option.showSlider) {
@@ -308,7 +308,7 @@ export function getMappedQuestionnaireTypes(qTypes=[], i18nRules={}) {
                     question.config = {}
 
                     if(question.options) {
-                        question.options = getMappedQuestionOptions(question)
+                        question.options = getMappedQuestionOptions(question, i18nRules)
                     }
 
                     if(question.type === 'scale') {
@@ -476,10 +476,10 @@ export function getQuestionnairesToShow() {
                 const firstLoginTimeAtZero = moment(firstLoginTime, DATETIME_FORMAT_DDMMYYYYHHMMSS).format(DATE_FORMAT_DDMMYYYY)+" 00:00:00"
                 const defaultTime = firstAnnotationTime || firstLoginTimeAtZero
                 const firstLoginTimeMonthDiff = Math.abs(moment(todayTime).diff(
-                    moment(firstLoginTimeAtZero, DATETIME_FORMAT_DDMMYYYYHHMMSS), 'months'
+                    moment(firstLoginTimeAtZero, DATETIME_FORMAT_DDMMYYYYHHMMSS), 'months', true
                 ))
                 const firstQuestionnaireFilledMonthDiff = Math.abs(moment(todayTime).diff(
-                    moment(firstQuestionnaireFilledTime), 'months', 
+                    moment(firstQuestionnaireFilledTime), 'months', true
                 ))
                 const hasPassedResearchTime = firstQuestionnaireFilledMonthDiff >= RESEARCH_TIME_IN_MONTHS 
                     || firstLoginTimeMonthDiff >= RESEARCH_TIME_IN_MONTHS
