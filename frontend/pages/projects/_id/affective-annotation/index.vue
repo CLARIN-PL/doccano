@@ -862,20 +862,23 @@ export default {
         console.log(e.response.data.detail)
       }
     },
-    async updateProgress() {
+    setRestData() {
       const restTimeInMinutes = 5
-      const { completedProjectsCount } = this.getProject
+      const endTime = moment(new Date())
+        .add(restTimeInMinutes, 'm')
+        .format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
+      this.setRest({
+        userId: this.getUserId,
+        startTime: new Date(),
+        endTime
+      })
+    },
+    async updateProgress() {
       this.progress = await this.$services.metrics.fetchMyProgress(this.projectId)
       const hasFinishedProject = this.progress.complete === this.progress.total
       if (hasFinishedProject) {
-        const endTime = moment(new Date())
-          .add(restTimeInMinutes, 'm')
-          .format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
-        this.setRest({
-          userId: this.getUserId,
-          startTime: new Date(),
-          endTime
-        })
+        await this.setRestData()
+        const { completedProjectsCount } = this.getProject
         this.setProject({
           completedProjectsCount: completedProjectsCount + 1
         })
@@ -1159,12 +1162,6 @@ export default {
     font-weight: 500;
     font-family: 'Roboto', sans-serif !important;
     opacity: 0.6;
-
-    .--hidden {
-      height: 0;
-      overflow: hidden;
-      transition: height 0.5s 1s;
-    }
 
     > div > div > svg:last-of-type {
       height: 0;
