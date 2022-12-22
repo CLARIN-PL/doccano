@@ -15,6 +15,14 @@
       <v-dialog v-model="dialogDelete">
         <form-delete :selected="selected" @cancel="dialogDelete = false" @remove="remove" />
       </v-dialog>
+      <v-spacer/>
+      <v-btn
+        class="text-capitalize ms-2 white--text"
+        color="teal"
+        @click.stop="$router.push('statistics/')"
+      >
+        Weekly Statistics
+      </v-btn>
     </v-card-title>
     <big-number-card
       v-if="!isStaff"
