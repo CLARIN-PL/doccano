@@ -279,7 +279,10 @@ function getQuestionSliderConfig(question) {
     return config  
 }
 
-function getQuestionRules(question={}, i18nRules={}) {
+function getQuestionRules(question={}, i18nRules=null) {
+    if(!i18nRules && window.$nuxt && window.$nuxt.$i18n) {
+        i18nRules = window.$nuxt.$i18n.t('rules')
+    }
     let rules = []
     if(question.required) {
         rules = rules.concat(...requiredRules(i18nRules))
@@ -290,7 +293,10 @@ function getQuestionRules(question={}, i18nRules={}) {
     return rules
 }
 
-export function getMappedQuestionnaireTypes(qTypes=[], i18nRules={}) {
+export function getMappedQuestionnaireTypes(qTypes=[], i18nRules=null) {
+    if(!i18nRules && window.$nuxt && window.$nuxt.$i18n) {
+        i18nRules = window.$nuxt.$i18n.t('rules')
+    }
     const numberInputs = ['slider', 'scale']
     return qTypes.map((qType)=> {
         qType.questionnaires = qType.questionnaires.map((questionnaire, queIdx)=> {
@@ -360,7 +366,6 @@ export function hasValidLoginTime(givenTime) {
 
 export function getQuestionnairesFilled(questionnaireStates=[]) {
     const atRestQuestionnaireId = '4.3'
-    let atRestQuestionnairesIds= []
     const todayDate = moment().format(DATE_FORMAT_DDMMYYYY)
     const qTypes = _.flatMap(qCategories, 'types')
     const groupedStatesByFinishedAtDate = _.groupBy(questionnaireStates, 'finishedAtDate')
@@ -369,7 +374,7 @@ export function getQuestionnairesFilled(questionnaireStates=[]) {
     const atRestQuestionnaires = questionnaireStates.filter((q) =>
       atRestQType.questionnaires.includes(q.questionnaire)
     )
-    atRestQuestionnairesIds = atRestQuestionnaires.map((q, index) => {
+    let atRestQuestionnairesIds = atRestQuestionnaires.map((q, index) => {
       q.restId = `${atRestQuestionnaireId}_${index + 1}`
       return q
     })
@@ -378,6 +383,7 @@ export function getQuestionnairesFilled(questionnaireStates=[]) {
     const uniqueStateTypes = [
       ...new Set(_.flatMap(questionnaireStates, 'questionnaire'))
     ]
+
     const finishedQTypes = qTypes
       .map((qType) => {
         qType.filledTypes = stateTypes.filter((stateType) =>
