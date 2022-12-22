@@ -358,6 +358,98 @@ export function hasValidLoginTime(givenTime) {
     return hasValidLoginTime
 }
 
+export function getQuestionnairesFilled(questionnaireStates=[]) {
+    const atRestQuestionnaireId = '4.3'
+    let atRestQuestionnairesIds= []
+    const todayDate = moment().format(DATE_FORMAT_DDMMYYYY)
+    const qTypes = _.flatMap(qCategories, 'types')
+    const groupedStatesByFinishedAtDate = _.groupBy(questionnaireStates, 'finishedAtDate')
+    const todayFilledQuestionnaires = groupedStatesByFinishedAtDate[todayDate]
+    const atRestQType = qTypes.find((qType) => qType.id === atRestQuestionnaireId)
+    const atRestQuestionnaires = questionnaireStates.filter((q) =>
+      atRestQType.questionnaires.includes(q.questionnaire)
+    )
+    atRestQuestionnairesIds = atRestQuestionnaires.map((q, index) => {
+      q.restId = `${atRestQuestionnaireId}_${index + 1}`
+      return q
+    })
+    atRestQuestionnairesIds = _.sortBy(atRestQuestionnairesIds, 'finishedAt').reverse()
+    const stateTypes = _.flatMap(questionnaireStates, 'questionnaire')
+    const uniqueStateTypes = [
+      ...new Set(_.flatMap(questionnaireStates, 'questionnaire'))
+    ]
+    const finishedQTypes = qTypes
+      .map((qType) => {
+        qType.filledTypes = stateTypes.filter((stateType) =>
+          qType.questionnaires.includes(stateType)
+        )
+        qType.filledTypesUnique = [
+          ...new Set(_.intersection(qType.questionnaires, uniqueStateTypes))
+        ]
+        qType.filledTypesOnlyDouble = qType.filledTypesUnique.filter((fType) => {
+          return qType.filledTypes.filter((fType2) => fType === fType2).length > 1
+        })
+        qType.filledTypesToday = _.intersection(
+          qType.questionnaires,
+          _.flatMap(todayFilledQuestionnaires, 'questionnaire')
+        )
+        qType.filledId = [qType.id]
+
+        const qStates = questionnaireStates
+          .filter((state) => qType.questionnaires.includes(state.questionnaire))
+          .reverse()
+        const todayQStates = questionnaireStates.filter(
+          (state) =>
+            qType.questionnaires.includes(state.questionnaire) &&
+            moment(String(state.finishedAt), DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(
+              DATE_FORMAT_DDMMYYYY
+            ) === todayDate
+        )
+
+        if (qStates.length) {
+          const state = qStates[0]
+          qType.finishedAt = state ? state.finishedAt : ''
+          qType.finishedAtDate = qType.finishedAt
+            ? moment(qType.finishedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(
+                DATE_FORMAT_DDMMYYYY
+              )
+            : ''
+        }
+
+        qType.hasFinishedToday = !!todayQStates.length
+        qType.hasFinishedAllTypes =
+          qType.filledTypesUnique.length === qType.questionnaires.length
+        qType.hasFinishedAllTypesToday =
+          !!todayQStates.length && qType.filledTypesToday.length >= qType.questionnaires.length
+
+        if (qType.id === '2.2') {
+          qType.hasFinishedAllTypes =
+            qType.hasFinishedAllTypes &&
+            qType.filledTypesOnlyDouble.length >= qType.questionnaires.length
+        } else if (qType.id === '3.2') {
+          qType.hasFinishedAllTypes =
+            qType.hasFinishedAllTypes &&
+            qType.filledTypesOnlyDouble.length >= qType.questionnaires.length
+        } else if (qType.id === '4.1') {
+          qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
+        } else if (qType.id === '4.2') {
+          qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
+        } else if (qType.id === '4.3') {
+          qType.filledId = atRestQuestionnairesIds.length
+            ? _.flatMap(atRestQuestionnairesIds, 'restId')
+            : [qType.id]
+          qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
+        }
+
+        return qType
+      })
+      .filter((qType) => {
+        return qType.hasFinishedAllTypes
+    })
+
+    return [..._.flatMap(finishedQTypes, 'filledId')]
+}
+
 export function getQuestionnairesToShow() {
     const qTypes = getQuestionnaireTypes()
     const todayTime = new Date()

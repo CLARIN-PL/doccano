@@ -46,7 +46,7 @@ import { mapGetters, mapActions } from 'vuex'
 import { userNameRules, passwordRules } from '@/rules/index'
 import BaseCard from '@/components/utils/BaseCard.vue'
 import { history } from '~/store/user'
-import { qCategories, hasValidLoginTime } from '~/utils/questionnaires'
+import { qCategories, hasValidLoginTime, getQuestionnairesFilled } from '~/utils/questionnaires'
 import {
   DATETIME_FORMAT_DDMMYYYYHHMMSS,
   DATE_FORMAT_DDMMYYYY,
@@ -134,100 +134,10 @@ export default Vue.extend({
     },
     async loadQuestionnaires() {
       this.isLoading = true
+      await this.setQuestionnaireData()
       try {
-        const atRestQuestionnaireId = '4.3'
-        let atRestQuestionnairesIds: any[] = []
-        const todayDate = moment().format(DATE_FORMAT_DDMMYYYY)
-        const qTypes = _.flatMap(qCategories, 'types')
-
-        await this.setQuestionnaireData()
-
-        const groupedStatesByFinishedAtDate = _.groupBy(this.questionnaireStates, 'finishedAtDate')
-        const todayFilledQuestionnaires = groupedStatesByFinishedAtDate[todayDate]
-        const atRestQType = qTypes.find((qType) => qType.id === atRestQuestionnaireId)
-        const atRestQuestionnaires = this.questionnaireStates.filter((q) =>
-          atRestQType.questionnaires.includes(q.questionnaire)
-        )
-        atRestQuestionnairesIds = atRestQuestionnaires.map((q: any, index) => {
-          q.restId = `${atRestQuestionnaireId}_${index + 1}`
-          return q
-        })
-        atRestQuestionnairesIds = _.sortBy(atRestQuestionnairesIds, 'finishedAt').reverse()
-        const stateTypes: any[] = _.flatMap(this.questionnaireStates, 'questionnaire')
-        const uniqueStateTypes: any[] = [
-          ...new Set(_.flatMap(this.questionnaireStates, 'questionnaire'))
-        ]
-        const finishedQTypes: any[] = qTypes
-          .map((qType) => {
-            qType.filledTypes = stateTypes.filter((stateType) =>
-              qType.questionnaires.includes(stateType)
-            )
-            qType.filledTypesUnique = [
-              ...new Set(_.intersection(qType.questionnaires, uniqueStateTypes))
-            ]
-            qType.filledTypesOnlyDouble = qType.filledTypesUnique.filter((fType: String) => {
-              return qType.filledTypes.filter((fType2: String) => fType === fType2).length > 1
-            })
-            qType.filledTypesToday = _.intersection(
-              qType.questionnaires,
-              _.flatMap(todayFilledQuestionnaires, 'questionnaire')
-            )
-            qType.filledId = [qType.id]
-
-            const qStates = this.questionnaireStates
-              .filter((state) => qType.questionnaires.includes(state.questionnaire))
-              .reverse()
-            const todayQStates = this.questionnaireStates.filter(
-              (state) =>
-                qType.questionnaires.includes(state.questionnaire) &&
-                moment(String(state.finishedAt), DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(
-                  DATE_FORMAT_DDMMYYYY
-                ) === todayDate
-            )
-
-            if (qStates.length) {
-              const state = qStates[0]
-              qType.finishedAt = state ? state.finishedAt : ''
-              qType.finishedAtDate = qType.finishedAt
-                ? moment(qType.finishedAt, DATETIME_FORMAT_YYYYMMDDTHHMMSS).format(
-                    DATE_FORMAT_DDMMYYYY
-                  )
-                : ''
-            }
-
-            qType.hasFinishedToday = !!todayQStates.length
-            qType.hasFinishedAllTypes =
-              qType.filledTypesUnique.length === qType.questionnaires.length
-            qType.hasFinishedAllTypesToday =
-              !!todayQStates.length && qType.filledTypesToday.length >= qType.questionnaires.length
-
-            if (qType.id === '2.2') {
-              qType.hasFinishedAllTypes =
-                qType.hasFinishedAllTypes &&
-                qType.filledTypesOnlyDouble.length >= qType.questionnaires.length
-            } else if (qType.id === '3.2') {
-              qType.hasFinishedAllTypes =
-                qType.hasFinishedAllTypes &&
-                qType.filledTypesOnlyDouble.length >= qType.questionnaires.length
-            } else if (qType.id === '4.1') {
-              qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
-            } else if (qType.id === '4.2') {
-              qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
-            } else if (qType.id === '4.3') {
-              qType.filledId = atRestQuestionnairesIds.length
-                ? _.flatMap(atRestQuestionnairesIds, 'restId')
-                : [qType.id]
-              qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
-            }
-
-            return qType
-          })
-          .filter((qType) => {
-            return qType.hasFinishedAllTypes
-          })
-
         await this.setQuestionnaire({
-          filled: [..._.flatMap(finishedQTypes, 'filledId')],
+          filled: getQuestionnairesFilled(this.questionnaireStates),
           toShow: []
         })
         this.$nextTick(() => {
@@ -333,7 +243,7 @@ export default Vue.extend({
           password: this.password
         })
         await this.initUserData()
-        this.$nextTick( () => {
+        this.$nextTick(() => {
           setTimeout(async () => {
             if (!this.isLoading) {
               await this.setUserData()
