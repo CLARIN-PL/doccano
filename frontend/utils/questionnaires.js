@@ -24,7 +24,7 @@ import _ from 'lodash'
     6. Ankieta po 2 tygodniach badania
 */ 
 
-const RESEARCH_TIME_IN_MONTHS = 3
+const RESEARCH_TIME_IN_MONTHS = 2.5
 const TEXT_BATCH_COUNT = 20
 const DATE_FORMAT = "DD-MM-YYYY HH:mm:ss"
 const DATE_ONLY_FORMAT = "DD-MM-YYYY"
@@ -343,10 +343,10 @@ export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
                 const { hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
                 const defaultTime = firstAnnotationTime || firstLoginTimeAtZero
                 const monthDiff1 = Math.abs(moment(todayTime).diff(
-                    moment(firstLoginTimeAtZero, DATE_FORMAT), 'months'
+                    moment(firstLoginTimeAtZero, DATE_FORMAT), 'months', true
                 ))
                 const monthDiff2 = Math.abs(moment(todayTime).diff(
-                    moment(firstQuestionnaireEverDate), 'months'
+                    moment(firstQuestionnaireEverDate), 'months', true
                 ))
                 const hasPassedResearchTime = monthDiff2 >= RESEARCH_TIME_IN_MONTHS || monthDiff1 >= RESEARCH_TIME_IN_MONTHS
                 let isShowing = false

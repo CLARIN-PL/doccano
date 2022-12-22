@@ -16,6 +16,11 @@
         <form-delete :selected="selected" @cancel="dialogDelete = false" @remove="remove" />
       </v-dialog>
     </v-card-title>
+    <big-number-card
+      v-if="!isStaff"
+      :label="$t('statistics.totalTextsAnnotated')"
+      :value="totalTextsAnnotated"
+    />
     <project-list
       v-model="selected"
       :items="projects.items"
@@ -38,6 +43,7 @@ import Vue from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 import ProjectList from '@/components/project/ProjectList.vue'
 import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
+import BigNumberCard from '@/components/utils/BigNumberCard.vue'
 import { MyProgress, MyProgressList } from '~/domain/models/metrics/metrics'
 import { ProjectDTO, ProjectListDTO } from '~/services/application/project/projectData'
 import FormDelete from '~/components/project/FormDelete.vue'
@@ -47,7 +53,8 @@ export default Vue.extend({
   components: {
     FormDelete,
     ProjectList,
-    RestingPeriodModal
+    RestingPeriodModal,
+    BigNumberCard
   },
   layout: 'projects',
 
@@ -62,7 +69,8 @@ export default Vue.extend({
       selected: [] as ProjectDTO[],
       isLoading: false,
       showRestingMessage: false,
-      restingEndTime: ''
+      restingEndTime: '',
+      totalTextsAnnotated: 0,
     }
   },
 
@@ -109,6 +117,14 @@ export default Vue.extend({
       }
     },
 
+    countTotalTextsAnnotated(progressList: MyProgressList) {
+      try {
+        this.totalTextsAnnotated = progressList.results.reduce((subtotal, prog: MyProgress) => subtotal + prog.complete, 0)
+      } catch {
+        this.totalTextsAnnotated = 0
+      }
+    },
+
     findNextProjectIdToAnnotate(progressList: MyProgressList) {
       try {
         const progress = progressList.results.find(
@@ -128,6 +144,7 @@ export default Vue.extend({
         this.projects = _.cloneDeep(projects)
       } else {
         const progresses = await this.$services.metrics.fetchMyProgresses()
+        this.countTotalTextsAnnotated(progresses)
         this.findNextProjectIdToAnnotate(progresses)
         const items = projects.items
           .map((projectItem: ProjectDTO) => {
