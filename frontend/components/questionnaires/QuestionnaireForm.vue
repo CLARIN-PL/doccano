@@ -1,6 +1,6 @@
 <template>
   <v-row align="center" justify="center">
-    <v-col cols="9">
+    <v-col :lg="9" :md="12">
       <div ref="header">
         <v-alert v-model="showWarning" color="error" dark transition="scale-transition" dismissible>
           {{ $t('errors.incompleteAffectiveAnnotation') }}
@@ -114,22 +114,13 @@
                     </v-card-actions>
                   </v-card>
                 </v-col>
-                <v-col cols="4" class="sticky-container">
-                  <v-card v-if="questionnaire.segments[0].scales" :class="(showWarning) ? 'sticky-offset' : 'sticky'">
-                    <v-card-text>
-                      <div class="segment-description-container text-caption">
-                        <ul class="hide-list-style">
-                          <li
-                            v-for="(segmentScaleValue, segScalIdx) in questionnaire.segments[0]
-                              .scales.values"
-                            :key="`segmentScaleValue-${segScalIdx}`"
-                          >
-                            {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
-                          </li>
-                        </ul>
-                      </div>
-                    </v-card-text>
-                  </v-card>
+                <v-col
+                  v-if="(questionnaire.segments[0].scales && questionnaire.segments[0].scales.values)"
+                  cols="4"
+                >
+                  <sticky-legend
+                    :questionnaire-scales-values="questionnaire.segments[0].scales.values"
+                  />
                 </v-col>
               </v-row>
             </v-window-item>
@@ -168,6 +159,7 @@ import RadioInput from '~/components/questionnaires/form/RadioInput.vue'
 import TextInput from '~/components/questionnaires/form/TextInput.vue'
 import SliderInput from '~/components/questionnaires/form/SliderInput.vue'
 import GreetingCard from '~/components/questionnaires/GreetingCard.vue'
+import StickyLegend from '~/components/questionnaires/form/StickyLegend.vue'
 
 export default {
   components: {
@@ -175,7 +167,8 @@ export default {
     RadioInput,
     TextInput,
     SliderInput,
-    GreetingCard
+    GreetingCard,
+    StickyLegend
   },
   layout: 'questionnaire',
   props: {
@@ -411,27 +404,5 @@ export default {
 .hide-list-style {
   list-style: none;
   padding-left: 0 !important;
-}
-
-.sticky-container {
-  z-index: 0;
-}
-
-.sticky {
-  position: fixed;
-  top: 90px;
-  min-width: 250px;
-  max-width: 270px;
-  overflow-x: visible;
-  z-index: 1;
-}
-
-.sticky-offset {
-  position: fixed;
-  top: 200px;
-  min-width: 250px;
-  max-width: 270px;
-  overflow-x: visible;
-  z-index: 1;
 }
 </style>
