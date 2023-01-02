@@ -1,6 +1,6 @@
 <template>
-  <v-row align="center" justify="center">
-    <v-col :lg="9" :md="12">
+  <v-row align="center" justify="center" class="overflow-visible">
+    <v-col :lg="9" :md="12" class="overflow-visible">
       <div ref="header">
         <v-alert v-model="showWarning" color="error" dark transition="scale-transition" dismissible>
           {{ $t('errors.incompleteAffectiveAnnotation') }}
@@ -8,19 +8,20 @@
       </div>
       <div
         v-if="formData.questionnaires && formData.questionnaires.length && isLoaded"
-        class="questionnaire-container"
+        class="questionnaire-container overflow-visible"
       >
-        <v-col>
+        <v-col class="overflow-visible">
           <v-window
             v-model="activeQuestionnaire"
-            class="questionnaire-window elevation-1"
+            class="questionnaire-window elevation-1 overflow-visible"
             horizontal
           >
             <v-window-item
               v-for="(questionnaire, qIdx) in formData.questionnaires"
               :key="`questionnaire-window-${qIdx}`"
+              class="overflow-visible"
             >
-              <v-row align="top" justify="center">
+              <v-row align="top" justify="center" class="overflow-visible">
                 <v-col cols="8">
                   <v-card>
                     <v-card-text>
@@ -117,10 +118,20 @@
                 <v-col
                   v-if="(questionnaire.segments[0].scales && questionnaire.segments[0].scales.values)"
                   cols="4"
+                  class="sticky-col overflow-visible"
                 >
-                  <sticky-legend
-                    :questionnaire-scales-values="questionnaire.segments[0].scales.values"
-                  />
+                  <v-card class="sticky">
+                    <v-card-text class="text-caption">
+                      <ul class="hide-list-style">
+                        <li
+                          v-for="(segmentScaleValue, segScalIdx) in questionnaire.segments[0].scales.values"
+                          :key="`segmentScaleValue-${segScalIdx}`"
+                        >
+                          {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
+                        </li>
+                      </ul>
+                    </v-card-text>
+                  </v-card>
                 </v-col>
               </v-row>
             </v-window-item>
@@ -159,7 +170,6 @@ import RadioInput from '~/components/questionnaires/form/RadioInput.vue'
 import TextInput from '~/components/questionnaires/form/TextInput.vue'
 import SliderInput from '~/components/questionnaires/form/SliderInput.vue'
 import GreetingCard from '~/components/questionnaires/GreetingCard.vue'
-import StickyLegend from '~/components/questionnaires/form/StickyLegend.vue'
 
 export default {
   components: {
@@ -167,8 +177,7 @@ export default {
     RadioInput,
     TextInput,
     SliderInput,
-    GreetingCard,
-    StickyLegend
+    GreetingCard
   },
   layout: 'questionnaire',
   props: {
@@ -404,5 +413,16 @@ export default {
 .hide-list-style {
   list-style: none;
   padding-left: 0 !important;
+}
+
+.overflow-visible {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.sticky {
+  position: sticky;
+  top: 55px;
+  z-index: 1;
 }
 </style>
