@@ -7,6 +7,6 @@ export default async function ({ app, store, route, redirect }) {
         const canAccess = progress.remaining > 0 && progress.total > 0 && currentlyAllowedProjectId.toString() === openedProjectId
         if (!canAccess) {
             return redirect('/projects')
-        } 
+        }
     }
 }

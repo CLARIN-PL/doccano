@@ -427,7 +427,7 @@ export function getQuestionnairesFilled(questionnaireStates=[]) {
           qType.filledTypesUnique.length === qType.questionnaires.length
         qType.hasFinishedAllTypesToday =
           !!todayQStates.length && qType.filledTypesToday.length >= qType.questionnaires.length
-
+        
         if (qType.id === '2.2') {
           qType.hasFinishedAllTypes =
             qType.hasFinishedAllTypes &&

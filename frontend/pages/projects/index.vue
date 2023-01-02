@@ -69,8 +69,6 @@ export default Vue.extend({
   },
   layout: 'projects',
 
-  middleware: ['check-auth', 'auth'],
-
   data() {
     return {
       dialogDelete: false,

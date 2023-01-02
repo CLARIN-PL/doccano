@@ -312,7 +312,8 @@ export default {
   layout: 'workspace',
 
   validate({ params, query }) {
-    return /^\d+$/.test(params.id) && /^\d+$/.test(query.page)
+    const hasValidQueryAndParams = /^\d+$/.test(params.id) && /^\d+$/.test(query.page)
+    return hasValidQueryAndParams
   },
 
   data() {
@@ -339,7 +340,6 @@ export default {
       selectedLabelIndex: null,
       progress: {},
       relationMode: false,
-      isProjectAdmin: false,
       articleTotal: 1,
       articleIndex: 1,
       isScaleImported: true,
@@ -379,7 +379,6 @@ export default {
   },
 
   async fetch() {
-    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
     await this.setProjectData()
     await this.setDoc()
     await this.setHasCheckedPreviousDoc()
@@ -390,7 +389,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId']),
+    ...mapGetters('auth', ['isAuthenticated', 'isStaff', 'getUsername', 'getUserId']),
     ...mapGetters('config', ['isRTL']),
     ...mapGetters('user', ['getAnnotation', 'getRest', 'getProject', 'getQuestionnaire']),
     shortKeysSpans() {
@@ -416,21 +415,21 @@ export default {
       return !!this.project?.isSingleAnnView
     },
     showFilterButton() {
-      return this.isAffectiveAnnotation ? this.isProjectAdmin : true
+      return this.isAffectiveAnnotation ? this.isStaff : true
     },
     canEdit() {
-      return this.isAffectiveAnnotation && this.doc.isConfirmed ? this.isProjectAdmin : true
+      return this.isAffectiveAnnotation && this.doc.isConfirmed ? this.isStaff : true
     },
     canNavigateBackward() {
-      const canNavigateBackward = this.isProjectAdmin || !this.hasCheckedPreviousDoc
+      const canNavigateBackward = this.isStaff || !this.hasCheckedPreviousDoc
       return this.isAffectiveAnnotation ? canNavigateBackward : true
     },
     canNavigateForward() {
-      const canNavigateForward = this.isProjectAdmin ? true : this.doc.isConfirmed
+      const canNavigateForward = this.isStaff ? true : this.doc.isConfirmed
       return this.isAffectiveAnnotation ? canNavigateForward : true
     },
     canSkipForward() {
-      return this.isAffectiveAnnotation ? this.isProjectAdmin : true
+      return this.isAffectiveAnnotation ? this.isStaff : true
     },
     showAutoLabeling() {
       return !this.isAffectiveAnnotation
@@ -552,7 +551,7 @@ export default {
     showRestingModal() {
       const { endTime } = this.getRest
       const restingEndTime = moment(endTime).format(DATETIME_FORMAT_DDMMYYYYHHMMSS)
-      this.isRestingModalShown = !this.isProjectAdmin
+      this.isRestingModalShown = !this.isStaff
       this.restingEndTime = restingEndTime
     },
     checkRestingPeriod() {
@@ -829,7 +828,7 @@ export default {
         })
         await this.initQuestionnaire()
         setTimeout(() => {
-          if (this.getQuestionnaire.toShow.length) {
+          if (this.getQuestionnaire.toShow.length && !this.isStaff) {
             this.$router.push(this.localePath('/questionnaires'))
           } else {
             this.$router.push(this.localePath('/projects'))
@@ -849,8 +848,8 @@ export default {
       } else if (this.project.isEmotionsMode) {
         this.hasValidEntries.isEmotionsMode = this.isAllAffectiveEmotionsAdded()
       }
-      this.hasClickedConfirmButton = this.canConfirm ? false : !this.isProjectAdmin
-      if (this.canConfirm || this.isProjectAdmin) {
+      this.hasClickedConfirmButton = this.canConfirm ? false : !this.isStaff
+      if (this.canConfirm || this.isStaff) {
         await this.$services.example.confirm(this.projectId, this.doc.id)
         await this.$fetch()
         this.updateProgress()
