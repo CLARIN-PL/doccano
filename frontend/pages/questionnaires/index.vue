@@ -17,7 +17,6 @@ export default {
     GreetingCard
   },
   layout: 'questionnaires',
-  middleware: ['check-auth', 'auth'],
   data() {
     return {
       qCategories

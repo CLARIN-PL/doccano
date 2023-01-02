@@ -31,7 +31,7 @@ export class APIMemberRepository implements MemberRepository {
 
   async fetchMyRole(projectId: string): Promise<MemberItem> {
     const url = `/projects/${projectId}/my-role`
-    const response = await this.request.get(url)
+    const response = projectId ? await this.request.get(url) : { data: {}}
     return plainToInstance(MemberItem, response.data)
   }
 }

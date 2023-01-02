@@ -173,6 +173,6 @@ export default {
     }
   },
   router: {
-    middleware: ['check-project']
+    middleware: ['check-auth', 'auth', 'check-project']
   }
 }
