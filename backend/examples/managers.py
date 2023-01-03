@@ -1,4 +1,6 @@
 from django.db.models import Count, Manager
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 
 
 class ExampleManager(Manager):
@@ -29,4 +31,20 @@ class ExampleStateManager(Manager):
         for member in members:
             if member.username not in members_with_progress:
                 response["progress"].append({"user": member.username, "done": 0})
+        return response
+
+    def measure_member_confirmed_examples_between_startdate_enddate(self, users, startdate, enddate):
+        done_count = (
+            self.filter(confirmed_by__in=users, confirmed_at__gte=startdate, confirmed_at__lte=enddate)
+            .values("confirmed_by__username")
+            .annotate(total=Count("example"))
+        )
+        response = {
+            "progress": [{"user": obj["confirmed_by__username"], "done": obj["total"]} for obj in done_count],
+        }
+        members_with_progress = {o["confirmed_by__username"] for o in done_count}
+        for user in users:
+            current_user = get_object_or_404(User, id=user)
+            if str(current_user) not in members_with_progress:
+                response["progress"].append({"user": str(current_user), "done": 0})
         return response
