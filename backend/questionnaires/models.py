@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from .managers import QuestionnaireStateManager
 
 
 class QuestionnaireType(models.Model):
@@ -38,6 +39,8 @@ class Answer(models.Model):
 
 
 class QuestionnaireState(models.Model):
+    objects = QuestionnaireStateManager()
+    
     questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="questionnaire_state")
     finished_by = models.ForeignKey(User, on_delete=models.CASCADE)
     finished_at = models.DateTimeField(auto_now=True)
