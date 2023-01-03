@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "health_check.contrib.celery",
     "django_cleanup",
     "questionnaires",
+    "report",
 ]
 
 
