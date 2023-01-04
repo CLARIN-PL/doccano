@@ -97,7 +97,6 @@ class AverageAnnotationTimeAPI(APIView):
                 
             average_annotation_time = sum(all_single_annotation_time) / len(all_single_annotation_time)
             data = {"average_annotation_time (seconds)": average_annotation_time, "daily_average_annotation_time": daily_avg_single_annotation_time}
-
             return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -115,7 +114,7 @@ class AvgDailyAnnotationTimeAPI(APIView):
         requested_dates = confirmed_df['Date'].tolist()
         all_started_data = []
         for date in requested_dates:
-            started_annotation = ExampleAnnotateStartState.objects.get_earliest_started_time_by_date([requested_user], date)
+            started_annotation = ExampleAnnotateStartState.objects.get_user_started_time_by_date([requested_user], date)
             all_started_data.extend(started_annotation)
         started_df = pd.DataFrame(all_started_data)
         started_df['Date'] = started_df['started_at'].dt.strftime('%Y-%m-%d')
@@ -168,3 +167,43 @@ class AvgDailyQuestionnaireTimeAPI(APIView):
             average_daily_questionnaire_time = sum([i['total_time (seconds)'] for i in period_questionnaire_time]) / len(period_questionnaire_time)
             data = {"average_daily_questionnaire_time (seconds)": average_daily_questionnaire_time, "daily_questionnaire_time": period_questionnaire_time}
             return Response(data=data, status=status.HTTP_200_OK)
+
+
+class AllUsersAverageAnnotationTimeAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
+
+    def get(self, request, *args, **kwargs):
+        all_user_ids = User.objects.all().values_list('id', flat=True)
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        progressed_users_avg_annotation_time = []
+        progressed_users_avg_annotation_time_per_day = []
+        for user_id in all_user_ids:
+            confirmed_examples_by_user = ExampleState.objects.get_confirmed_time_by_example([user_id], startdate, enddate)
+            if len(confirmed_examples_by_user) != 0:
+                confirmed_df = pd.DataFrame(confirmed_examples_by_user)
+                confirmed_df['Date'] = confirmed_df['confirmed_at'].dt.strftime('%Y-%m-%d')
+                confirmed_dates = list(confirmed_df.Date.unique())
+                daily_avg_single_annotation_time = []
+                all_single_annotation_time = []
+                for date in confirmed_dates:
+                    requested_examples = confirmed_df[confirmed_df['Date'] == date].example_id
+                    daily_single_annotation_time = []
+                    for example_id in requested_examples:
+                        started_examples_by_user = ExampleAnnotateStartState.objects.get_started_time_by_example(example_id, [user_id], startdate, enddate)
+                        annotation_time  = confirmed_df[confirmed_df['example_id']==example_id]["confirmed_at"] - started_examples_by_user[0]['started_at']
+                        daily_single_annotation_time.append(annotation_time.dt.seconds.values[0])
+                        all_single_annotation_time.append(annotation_time.dt.seconds.values[0])
+                    average_daily_annotation_time = sum(daily_single_annotation_time) / len(daily_single_annotation_time)
+                    single_annotation_time_per_day = {"date": date, "average_annotation_time (seconds)": average_daily_annotation_time, "user_id": user_id}
+                    daily_avg_single_annotation_time.append(single_annotation_time_per_day)
+                for time in daily_avg_single_annotation_time:
+                    progressed_users_avg_annotation_time_per_day.append(time)
+                df = pd.DataFrame(progressed_users_avg_annotation_time_per_day)
+                df = df.groupby('date')['average_annotation_time (seconds)'].mean().reset_index(name='avg_annotation_time_single_text (seconds)')
+                all_user_daily_avg_single_annotation_time = df.to_dict(orient='records')
+                for time in all_single_annotation_time:
+                    progressed_users_avg_annotation_time.append(time)
+                all_user_average_annotation_time = sum(progressed_users_avg_annotation_time) / len(progressed_users_avg_annotation_time)
+                data = {"average_annotation_time (seconds)": all_user_average_annotation_time, "daily_average_annotation_time": all_user_daily_avg_single_annotation_time}
+        return Response(data=data, status=status.HTTP_200_OK)
