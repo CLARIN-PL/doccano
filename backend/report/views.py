@@ -207,3 +207,43 @@ class AllUsersAverageAnnotationTimeAPI(APIView):
                 all_user_average_annotation_time = sum(progressed_users_avg_annotation_time) / len(progressed_users_avg_annotation_time)
                 data = {"average_annotation_time (seconds)": all_user_average_annotation_time, "daily_average_annotation_time": all_user_daily_avg_single_annotation_time}
         return Response(data=data, status=status.HTTP_200_OK)
+
+
+class AllUsersAvgDailyAnnotationTimeAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
+
+    def get(self, request, *args, **kwargs):
+        all_user_ids = User.objects.all().values_list('id', flat=True)
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        all_user_ann_time_per_day = []
+        all_user_daily_ann_time = []
+        for user_id in all_user_ids:
+            confirmed_examples_by_user = ExampleState.objects.get_confirmed_time_by_example([user_id], startdate, enddate)
+            if len(confirmed_examples_by_user) != 0:
+                confirmed_df = pd.DataFrame(confirmed_examples_by_user)
+                confirmed_df['Date'] = confirmed_df['confirmed_at'].dt.strftime('%Y-%m-%d')
+                confirmed_df = confirmed_df.sort_values('confirmed_at').drop_duplicates(['Date'], keep='last')
+                requested_dates = confirmed_df['Date'].tolist()
+                all_started_data = []
+                for date in requested_dates:
+                    started_annotation = ExampleAnnotateStartState.objects.get_user_started_time_by_date([user_id], date)
+                    all_started_data.extend(started_annotation)
+                started_df = pd.DataFrame(all_started_data)
+                started_df['Date'] = started_df['started_at'].dt.strftime('%Y-%m-%d')
+                started_df = started_df.drop_duplicates(['Date'], keep='first')
+                confirm_time_daily = confirmed_df.confirmed_at.to_list()
+                started_time_daily = started_df.started_at.to_list()
+                daily_annotation_time = [(cf - st).seconds for cf, st in zip(confirm_time_daily, started_time_daily)]
+                annotation_time_per_day = [{"user": user_id, "date": date, "annotation_time (seconds)": time} for date, time in zip(requested_dates, daily_annotation_time)]
+                all_user_ann_time_per_day.extend(annotation_time_per_day)
+                all_user_daily_ann_time.extend(daily_annotation_time)
+        if all_user_ann_time_per_day:
+            df = pd.DataFrame(all_user_ann_time_per_day)
+            df = df.groupby('date')['annotation_time (seconds)'].mean().reset_index(name='avg_annotation_time_daily (seconds)')
+            all_user_avg_ann_time_per_day= df.to_dict(orient='records')
+            all_user_avg_daily_annotation_time = sum(all_user_daily_ann_time) / len(all_user_daily_ann_time)
+            data = {"average_daily_annotation_time (seconds)": all_user_avg_daily_annotation_time, "annotation_time_per_day (seconds)": all_user_avg_ann_time_per_day}
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            return Response(data={"average_daily_annotation_time (seconds)": 0, "annotation_time_per_day (seconds)": []}, status=status.HTTP_200_OK)
