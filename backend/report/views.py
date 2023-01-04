@@ -28,12 +28,9 @@ class MemberProgressBetweenStartdateEnddateAPI(APIView):
     permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
 
     def get(self, request, *args, **kwargs):
-        all_users = User.objects.all().values_list('id', flat=True)
-        print(all_users)
         startdate = self.kwargs["startdate"]
         enddate = self.kwargs["enddate"]
-        print(startdate, enddate)
-        data = ExampleState.objects.measure_member_confirmed_examples_between_startdate_enddate(all_users, startdate, enddate)
+        data = ExampleState.objects.measure_total_confirmed_examples_between_startdate_enddate(startdate, enddate)
         return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -44,7 +41,7 @@ class EachMemberProgressBetweenStartdateEnddateAPI(APIView):
         requested_user = self.kwargs["user_id"]
         startdate = self.kwargs["startdate"]
         enddate = self.kwargs["enddate"]
-        data = ExampleState.objects.measure_member_confirmed_examples_between_startdate_enddate([requested_user], startdate, enddate)
+        data = ExampleState.objects.measure_member_confirmed_examples_between_startdate_enddate(requested_user, startdate, enddate)
         return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -52,10 +49,9 @@ class MembersEveningQuestionnaireProgressAPI(APIView):
     permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
 
     def get(self, request, *args, **kwargs):
-        all_users = User.objects.all().values_list('id', flat=True)
         startdate = self.kwargs["startdate"]
         enddate = self.kwargs["enddate"]
-        data = QuestionnaireState.objects.count_all_users_evening_questionnaire_done(all_users, startdate, enddate)
+        data = QuestionnaireState.objects.count_total_evening_questionnaire_done(startdate, enddate)
         return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -66,7 +62,7 @@ class EachMemberEveningQuestionnaireProgressAPI(APIView):
         requested_user = self.kwargs["user_id"]
         startdate = self.kwargs["startdate"]
         enddate = self.kwargs["enddate"]
-        data = QuestionnaireState.objects.count_all_users_evening_questionnaire_done([requested_user], startdate, enddate)
+        data = QuestionnaireState.objects.count_user_evening_questionnaire_done(requested_user, startdate, enddate)
         return Response(data=data, status=status.HTTP_200_OK)
 
 

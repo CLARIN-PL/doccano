@@ -4,9 +4,9 @@ from django.shortcuts import get_object_or_404
 
 
 class QuestionnaireStateManager(Manager):
-    def count_all_users_evening_questionnaire_done(self, users, startdate, enddate):
+    def count_user_evening_questionnaire_done(self, user, startdate, enddate):
         done_count = (
-            self.filter(finished_by__in=users, finished_at__gte=startdate, finished_at__lte=enddate, questionnaire__in=[15, 16])
+            self.filter(finished_by=user, finished_at__gte=startdate, finished_at__lte=enddate, questionnaire__in=[15, 16])
             .values("finished_by__username")
             .annotate(total=Count("questionnaire"))
         )
@@ -14,10 +14,16 @@ class QuestionnaireStateManager(Manager):
             "progress": [{"user": obj["finished_by__username"], "done": obj["total"]} for obj in done_count],
         }
         members_with_progress = {o["finished_by__username"] for o in done_count}
-        for user in users:
-            current_user = get_object_or_404(User, id=user)
-            if str(current_user) not in members_with_progress:
-                response["progress"].append({"user": str(current_user), "done": 0})
+        current_user = get_object_or_404(User, id=user)
+        if str(current_user) not in members_with_progress:
+            response["progress"].append({"user": str(current_user), "done": 0})
+        return response
+
+    def count_total_evening_questionnaire_done(self, startdate, enddate):
+        response = (
+            self.filter(finished_at__gte=startdate, finished_at__lte=enddate, questionnaire__in=[15, 16])
+            .aggregate(total=Count("id"))
+        )
         return response
 
     def get_finished_time_by_questionnaire(self, users, startdate, enddate):

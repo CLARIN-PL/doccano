@@ -33,9 +33,9 @@ class ExampleStateManager(Manager):
                 response["progress"].append({"user": member.username, "done": 0})
         return response
 
-    def measure_member_confirmed_examples_between_startdate_enddate(self, users, startdate, enddate):
+    def measure_member_confirmed_examples_between_startdate_enddate(self, user, startdate, enddate):
         done_count = (
-            self.filter(confirmed_by__in=users, confirmed_at__gte=startdate, confirmed_at__lte=enddate)
+            self.filter(confirmed_by=user, confirmed_at__gte=startdate, confirmed_at__lte=enddate)
             .values("confirmed_by__username")
             .annotate(total=Count("example"))
         )
@@ -43,10 +43,16 @@ class ExampleStateManager(Manager):
             "progress": [{"user": obj["confirmed_by__username"], "done": obj["total"]} for obj in done_count],
         }
         members_with_progress = {o["confirmed_by__username"] for o in done_count}
-        for user in users:
-            current_user = get_object_or_404(User, id=user)
-            if str(current_user) not in members_with_progress:
-                response["progress"].append({"user": str(current_user), "done": 0})
+        current_user = get_object_or_404(User, id=user)
+        if str(current_user) not in members_with_progress:
+            response["progress"].append({"user": str(current_user), "done": 0})
+        return response
+
+    def measure_total_confirmed_examples_between_startdate_enddate(self, startdate, enddate):
+        response = (
+            self.filter(confirmed_at__gte=startdate, confirmed_at__lte=enddate)
+            .aggregate(total=Count("example"))
+        )
         return response
 
     def get_confirmed_time_by_example(self, users, startdate, enddate):
