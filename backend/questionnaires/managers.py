@@ -19,3 +19,16 @@ class QuestionnaireStateManager(Manager):
             if str(current_user) not in members_with_progress:
                 response["progress"].append({"user": str(current_user), "done": 0})
         return response
+
+    def get_finished_time_by_questionnaire(self, users, startdate, enddate):
+        finished_time_questionnaires = self.filter(finished_by__in=users, finished_at__gte=startdate, finished_at__lte=enddate).values()
+        return finished_time_questionnaires
+
+
+class AnswerStateManager(Manager):
+    def get_answers_time_by_user_in_given_period(self, questionnaire_ids, user, date):
+        return (
+            self.filter(user_id=user, created_at__date=date, question_id__questionnaire_id__in=questionnaire_ids)
+            .values("created_at", "question_id__questionnaire_id")
+        )
+        

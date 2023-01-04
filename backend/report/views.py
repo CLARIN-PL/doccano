@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from examples.models import Example, ExampleState, ExampleAnnotateStartState
-from questionnaires.models import QuestionnaireState
+from questionnaires.models import QuestionnaireState, Answer
 from datetime import datetime
 
 from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly
@@ -119,4 +119,42 @@ class AvgDailyAnnotationTimeAPI(APIView):
         else:
             average_daily_annotation_time = sum(daily_annotation_time) / len(daily_annotation_time)
             data = {"average_daily_annotation_time (seconds)": average_daily_annotation_time}
+            return Response(data=data, status=status.HTTP_200_OK)
+
+    
+class AvgDailyQuestionnaireTimeAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
+
+    def get(self, request, *args, **kwargs):
+        requested_user = self.kwargs["user_id"]
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        data = {}
+        finished_questionnaires_by_user = QuestionnaireState.objects.get_finished_time_by_questionnaire([requested_user], startdate, enddate)
+        if len(finished_questionnaires_by_user) == 0:
+            return Response(data={"average_daily_questionnaire_time (seconds)": 0}, status=status.HTTP_200_OK)
+        else:
+            finished_quetionnaires_df = pd.DataFrame(finished_questionnaires_by_user)
+            finished_quetionnaires_df['Date'] = finished_quetionnaires_df['finished_at'].dt.strftime('%Y-%m-%d')
+            finished_questionnaire_dates = list(finished_quetionnaires_df.Date.unique())
+            period_questionnaire_time = []
+            for date in finished_questionnaire_dates:
+                list_finished_questionnaire_ids = finished_quetionnaires_df[finished_quetionnaires_df['Date'] == date]['questionnaire_id'].tolist()
+                answered_questionnaires_by_user = Answer.objects.get_answers_time_by_user_in_given_period(list_finished_questionnaire_ids, requested_user, date=date)
+                if len(answered_questionnaires_by_user) == 0:
+                    return Response(data={"average_daily_questionnaire_time (seconds)": 0}, status=status.HTTP_200_OK)
+                else:
+                    answered_questionnaire_df = pd.DataFrame(answered_questionnaires_by_user).sort_values('created_at')
+                    answered_questionnaire_df = answered_questionnaire_df.drop_duplicates(['question_id__questionnaire_id'], keep='first')
+                    start_time_list = answered_questionnaire_df.created_at.to_list()
+                    finish_time_list = finished_quetionnaires_df[finished_quetionnaires_df['Date'] == date].finished_at.to_list()
+                    time_diff_list = [(fn - st).seconds for fn, st in zip(finish_time_list, start_time_list)]
+                    questioonaire_time_per_day = {"date": date, "total_time (seconds)": sum(time_diff_list)}
+                    period_questionnaire_time.append(questioonaire_time_per_day)
+
+        if len(period_questionnaire_time) == 0:
+            return Response(data={"average_daily_questionnaire_time (seconds)": 0}, status=status.HTTP_200_OK)
+        else:
+            average_daily_questionnaire_time = sum([i['total_time (seconds)'] for i in period_questionnaire_time]) / len(period_questionnaire_time)
+            data = {"average_daily_questionnaire_time (seconds)": average_daily_questionnaire_time, "daily_questionnaire_time": period_questionnaire_time}
             return Response(data=data, status=status.HTTP_200_OK)

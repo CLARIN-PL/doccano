@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from .managers import QuestionnaireStateManager
+from .managers import QuestionnaireStateManager, AnswerStateManager
 
 
 class QuestionnaireType(models.Model):
@@ -31,6 +31,8 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
+    objects = AnswerStateManager()
+    
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer_text = models.CharField(max_length=1024)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
