@@ -114,11 +114,12 @@ class AvgDailyAnnotationTimeAPI(APIView):
         confirm_time_daily = confirmed_df.confirmed_at.to_list()
         started_time_daily = started_df.started_at.to_list()
         daily_annotation_time = [(cf - st).seconds for cf, st in zip(confirm_time_daily, started_time_daily)]
+        annotation_time_per_day = [{"date": date, "annotation_time (seconds)": time} for date, time in zip(requested_dates, daily_annotation_time)]
         if len(daily_annotation_time) == 0:
             return Response(data={"average_daily_annotation_time (seconds)": 0}, status=status.HTTP_200_OK)
         else:
             average_daily_annotation_time = sum(daily_annotation_time) / len(daily_annotation_time)
-            data = {"average_daily_annotation_time (seconds)": average_daily_annotation_time}
+            data = {"average_daily_annotation_time (seconds)": average_daily_annotation_time, "annotation_time_per_day": annotation_time_per_day}
             return Response(data=data, status=status.HTTP_200_OK)
 
     
@@ -149,8 +150,8 @@ class AvgDailyQuestionnaireTimeAPI(APIView):
                     start_time_list = answered_questionnaire_df.created_at.to_list()
                     finish_time_list = finished_quetionnaires_df[finished_quetionnaires_df['Date'] == date].finished_at.to_list()
                     time_diff_list = [(fn - st).seconds for fn, st in zip(finish_time_list, start_time_list)]
-                    questioonaire_time_per_day = {"date": date, "total_time (seconds)": sum(time_diff_list)}
-                    period_questionnaire_time.append(questioonaire_time_per_day)
+                    questionaire_time_per_day = {"date": date, "total_time (seconds)": sum(time_diff_list)}
+                    period_questionnaire_time.append(questionaire_time_per_day)
 
         if len(period_questionnaire_time) == 0:
             return Response(data={"average_daily_questionnaire_time (seconds)": 0}, status=status.HTTP_200_OK)
