@@ -14,7 +14,6 @@ export default function ({ store, route, redirect, app }) {
         const locale = app.i18n.locale ?? 'pl'
         
         if(!isStaff && toShow.length && !isOnQuestionnairePage) {
-            console.log("test")
             return redirect("/"+ locale + "/questionnaires")
         } 
         else if(!isStaff && toShow.length && isOnQuestionnairePage) {
