@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django_drf_filepond.models import DrfFilePondStoredStorage
 
-from .managers import ExampleManager, ExampleStateManager
+from .managers import ExampleManager, ExampleStateManager, ExampleStartStateManager
 from projects.models import Project
 
 
@@ -65,6 +65,7 @@ class Comment(models.Model):
 
 
 class ExampleAnnotateStartState(models.Model):
+    objects = ExampleStartStateManager()
     example = models.ForeignKey(to=Example, on_delete=models.CASCADE, related_name="annotate_start_states")
     started_by = models.ForeignKey(to=User, on_delete=models.CASCADE)
     started_at = models.DateTimeField(auto_now=True)

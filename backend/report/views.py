@@ -1,17 +1,14 @@
-import abc
-
+import pandas as pd
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from examples.models import Example, ExampleState
+from examples.models import Example, ExampleState, ExampleAnnotateStartState
 from questionnaires.models import QuestionnaireState
 from datetime import datetime
-# from label_types.models import CategoryType, LabelType, RelationType, SpanType, ScaleType
-# from labels.models import Category, Label, Relation, Span, Scale
-# from projects.models import Member, Project
+
 from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly
 from django.contrib.auth.models import User
 
@@ -71,3 +68,55 @@ class EachMemberEveningQuestionnaireProgressAPI(APIView):
         enddate = self.kwargs["enddate"]
         data = QuestionnaireState.objects.count_all_users_evening_questionnaire_done([requested_user], startdate, enddate)
         return Response(data=data, status=status.HTTP_200_OK)
+
+
+class AverageAnnotationTimeAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
+
+    def get(self, request, *args, **kwargs):
+        requested_user = self.kwargs["user_id"]
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        confirmed_examples_by_user = ExampleState.objects.get_confirmed_time_by_example([requested_user], startdate, enddate)
+        print(confirmed_examples_by_user[0])
+        all_annotation_time = []
+        for example in confirmed_examples_by_user:
+            started_examples_by_user = ExampleAnnotateStartState.objects.get_started_time_by_example(example['example_id'], [requested_user], startdate, enddate)
+            annotation_time  = example["confirmed_at"] - started_examples_by_user[0]['started_at']
+            all_annotation_time.append(annotation_time.seconds)
+        if len(all_annotation_time) == 0:
+            return Response(data={"average_annotation_time (seconds)": 0}, status=status.HTTP_200_OK)
+        else:
+            average_annotation_time = sum(all_annotation_time) / len(all_annotation_time)
+            data = {"average_annotation_time (seconds)": average_annotation_time}
+            return Response(data=data, status=status.HTTP_200_OK)
+
+
+class AvgDailyAnnotationTimeAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
+
+    def get(self, request, *args, **kwargs):
+        requested_user = self.kwargs["user_id"]
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        confirmed_examples_by_user = ExampleState.objects.get_confirmed_time_by_example([requested_user], startdate, enddate)
+        confirmed_df = pd.DataFrame(confirmed_examples_by_user)
+        confirmed_df['Date'] = confirmed_df['confirmed_at'].dt.strftime('%Y-%m-%d')
+        confirmed_df = confirmed_df.sort_values('confirmed_at').drop_duplicates(['Date'], keep='last')
+        requested_dates = confirmed_df['Date'].tolist()
+        all_started_data = []
+        for date in requested_dates:
+            started_annotation = ExampleAnnotateStartState.objects.get_earliest_started_time_by_date([requested_user], date)
+            all_started_data.extend(started_annotation)
+        started_df = pd.DataFrame(all_started_data)
+        started_df['Date'] = started_df['started_at'].dt.strftime('%Y-%m-%d')
+        started_df = started_df.drop_duplicates(['Date'], keep='first')
+        confirm_time_daily = confirmed_df.confirmed_at.to_list()
+        started_time_daily = started_df.started_at.to_list()
+        daily_annotation_time = [(cf - st).seconds for cf, st in zip(confirm_time_daily, started_time_daily)]
+        if len(daily_annotation_time) == 0:
+            return Response(data={"average_daily_annotation_time (seconds)": 0}, status=status.HTTP_200_OK)
+        else:
+            average_daily_annotation_time = sum(daily_annotation_time) / len(daily_annotation_time)
+            data = {"average_daily_annotation_time (seconds)": average_daily_annotation_time}
+            return Response(data=data, status=status.HTTP_200_OK)

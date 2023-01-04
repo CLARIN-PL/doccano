@@ -48,3 +48,18 @@ class ExampleStateManager(Manager):
             if str(current_user) not in members_with_progress:
                 response["progress"].append({"user": str(current_user), "done": 0})
         return response
+
+    def get_confirmed_time_by_example(self, users, startdate, enddate):
+        confirmed_time_examples = self.filter(confirmed_by__in=users, confirmed_at__gte=startdate, confirmed_at__lte=enddate).values()
+        return confirmed_time_examples
+
+
+class ExampleStartStateManager(Manager):
+    def get_started_time_by_example(self, example, users, startdate, enddate):
+        started_time_examples = self.filter(started_by__in=users, started_at__gte=startdate, started_at__lte=enddate, example_id=example).values()
+        return started_time_examples
+
+    def get_earliest_started_time_by_date(self, users, date):
+        started_time_examples = self.filter(started_by__in=users, started_at__date=date).values()
+        return started_time_examples
+        
