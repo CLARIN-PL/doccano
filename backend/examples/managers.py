@@ -62,10 +62,10 @@ class ExampleStateManager(Manager):
 
 class ExampleStartStateManager(Manager):
     def get_started_time_by_example(self, example, users, startdate, enddate):
-        started_time_examples = self.filter(started_by__in=users, started_at__gte=startdate, started_at__lte=enddate, example_id=example).values()
+        started_time_examples = self.filter(started_by__in=users, started_at__gte=startdate, started_at__lte=enddate, example_id=example).values().order_by("started_at")
         return started_time_examples
 
     def get_user_started_time_by_date(self, users, date):
-        started_time_examples = self.filter(started_by__in=users, started_at__date=date).values()
+        started_time_examples = self.filter(started_by__in=users, started_at__date=date).values().order_by("started_at")
         return started_time_examples
         

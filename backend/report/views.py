@@ -1,11 +1,10 @@
 import pandas as pd
-from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from examples.models import Example, ExampleState, ExampleAnnotateStartState
+from examples.models import ExampleState, ExampleAnnotateStartState
 from questionnaires.models import QuestionnaireState, Answer
 from datetime import datetime
 
@@ -162,7 +161,6 @@ class AvgDailyQuestionnaireTimeAPI(APIView):
                     time_diff_list = [(fn - st).seconds for fn, st in zip(finish_time_list, start_time_list)]
                     questionaire_time_per_day = {"date": date, "total_time (seconds)": sum(time_diff_list)}
                     period_questionnaire_time.append(questionaire_time_per_day)
-
         if len(period_questionnaire_time) == 0:
             return Response(data={"average_daily_questionnaire_time (seconds)": 0, "total_time (seconds)": []}, status=status.HTTP_200_OK)
         else:
@@ -242,7 +240,6 @@ class AllUsersAvgDailyAnnotationTimeAPI(APIView):
                     progressed_users_annotation_time_per_day.append(time)
 
                 df = pd.DataFrame(progressed_users_annotation_time_per_day)
-                print(progressed_users_annotation_time_per_day)
                 avg_daily_annotation_time_df = df.groupby('date')['total_annotation_time (seconds)'].mean().reset_index(name='avg_annotation_time_daily (seconds)')
                 all_user_daily_avg_annotation_time = avg_daily_annotation_time_df.to_dict(orient='records')
                 list_user_avg_annotation_time_daily = df.groupby(["user_id"])['total_annotation_time (seconds)'].mean().to_list()
