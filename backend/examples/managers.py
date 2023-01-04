@@ -50,7 +50,7 @@ class ExampleStateManager(Manager):
         return response
 
     def get_confirmed_time_by_example(self, users, startdate, enddate):
-        confirmed_time_examples = self.filter(confirmed_by__in=users, confirmed_at__gte=startdate, confirmed_at__lte=enddate).values()
+        confirmed_time_examples = self.filter(confirmed_by__in=users, confirmed_at__gte=startdate, confirmed_at__lte=enddate).values().order_by("confirmed_at")
         return confirmed_time_examples
 
 

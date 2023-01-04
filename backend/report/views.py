@@ -78,17 +78,30 @@ class AverageAnnotationTimeAPI(APIView):
         startdate = self.kwargs["startdate"]
         enddate = self.kwargs["enddate"]
         confirmed_examples_by_user = ExampleState.objects.get_confirmed_time_by_example([requested_user], startdate, enddate)
-        print(confirmed_examples_by_user[0])
-        all_annotation_time = []
-        for example in confirmed_examples_by_user:
-            started_examples_by_user = ExampleAnnotateStartState.objects.get_started_time_by_example(example['example_id'], [requested_user], startdate, enddate)
-            annotation_time  = example["confirmed_at"] - started_examples_by_user[0]['started_at']
-            all_annotation_time.append(annotation_time.seconds)
-        if len(all_annotation_time) == 0:
-            return Response(data={"average_annotation_time (seconds)": 0}, status=status.HTTP_200_OK)
+        if len(confirmed_examples_by_user) == 0:
+            data = {"average_annotation_time (seconds)": 0, "daily_average_annotation_time": []}
+            return Response(data=data, status=status.HTTP_200_OK)
         else:
-            average_annotation_time = sum(all_annotation_time) / len(all_annotation_time)
-            data = {"average_annotation_time (seconds)": average_annotation_time}
+            confirmed_df = pd.DataFrame(confirmed_examples_by_user)
+            confirmed_df['Date'] = confirmed_df['confirmed_at'].dt.strftime('%Y-%m-%d')
+            confirmed_dates = list(confirmed_df.Date.unique())
+            daily_avg_single_annotation_time = []
+            all_single_annotation_time = []
+            for date in confirmed_dates:
+                requested_examples = confirmed_df[confirmed_df['Date'] == date].example_id
+                daily_single_annotation_time = []
+                for example_id in requested_examples:
+                    started_examples_by_user = ExampleAnnotateStartState.objects.get_started_time_by_example(example_id, [requested_user], startdate, enddate)
+                    annotation_time  = confirmed_df[confirmed_df['example_id']==example_id]["confirmed_at"] - started_examples_by_user[0]['started_at']
+                    daily_single_annotation_time.append(annotation_time.dt.seconds.values[0])
+                    all_single_annotation_time.append(annotation_time.dt.seconds.values[0])
+                average_daily_annotation_time = sum(daily_single_annotation_time) / len(daily_single_annotation_time)
+                single_annotation_time_per_day = {"date": date, "average_annotation_time (seconds)": average_daily_annotation_time}
+                daily_avg_single_annotation_time.append(single_annotation_time_per_day)
+                
+            average_annotation_time = sum(all_single_annotation_time) / len(all_single_annotation_time)
+            data = {"average_annotation_time (seconds)": average_annotation_time, "daily_average_annotation_time": daily_avg_single_annotation_time}
+
             return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -116,10 +129,10 @@ class AvgDailyAnnotationTimeAPI(APIView):
         daily_annotation_time = [(cf - st).seconds for cf, st in zip(confirm_time_daily, started_time_daily)]
         annotation_time_per_day = [{"date": date, "annotation_time (seconds)": time} for date, time in zip(requested_dates, daily_annotation_time)]
         if len(daily_annotation_time) == 0:
-            return Response(data={"average_daily_annotation_time (seconds)": 0}, status=status.HTTP_200_OK)
+            return Response(data={"average_daily_annotation_time (seconds)": 0, "annotation_time_per_day (seconds)": []}, status=status.HTTP_200_OK)
         else:
             average_daily_annotation_time = sum(daily_annotation_time) / len(daily_annotation_time)
-            data = {"average_daily_annotation_time (seconds)": average_daily_annotation_time, "annotation_time_per_day": annotation_time_per_day}
+            data = {"average_daily_annotation_time (seconds)": average_daily_annotation_time, "annotation_time_per_day (seconds)": annotation_time_per_day}
             return Response(data=data, status=status.HTTP_200_OK)
 
     
@@ -143,7 +156,7 @@ class AvgDailyQuestionnaireTimeAPI(APIView):
                 list_finished_questionnaire_ids = finished_quetionnaires_df[finished_quetionnaires_df['Date'] == date]['questionnaire_id'].tolist()
                 answered_questionnaires_by_user = Answer.objects.get_answers_time_by_user_in_given_period(list_finished_questionnaire_ids, requested_user, date=date)
                 if len(answered_questionnaires_by_user) == 0:
-                    return Response(data={"average_daily_questionnaire_time (seconds)": 0}, status=status.HTTP_200_OK)
+                    return Response(data={"average_daily_questionnaire_time (seconds)": 0, "total_time (seconds)": []}, status=status.HTTP_200_OK)
                 else:
                     answered_questionnaire_df = pd.DataFrame(answered_questionnaires_by_user).sort_values('created_at')
                     answered_questionnaire_df = answered_questionnaire_df.drop_duplicates(['question_id__questionnaire_id'], keep='first')
@@ -154,7 +167,7 @@ class AvgDailyQuestionnaireTimeAPI(APIView):
                     period_questionnaire_time.append(questionaire_time_per_day)
 
         if len(period_questionnaire_time) == 0:
-            return Response(data={"average_daily_questionnaire_time (seconds)": 0}, status=status.HTTP_200_OK)
+            return Response(data={"average_daily_questionnaire_time (seconds)": 0, "total_time (seconds)": []}, status=status.HTTP_200_OK)
         else:
             average_daily_questionnaire_time = sum([i['total_time (seconds)'] for i in period_questionnaire_time]) / len(period_questionnaire_time)
             data = {"average_daily_questionnaire_time (seconds)": average_daily_questionnaire_time, "daily_questionnaire_time": period_questionnaire_time}
