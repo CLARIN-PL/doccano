@@ -199,14 +199,17 @@ class AllUsersAverageAnnotationTimeAPI(APIView):
                     daily_avg_single_annotation_time.append(single_annotation_time_per_day)
                 for time in daily_avg_single_annotation_time:
                     progressed_users_avg_annotation_time_per_day.append(time)
-                df = pd.DataFrame(progressed_users_avg_annotation_time_per_day)
-                df = df.groupby('date')['average_annotation_time (seconds)'].mean().reset_index(name='avg_annotation_time_single_text (seconds)')
-                all_user_daily_avg_single_annotation_time = df.to_dict(orient='records')
-                for time in all_single_annotation_time:
-                    progressed_users_avg_annotation_time.append(time)
-                all_user_average_annotation_time = sum(progressed_users_avg_annotation_time) / len(progressed_users_avg_annotation_time)
-                data = {"average_annotation_time (seconds)": all_user_average_annotation_time, "daily_average_annotation_time": all_user_daily_avg_single_annotation_time}
-        return Response(data=data, status=status.HTTP_200_OK)
+        if progressed_users_avg_annotation_time_per_day:
+            df = pd.DataFrame(progressed_users_avg_annotation_time_per_day)
+            df = df.groupby('date')['average_annotation_time (seconds)'].mean().reset_index(name='avg_annotation_time_single_text (seconds)')
+            all_user_daily_avg_single_annotation_time = df.to_dict(orient='records')
+            for time in all_single_annotation_time:
+                progressed_users_avg_annotation_time.append(time)
+            all_user_average_annotation_time = sum(progressed_users_avg_annotation_time) / len(progressed_users_avg_annotation_time)
+            data = {"average_annotation_time (seconds)": all_user_average_annotation_time, "daily_average_annotation_time": all_user_daily_avg_single_annotation_time}
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            return Response(data={"average_annotation_time (seconds)": 0, "daily_average_annotation_time": []}, status=status.HTTP_200_OK)
 
 
 class AllUsersAvgDailyAnnotationTimeAPI(APIView):
@@ -238,14 +241,18 @@ class AllUsersAvgDailyAnnotationTimeAPI(APIView):
                     daily_user_annotation_time.append(total_annotation_time_per_day)
                 for time in daily_user_annotation_time:
                     progressed_users_annotation_time_per_day.append(time)
+        if progressed_users_annotation_time_per_day:
+            df = pd.DataFrame(progressed_users_annotation_time_per_day)
+            avg_daily_annotation_time_df = df.groupby('date')['total_annotation_time (seconds)'].mean().reset_index(name='avg_annotation_time_daily (seconds)')
+            all_user_daily_avg_annotation_time = avg_daily_annotation_time_df.to_dict(orient='records')
+            list_user_avg_annotation_time_daily = df.groupby(["user_id"])['total_annotation_time (seconds)'].mean().to_list()
+            all_user_average_annotation_time = sum(list_user_avg_annotation_time_daily) / len(list_user_avg_annotation_time_daily)
 
-                df = pd.DataFrame(progressed_users_annotation_time_per_day)
-                avg_daily_annotation_time_df = df.groupby('date')['total_annotation_time (seconds)'].mean().reset_index(name='avg_annotation_time_daily (seconds)')
-                all_user_daily_avg_annotation_time = avg_daily_annotation_time_df.to_dict(orient='records')
-                list_user_avg_annotation_time_daily = df.groupby(["user_id"])['total_annotation_time (seconds)'].mean().to_list()
-                all_user_average_annotation_time = sum(list_user_avg_annotation_time_daily) / len(list_user_avg_annotation_time_daily)
-                data = {"average_annotation_time (seconds)": all_user_average_annotation_time, "daily_average_annotation_time": all_user_daily_avg_annotation_time}
-        return Response(data=data, status=status.HTTP_200_OK)
+            data = {"average_annotation_time (seconds)": all_user_average_annotation_time, "daily_average_annotation_time": all_user_daily_avg_annotation_time}
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            data = {"average_annotation_time (seconds)": 0, "daily_average_annotation_time": []}
+            return Response(data=data, status=status.HTTP_200_OK)
 
 
 class AllUserAvgDailyQuestionnaireTimeAPI(APIView):
@@ -286,4 +293,7 @@ class AllUserAvgDailyQuestionnaireTimeAPI(APIView):
             avg_daily_questionnaire_time_df = df.groupby('date')['total_time (seconds)'].mean().reset_index(name='avg_questionnaire_time_daily (seconds)')
             all_user_daily_avg_questionnaire_time = avg_daily_questionnaire_time_df.to_dict(orient='records')
             data = {"average_daily_questionnaire_time (seconds)": all_user_average_questionnaire_time, "daily_questionnaire_time": all_user_daily_avg_questionnaire_time}
-        return Response(data=data, status=status.HTTP_200_OK)
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            data = {"average_daily_questionnaire_time (seconds)": 0, "daily_questionnaire_time": []}
+            return Response(data=data, status=status.HTTP_200_OK)
