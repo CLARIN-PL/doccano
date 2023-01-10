@@ -5,6 +5,7 @@ export default {
   userStats: '用户统计',
   totalTextsAnnotated : "您已注释的文本总数:",
   weeklyStats: {
+    button: "每周统计",
     weekSelectPrompt: "--选择一个星期的范围--",
     startDate: "开始日期: ",
     endDate: "结束日期: ",

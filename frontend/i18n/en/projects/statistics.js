@@ -5,6 +5,7 @@ export default {
   userStats: 'User stats',
   totalTextsAnnotated : "Total number of texts that you have annotated:",
   weeklyStats: {
+    button: "Weekly Statistics",
     weekSelectPrompt: '-- Select a week range --',
     startDate: 'Start Date: ',
     endDate: 'End Date: ',

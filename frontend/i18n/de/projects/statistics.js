@@ -5,6 +5,7 @@ export default {
   userStats: 'Nutzerstatistiken',
   totalTextsAnnotated : "Gesamtzahl der Texte, die Sie kommentiert haben:",
   weeklyStats: {
+    button: "Wöchentliche Statistiken",
     weekSelectPrompt: '-- Wählen Sie einen Wochenbereich aus --',
     startDate: 'Anfangsdatum: ',
     endDate: 'Enddatum: ',
