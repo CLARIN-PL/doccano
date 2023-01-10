@@ -21,7 +21,7 @@
         color="teal"
         @click.stop="$router.push('statistics/')"
       >
-        {{ $t('statistics.weeklyStats') }}
+        {{ $t('statistics.weeklyStats.button') }}
       </v-btn>
     </v-card-title>
     <big-number-card
