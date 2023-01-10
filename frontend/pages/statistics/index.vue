@@ -6,7 +6,7 @@
           <h3>{{ $t('statistics.weeklyStats.aggregated.title') }}</h3>
         </v-card-title>
         <v-card-text>
-          <v-row align="center" justify="center" class="mb-3">
+          <v-row align="center" justify="center" class="report mb-3">
             <v-col cols="12">
               <v-select
                 :items="weeks"
@@ -15,56 +15,64 @@
                 @change="weekChangeHandler"
               ></v-select>
             </v-col>
-            <v-col cols="12" class="bordered">
+            <v-col cols="12" class="report-item">
               <p>{{ $t('statistics.weeklyStats.startDate') + weekStartDate }}</p>
               <p>{{ $t('statistics.weeklyStats.endDate') + weekEndDate }}</p>
             </v-col>
-            <v-col cols="6" class="bordered">
+            <v-col cols="6" class="report-item d-flex">
               <big-number-card
                 :label="$t('statistics.weeklyStats.aggregated.totalAnnotations')"
                 :value="weeklyAggregatedStats.totalAnnotationsCount"
                 :show-decimal="false"
+                class="flex-grow-1"
               />
             </v-col>
-            <v-col cols="6" class="bordered">
+            <v-col cols="6" class="report-item d-flex">
               <big-number-card
                 :label="$t('statistics.weeklyStats.aggregated.totalEveningQuestionnaires')"
                 :value="weeklyAggregatedStats.totalEveningQuestionnairesCount"
                 :show-decimal="false"
+                class="flex-grow-1"
               />
             </v-col>
-            <v-col cols="6" class="bordered">
-              <big-number-card
-                :label="$t('statistics.weeklyStats.aggregated.avgTimeAnnotate')"
-                :value="weeklyAggregatedStats.meanAvgTimeAnnotate"
-                :show-decimal="true"
-              />
-              <bar-chart
-                :key="chartKeys.weeklyAggregatedStats.avgTimeAnnotate"
-                :chart-data="weeklyAggregatedStats.avgTimeAnnotate"
-              />
+            <v-col cols="6" class="report-item d-flex">
+              <div class="flex-grow-1">
+                <big-number-card
+                  :label="$t('statistics.weeklyStats.aggregated.avgTimeAnnotate')"
+                  :value="weeklyAggregatedStats.meanAvgTimeAnnotate"
+                  :show-decimal="true"
+                />
+                <bar-chart
+                  :key="chartKeys.weeklyAggregatedStats.avgTimeAnnotate"
+                  :chart-data="weeklyAggregatedStats.avgTimeAnnotate"
+                />
+              </div>
             </v-col>
-            <v-col cols="6" class="bordered">
-              <big-number-card
-                :label="$t('statistics.weeklyStats.aggregated.avgTimeQuestionnaire')"
-                :value="weeklyAggregatedStats.meanAvgTimeQuestionnaire"
-                :show-decimal="true"
-              />
-              <bar-chart
-                :key="chartKeys.weeklyAggregatedStats.avgTimeQuestionnaire"
-                :chart-data="weeklyAggregatedStats.avgTimeQuestionnaire"
-              />
+            <v-col cols="6" class="report-item d-flex">
+              <div class="flex-grow-1">
+                <big-number-card
+                  :label="$t('statistics.weeklyStats.aggregated.avgTimeQuestionnaire')"
+                  :value="weeklyAggregatedStats.meanAvgTimeQuestionnaire"
+                  :show-decimal="true"
+                />
+                <bar-chart
+                  :key="chartKeys.weeklyAggregatedStats.avgTimeQuestionnaire"
+                  :chart-data="weeklyAggregatedStats.avgTimeQuestionnaire"
+                />
+              </div>
             </v-col>
-            <v-col cols="6" class="bordered">
-              <big-number-card
-                :label="$t('statistics.weeklyStats.aggregated.avgTimeText')"
-                :value="weeklyAggregatedStats.meanAvgTimeText"
-                :show-decimal="true"
-              />
-              <bar-chart
-                :key="chartKeys.weeklyAggregatedStats.avgTimeText"
-                :chart-data="weeklyAggregatedStats.avgTimeText"
-              />
+            <v-col cols="6" class="report-item d-flex">
+              <div class="flex-grow-1">
+                <big-number-card
+                  :label="$t('statistics.weeklyStats.aggregated.avgTimeText')"
+                  :value="weeklyAggregatedStats.meanAvgTimeText"
+                  :show-decimal="true"
+                />
+                <bar-chart
+                  :key="chartKeys.weeklyAggregatedStats.avgTimeText"
+                  :chart-data="weeklyAggregatedStats.avgTimeText"
+                />
+              </div>
             </v-col>
           </v-row>
         </v-card-text>
@@ -88,58 +96,66 @@
             :error="error"
             return-object
           />
-          <v-row align="center" justify="center" class="mb-3">
-            <v-col cols="12" class="bordered">
+          <v-row align="center" justify="center" class="report mb-3">
+            <v-col cols="12" class="report-item">
               <p>{{ $t('statistics.weeklyStats.startDate') + weekStartDate }}</p>
               <p>{{ $t('statistics.weeklyStats.endDate') + weekEndDate }}</p>
               <p>{{ $t('statistics.weeklyStats.selectedUsername') + selectedUsername }}</p>
             </v-col>
-            <v-col cols="6" class="bordered">
+            <v-col cols="6" class="report-item d-flex">
               <big-number-card
                 :label="$t('statistics.weeklyStats.individual.totalAnnotations')"
                 :value="weeklyIndividualStats.totalAnnotationsCount"
                 :show-decimal="false"
+                class="flex-grow-1"
               />
             </v-col>
-            <v-col cols="6" class="bordered">
+            <v-col cols="6" class="report-item d-flex">
               <big-number-card
                 :label="$t('statistics.weeklyStats.individual.totalEveningQuestionnaires')"
                 :value="weeklyIndividualStats.totalEveningQuestionnairesCount"
                 :show-decimal="false"
+                class="flex-grow-1"
               />
             </v-col>
-            <v-col cols="6" class="bordered">
-              <big-number-card
-                :label="$t('statistics.weeklyStats.individual.avgTimeAnnotate')"
-                :value="weeklyIndividualStats.meanAvgTimeAnnotate"
-                :show-decimal="true"
-              />
-              <bar-chart
-                :key="chartKeys.weeklyIndividualStats.avgTimeAnnotate"
-                :chart-data="weeklyIndividualStats.avgTimeAnnotate"
-              />
+            <v-col cols="6" class="report-item d-flex">
+              <div class="flex-grow-1">
+                <big-number-card
+                  :label="$t('statistics.weeklyStats.individual.avgTimeAnnotate')"
+                  :value="weeklyIndividualStats.meanAvgTimeAnnotate"
+                  :show-decimal="true"
+                />
+                <bar-chart
+                  :key="chartKeys.weeklyIndividualStats.avgTimeAnnotate"
+                  :chart-data="weeklyIndividualStats.avgTimeAnnotate"
+                />
+              </div>
             </v-col>
-            <v-col cols="6" class="bordered">
-              <big-number-card
-                :label="$t('statistics.weeklyStats.individual.avgTimeQuestionnaire')"
-                :value="weeklyIndividualStats.meanAvgTimeQuestionnaire"
-                :show-decimal="true"
-              />
-              <bar-chart
-                :key="chartKeys.weeklyIndividualStats.avgTimeQuestionnaire"
-                :chart-data="weeklyIndividualStats.avgTimeQuestionnaire"
-              />
+            <v-col cols="6" class="report-item d-flex">
+              <div class="flex-grow-1">
+                <big-number-card
+                  :label="$t('statistics.weeklyStats.individual.avgTimeQuestionnaire')"
+                  :value="weeklyIndividualStats.meanAvgTimeQuestionnaire"
+                  :show-decimal="true"
+                />
+                <bar-chart
+                  :key="chartKeys.weeklyIndividualStats.avgTimeQuestionnaire"
+                  :chart-data="weeklyIndividualStats.avgTimeQuestionnaire"
+                />
+              </div>
             </v-col>
-            <v-col cols="6" class="bordered">
-              <big-number-card
-                :label="$t('statistics.weeklyStats.individual.avgTimeText')"
-                :value="weeklyIndividualStats.meanAvgTimeText"
-                :show-decimal="true"
-              />
-              <bar-chart
-                :key="chartKeys.weeklyIndividualStats.avgTimeText"
-                :chart-data="weeklyIndividualStats.avgTimeText"
-              />
+            <v-col cols="6" class="report-item d-flex">
+              <div class="flex-grow-1">
+                <big-number-card
+                  :label="$t('statistics.weeklyStats.individual.avgTimeText')"
+                  :value="weeklyIndividualStats.meanAvgTimeText"
+                  :show-decimal="true"
+                />
+                <bar-chart
+                  :key="chartKeys.weeklyIndividualStats.avgTimeText"
+                  :chart-data="weeklyIndividualStats.avgTimeText"
+                />
+              </div>
             </v-col>
           </v-row>
         </v-card-text>
@@ -466,7 +482,8 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-.bordered {
+.report-item {
+  flex-direction:column;
   border: 1px solid black;
 }
 
