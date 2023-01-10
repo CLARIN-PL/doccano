@@ -3,7 +3,7 @@ export default {
   role: 'Rola',
   updateRole: 'Aktualizuj rolę',
   addMember: 'Dodaj członka',
-  userSearchAPI: 'Interfejsy API Wyszukiwania Użytkownika',
+  userSearchAPIs: 'Interfejsy API Wyszukiwania Użytkownika',
   userSearchPrompt: 'Zacznij pisać, aby wyszukać',
   removeMember: 'Usuń członka',
   removePrompt: 'Czy na pewno chcesz usunąć tych członków?',

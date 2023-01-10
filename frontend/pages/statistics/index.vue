@@ -3,39 +3,39 @@
     <v-col cols="10" class="mt-10">
       <v-card class="mb-2 pa-5">
         <v-card-title class="mb-3">
-          <h3>Weekly Statistics for All Users</h3>
+          <h3>{{ $t('statistics.weeklyStats.aggregated.title') }}</h3>
         </v-card-title>
         <v-card-text>
           <v-row align="center" justify="center" class="mb-3">
             <v-col cols="12">
               <v-select
                 :items="weeks"
-                label="-- Select a week range --"
+                :label="$t('statistics.weeklyStats.weekSelectPrompt')"
                 outlined
                 @change="weekChangeHandler"
               ></v-select>
             </v-col>
             <v-col cols="12" class="bordered">
-              <p>Start Date: {{ weekStartDate }}</p>
-              <p>End Date: {{ weekEndDate }}</p>
+              <p>{{ $t('statistics.weeklyStats.startDate') + weekStartDate }}</p>
+              <p>{{ $t('statistics.weeklyStats.endDate') + weekEndDate }}</p>
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
-                :label="'Total annotations made this week:'"
+                :label="$t('statistics.weeklyStats.aggregated.totalAnnotations')"
                 :value="weeklyAggregatedStats.totalAnnotationsCount"
                 :show-decimal="false"
               />
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
-                :label="'Total evening questionnaires made this week:'"
+                :label="$t('statistics.weeklyStats.aggregated.totalEveningQuestionnaires')"
                 :value="weeklyAggregatedStats.totalEveningQuestionnairesCount"
                 :show-decimal="false"
               />
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
-                :label="'Average time users spend daily with annotating (hour):'"
+                :label="$t('statistics.weeklyStats.aggregated.avgTimeAnnotate')"
                 :value="weeklyAggregatedStats.meanAvgTimeAnnotate"
                 :show-decimal="true"
               />
@@ -46,7 +46,7 @@
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
-                :label="'Average time users spend daily with questionnaires (hour):'"
+                :label="$t('statistics.weeklyStats.aggregated.avgTimeQuestionnaire')"
                 :value="weeklyAggregatedStats.meanAvgTimeQuestionnaire"
                 :show-decimal="true"
               />
@@ -57,7 +57,7 @@
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
-                :label="'Average time users spend to annotate a single text (minute):'"
+                :label="$t('statistics.weeklyStats.aggregated.avgTimeText')"
                 :value="weeklyAggregatedStats.meanAvgTimeText"
                 :show-decimal="true"
               />
@@ -71,7 +71,7 @@
       </v-card>
       <v-card class="mb-2 pa-5">
         <v-card-title class="mb-3">
-          Weekly Statistics for Individual User
+          <h3>{{ $t('statistics.weeklyStats.individual.title') }}</h3>
         </v-card-title>
         <v-card-text>
           <v-autocomplete
@@ -90,27 +90,27 @@
           />
           <v-row align="center" justify="center" class="mb-3">
             <v-col cols="12" class="bordered">
-              <p>Start Date: {{ weekStartDate }}</p>
-              <p>End Date: {{ weekEndDate }}</p>
-              <p>User: {{ selectedUsername }}</p>
+              <p>{{ $t('statistics.weeklyStats.startDate') + weekStartDate }}</p>
+              <p>{{ $t('statistics.weeklyStats.endDate') + weekEndDate }}</p>
+              <p>{{ $t('statistics.weeklyStats.selectedUsername') + selectedUsername }}</p>
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
-                :label="'Total annotations made by this user this week:'"
+                :label="$t('statistics.weeklyStats.individual.totalAnnotations')"
                 :value="weeklyIndividualStats.totalAnnotationsCount"
                 :show-decimal="false"
               />
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
-                :label="'Total evening questionnaires made by this user this week:'"
+                :label="$t('statistics.weeklyStats.individual.totalEveningQuestionnaires')"
                 :value="weeklyIndividualStats.totalEveningQuestionnairesCount"
                 :show-decimal="false"
               />
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
-                :label="'Average time the user spends daily with annotating (hour):'"
+                :label="$t('statistics.weeklyStats.individual.avgTimeAnnotate')"
                 :value="weeklyIndividualStats.meanAvgTimeAnnotate"
                 :show-decimal="true"
               />
@@ -121,7 +121,7 @@
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
-                :label="'Average time the user spends daily with questionnaires (hour):'"
+                :label="$t('statistics.weeklyStats.individual.avgTimeQuestionnaire')"
                 :value="weeklyIndividualStats.meanAvgTimeQuestionnaire"
                 :show-decimal="true"
               />
@@ -132,7 +132,7 @@
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
-                :label="'Average time the user spends to annotate a single text (minute):'"
+                :label="$t('statistics.weeklyStats.individual.avgTimeText')"
                 :value="weeklyIndividualStats.meanAvgTimeText"
                 :show-decimal="true"
               />
@@ -146,7 +146,7 @@
       </v-card>
     </v-col>
     <div v-show="isLoadingChartData" class="loading-anim">
-      <p>Please wait....</p>
+      <p>{{ $t('generic.loading') }}</p>
       <v-progress-circular
         :size="90"
         color="primary"
