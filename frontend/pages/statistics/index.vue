@@ -12,29 +12,32 @@
                 :items="weeks"
                 label="-- Select a week range --"
                 outlined
-                @change="fetchAggregatedWeekStatistics"
+                @change="weekChangeHandler"
               ></v-select>
             </v-col>
             <v-col cols="12" class="bordered">
-              <p>Start Date: 12 December 2022</p>
-              <p>End Date: 18 December 2022</p>
+              <p>Start Date: {{ weekStartDate }}</p>
+              <p>End Date: {{ weekEndDate }}</p>
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
                 :label="'Total annotations made this week:'"
-                :value="12324"
+                :value="weeklyAggregatedStats.totalAnnotationsCount"
+                :show-decimal="false"
               />
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
                 :label="'Total evening questionnaires made this week:'"
-                :value="128"
+                :value="weeklyAggregatedStats.totalEveningQuestionnairesCount"
+                :show-decimal="false"
               />
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
                 :label="'Average time users spend daily with annotating (hour):'"
-                :value="3.4"
+                :value="weeklyAggregatedStats.meanAvgTimeAnnotate"
+                :show-decimal="true"
               />
               <bar-chart
                 :key="chartKeys.weeklyAggregatedStats.avgTimeAnnotate"
@@ -44,7 +47,8 @@
             <v-col cols="6" class="bordered">
               <big-number-card
                 :label="'Average time users spend daily with questionnaires (hour):'"
-                :value="3.4"
+                :value="weeklyAggregatedStats.meanAvgTimeQuestionnaire"
+                :show-decimal="true"
               />
               <bar-chart
                 :key="chartKeys.weeklyAggregatedStats.avgTimeQuestionnaire"
@@ -54,7 +58,8 @@
             <v-col cols="6" class="bordered">
               <big-number-card
                 :label="'Average time users spend to annotate a single text (minute):'"
-                :value="3.4"
+                :value="weeklyAggregatedStats.meanAvgTimeText"
+                :show-decimal="true"
               />
               <bar-chart
                 :key="chartKeys.weeklyAggregatedStats.avgTimeText"
@@ -72,7 +77,7 @@
           <v-autocomplete
             v-model="user"
             :items="users"
-            :loading="isLoading"
+            :loading="isLoadingUserList"
             :search-input.sync="username"
             hide-no-data
             item-text="username"
@@ -85,26 +90,29 @@
           />
           <v-row align="center" justify="center" class="mb-3">
             <v-col cols="12" class="bordered">
-              <p>Start Date: 12 December 2022</p>
-              <p>End Date: 18 December 2022</p>
-              <p>User: Annotator2</p>
+              <p>Start Date: {{ weekStartDate }}</p>
+              <p>End Date: {{ weekEndDate }}</p>
+              <p>User: {{ selectedUsername }}</p>
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
                 :label="'Total annotations made by this user this week:'"
-                :value="12324"
+                :value="weeklyIndividualStats.totalAnnotationsCount"
+                :show-decimal="false"
               />
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
                 :label="'Total evening questionnaires made by this user this week:'"
-                :value="128"
+                :value="weeklyIndividualStats.totalEveningQuestionnairesCount"
+                :show-decimal="false"
               />
             </v-col>
             <v-col cols="6" class="bordered">
               <big-number-card
                 :label="'Average time the user spends daily with annotating (hour):'"
-                :value="3.4"
+                :value="weeklyIndividualStats.meanAvgTimeAnnotate"
+                :show-decimal="true"
               />
               <bar-chart
                 :key="chartKeys.weeklyIndividualStats.avgTimeAnnotate"
@@ -114,7 +122,8 @@
             <v-col cols="6" class="bordered">
               <big-number-card
                 :label="'Average time the user spends daily with questionnaires (hour):'"
-                :value="3.4"
+                :value="weeklyIndividualStats.meanAvgTimeQuestionnaire"
+                :show-decimal="true"
               />
               <bar-chart
                 :key="chartKeys.weeklyIndividualStats.avgTimeQuestionnaire"
@@ -124,7 +133,8 @@
             <v-col cols="6" class="bordered">
               <big-number-card
                 :label="'Average time the user spends to annotate a single text (minute):'"
-                :value="3.4"
+                :value="weeklyIndividualStats.meanAvgTimeText"
+                :show-decimal="true"
               />
               <bar-chart
                 :key="chartKeys.weeklyIndividualStats.avgTimeText"
@@ -135,6 +145,14 @@
         </v-card-text>
       </v-card>
     </v-col>
+    <div v-show="isLoadingChartData" class="loading-anim">
+      <p>Please wait....</p>
+      <v-progress-circular
+        :size="90"
+        color="primary"
+        indeterminate
+      />
+    </div>
   </v-row>
 </template>
 
@@ -146,6 +164,7 @@ import { mdiAccount } from '@mdi/js'
 import BigNumberCard from '@/components/utils/BigNumberCard.vue'
 import BarChart from '@/components/metrics/ChartBar.vue'
 import { UserDTO } from '~/services/application/user/userData'
+import { DailyAverageTime } from '~/domain/models/statistics/statistics'
 
 export default Vue.extend({
   name: 'Statistics',
@@ -159,9 +178,15 @@ export default Vue.extend({
   data() {
     return {
       mdiAccount,
-      isLoading: false,
+      isLoadingUserList: false,
+      isLoadingChartData: false,
       error: false,
+      researchStartDate: '2022-12-01',
+      dateFormatAPI: 'YYYY-MM-DD',
+      dateFormatUI: 'ddd, DD MMM YYYY',
       week: '',
+      weekStartDate: '',
+      weekEndDate: '',
       users: [] as UserDTO[],
       user: null,
       username: '',
@@ -169,113 +194,75 @@ export default Vue.extend({
         userRequired: (v: UserDTO) => (!!v && !!v.username) || 'Required'
       },
       weeklyAggregatedStats: {
+        totalAnnotationsCount: 0,
+        totalEveningQuestionnairesCount: 0,
+        meanAvgTimeAnnotate: 0,
         avgTimeAnnotate: {
-          labels: [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday'
-          ],
+          labels: [] as string[],
           datasets: [
             {
-              label: 'Sample Chart',
+              label: 'Chart',
               backgroundColor: '#f87979',
-              data: [3.7, 3.6, 3.9, 4.1, 4.2, 2.1, 2.2]
+              data: [] as number[]
             }
           ]
         },
+        meanAvgTimeQuestionnaire: 0,
         avgTimeQuestionnaire: {
-          labels: [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday'
-          ],
+          labels: [] as string[],
           datasets: [
             {
-              label: 'Sample Chart',
+              label: 'Chart',
               backgroundColor: '#f87979',
-              data: [3.7, 3.6, 3.9, 4.1, 4.2, 2.1, 2.2]
+              data: [] as number[]
             }
           ]
         },
+        meanAvgTimeText: 0,
         avgTimeText: {
-          labels: [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday'
-          ],
+          labels: [] as string[],
           datasets: [
             {
-              label: 'Sample Chart',
+              label: 'Chart',
               backgroundColor: '#f87979',
-              data: [3.7, 3.6, 3.9, 4.1, 4.2, 2.1, 2.2]
+              data: [] as number[]
             }
           ]
         }
       },
       weeklyIndividualStats: {
+        totalAnnotationsCount: 0,
+        totalEveningQuestionnairesCount: 0,
+        meanAvgTimeAnnotate: 0,
         avgTimeAnnotate: {
-          labels: [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday'
-          ],
+          labels: [] as string[],
           datasets: [
             {
-              label: 'Sample Chart',
+              label: 'Chart',
               backgroundColor: '#f87979',
-              data: [0, 0, 0, 0, 0, 0, 0]
+              data: [] as number[]
             }
           ]
         },
+        meanAvgTimeQuestionnaire: 0,
         avgTimeQuestionnaire: {
-          labels: [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday'
-          ],
+          labels: [] as string[],
           datasets: [
             {
-              label: 'Sample Chart',
+              label: 'Chart',
               backgroundColor: '#f87979',
-              data: [0, 0, 0, 0, 0, 0, 0]
+              data: [] as number[]
             }
           ]
         },
+        meanAvgTimeText: 0,
         avgTimeText: {
-          labels: [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday'
-          ],
+          labels: [] as string[],
           datasets: [
             {
-              label: 'Sample Chart',
+              label: 'Chart',
               backgroundColor: '#f87979',
-              data: [0, 0, 0, 0, 0, 0, 0]
+              data: [] as number[]
             }
           ]
         }
@@ -296,16 +283,14 @@ export default Vue.extend({
   },
 
   async fetch() {
-    this.isLoading = true
+    this.isLoadingUserList = true
     this.users = await this.$services.user.list(this.username)
-    // fetch data of current week
-    this.isLoading = false
+    this.isLoadingUserList = false
   },
 
   computed: {
     weeks() {
-      const strDateFormat = 'ddd, DD/MM/YYYY'
-      const startPeriod = moment('2022-12-01')
+      const startPeriod = moment(this.researchStartDate)
       const endPeriod = moment()
       const weeks = []
       let newStartPeriod = startPeriod
@@ -314,17 +299,24 @@ export default Vue.extend({
       if (startPeriod.day() !== 1) {
         const dayPluses = 7 - startPeriod.day()
         lastDateOfWeek = startPeriod.clone().add(dayPluses, 'days')
-        week = startPeriod.format(strDateFormat) + " - " + lastDateOfWeek.format(strDateFormat)
+        week = startPeriod.format(this.dateFormatUI) + " - " + lastDateOfWeek.format(this.dateFormatUI)
         weeks.unshift(week)
         newStartPeriod = lastDateOfWeek.clone().add(1, 'days')
       }
       while (!newStartPeriod.isAfter(endPeriod)) {
         lastDateOfWeek = newStartPeriod.clone().add(6, 'days')
-        week = newStartPeriod.format(strDateFormat) + " - " + lastDateOfWeek.format(strDateFormat)
+        week = newStartPeriod.format(this.dateFormatUI) + " - " + lastDateOfWeek.format(this.dateFormatUI)
         weeks.unshift(week)
         newStartPeriod = lastDateOfWeek.clone().add(1, 'days')
       }
       return weeks
+    },
+    selectedUsername() {
+      if (this.user !== null) {
+        const user = this.user! as UserDTO
+        return user.username
+      }
+      return ''
     }
   },
 
@@ -333,11 +325,11 @@ export default Vue.extend({
       // Items have already been loaded
       if (this.users.length > 0) return
       // Items have already been requested
-      if (this.isLoading) return
+      if (this.isLoadingUserList) return
       this.$fetch()
     },
-    user(val) {
-      this.fetchIndividualWeekStatistics(this.week, val)
+    async user(val) {
+      await this.fetchIndividualWeekStatistics(val)
     }
   },
 
@@ -347,37 +339,127 @@ export default Vue.extend({
     }
   },
 
+  async mounted() {
+    this.week = this.weeks[0]
+    this.setWeekStartAndWeekEnd()
+    await this.fetchAggregatedWeekStatistics()
+  },
+
   methods: {
     ...mapGetters('auth', ['isStaff']),
-    fetchAggregatedWeekStatistics(week: string) {
-      console.log(week)
+
+    setWeekStartAndWeekEnd() {
+      const weekRange = this.week.split(" - ")
+      this.weekStartDate = weekRange[0]
+      this.weekEndDate = weekRange[1]
+    },
+
+    async weekChangeHandler(week: string) {
       this.week = week
-      this.weeklyAggregatedStats.avgTimeAnnotate.datasets[0].data = [1, 3, 2, 5, 4, 7, 6]
-      this.weeklyAggregatedStats.avgTimeQuestionnaire.datasets[0].data = [10, 20, 30, 40, 50, 60, 70]
-      this.weeklyAggregatedStats.avgTimeText.datasets[0].data = [7, 6, 5, 4, 3, 2, 1]
+      this.setWeekStartAndWeekEnd()
+      await this.fetchAggregatedWeekStatistics()
+      if (this.user !== null){
+        await this.fetchIndividualWeekStatistics(this.user!)
+      }
+    },
+
+    getChartData(items: DailyAverageTime[], unit: string) {
+      const avgTimeDivisor = (unit === "minute") ? 60 : 3600
+      const output = {
+        labels: [] as string[],
+        values: [] as number[]
+      }
+
+      const mon = items.filter((item) => moment(item.date, this.dateFormatAPI).day() === 1)
+      const tue = items.filter((item) => moment(item.date, this.dateFormatAPI).day() === 2)
+      const wed = items.filter((item) => moment(item.date, this.dateFormatAPI).day() === 3)
+      const thu = items.filter((item) => moment(item.date, this.dateFormatAPI).day() === 4)
+      const fri = items.filter((item) => moment(item.date, this.dateFormatAPI).day() === 5)
+      const sat = items.filter((item) => moment(item.date, this.dateFormatAPI).day() === 6)
+      const sun = items.filter((item) => moment(item.date, this.dateFormatAPI).day() === 7)
+
+      output.labels.push((mon.length > 0) ? moment(mon[0].date, this.dateFormatAPI).format(this.dateFormatUI) : 'Monday')
+      output.labels.push((tue.length > 0) ? moment(tue[0].date, this.dateFormatAPI).format(this.dateFormatUI) : 'Tuesday')
+      output.labels.push((wed.length > 0) ? moment(wed[0].date, this.dateFormatAPI).format(this.dateFormatUI) : 'Wednesday')
+      output.labels.push((thu.length > 0) ? moment(thu[0].date, this.dateFormatAPI).format(this.dateFormatUI) : 'Thursday')
+      output.labels.push((fri.length > 0) ? moment(fri[0].date, this.dateFormatAPI).format(this.dateFormatUI) : 'Friday')
+      output.labels.push((sat.length > 0) ? moment(sat[0].date, this.dateFormatAPI).format(this.dateFormatUI) : 'Saturday')
+      output.labels.push((sun.length > 0) ? moment(sun[0].date, this.dateFormatAPI).format(this.dateFormatUI) : 'Sunday')
+
+      output.values.push((mon.length > 0) ? mon[0].averageTimeInSeconds/avgTimeDivisor : 0)
+      output.values.push((tue.length > 0) ? tue[0].averageTimeInSeconds/avgTimeDivisor : 0)
+      output.values.push((wed.length > 0) ? wed[0].averageTimeInSeconds/avgTimeDivisor : 0)
+      output.values.push((thu.length > 0) ? thu[0].averageTimeInSeconds/avgTimeDivisor : 0)
+      output.values.push((fri.length > 0) ? fri[0].averageTimeInSeconds/avgTimeDivisor : 0)
+      output.values.push((sat.length > 0) ? sat[0].averageTimeInSeconds/avgTimeDivisor : 0)
+      output.values.push((sun.length > 0) ? sun[0].averageTimeInSeconds/avgTimeDivisor : 0)
+
+      return output
+    },
+
+    async fetchAggregatedWeekStatistics() {
+      this.isLoadingChartData = true
+      const weekStartDateAPI = moment(this.weekStartDate, this.dateFormatUI).format(this.dateFormatAPI)
+      const weekEndDateAPI = moment(this.weekEndDate, this.dateFormatUI).format(this.dateFormatAPI)
+
+      const fetchAllAnnoCount = await this.$services.statistics.fetchAllUsersAnnotationsCount(weekStartDateAPI, weekEndDateAPI)
+      const fetchAllEveQuestCount = await this.$services.statistics.fetchAllUsersEveningQuestionnairesCount(weekStartDateAPI, weekEndDateAPI)
+      const fetchAllAvgAnnotation = await this.$services.statistics.fetchAllUsersAverageTimeAnnotation(weekStartDateAPI, weekEndDateAPI)
+      const fetchAllAvgQuestionnaire = await this.$services.statistics.fetchAllUsersAverageTimeQuestionnaire(weekStartDateAPI, weekEndDateAPI)
+      const fetchAllAvgText = await this.$services.statistics.fetchAllUsersAverageTimeText(weekStartDateAPI, weekEndDateAPI)
+      const allAvgAnnotationChartData = this.getChartData(fetchAllAvgAnnotation.dailyAverageTime, 'hour')
+      const allAvgQuestionnaireChartData = this.getChartData(fetchAllAvgQuestionnaire.dailyAverageTime, 'hour')
+      const allAvgTextChartData = this.getChartData(fetchAllAvgText.dailyAverageTime, 'minute')
+
+      this.weeklyAggregatedStats.totalAnnotationsCount = fetchAllAnnoCount.total
+      this.weeklyAggregatedStats.totalEveningQuestionnairesCount = fetchAllEveQuestCount.total
+      this.weeklyAggregatedStats.meanAvgTimeAnnotate = fetchAllAvgAnnotation.meanTimeInSeconds / 3600
+      this.weeklyAggregatedStats.avgTimeAnnotate.labels = allAvgAnnotationChartData.labels
+      this.weeklyAggregatedStats.avgTimeAnnotate.datasets[0].data = allAvgAnnotationChartData.values
+      this.weeklyAggregatedStats.meanAvgTimeQuestionnaire = fetchAllAvgQuestionnaire.meanTimeInSeconds / 3600
+      this.weeklyAggregatedStats.avgTimeQuestionnaire.labels = allAvgQuestionnaireChartData.labels
+      this.weeklyAggregatedStats.avgTimeQuestionnaire.datasets[0].data = allAvgQuestionnaireChartData.values
+      this.weeklyAggregatedStats.meanAvgTimeText = fetchAllAvgText.meanTimeInSeconds / 60
+      this.weeklyAggregatedStats.avgTimeText.labels = allAvgTextChartData.labels
+      this.weeklyAggregatedStats.avgTimeText.datasets[0].data = allAvgTextChartData.values
+
       this.chartKeys.weeklyAggregatedStats.avgTimeAnnotate += 1
       this.chartKeys.weeklyAggregatedStats.avgTimeQuestionnaire += 1
       this.chartKeys.weeklyAggregatedStats.avgTimeText += 1
-      if (this.user){
-        console.log("run fetch for individual data")
-        this.fetchIndividualWeekStatistics(this.week, this.user)
-      }
+      this.isLoadingChartData = false
     },
-    fetchIndividualWeekStatistics(week: string, user: UserDTO) {
-      console.log(week)
-      console.log(user)
-      if (this.chartKeys.weeklyIndividualStats.avgTimeAnnotate === 0) {
-        this.weeklyIndividualStats.avgTimeAnnotate.datasets[0].data = [1, 2, 3, 4, 5, 6, 7]
-        this.weeklyIndividualStats.avgTimeQuestionnaire.datasets[0].data = [10, 20, 30, 40, 50, 60, 70]
-        this.weeklyIndividualStats.avgTimeText.datasets[0].data = [7, 6, 5, 4, 3, 2, 1]
-      } else {
-        this.weeklyIndividualStats.avgTimeAnnotate.datasets[0].data = [1, 5, 7, 9, 11, 13, 15]
-        this.weeklyIndividualStats.avgTimeQuestionnaire.datasets[0].data = [16, 14, 12, 10, 8, 4, 2]
-        this.weeklyIndividualStats.avgTimeText.datasets[0].data = [1, 2, 3, 4, 3, 2, 1]
-      }
+
+    async fetchIndividualWeekStatistics(user: UserDTO) {
+      this.isLoadingChartData = true
+      const userId = user.id.toString()
+      const weekStartDate = moment(this.weekStartDate, this.dateFormatUI).format(this.dateFormatAPI)
+      const weekEndDate = moment(this.weekEndDate, this.dateFormatUI).format(this.dateFormatAPI)
+
+      const fetchUserAnnoCount = await this.$services.statistics.fetchUserAnnotationsCount(userId, weekStartDate, weekEndDate)
+      const fetchUserEveQuestCount = await this.$services.statistics.fetchUserEveningQuestionnairesCount(userId, weekStartDate, weekEndDate)
+      const fetchUserAvgAnnotation = await this.$services.statistics.fetchUserAverageTimeAnnotation(userId, weekStartDate, weekEndDate)
+      const fetchUserAvgQuestionnaire = await this.$services.statistics.fetchUserAverageTimeQuestionnaire(userId, weekStartDate, weekEndDate)
+      const fetchUserAvgText = await this.$services.statistics.fetchUserAverageTimeText(userId, weekStartDate, weekEndDate)
+      const userAvgAnnotationChartData = this.getChartData(fetchUserAvgAnnotation.dailyAverageTime, 'hour')
+      const userAvgQuestionnaireChartData = this.getChartData(fetchUserAvgQuestionnaire.dailyAverageTime, 'hour')
+      const userAvgTextChartData = this.getChartData(fetchUserAvgText.dailyAverageTime, 'minute')
+
+      this.weeklyIndividualStats.totalAnnotationsCount = fetchUserAnnoCount.done
+      this.weeklyIndividualStats.totalEveningQuestionnairesCount = fetchUserEveQuestCount.done
+      this.weeklyIndividualStats.meanAvgTimeAnnotate = fetchUserAvgAnnotation.meanTimeInSeconds / 3600
+      this.weeklyIndividualStats.avgTimeAnnotate.labels = userAvgAnnotationChartData.labels
+      this.weeklyIndividualStats.avgTimeAnnotate.datasets[0].data = userAvgAnnotationChartData.values
+      this.weeklyIndividualStats.meanAvgTimeQuestionnaire = fetchUserAvgQuestionnaire.meanTimeInSeconds / 3600
+      this.weeklyIndividualStats.avgTimeQuestionnaire.labels = userAvgQuestionnaireChartData.labels
+      this.weeklyIndividualStats.avgTimeQuestionnaire.datasets[0].data = userAvgQuestionnaireChartData.values
+      this.weeklyIndividualStats.meanAvgTimeText = fetchUserAvgText.meanTimeInSeconds / 60
+      this.weeklyIndividualStats.avgTimeText.labels = userAvgTextChartData.labels
+      this.weeklyIndividualStats.avgTimeText.datasets[0].data = userAvgTextChartData.values
+
       this.chartKeys.weeklyIndividualStats.avgTimeAnnotate += 1
       this.chartKeys.weeklyIndividualStats.avgTimeQuestionnaire += 1
       this.chartKeys.weeklyIndividualStats.avgTimeText += 1
+      this.isLoadingChartData = false
     }
   }
 })
@@ -386,5 +468,17 @@ export default Vue.extend({
 <style lang="scss">
 .bordered {
   border: 1px solid black;
+}
+
+.loading-anim {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ccc;
+  text-align: center;
+  padding-top: 70px;
 }
 </style>
