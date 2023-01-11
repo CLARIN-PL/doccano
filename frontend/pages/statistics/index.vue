@@ -488,9 +488,9 @@ export default Vue.extend({
 }
 
 .loading-anim {
-  position: absolute;
+  position: fixed;
   z-index: 100;
-  top: 0;
+  top: 55px;
   left: 0;
   width: 100%;
   height: 100%;
