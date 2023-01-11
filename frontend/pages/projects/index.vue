@@ -19,7 +19,7 @@
       <v-btn
         class="text-capitalize ms-2 white--text"
         color="teal"
-        @click.stop="$router.push('statistics/')"
+        @click.stop="$router.push(localePath('/statistics'))"
       >
         {{ $t('statistics.weeklyStats.button') }}
       </v-btn>
