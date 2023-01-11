@@ -87,9 +87,10 @@ class AverageAnnotationTimeAPI(APIView):
                 daily_single_annotation_time = []
                 for example_id in requested_examples:
                     started_examples_by_user = ExampleAnnotateStartState.objects.get_started_time_by_example(example_id, [requested_user], startdate, enddate)
-                    annotation_time  = confirmed_df[confirmed_df['example_id']==example_id]["confirmed_at"] - started_examples_by_user[0]['started_at']
-                    daily_single_annotation_time.append(annotation_time.dt.seconds.values[0])
-                    all_single_annotation_time.append(annotation_time.dt.seconds.values[0])
+                    if started_examples_by_user:
+                        annotation_time  = confirmed_df[confirmed_df['example_id']==example_id]["confirmed_at"] - started_examples_by_user[0]['started_at']
+                        daily_single_annotation_time.append(annotation_time.dt.seconds.values[0])
+                        all_single_annotation_time.append(annotation_time.dt.seconds.values[0])
                 average_daily_annotation_time = sum(daily_single_annotation_time) / len(daily_single_annotation_time)
                 single_annotation_time_per_day = {"date": date, "average_annotation_time (seconds)": average_daily_annotation_time}
                 daily_avg_single_annotation_time.append(single_annotation_time_per_day)
@@ -121,8 +122,9 @@ class AvgDailyAnnotationTimeAPI(APIView):
                 daily_annotation_time = []
                 for example_id in requested_examples:
                     started_examples_by_user = ExampleAnnotateStartState.objects.get_started_time_by_example(example_id, [requested_user], startdate, enddate)
-                    annotation_time  = confirmed_df[confirmed_df['example_id']==example_id]["confirmed_at"] - started_examples_by_user[0]['started_at']
-                    daily_annotation_time.append(annotation_time.dt.seconds.values[0])
+                    if started_examples_by_user:
+                        annotation_time  = confirmed_df[confirmed_df['example_id']==example_id]["confirmed_at"] - started_examples_by_user[0]['started_at']
+                        daily_annotation_time.append(annotation_time.dt.seconds.values[0])
                 total_daily_annotation_time = sum(daily_annotation_time)
                 total_annotation_time_per_day = {"date": date, "average_annotation_time (seconds)": total_daily_annotation_time}
                 list_annotation_time_per_day.append(total_annotation_time_per_day)
@@ -191,9 +193,10 @@ class AllUsersAverageAnnotationTimeAPI(APIView):
                     daily_single_annotation_time = []
                     for example_id in requested_examples:
                         started_examples_by_user = ExampleAnnotateStartState.objects.get_started_time_by_example(example_id, [user_id], startdate, enddate)
-                        annotation_time  = confirmed_df[confirmed_df['example_id']==example_id]["confirmed_at"] - started_examples_by_user[0]['started_at']
-                        daily_single_annotation_time.append(annotation_time.dt.seconds.values[0])
-                        all_single_annotation_time.append(annotation_time.dt.seconds.values[0])
+                        if started_examples_by_user:
+                            annotation_time  = confirmed_df[confirmed_df['example_id']==example_id]["confirmed_at"] - started_examples_by_user[0]['started_at']
+                            daily_single_annotation_time.append(annotation_time.dt.seconds.values[0])
+                            all_single_annotation_time.append(annotation_time.dt.seconds.values[0])
                     average_daily_annotation_time = sum(daily_single_annotation_time) / len(daily_single_annotation_time)
                     single_annotation_time_per_day = {"date": date, "average_annotation_time (seconds)": average_daily_annotation_time, "user_id": user_id}
                     daily_avg_single_annotation_time.append(single_annotation_time_per_day)
@@ -233,9 +236,10 @@ class AllUsersAvgDailyAnnotationTimeAPI(APIView):
                     daily_single_annotation_time = []
                     for example_id in requested_examples:
                         started_examples_by_user = ExampleAnnotateStartState.objects.get_started_time_by_example(example_id, [user_id], startdate, enddate)
-                        annotation_time  = confirmed_df[confirmed_df['example_id']==example_id]["confirmed_at"] - started_examples_by_user[0]['started_at']
-                        daily_single_annotation_time.append(annotation_time.dt.seconds.values[0])
-                        all_annotation_time.append(annotation_time.dt.seconds.values[0])
+                        if started_examples_by_user:
+                            annotation_time  = confirmed_df[confirmed_df['example_id']==example_id]["confirmed_at"] - started_examples_by_user[0]['started_at']
+                            daily_single_annotation_time.append(annotation_time.dt.seconds.values[0])
+                            all_annotation_time.append(annotation_time.dt.seconds.values[0])
                     total_daily_annotation_time = sum(daily_single_annotation_time)
                     total_annotation_time_per_day = {"date": date, "total_annotation_time (seconds)": total_daily_annotation_time, "user_id": user_id}
                     daily_user_annotation_time.append(total_annotation_time_per_day)
