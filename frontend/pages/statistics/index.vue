@@ -305,6 +305,7 @@ export default Vue.extend({
   },
 
   computed: {
+    ...mapGetters('auth', ['isStaff']),
     weeks() {
       const startPeriod = moment(this.researchStartDate)
       const endPeriod = moment()
@@ -350,7 +351,7 @@ export default Vue.extend({
   },
 
   created() {
-    if (!this.isStaff()) {
+    if (!this.isStaff) {
       this.$router.push(this.localePath('/projects/'))
     }
   },
@@ -362,8 +363,6 @@ export default Vue.extend({
   },
 
   methods: {
-    ...mapGetters('auth', ['isStaff']),
-
     setWeekStartAndWeekEnd() {
       const weekRange = this.week.split(" - ")
       this.weekStartDate = weekRange[0]
