@@ -20,7 +20,6 @@ export default {
   name: 'Statistics',
   components: {
     TheHeader
-  },
-  middleware: ['check-auth', 'auth']
+  }
 }
 </script>
