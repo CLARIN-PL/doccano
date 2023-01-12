@@ -901,44 +901,13 @@ export default {
       }
     },
     isAllAffectiveSummaryAdded() {
-      return this.affectiveSummaryTags.length >= 2 && this.affectiveSummaryImpressions.length >= 2
+      return this.$refs.summaryInput.hasValidEntries
     },
     isAllAffectiveEmotionsAdded() {
-      const EmotionsScalesDict = {}
-      const varsMustExist = []
-      const keysMustExist = []
-      const keysAnswered = []
-      EmotionsScales.forEach(function (item) {
-        EmotionsScalesDict[item.varname] = item.text
-        varsMustExist.push(item.varname)
-        keysMustExist.push(item.text)
-      })
-      _.keys(this.affectiveScalesValues).forEach((key) => {
-        if (varsMustExist.includes(key)) {
-          keysAnswered.push(EmotionsScalesDict[key])
-        }
-      })
-      return keysMustExist.sort().join(',') === keysAnswered.sort().join(',')
+      return this.$refs.emotionsInput.hasValidEntries
     },
     isAllAffectiveOthersAdded() {
-      const OthersScalesDict = {}
-      const varsMustExist = []
-      const keysMustExist = []
-      const keysAnswered = []
-      OthersScales.forEach(function (item) {
-        OthersScalesDict[item.varname] = item.text
-        varsMustExist.push(item.varname)
-        keysMustExist.push(item.text)
-      })
-      _.keys(this.affectiveScalesValues).forEach((key) => {
-        if (varsMustExist.includes(key)) {
-          keysAnswered.push(OthersScalesDict[key])
-        }
-      })
-      return (
-        keysMustExist.sort().join(',') === keysAnswered.sort().join(',') &&
-        this.affectiveOthersWishToAuthor.length > 0
-      )
+      return this.$refs.othersInput.hasValidEntries
     },
     onConfirmationAlertClose() {
       this.hasClickedConfirmButton = false
