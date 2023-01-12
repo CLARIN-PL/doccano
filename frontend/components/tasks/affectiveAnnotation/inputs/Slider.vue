@@ -1,6 +1,6 @@
 <template>
   <v-container class="widget">
-    <v-row class="widget-row" justify="center" align="center">
+    <v-row class="widget-row" justify="center" align="top">
       <v-col :cols="(withCheckbox) ? 3 : 4" class="widget-row__category">
         {{ categoryLabel }}
         <span v-if="required" class="red--text"> * </span>
