@@ -1,10 +1,11 @@
 <template>
-  <div class="emotions-input" :class="{'--has-error': showErrors, '--bordered': showBorders}">
+  <div class="emotions-input" :class="{'--has-error': hasErrors, '--bordered': showBorders}">
     <p class="emotions-input__title">{{ $t('annotation.affectiveEmotions.titleQuestion') }}</p>
     <v-divider class="emotions-input__divider" />
     <p class="emotions-input__subheader">{{ $t('annotation.affectiveEmotions.titleWhat') }}</p>
     <div class="emotions-input__content">
       <slider
+        :error="showErrors && generalPositivity === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.positiveCategory')"
         color="green"
@@ -14,6 +15,7 @@
         @change="updateEmotions"
       />
       <slider
+        :error="showErrors && generalNegativity === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.negativeCategory')"
         color="red"
@@ -27,6 +29,7 @@
     <p class="emotions-input__subheader">{{ $t('annotation.affectiveEmotions.titleEmotions') }}</p>
     <div class="emotions-input__content">
       <slider
+        :error="showErrors && joy === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.joyCategory')"
         color="pink"
@@ -36,6 +39,7 @@
         @change="updateEmotions"
       />
       <slider
+        :error="showErrors && admiration === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.admirationCategory')"
         color="purple"
@@ -45,6 +49,7 @@
         @change="updateEmotions"
       />
       <slider
+        :error="showErrors && inspiration === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.inspirationCategory')"
         color="indigo"
@@ -54,6 +59,7 @@
         @change="updateEmotions"
       />
       <slider
+        :error="showErrors && peace === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.peaceCategory')"
         color="teal"
@@ -63,6 +69,7 @@
         @change="updateEmotions"
       />
       <slider
+        :error="showErrors && surprise === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.surpriseCategory')"
         color="amber"
@@ -72,6 +79,7 @@
         @change="updateEmotions"
       />
       <slider
+        :error="showErrors && sympathy === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.sympathyCategory')"
         color="cyan"
@@ -81,6 +89,7 @@
         @change="updateEmotions"
       />
       <slider
+        :error="showErrors && fear === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.fearCategory')"
         color="brown"
@@ -90,6 +99,7 @@
         @change="updateEmotions"
       />
       <slider
+        :error="showErrors && sadness === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.sadnessCategory')"
         color="blue-grey darken-4"
@@ -99,6 +109,7 @@
         @change="updateEmotions"
       />
       <slider
+        :error="showErrors && disgust === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.disgustCategory')"
         color="lime darken-4"
@@ -108,6 +119,7 @@
         @change="updateEmotions"
       />
       <slider
+        :error="showErrors && anger === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.angerCategory')"
         color="red darken-4"
@@ -193,6 +205,7 @@ export default {
 
   data() {
     return {
+      flagSliderUnclicked: -99,
       positiveCategory: this.$i18n.t('annotation.affectiveEmotions.positiveCategory'),
       negativeCategory: this.$i18n.t('annotation.affectiveEmotions.negativeCategory'),
       joyCategory: this.$i18n.t('annotation.affectiveEmotions.joyCategory'),
@@ -224,6 +237,15 @@ export default {
       output[this.disgustCategory]= "disgust"
       output[this.angerCategory]= "anger"
       return output
+    },
+    hasValidEntries() {
+      const items = [this.generalPositivity, this.generalNegativity, this.joy,
+                    this.admiration, this.inspiration, this.peace, this.surprise,
+                    this.sympathy, this.fear, this.sadness, this.disgust, this.anger]
+      return items.findIndex((item) => item === this.flagSliderUnclicked) === -1
+    },
+    hasErrors() {
+      return (this.showErrors) ? !this.hasValidEntries : false
     }
   },
 
