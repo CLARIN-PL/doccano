@@ -1,12 +1,13 @@
 <template>
   <v-container class="widget">
-    <v-row class="widget-row" justify="center" align="top">
-      <v-col :cols="(withCheckbox) ? 3 : 4" class="widget-row__category">
+    <v-row class="widget-row" justify="center" align="center">
+      <v-col :cols="(withCheckbox) ? 3 : 4" class="widget-row__category" :class="{ 'has-error': error }">
         {{ categoryLabel }}
       </v-col>
       <v-col :cols="(withCheckbox) ? 6 : 8" class="widget-row__slider">
         <v-slider
           :value="value"
+          :error="error"
           :readonly="readOnly"
           :disabled="!enableSlider"
           :min="sliderMinVal"
@@ -32,6 +33,7 @@
       <v-col v-if="withCheckbox" cols="3" class="widget-row__checkbox">
         <v-checkbox
           v-model="checkboxValue"
+          :error="error"
           :readonly="readOnly"
           :label="checkboxLabel"
           @click="markClicked"
@@ -46,6 +48,10 @@ import { mdiCheck } from '@mdi/js'
 
 export default {
   props: {
+    error: {
+      type: Boolean,
+      default: true
+    },
     categoryLabel: {
       type: String,
       default: ""
@@ -173,6 +179,10 @@ export default {
         overflow-x: visible;
       }
     }
+
+    .v-input.error--text .v-messages {
+      color: red !important;
+    }
   }
 
   &__checkbox {
@@ -186,5 +196,9 @@ export default {
       line-height: 0.95;
     }
   }
+}
+
+.has-error {
+  color: red !important;
 }
 </style>
