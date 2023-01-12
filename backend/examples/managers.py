@@ -1,4 +1,8 @@
 from django.db.models import Count, Manager
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+import datetime
 
 
 class ExampleManager(Manager):
@@ -30,3 +34,52 @@ class ExampleStateManager(Manager):
             if member.username not in members_with_progress:
                 response["progress"].append({"user": member.username, "done": 0})
         return response
+
+    def measure_member_confirmed_examples_between_startdate_enddate(self, user, startdate, enddate):
+        tz = timezone.get_current_timezone()
+        startdate = timezone.make_aware(datetime.datetime.fromordinal(startdate.toordinal()), tz, is_dst=True)
+        enddate = timezone.make_aware(datetime.datetime.fromordinal(enddate.toordinal()), tz, is_dst=True)
+        done_count = (
+            self.filter(confirmed_by=user, confirmed_at__gte=startdate, confirmed_at__lte=enddate)
+            .values("confirmed_by__username")
+            .annotate(total=Count("example"))
+        )
+        response = {
+            "progress": [{"user": obj["confirmed_by__username"], "done": obj["total"]} for obj in done_count],
+        }
+        members_with_progress = {o["confirmed_by__username"] for o in done_count}
+        current_user = get_object_or_404(User, id=user)
+        if str(current_user) not in members_with_progress:
+            response["progress"].append({"user": str(current_user), "done": 0})
+        return response
+
+    def measure_total_confirmed_examples_between_startdate_enddate(self, startdate, enddate):
+        tz = timezone.get_current_timezone()
+        startdate = timezone.make_aware(datetime.datetime.fromordinal(startdate.toordinal()), tz, is_dst=True)
+        enddate = timezone.make_aware(datetime.datetime.fromordinal(enddate.toordinal()), tz, is_dst=True)
+        response = (
+            self.filter(confirmed_at__gte=startdate, confirmed_at__lte=enddate)
+            .aggregate(total=Count("example"))
+        )
+        return response
+
+    def get_confirmed_time_by_example(self, users, startdate, enddate):
+        tz = timezone.get_current_timezone()
+        startdate = timezone.make_aware(datetime.datetime.fromordinal(startdate.toordinal()), tz, is_dst=True)
+        enddate = timezone.make_aware(datetime.datetime.fromordinal(enddate.toordinal()), tz, is_dst=True)
+        confirmed_time_examples = self.filter(confirmed_by__in=users, confirmed_at__gte=startdate, confirmed_at__lte=enddate).values().order_by("confirmed_at")
+        return confirmed_time_examples
+
+
+class ExampleStartStateManager(Manager):
+    def get_started_time_by_example(self, example, users, startdate, enddate):
+        tz = timezone.get_current_timezone()
+        startdate = timezone.make_aware(datetime.datetime.fromordinal(startdate.toordinal()), tz, is_dst=True)
+        enddate = timezone.make_aware(datetime.datetime.fromordinal(enddate.toordinal()), tz, is_dst=True)
+        started_time_examples = self.filter(started_by__in=users, started_at__gte=startdate, started_at__lte=enddate, example_id=example).values().order_by("started_at")
+        return started_time_examples
+
+    def get_user_started_time_by_date(self, users, date):
+        started_time_examples = self.filter(started_by__in=users, started_at__date=date).values().order_by("started_at")
+        return started_time_examples
+        
