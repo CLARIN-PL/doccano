@@ -1,6 +1,7 @@
 <template>
-  <div class="summary-input" :class="{'--has-error': showErrors, '--bordered': showBorders}">
+  <div class="summary-input" :class="{'--has-error': hasErrors, '--bordered': showBorders}">
     <textfield-with-seq-2-seq
+      :error="showErrors && tags.length < 2"
       :read-only="readOnly"
       :text="text"
       :question="$t('annotation.affectiveSummary.tagsQuestion')"
@@ -12,6 +13,7 @@
       @add="addTag"
     />
     <textfield-with-seq-2-seq
+      :error="showErrors && impressions.length < 2"
       :read-only="readOnly"
       :text="text"
       :question="$t('annotation.affectiveSummary.impressionsQuestion')"
@@ -76,6 +78,15 @@ export default {
           return pattern.test(value) || this.$i18n.t('annotation.warningInvalidChar')
         }
       ]
+    }
+  },
+
+  computed: {
+    hasValidEntries() {
+      return this.tags.length >= 2 && this.impressions.length >= 2
+    },
+    hasErrors() {
+      return (this.showErrors) ? !this.hasValidEntries : false
     }
   },
 

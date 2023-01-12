@@ -1,9 +1,10 @@
 <template>
-  <div class="others-input" :class="{'--has-error': showErrors, '--bordered': showBorders}">
+  <div class="others-input" :class="{'--has-error': hasErrors, '--bordered': showBorders}">
     <p class="others-input__title">{{ $t('annotation.affectiveOthers.titleQuestion') }}</p>
     <v-divider class="others-input__divider" />
     <div class="others-input__content">
       <slider
+        :error="showErrors && ironic === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.ironicCategory')"
         color="blue"
@@ -18,6 +19,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :error="showErrors && embarrassing === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.embarrassingCategory')"
         color="blue"
@@ -32,6 +34,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :error="showErrors && vulgar === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.vulgarCategory')"
         color="blue"
@@ -46,6 +49,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :error="showErrors && politic === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.politicCategory')"
         color="blue"
@@ -60,6 +64,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :error="showErrors && interesting === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.interestingCategory')"
         color="blue"
@@ -74,6 +79,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :error="showErrors && comprehensible === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.comprehensibleCategory')"
         color="blue"
@@ -88,6 +94,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :error="showErrors && agreeable === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.agreeableCategory')"
         color="blue"
@@ -102,6 +109,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :error="showErrors && believable === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.believableCategory')"
         color="blue"
@@ -116,6 +124,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :error="showErrors && needMoreInfo === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.needMoreInfoCategory')"
         color="blue"
@@ -130,6 +139,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <slider
+        :error="showErrors && sympathyToAuthor === flagSliderUnclicked"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.sympathyToAuthorCategory')"
         color="blue"
@@ -144,6 +154,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <textfield-with-seq-2-seq
+        :error="showErrors && wishToAuthor.length === 0"
         :read-only="readOnly"
         :text="$t('annotation.affectiveOthers.wishToAuthorCategory')"
         :category-label="$t('annotation.affectiveOthers.wishToAuthorCategory')"
@@ -243,6 +254,7 @@ export default {
           return true
         }
       ],
+      flagSliderUnclicked: -99,
       checkboxLabel: this.$i18n.t('annotation.affectiveOthers.labelDontKnow'),
       ironicCategory: this.$i18n.t('annotation.affectiveOthers.ironicCategory'),
       embarrassingCategory: this.$i18n.t('annotation.affectiveOthers.embarrassingCategory'),
@@ -271,6 +283,16 @@ export default {
       output[this.sympathyToAuthorCategory]= "sympathyToAuthor"
       output[this.needMoreInfoCategory]= "needMoreInfo"
       return output
+    },
+    hasValidEntries() {
+      const items = [this.ironic, this.embarrassing, this.vulgar, this.politic,
+                    this.interesting, this.comprehensible, this.agreeable,
+                    this.believable, this.sympathyToAuthor, this.needMoreInfo]
+      return items.findIndex((item) => item === this.flagSliderUnclicked) === -1 && this.wishToAuthor.length > 0
+    },
+    hasErrors() {
+      console.log("others", (this.showErrors) ? !this.hasValidEntries : false)
+      return (this.showErrors) ? !this.hasValidEntries : false
     }
   },
 

@@ -1,6 +1,6 @@
 <template>
     <v-container class="offensive-input widget" 
-        :class="{'--has-error': !value && showErrors, '--bordered': showBorders }">
+        :class="{'--has-error': hasErrors, '--bordered': showBorders }">
         <v-row >
             <v-col v-if="scaleTypes.length && hasProperScaleTypes">
                 <h3 class="widget__title">{{ $t('annotation.offensive.question')}}</h3>
@@ -8,7 +8,7 @@
                 <ol class="widget__questions">
                     <li class="widget-questions__item questions-item --visible">
                         <p class="questions-item__text">
-                        <h4>
+                        <h4 :class="{'has-error': showErrors && !formData.subquestion1.isClicked}">
                             {{ $t('annotation.offensive.subquestion1')}}
                         </h4>
                         <div class="questions-item__slider">
@@ -41,7 +41,7 @@
                     </li>
                     <li class="widget-questions__item questions-item --visible">
                         <p class="questions-item__text">
-                        <h4>
+                        <h4 :class="{'has-error': showErrors && !formData.subquestion2.isClicked}">
                             {{ $t('annotation.offensive.subquestion2')}}
                         </h4>
                         <div class="questions-item__slider">
@@ -75,7 +75,7 @@
                     <li class="widget-questions__item questions-item"
                         :class="{'--visible': hasFilledTopQuestions}">
                         <p class="questions-item__text">
-                            <h4>
+                            <h4 :class="{'has-error': !hasValidSubquestion3}">
                                 {{ $t('annotation.offensive.subquestion3.question')}}
                             </h4>
                             <ul class="subquestions">
@@ -111,7 +111,7 @@
                     <li class="widget-questions__item questions-item" 
                         :class="{'--visible': hasFilledTopQuestions}">
                         <p class="questions-item__text">
-                            <h4>
+                            <h4 :class="{'has-error': !hasValidSubquestion4}">
                                 {{ $t('annotation.offensive.subquestion4.question')}}
                             </h4>
                                 <ul class="subquestions">
@@ -184,7 +184,7 @@ export default Vue.extend({
     },
     showErrors: {
       type: Boolean,
-      default: false
+      default: true
     },
     showBorders: {
       type: Boolean,
@@ -294,6 +294,34 @@ export default Vue.extend({
     },
     hasFilledTopQuestions(): boolean {
       return !!this.formData.subquestion1.value || !!this.formData.subquestion2.value
+    },
+    hasValidSubquestion3(): boolean {
+      if (this.showErrors && this.hasFilledTopQuestions) {
+        const answersSubquestion3 = this.formData.subquestion3.filter((item:any) => item.isChecked && !!item.answer)
+        return answersSubquestion3.length > 0
+      }
+      return true
+    },
+    hasValidSubquestion4(): boolean {
+      if (this.showErrors && this.hasFilledTopQuestions) {
+        const answersSubquestion4 = this.formData.subquestion4.filter((item:any) => item.isChecked)
+        return answersSubquestion4.length > 0
+      }
+      return true
+    },
+    hasErrors(): boolean {
+      if (this.showErrors) {
+        if (!this.value) {
+          return true
+        }
+        if (!this.formData.subquestion1.isClicked || !this.formData.subquestion2.isClicked) {
+          return true
+        }
+        if (!this.hasValidSubquestion3 || !this.hasValidSubquestion4) {
+          return true
+        }
+      }
+      return false
     }
   },
   watch: {
@@ -511,6 +539,14 @@ export default Vue.extend({
 
   &.--visible {
     opacity: 1;
+  }
+
+  &__text {
+    h4 {
+      &.has-error {
+        color: red !important;
+      }
+    }
   }
 
   &__slider {
