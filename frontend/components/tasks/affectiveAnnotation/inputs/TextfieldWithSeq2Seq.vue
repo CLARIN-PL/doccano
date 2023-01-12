@@ -1,10 +1,10 @@
 <template>
   <v-container class="widget">
-    <v-row v-if="question" class="widget__question">
+    <v-row v-if="question" class="widget__question" :class="{ 'has-error': error }">
       {{ question }}
     </v-row>
-    <v-row class="widget__answer"  justify="center" align="center">
-      <v-col v-if="categoryLabel" :cols="(withCheckbox)?3:4" class="widget__category">
+    <v-row class="widget__answer" justify="center" align="center">
+      <v-col v-if="categoryLabel" :cols="(withCheckbox)?3:4" class="widget__category" :class="{ 'has-error': error }">
         {{ categoryLabel }}
       </v-col>
       <v-col
@@ -25,6 +25,7 @@
       <v-col v-if="withCheckbox" cols="3" class="widget__checkbox">
         <v-checkbox
           v-model="checkboxValue"
+          :error="error"
           :readonly="readOnly"
           :label="checkboxLabel"
         />
@@ -66,6 +67,10 @@ export default {
   },
 
   props: {
+    error: {
+      type: Boolean,
+      default: true
+    },
     text: {
       type: String,
       default: ""
