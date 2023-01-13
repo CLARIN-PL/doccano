@@ -291,7 +291,6 @@ export default {
       return items.findIndex((item) => item === this.flagSliderUnclicked) === -1 && this.wishToAuthor.length > 0
     },
     hasErrors() {
-      console.log("others", (this.showErrors) ? !this.hasValidEntries : false)
       return (this.showErrors) ? !this.hasValidEntries : false
     }
   },
