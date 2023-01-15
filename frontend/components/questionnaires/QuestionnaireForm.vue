@@ -1,6 +1,6 @@
 <template>
-  <v-row align="center" justify="center">
-    <v-col cols="9">
+  <v-row align="center" justify="center" class="overflow-visible">
+    <v-col :lg="9" :md="12" class="overflow-visible">
       <div ref="header">
         <v-alert v-model="showWarning" color="error" dark transition="scale-transition" dismissible>
           {{ $t('errors.incompleteAffectiveAnnotation') }}
@@ -8,19 +8,20 @@
       </div>
       <div
         v-if="formData.questionnaires && formData.questionnaires.length && isLoaded"
-        class="questionnaire-container"
+        class="questionnaire-container overflow-visible"
       >
-        <v-col>
+        <v-col class="overflow-visible">
           <v-window
             v-model="activeQuestionnaire"
-            class="questionnaire-window elevation-1"
+            class="questionnaire-window elevation-1 overflow-visible"
             horizontal
           >
             <v-window-item
               v-for="(questionnaire, qIdx) in formData.questionnaires"
               :key="`questionnaire-window-${qIdx}`"
+              class="overflow-visible"
             >
-              <v-row align="top" justify="center">
+              <v-row align="top" justify="center" class="overflow-visible">
                 <v-col cols="8">
                   <v-card>
                     <v-card-text>
@@ -114,20 +115,21 @@
                     </v-card-actions>
                   </v-card>
                 </v-col>
-                <v-col cols="4" class="sticky-container">
-                  <v-card v-if="questionnaire.segments[0].scales" :class="(showWarning) ? 'sticky-offset' : 'sticky'">
-                    <v-card-text>
-                      <div class="segment-description-container text-caption">
-                        <ul class="hide-list-style">
-                          <li
-                            v-for="(segmentScaleValue, segScalIdx) in questionnaire.segments[0]
-                              .scales.values"
-                            :key="`segmentScaleValue-${segScalIdx}`"
-                          >
-                            {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
-                          </li>
-                        </ul>
-                      </div>
+                <v-col
+                  v-if="(questionnaire.segments[0].scales && questionnaire.segments[0].scales.values)"
+                  cols="4"
+                  class="sticky-col overflow-visible"
+                >
+                  <v-card class="sticky">
+                    <v-card-text class="text-caption">
+                      <ul class="hide-list-style">
+                        <li
+                          v-for="(segmentScaleValue, segScalIdx) in questionnaire.segments[0].scales.values"
+                          :key="`segmentScaleValue-${segScalIdx}`"
+                        >
+                          {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
+                        </li>
+                      </ul>
                     </v-card-text>
                   </v-card>
                 </v-col>
@@ -413,25 +415,14 @@ export default {
   padding-left: 0 !important;
 }
 
-.sticky-container {
-  z-index: 0;
+.overflow-visible {
+  position: relative !important;
+  overflow: visible !important;
 }
 
 .sticky {
-  position: fixed;
-  top: 90px;
-  min-width: 250px;
-  max-width: 270px;
-  overflow-x: visible;
-  z-index: 1;
-}
-
-.sticky-offset {
-  position: fixed;
-  top: 200px;
-  min-width: 250px;
-  max-width: 270px;
-  overflow-x: visible;
+  position: sticky;
+  top: 55px;
   z-index: 1;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <questionnaire-form :q-types="qTypes" />
+  <div class="overflow-visible">
+    <questionnaire-form :q-types="qTypes" class="overflow-visible" />
   </div>
 </template>
 
@@ -20,3 +20,10 @@ export default {
   }
 }
 </script>
+
+<style>
+.overflow-visible {
+  position: relative;
+  overflow: visible;
+}
+</style>
