@@ -1,6 +1,6 @@
 <template>
   <v-container class="widget">
-    <v-row class="widget-row" justify="center" align="center">
+    <v-row class="widget-row" justify="center" align="top">
       <v-col :cols="(withCheckbox) ? 3 : 4" class="widget-row__category">
         {{ categoryLabel }}
       </v-col>
@@ -19,7 +19,8 @@
           track-color='grey'
           :hint="hint"
           persistent-hint
-          :thumb-size="sliderThumbSize"
+          thumb-label="always"
+          thumb-size="18"
           :thumb-color="sliderThumbColor"
           @click="markClicked"
           @change="valueChangeHandler"
@@ -144,6 +145,7 @@ export default {
 .widget-row {
   word-wrap: normal;
   word-break: normal;
+  padding-bottom: 30px;
 
   &__category {
     font-size: 0.8rem;
@@ -158,6 +160,10 @@ export default {
     padding: 0 !important;
 
     .v-input {
+      &__slot {
+        margin-bottom: 0 !important;
+      }
+
       &__prepend-outer, &__append-outer {
         font-size: 0.65rem;
         line-height: 0.8;
