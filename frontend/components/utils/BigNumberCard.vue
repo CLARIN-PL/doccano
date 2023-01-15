@@ -23,13 +23,16 @@ export default Vue.extend({
     value: {
       type: Number,
       required: true
+    },
+    showDecimal: {
+      type: Boolean,
+      default: false
     }
   },
 
   computed: {
     valueString() {
-      const currentLocale = this.$i18n.locale
-      return this.value.toLocaleString(currentLocale)
+      return (this.showDecimal) ? this.value.toFixed(3).toString() : this.value.toFixed(0).toString()
     }
   }
 })

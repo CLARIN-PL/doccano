@@ -48,6 +48,8 @@ import { APIAffectiveScaleRepository } from '~/repositories/tasks/affectiveAnnot
 import { AffectiveScaleApplicationService } from '~/services/application/tasks/affectiveAnnotation/affectiveScaleApplicationService'
 import { QuestionnaireApplicationService}  from "~/services/application/questionnaire/questionnaireApplicationService"
 import { APIQuestionnaireRepository } from '~/repositories/questionnaire/apiQuestionnaireRepository'
+import { StatisticsApplicationService } from '~/services/application/statistics/statisticsApplicationService'
+import { APIStatisticsRepository } from '~/repositories/statistics/apiStatistics'
 
 export interface Services {
   categoryType: LabelApplicationService
@@ -77,6 +79,7 @@ export interface Services {
   affectiveTextlabel: AffectiveTextlabelApplicationService
   affectiveScale: AffectiveScaleApplicationService
   questionnaire: QuestionnaireApplicationService
+  statistics: StatisticsApplicationService
 }
 
 declare module 'vue/types/vue' {
@@ -110,6 +113,7 @@ const plugin: Plugin = (_, inject) => {
   const affectiveTextlabelRepository = new APIAffectiveTextlabelRepository()
   const affectiveScaleRepository = new APIAffectiveScaleRepository()
   const questionnaireRepository = new APIQuestionnaireRepository()
+  const statisticsRepository = new APIStatisticsRepository()
 
   const categoryType = new LabelApplicationService(new APILabelRepository('category-type'))
   const spanType = new LabelApplicationService(new APILabelRepository('span-type'))
@@ -141,6 +145,7 @@ const plugin: Plugin = (_, inject) => {
   const affectiveTextlabel = new AffectiveTextlabelApplicationService(affectiveTextlabelRepository)
   const affectiveScale = new AffectiveScaleApplicationService(affectiveScaleRepository)
   const questionnaire = new QuestionnaireApplicationService(questionnaireRepository)
+  const statistics = new StatisticsApplicationService(statisticsRepository)
 
   const services: Services = {
     categoryType,
@@ -169,7 +174,8 @@ const plugin: Plugin = (_, inject) => {
     tag,
     affectiveTextlabel,
     affectiveScale,
-    questionnaire
+    questionnaire,
+    statistics
   }
   inject('services', services)
 }
