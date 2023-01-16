@@ -84,16 +84,20 @@
             <v-spacer />
           </toolbar-laptop>
           <toolbar-mobile :total="docs.count" class="d-flex d-sm-none header-toolbar --mobile" />
-          <v-row v-show="hasStickyView">
-            <v-col cols="12" md="9">
-              <p ref="entityText" class="header-text">
-                {{ doc.text }}
-              </p>
-            </v-col>
-            <v-col cols="12" md="3" class="d-sm-none d-md-block">
-              <annotation-progress :progress="progress" />
-            </v-col>
-          </v-row>
+          <v-card v-show="hasStickyView">
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" md="9">
+                  <p ref="entityText" class="header-text">
+                    {{ doc.text }}
+                  </p>
+                </v-col>
+                <v-col cols="12" md="3" class="d-sm-none d-md-block">
+                  <annotation-progress :progress="progress" />
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
         </div>
       </template>
       <template #content>
@@ -513,14 +517,17 @@ export default {
         const textBatchCount = 20
         if (val.textCountToday > 0 && val.textCountToday % textBatchCount === 0) {
           this.$nextTick(async () => {
-            const questionnaireStates = await this.$services.questionnaire.listFinishedQuestionnaires({
-              questionnaireTypeId: 1,
-              limit: 1
-            })
+            const questionnaireStates =
+              await this.$services.questionnaire.listFinishedQuestionnaires({
+                questionnaireTypeId: 1,
+                limit: 1
+              })
             let firstQuestionnaireEverDate = null
             if (questionnaireStates && questionnaireStates.items.length > 0) {
               const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
-              firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format('DD-MM-YYYY')
+              firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format(
+                'DD-MM-YYYY'
+              )
             }
             this.initQuestionnaire(firstQuestionnaireEverDate)
           })
@@ -1098,11 +1105,9 @@ export default {
     &__header {
       &.--sticky {
         position: sticky;
-        background-color: #fff;
         padding: 20px;
         top: 55px;
         z-index: 1;
-        border: 1px solid #ddd;
       }
 
       .header-text {
