@@ -475,14 +475,17 @@ export default {
         const textBatchCount = 20
         if (val.textCountToday > 0 && val.textCountToday % textBatchCount === 0) {
           this.$nextTick(async () => {
-            const questionnaireStates = await this.$services.questionnaire.listFinishedQuestionnaires({
-              questionnaireTypeId: 1,
-              limit: 1
-            })
+            const questionnaireStates =
+              await this.$services.questionnaire.listFinishedQuestionnaires({
+                questionnaireTypeId: 1,
+                limit: 1
+              })
             let firstQuestionnaireEverDate = null
             if (questionnaireStates && questionnaireStates.items.length > 0) {
               const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
-              firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format('DD-MM-YYYY')
+              firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format(
+                'DD-MM-YYYY'
+              )
             }
             this.initQuestionnaire(firstQuestionnaireEverDate)
           })
@@ -1027,11 +1030,9 @@ export default {
     &__header {
       &.--sticky {
         position: sticky;
-        background-color: #fff;
         padding: 20px;
         top: 55px;
         z-index: 1;
-        border: 1px solid #ddd;
       }
 
       .header-text {
