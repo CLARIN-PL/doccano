@@ -38,7 +38,7 @@ class QuestionnaireStateManager(Manager):
         tz = timezone.get_current_timezone()
         startdate = timezone.make_aware(datetime.datetime.fromordinal(startdate.toordinal()), tz, is_dst=True)
         enddate = timezone.make_aware(datetime.datetime.fromordinal(enddate.toordinal()), tz, is_dst=True)
-        finished_time_questionnaires = self.filter(finished_by__in=users, finished_at__gte=startdate, finished_at__lte=enddate).values()
+        finished_time_questionnaires = self.filter(finished_by__in=users, finished_at__gte=startdate, finished_at__lte=enddate).values().order_by("finished_at")
         return finished_time_questionnaires
 
 
@@ -46,6 +46,6 @@ class AnswerStateManager(Manager):
     def get_answers_time_by_user_in_given_period(self, questionnaire_ids, user, date):
         return (
             self.filter(user_id=user, created_at__date=date, question_id__questionnaire_id__in=questionnaire_ids)
-            .values("created_at", "question_id__questionnaire_id")
+            .values("created_at", "question_id__questionnaire_id").order_by("created_at")
         )
         
