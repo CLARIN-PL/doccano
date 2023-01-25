@@ -11,6 +11,7 @@ from .views import (
     AvgDailyQuestionnaireTimeAPI,
     AllUsersAvgDailyAnnotationTimeAPI,
     AllUserAvgDailyQuestionnaireTimeAPI,
+    UserDailyAvgActiveAnnotationTimeAPI,
     DateConverter,
 )
 
@@ -27,4 +28,5 @@ urlpatterns = [
     path(route="all-users-average-annotation-time/<date:startdate>/<date:enddate>/", view=AllUsersAverageAnnotationTimeAPI.as_view(), name="all_users_average_annotation_time"),
     path(route="all-users-avg-daily-annotation-time/<date:startdate>/<date:enddate>/", view=AllUsersAvgDailyAnnotationTimeAPI.as_view(), name="all_users_avg_daily_annotation_time"),
     path(route="all-users-avg-daily-questionnaire-time/<date:startdate>/<date:enddate>/", view=AllUserAvgDailyQuestionnaireTimeAPI.as_view(), name="all_users_avg_daily_questionnaire_time"),
+    path(route="user-daily-active-time/<int:user_id>/<date:startdate>/<date:enddate>/", view=UserDailyAvgActiveAnnotationTimeAPI.as_view(), name="user_daily_active_time"),
 ]
