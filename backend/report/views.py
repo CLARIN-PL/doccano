@@ -6,10 +6,12 @@ from rest_framework.views import APIView
 
 from examples.models import ExampleState, ExampleAnnotateStartState
 from questionnaires.models import QuestionnaireState, Answer
+from labels.models import Label, Scale, TextLabel
 from datetime import datetime
 
 from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly
 from django.contrib.auth.models import User
+from itertools import chain
 
 
 class DateConverter:
@@ -300,4 +302,26 @@ class AllUserAvgDailyQuestionnaireTimeAPI(APIView):
             return Response(data=data, status=status.HTTP_200_OK)
         else:
             data = {"average_daily_questionnaire_time (seconds)": 0, "daily_questionnaire_time": []}
+            return Response(data=data, status=status.HTTP_200_OK)
+
+
+class UserDailyAvgActiveAnnotationTimeAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
+
+    def get(self, request, *args, **kwargs):
+        user_id = self.kwargs["user_id"]
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        scale_label_created_minutes_by_user = Scale.objects.filter_created_labels_by_minutes(user_id, startdate, enddate)
+        text_label_created_minutes_by_user = TextLabel.objects.filter_created_labels_by_minutes(user_id, startdate, enddate)
+        all_labels = list(chain(scale_label_created_minutes_by_user, text_label_created_minutes_by_user))
+        if len(all_labels) != 0:
+            label_created_df = pd.DataFrame(all_labels)
+            annotation_time_df = label_created_df.groupby('date')['minute'].nunique().reset_index().rename(columns={'minute':'total_active_minutes'})
+            daily_active_annotation_time = annotation_time_df.to_dict(orient='records')
+            avg_daily_annotation_time = annotation_time_df['total_active_minutes'].mean()
+            data = {"average_daily_active_annotation_time (minutes)": avg_daily_annotation_time, "daily_active_annotation_time": daily_active_annotation_time}
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            data = {"average_daily_active_annotation_time (minutes)": 0, "daily_active_annotation_time": []}
             return Response(data=data, status=status.HTTP_200_OK)
