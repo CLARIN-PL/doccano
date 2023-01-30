@@ -431,3 +431,22 @@ class AllUsersAvgSingleTextActiveAnnotationTimeAPI(APIView):
         else:
             data = {"all_user_avg_single_text_ann_time (active minutes)": [], "daily_avg_single_text_ann_time (active minutes)": []}
             return Response(data=data, status=status.HTTP_200_OK)
+
+
+class UserQuestionnaireActiveMinutesAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
+
+    def get(self, request, *args, **kwargs):
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        user_id = self.kwargs["user_id"]
+        user = User.objects.get(id=user_id)
+        daily_questionnaire_mins = Answer.objects.count_number_activate_minutes_by_day(user, startdate, enddate)
+        if daily_questionnaire_mins:
+            daily_questionnaire_mins_df = pd.DataFrame(daily_questionnaire_mins)
+            avg_daily_questionnaire_mins = daily_questionnaire_mins_df['total_active_mins'].mean()
+            data = {"avg_questionnaire_active_mins": avg_daily_questionnaire_mins, "daily_questionnaire_mins": daily_questionnaire_mins}
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            data = {"avg_questionnaire_active_mins": 0, "daily_questionnaire_mins": []}
+            return Response(data=data, status=status.HTTP_200_OK)
