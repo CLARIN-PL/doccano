@@ -249,7 +249,6 @@ class AllUsersAvgDailyAnnotationTimeAPI(APIView):
                     progressed_users_annotation_time_per_day.append(time)
         if progressed_users_annotation_time_per_day:
             df = pd.DataFrame(progressed_users_annotation_time_per_day)
-            print(df)
             avg_daily_annotation_time_df = df.groupby('date')['total_annotation_time (seconds)'].mean().reset_index(name='avg_annotation_time_daily (seconds)')
             all_user_daily_avg_annotation_time = avg_daily_annotation_time_df.to_dict(orient='records')
             list_user_avg_annotation_time_daily = df.groupby(["user_id"])['total_annotation_time (seconds)'].mean().to_list()
@@ -306,7 +305,7 @@ class AllUserAvgDailyQuestionnaireTimeAPI(APIView):
             return Response(data=data, status=status.HTTP_200_OK)
 
 
-class UserDailyAvgActiveAnnotationTimeAPI(APIView):
+class UserDailyAvgActiveActiveMinutesAPI(APIView):
     permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
 
     def get(self, request, *args, **kwargs):
@@ -330,7 +329,7 @@ class UserDailyAvgActiveAnnotationTimeAPI(APIView):
             return Response(data=data, status=status.HTTP_200_OK)
 
 
-class AllUserDailyAvgActiveAnnotationTimeAPI(APIView):
+class AllUserDailyAvgActiveMinutesAPI(APIView):
     permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
 
     def get(self, request, *args, **kwargs):
@@ -354,7 +353,6 @@ class AllUserDailyAvgActiveAnnotationTimeAPI(APIView):
                     annotation_time_df['user_id'] = label_created_df['confirmed_by__username'].unique()[0]
                 elif 'started_by__username' in cols:
                     annotation_time_df['user_id'] = label_created_df['started_by__username'].unique()[0]
-                print(annotation_time_df)
                 all_user_period_active_annotation_time.append(annotation_time_df)
 
         if all_user_period_active_annotation_time:
@@ -370,7 +368,7 @@ class AllUserDailyAvgActiveAnnotationTimeAPI(APIView):
             return Response(data=data, status=status.HTTP_200_OK)
 
 
-class UserAvgSingleTextActiveAnnotationTimeAPI(APIView):
+class UserAvgSingleTextActiveMinutesAPI(APIView):
     permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
 
     def get(self, request, *args, **kwargs):
@@ -395,7 +393,7 @@ class UserAvgSingleTextActiveAnnotationTimeAPI(APIView):
             return Response(data=all_labels, status=status.HTTP_200_OK)
 
 
-class AllUsersAvgSingleTextActiveAnnotationTimeAPI(APIView):
+class AllUsersAvgSingleTextActiveMinutesAPI(APIView):
     permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
 
     def get(self, request, *args, **kwargs):
@@ -462,11 +460,9 @@ class AllUsersQuestionnaireActiveMinutesAPI(APIView):
         all_user_questionnaire_activity_list = []
         for user in all_user_ids:
             daily_questionnaire_mins = Answer.objects.count_number_activate_minutes_by_day(user, startdate, enddate)
-            print(daily_questionnaire_mins)
             if daily_questionnaire_mins:
                 daily_questionnaire_mins_df = pd.DataFrame(daily_questionnaire_mins)
                 daily_questionnaire_mins_df['user_id'] = user
-                print(daily_questionnaire_mins_df)
                 all_user_questionnaire_activity_list.append(daily_questionnaire_mins_df)
 
         if all_user_questionnaire_activity_list:

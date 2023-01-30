@@ -47,26 +47,12 @@ class LabelManager(Manager):
     def filter_annotatable_labels(self, labels, project):
         return [label for label in labels if self.can_annotate(label, project)]
 
-    # def get_created_labels_by_given_period(self, user, start_date, end_date):
-    #     tz = timezone.get_current_timezone()
-    #     start_date = timezone.make_aware(datetime.datetime.fromordinal(start_date.toordinal()), tz, is_dst=True)
-    #     end_date = timezone.make_aware(datetime.datetime.fromordinal(end_date.toordinal()), tz, is_dst=True)
-    #     return self.filter(user=user, created_at__gte=start_date, created_at__lte=end_date).values("created_at", "user__username").order_by("created_at")
-
-    # def count_number_created_labels_by_minutes(self, user, start_date, end_date):
-    #     tz = timezone.get_current_timezone()
-    #     start_date = timezone.make_aware(datetime.datetime.fromordinal(start_date.toordinal()), tz, is_dst=True)
-    #     end_date = timezone.make_aware(datetime.datetime.fromordinal(end_date.toordinal()), tz, is_dst=True)
-    #     return self.filter(user=user, created_at__gte=start_date, created_at__lte=end_date).annotate(
-    #         minute=TruncMinute("created_at"), date=TruncDate("created_at")).values("date", "user__username").annotate(count=Count("minute", distinct=True)).order_by("date")
-
     def filter_created_labels_by_minutes(self, user, start_date, end_date):
         tz = timezone.get_current_timezone()
         start_date = timezone.make_aware(datetime.datetime.fromordinal(start_date.toordinal()), tz, is_dst=True)
         end_date = timezone.make_aware(datetime.datetime.fromordinal(end_date.toordinal()), tz, is_dst=True)
         return self.filter(user=user, created_at__gte=start_date, created_at__lte=end_date).annotate(
             minute=TruncMinute("created_at"), date=TruncDate("created_at")).values("date", "minute", "user__username", "example_id").annotate(count=Count("example", distinct=True)).order_by("date")
-
 
 
 class CategoryManager(LabelManager):
