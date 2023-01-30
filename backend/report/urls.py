@@ -16,6 +16,7 @@ from .views import (
     UserAvgSingleTextActiveAnnotationTimeAPI,
     AllUsersAvgSingleTextActiveAnnotationTimeAPI,
     UserQuestionnaireActiveMinutesAPI,
+    AllUsersQuestionnaireActiveMinutesAPI,
     DateConverter,
 )
 
@@ -37,4 +38,5 @@ urlpatterns = [
     path(route="user-avg-single-text-active-annotation-time/<int:user_id>/<date:startdate>/<date:enddate>/", view=UserAvgSingleTextActiveAnnotationTimeAPI.as_view(), name="user_avg_single_text_active_annotation_time"),
     path(route="all-users-avg-single-text-active-annotation-time/<date:startdate>/<date:enddate>/", view=AllUsersAvgSingleTextActiveAnnotationTimeAPI.as_view(), name="all_users_avg_single_text_active_annotation_time"),
     path(route="user-questionnaire-active-minutes/<int:user_id>/<date:startdate>/<date:enddate>/", view=UserQuestionnaireActiveMinutesAPI.as_view(), name="user_questionnaire_active_minutes"),
+    path(route="all-users-questionnaire-active-minutes/<date:startdate>/<date:enddate>/", view=AllUsersQuestionnaireActiveMinutesAPI.as_view(), name="all_users_questionnaire_active_minutes"),
 ]
