@@ -450,3 +450,32 @@ class UserQuestionnaireActiveMinutesAPI(APIView):
         else:
             data = {"avg_questionnaire_active_mins": 0, "daily_questionnaire_mins": []}
             return Response(data=data, status=status.HTTP_200_OK)
+
+
+class AllUsersQuestionnaireActiveMinutesAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
+
+    def get(self, request, *args, **kwargs):
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        all_user_ids = User.objects.all().values_list('id', flat=True)
+        all_user_questionnaire_activity_list = []
+        for user in all_user_ids:
+            daily_questionnaire_mins = Answer.objects.count_number_activate_minutes_by_day(user, startdate, enddate)
+            print(daily_questionnaire_mins)
+            if daily_questionnaire_mins:
+                daily_questionnaire_mins_df = pd.DataFrame(daily_questionnaire_mins)
+                daily_questionnaire_mins_df['user_id'] = user
+                print(daily_questionnaire_mins_df)
+                all_user_questionnaire_activity_list.append(daily_questionnaire_mins_df)
+
+        if all_user_questionnaire_activity_list:
+            all_user_questionnaire_activity_df = pd.concat(all_user_questionnaire_activity_list)
+            avg_daily_questionnaire_mins = all_user_questionnaire_activity_df.groupby('user_id')['total_active_mins'].mean().reset_index(name='avg_questionnaire_active_mins')['avg_questionnaire_active_mins'].mean()
+            avg_daily_questionnaire_mins_df = all_user_questionnaire_activity_df.groupby('date')['total_active_mins'].mean().reset_index(name='avg_daily_questionnaire_active_mins')
+            list_daily_questionnaire_mins = avg_daily_questionnaire_mins_df.to_dict(orient='records')
+            data = {"all_user_avg_questionnaire_active_mins": avg_daily_questionnaire_mins, "daily_avg_questionnaire_active_mins": list_daily_questionnaire_mins}
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            data = {"all_user_avg_questionnaire_active_mins": 0, "daily_avg_questionnaire_active_mins": []}
+            return Response(data=data, status=status.HTTP_200_OK)
