@@ -1,6 +1,15 @@
 <template>
   <v-row align="center" justify="center">
-    <v-col lg="10" md="12" class="mt-10">
+    <v-col lg="10" md="12">
+      <div class="d-flex">
+        <v-spacer/>
+        <v-switch
+          v-model="useActiveMinutes"
+          flat
+          :label="$t('statistics.weeklyStats.toggleActiveMinutes')"
+          @change="toggleActiveMinutes"
+        />
+      </div>
       <v-card class="mb-2 pa-5">
         <v-card-title class="mb-3">
           <h3>{{ $t('statistics.weeklyStats.aggregated.title') }}</h3>
@@ -13,7 +22,7 @@
                 :label="$t('statistics.weeklyStats.weekSelectPrompt')"
                 outlined
                 @change="weekChangeHandler"
-              ></v-select>
+              />
             </v-col>
             <v-col cols="12" class="report-item">
               <p>{{ $t('statistics.weeklyStats.startDate') + weekStartDate }}</p>
@@ -181,7 +190,9 @@ import { mdiAccount } from '@mdi/js'
 import BigNumberCard from '@/components/utils/BigNumberCard.vue'
 import BarChart from '@/components/metrics/ChartBar.vue'
 import { UserDTO } from '~/services/application/user/userData'
-import { DailyAverageTime } from '~/domain/models/statistics/statistics'
+import {
+  DailyAverageTime, UserAverageTime, AllUsersAverageTime
+} from '~/domain/models/statistics/statistics'
 
 export default Vue.extend({
   name: 'Statistics',
@@ -198,6 +209,7 @@ export default Vue.extend({
       isLoadingUserList: false,
       isLoadingChartData: false,
       error: false,
+      useActiveMinutes: true,
       researchStartDate: '2022-12-01',
       dateFormatAPI: 'YYYY-MM-DD',
       dateFormatUI: 'ddd, DD MMM YYYY',
@@ -375,8 +387,12 @@ export default Vue.extend({
       await this.fetchIndividualWeekStatistics(this.user)
     },
 
-    getChartData(items: DailyAverageTime[], unit: string) {
-      const avgTimeDivisor = (unit === "minute") ? 60 : 3600
+    async toggleActiveMinutes() {
+      await this.fetchAggregatedWeekStatistics()
+      await this.fetchIndividualWeekStatistics(this.user)
+    },
+
+    getChartData(items: DailyAverageTime[]) {
       const output = {
         labels: [] as string[],
         values: [] as number[]
@@ -398,13 +414,13 @@ export default Vue.extend({
       output.labels.push((sat.length > 0) ? moment(sat[0].date, this.dateFormatAPI).format(this.dateFormatUI) : 'Saturday')
       output.labels.push((sun.length > 0) ? moment(sun[0].date, this.dateFormatAPI).format(this.dateFormatUI) : 'Sunday')
 
-      output.values.push((mon.length > 0) ? mon[0].averageTimeInSeconds/avgTimeDivisor : 0)
-      output.values.push((tue.length > 0) ? tue[0].averageTimeInSeconds/avgTimeDivisor : 0)
-      output.values.push((wed.length > 0) ? wed[0].averageTimeInSeconds/avgTimeDivisor : 0)
-      output.values.push((thu.length > 0) ? thu[0].averageTimeInSeconds/avgTimeDivisor : 0)
-      output.values.push((fri.length > 0) ? fri[0].averageTimeInSeconds/avgTimeDivisor : 0)
-      output.values.push((sat.length > 0) ? sat[0].averageTimeInSeconds/avgTimeDivisor : 0)
-      output.values.push((sun.length > 0) ? sun[0].averageTimeInSeconds/avgTimeDivisor : 0)
+      output.values.push((mon.length > 0) ? mon[0].averageTimeInMinutes : 0)
+      output.values.push((tue.length > 0) ? tue[0].averageTimeInMinutes : 0)
+      output.values.push((wed.length > 0) ? wed[0].averageTimeInMinutes : 0)
+      output.values.push((thu.length > 0) ? thu[0].averageTimeInMinutes : 0)
+      output.values.push((fri.length > 0) ? fri[0].averageTimeInMinutes : 0)
+      output.values.push((sat.length > 0) ? sat[0].averageTimeInMinutes : 0)
+      output.values.push((sun.length > 0) ? sun[0].averageTimeInMinutes : 0)
 
       return output
     },
@@ -416,22 +432,31 @@ export default Vue.extend({
 
       const fetchAllAnnoCount = await this.$services.statistics.fetchAllUsersAnnotationsCount(weekStartDateAPI, weekEndDateAPI)
       const fetchAllEveQuestCount = await this.$services.statistics.fetchAllUsersEveningQuestionnairesCount(weekStartDateAPI, weekEndDateAPI)
-      const fetchAllAvgAnnotation = await this.$services.statistics.fetchAllUsersAverageTimeAnnotation(weekStartDateAPI, weekEndDateAPI)
-      const fetchAllAvgQuestionnaire = await this.$services.statistics.fetchAllUsersAverageTimeQuestionnaire(weekStartDateAPI, weekEndDateAPI)
-      const fetchAllAvgText = await this.$services.statistics.fetchAllUsersAverageTimeText(weekStartDateAPI, weekEndDateAPI)
-      const allAvgAnnotationChartData = this.getChartData(fetchAllAvgAnnotation.dailyAverageTime, 'hour')
-      const allAvgQuestionnaireChartData = this.getChartData(fetchAllAvgQuestionnaire.dailyAverageTime, 'hour')
-      const allAvgTextChartData = this.getChartData(fetchAllAvgText.dailyAverageTime, 'minute')
+      let fetchAllAvgAnnotation = new AllUsersAverageTime(0, [])
+      let fetchAllAvgQuestionnaire = new AllUsersAverageTime(0, [])
+      let fetchAllAvgText = new AllUsersAverageTime(0, [])
+      if (this.useActiveMinutes) {
+        fetchAllAvgAnnotation = await this.$services.statistics.fetchAllUsersAvgTimeAnnotationActiveMinutes(weekStartDateAPI, weekEndDateAPI)
+        fetchAllAvgQuestionnaire = await this.$services.statistics.fetchAllUsersAvgTimeQuestionnaireActiveMinutes(weekStartDateAPI, weekEndDateAPI)
+        fetchAllAvgText = await this.$services.statistics.fetchAllUsersAvgTimeTextActiveMinutes(weekStartDateAPI, weekEndDateAPI)
+      } else {
+        fetchAllAvgAnnotation = await this.$services.statistics.fetchAllUsersAverageTimeAnnotation(weekStartDateAPI, weekEndDateAPI)
+        fetchAllAvgQuestionnaire = await this.$services.statistics.fetchAllUsersAverageTimeQuestionnaire(weekStartDateAPI, weekEndDateAPI)
+        fetchAllAvgText = await this.$services.statistics.fetchAllUsersAverageTimeText(weekStartDateAPI, weekEndDateAPI)
+      }
+      const allAvgAnnotationChartData = this.getChartData(fetchAllAvgAnnotation.dailyAverageTime)
+      const allAvgQuestionnaireChartData = this.getChartData(fetchAllAvgQuestionnaire.dailyAverageTime)
+      const allAvgTextChartData = this.getChartData(fetchAllAvgText.dailyAverageTime)
 
       this.weeklyAggregatedStats.totalAnnotationsCount = fetchAllAnnoCount.total
       this.weeklyAggregatedStats.totalEveningQuestionnairesCount = fetchAllEveQuestCount.total
-      this.weeklyAggregatedStats.meanAvgTimeAnnotate = fetchAllAvgAnnotation.meanTimeInSeconds / 3600
+      this.weeklyAggregatedStats.meanAvgTimeAnnotate = fetchAllAvgAnnotation.meanTimeInMinutes
       this.weeklyAggregatedStats.avgTimeAnnotate.labels = allAvgAnnotationChartData.labels
       this.weeklyAggregatedStats.avgTimeAnnotate.datasets[0].data = allAvgAnnotationChartData.values
-      this.weeklyAggregatedStats.meanAvgTimeQuestionnaire = fetchAllAvgQuestionnaire.meanTimeInSeconds / 3600
+      this.weeklyAggregatedStats.meanAvgTimeQuestionnaire = fetchAllAvgQuestionnaire.meanTimeInMinutes
       this.weeklyAggregatedStats.avgTimeQuestionnaire.labels = allAvgQuestionnaireChartData.labels
       this.weeklyAggregatedStats.avgTimeQuestionnaire.datasets[0].data = allAvgQuestionnaireChartData.values
-      this.weeklyAggregatedStats.meanAvgTimeText = fetchAllAvgText.meanTimeInSeconds / 60
+      this.weeklyAggregatedStats.meanAvgTimeText = fetchAllAvgText.meanTimeInMinutes
       this.weeklyAggregatedStats.avgTimeText.labels = allAvgTextChartData.labels
       this.weeklyAggregatedStats.avgTimeText.datasets[0].data = allAvgTextChartData.values
 
@@ -456,28 +481,37 @@ export default Vue.extend({
         this.weeklyIndividualStats.avgTimeText.labels = []
         this.weeklyIndividualStats.avgTimeText.datasets[0].data = []
       } else {
-        const userId = user.id.toString()
+        const id = user.id.toString()
         const weekStartDateAPI = moment(this.weekStartDate, this.dateFormatUI).format(this.dateFormatAPI)
         const weekEndDateAPI = moment(this.weekEndDate, this.dateFormatUI).add(1, 'days').format(this.dateFormatAPI)
 
-        const fetchUserAnnoCount = await this.$services.statistics.fetchUserAnnotationsCount(userId, weekStartDateAPI, weekEndDateAPI)
-        const fetchUserEveQuestCount = await this.$services.statistics.fetchUserEveningQuestionnairesCount(userId, weekStartDateAPI, weekEndDateAPI)
-        const fetchUserAvgAnnotation = await this.$services.statistics.fetchUserAverageTimeAnnotation(userId, weekStartDateAPI, weekEndDateAPI)
-        const fetchUserAvgQuestionnaire = await this.$services.statistics.fetchUserAverageTimeQuestionnaire(userId, weekStartDateAPI, weekEndDateAPI)
-        const fetchUserAvgText = await this.$services.statistics.fetchUserAverageTimeText(userId, weekStartDateAPI, weekEndDateAPI)
-        const userAvgAnnotationChartData = this.getChartData(fetchUserAvgAnnotation.dailyAverageTime, 'hour')
-        const userAvgQuestionnaireChartData = this.getChartData(fetchUserAvgQuestionnaire.dailyAverageTime, 'hour')
-        const userAvgTextChartData = this.getChartData(fetchUserAvgText.dailyAverageTime, 'minute')
+        const fetchUserAnnoCount = await this.$services.statistics.fetchUserAnnotationsCount(id, weekStartDateAPI, weekEndDateAPI)
+        const fetchUserEveQuestCount = await this.$services.statistics.fetchUserEveningQuestionnairesCount(id, weekStartDateAPI, weekEndDateAPI)
+        let fetchUserAvgAnnotation = new UserAverageTime(0, 0, [])
+        let fetchUserAvgQuestionnaire = new UserAverageTime(0, 0, [])
+        let fetchUserAvgText = new UserAverageTime(0, 0, [])
+        if (this.useActiveMinutes) {
+          fetchUserAvgAnnotation = await this.$services.statistics.fetchUsrAvgTimeAnnotationActiveMinutes(id, weekStartDateAPI, weekEndDateAPI)
+          fetchUserAvgQuestionnaire = await this.$services.statistics.fetchUsrAvgTimeQuestionnaireActiveMinutes(id, weekStartDateAPI, weekEndDateAPI)
+          fetchUserAvgText = await this.$services.statistics.fetchUsrAvgTimeTextActiveMinutes(id, weekStartDateAPI, weekEndDateAPI)
+        } else {
+          fetchUserAvgAnnotation = await this.$services.statistics.fetchUserAverageTimeAnnotation(id, weekStartDateAPI, weekEndDateAPI)
+          fetchUserAvgQuestionnaire = await this.$services.statistics.fetchUserAverageTimeQuestionnaire(id, weekStartDateAPI, weekEndDateAPI)
+          fetchUserAvgText = await this.$services.statistics.fetchUserAverageTimeText(id, weekStartDateAPI, weekEndDateAPI)
+        }
+        const userAvgAnnotationChartData = this.getChartData(fetchUserAvgAnnotation.dailyAverageTime)
+        const userAvgQuestionnaireChartData = this.getChartData(fetchUserAvgQuestionnaire.dailyAverageTime)
+        const userAvgTextChartData = this.getChartData(fetchUserAvgText.dailyAverageTime)
 
         this.weeklyIndividualStats.totalAnnotationsCount = fetchUserAnnoCount.done
         this.weeklyIndividualStats.totalEveningQuestionnairesCount = fetchUserEveQuestCount.done
-        this.weeklyIndividualStats.meanAvgTimeAnnotate = fetchUserAvgAnnotation.meanTimeInSeconds / 3600
+        this.weeklyIndividualStats.meanAvgTimeAnnotate = fetchUserAvgAnnotation.meanTimeInMinutes
         this.weeklyIndividualStats.avgTimeAnnotate.labels = userAvgAnnotationChartData.labels
         this.weeklyIndividualStats.avgTimeAnnotate.datasets[0].data = userAvgAnnotationChartData.values
-        this.weeklyIndividualStats.meanAvgTimeQuestionnaire = fetchUserAvgQuestionnaire.meanTimeInSeconds / 3600
+        this.weeklyIndividualStats.meanAvgTimeQuestionnaire = fetchUserAvgQuestionnaire.meanTimeInMinutes
         this.weeklyIndividualStats.avgTimeQuestionnaire.labels = userAvgQuestionnaireChartData.labels
         this.weeklyIndividualStats.avgTimeQuestionnaire.datasets[0].data = userAvgQuestionnaireChartData.values
-        this.weeklyIndividualStats.meanAvgTimeText = fetchUserAvgText.meanTimeInSeconds / 60
+        this.weeklyIndividualStats.meanAvgTimeText = fetchUserAvgText.meanTimeInMinutes
         this.weeklyIndividualStats.avgTimeText.labels = userAvgTextChartData.labels
         this.weeklyIndividualStats.avgTimeText.datasets[0].data = userAvgTextChartData.values
       }

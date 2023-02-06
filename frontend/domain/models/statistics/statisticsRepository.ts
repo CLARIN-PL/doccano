@@ -14,4 +14,10 @@ export interface StatisticsRepository {
   fetchAllUsersAverageTimeAnnotation(startDate: string, endDate: string): Promise<AllUsersAverageTime>
   fetchAllUsersAverageTimeQuestionnaire(startDate: string, endDate: string): Promise<AllUsersAverageTime>
   fetchAllUsersAverageTimeText(startDate: string, endDate: string): Promise<AllUsersAverageTime>
+  fetchUsrAvgTimeAnnotationActiveMinutes(userId: string, startDate: string, endDate: string): Promise<UserAverageTime>
+  fetchUsrAvgTimeQuestionnaireActiveMinutes(userId: string, startDate: string, endDate: string): Promise<UserAverageTime>
+  fetchUsrAvgTimeTextActiveMinutes(userId: string, startDate: string, endDate: string): Promise<UserAverageTime>
+  fetchAllUsersAvgTimeAnnotationActiveMinutes(startDate: string, endDate: string): Promise<AllUsersAverageTime>
+  fetchAllUsersAvgTimeQuestionnaireActiveMinutes(startDate: string, endDate: string): Promise<AllUsersAverageTime>
+  fetchAllUsersAvgTimeTextActiveMinutes(startDate: string, endDate: string): Promise<AllUsersAverageTime>
 }
