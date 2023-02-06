@@ -27,13 +27,13 @@ export class AllUsersItemDoneCount {
 export class DailyAverageTime {
   constructor(
     public date: string,
-    public averageTimeInSeconds: number
+    public averageTimeInMinutes: number
   ) {}
 
   toObject(): Object {
     return {
       date: this.date,
-      averageTimeInSeconds: this.averageTimeInSeconds
+      averageTimeInMinutes: this.averageTimeInMinutes
     }
   }
 }
@@ -41,14 +41,14 @@ export class DailyAverageTime {
 export class UserAverageTime {
   constructor(
     public userId: number,
-    public meanTimeInSeconds: number,
+    public meanTimeInMinutes: number,
     public dailyAverageTime: DailyAverageTime[]
   ) {}
 
   toObject(): Object {
     return {
       userId: this.userId,
-      meanTimeInSeconds: this.meanTimeInSeconds,
+      meanTimeInMinutes: this.meanTimeInMinutes,
       dailyAverageTime: this.dailyAverageTime
     }
   }
@@ -56,13 +56,13 @@ export class UserAverageTime {
 
 export class AllUsersAverageTime {
   constructor(
-    public meanTimeInSeconds: number,
+    public meanTimeInMinutes: number,
     public dailyAverageTime: DailyAverageTime[]
   ) {}
 
   toObject(): Object {
     return {
-      meanTimeInSeconds: this.meanTimeInSeconds,
+      meanTimeInMinutes: this.meanTimeInMinutes,
       dailyAverageTime: this.dailyAverageTime
     }
   }

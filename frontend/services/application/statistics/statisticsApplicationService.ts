@@ -46,4 +46,28 @@ export class StatisticsApplicationService {
   public async fetchAllUsersAverageTimeText(startDate: string, endDate: string): Promise<AllUsersAverageTime> {
     return await this.repository.fetchAllUsersAverageTimeText(startDate, endDate)
   }
+
+  public async fetchUsrAvgTimeAnnotationActiveMinutes(userId: string, startDate: string, endDate: string): Promise<UserAverageTime> {
+    return await this.repository.fetchUsrAvgTimeAnnotationActiveMinutes(userId, startDate, endDate)
+  }
+
+  public async fetchUsrAvgTimeQuestionnaireActiveMinutes(userId: string, startDate: string, endDate: string): Promise<UserAverageTime> {
+    return await this.repository.fetchUsrAvgTimeQuestionnaireActiveMinutes(userId, startDate, endDate)
+  }
+
+  public async fetchUsrAvgTimeTextActiveMinutes(userId: string, startDate: string, endDate: string): Promise<UserAverageTime> {
+    return await this.repository.fetchUsrAvgTimeTextActiveMinutes(userId, startDate, endDate)
+  }
+  
+  public async fetchAllUsersAvgTimeAnnotationActiveMinutes(startDate: string, endDate: string): Promise<AllUsersAverageTime> {
+    return await this.repository.fetchAllUsersAvgTimeAnnotationActiveMinutes(startDate, endDate)
+  }
+
+  public async fetchAllUsersAvgTimeQuestionnaireActiveMinutes(startDate: string, endDate: string): Promise<AllUsersAverageTime> {
+    return await this.repository.fetchAllUsersAvgTimeQuestionnaireActiveMinutes(startDate, endDate)
+  }
+
+  public async fetchAllUsersAvgTimeTextActiveMinutes(startDate: string, endDate: string): Promise<AllUsersAverageTime> {
+    return await this.repository.fetchAllUsersAvgTimeTextActiveMinutes(startDate, endDate)
+  }
 }
