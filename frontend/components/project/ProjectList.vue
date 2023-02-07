@@ -19,6 +19,7 @@
     item-key="id"
     :show-select="showSelect"
     @input="$emit('input', $event)"
+    @update:page="$emit('navigation', $event)"
   >
     <template #top>
       <v-text-field
