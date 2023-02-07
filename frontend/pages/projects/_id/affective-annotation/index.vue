@@ -535,24 +535,6 @@ export default {
       this.showProgressBar = !this.showProgressBar
     },
 
-    getDimensionComponentRef() {
-      let dimensionRef = 'summaryInput'
-      if (this.isCombinationMode) {
-        dimensionRef = 'summaryInput'
-      } else if (this.isSummaryMode) {
-        dimensionRef = 'summaryInput'
-      } else if (this.isEmotionsMode) {
-        dimensionRef = 'emotionsInput'
-      } else if (this.isOthersMode) {
-        dimensionRef = 'othersInput'
-      } else if (this.isHumorMode) {
-        dimensionRef = 'humorInput'
-      } else if (this.isOffensiveMode) {
-        dimensionRef = 'offensiveInput'
-      }
-      return this.$refs[dimensionRef]
-    },
-
     async checkRestingPeriod() {
       const restingEndTime = await this.calculateRestingPeriod()
       if (restingEndTime === null) {
