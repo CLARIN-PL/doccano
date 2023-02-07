@@ -389,8 +389,8 @@ class UserAvgSingleTextActiveMinutesAPI(APIView):
             data = {"average_single_text_annotation_time (active minutes)": avg_single_annotation_time, "daily_avg_sinlge_text_annotation_time (active minutes)": daily_avg_single_ann_time}
             return Response(data=data, status=status.HTTP_200_OK)
         else:
-            data = {"aaverage_single_text_annotation_time (active minutes)": 0, "daily_avg_sinlge_text_annotation_time (active minutes)": []}
-            return Response(data=all_labels, status=status.HTTP_200_OK)
+            data = {"average_single_text_annotation_time (active minutes)": 0, "daily_avg_sinlge_text_annotation_time (active minutes)": []}
+            return Response(data=data, status=status.HTTP_200_OK)
 
 
 class AllUsersAvgSingleTextActiveMinutesAPI(APIView):
@@ -427,7 +427,7 @@ class AllUsersAvgSingleTextActiveMinutesAPI(APIView):
             data = {"all_user_avg_single_text_ann_time (active minutes)": avg_single_text_annotation_time, "daily_avg_single_text_ann_time (active minutes)": list_daily_sisngle_text_annotation_time}
             return Response(data=data, status=status.HTTP_200_OK)
         else:
-            data = {"all_user_avg_single_text_ann_time (active minutes)": [], "daily_avg_single_text_ann_time (active minutes)": []}
+            data = {"all_user_avg_single_text_ann_time (active minutes)": 0, "daily_avg_single_text_ann_time (active minutes)": []}
             return Response(data=data, status=status.HTTP_200_OK)
 
 
