@@ -3,6 +3,7 @@
     :value="value"
     :headers="headers"
     :items="items"
+    :page.sync="page"
     :options.sync="options"
     :server-items-length="total"
     :search="search"
@@ -63,6 +64,10 @@ export default Vue.extend({
       type: Boolean,
       default: false,
       required: true
+    },
+    page: {
+      type: Number,
+      default: 1
     },
     items: {
       type: Array as PropType<ProjectDTO[]>,

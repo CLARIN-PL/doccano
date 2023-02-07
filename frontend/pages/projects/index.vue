@@ -32,6 +32,7 @@
     <project-list
       v-model="selected"
       :items="projects.items"
+      :page="page"
       :is-loading="isLoading"
       :total="projects.count"
       :show-select="isStaff"
@@ -79,6 +80,7 @@ export default Vue.extend({
       showRestingMessage: false,
       restingEndTime: '',
       totalTextsAnnotated: 0,
+      page: 1
     }
   },
 
@@ -174,6 +176,9 @@ export default Vue.extend({
       const hasFinishedAll = this.projects.items.length === 0
       this.setProject({ hasFinishedAll })
       await this.checkQuestionnaire()
+      if (hasFinishedAll) {
+        this.page = this.page + 1
+      }
       this.isLoading = false
     },
 
