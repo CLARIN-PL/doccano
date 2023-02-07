@@ -82,7 +82,12 @@
           >
             <v-spacer />
           </toolbar-laptop>
-          <toolbar-mobile :total="docs.count" class="d-flex d-sm-none header-toolbar --mobile" />
+          <toolbar-mobile
+            :total="docs.count"
+            :disable-prev="!canNavigateBackward"
+            :disable-next="!canNavigateForward"
+            class="d-flex d-sm-none header-toolbar --mobile"
+          />
           <v-row>
             <v-col cols="12" md="9">
               <p ref="entityText" class="header-text">
@@ -90,7 +95,9 @@
               </p>
             </v-col>
             <v-col cols="12" md="3" class="d-sm-none d-md-block text-center">
-              <v-btn plain x-small @click="toggleProgressBar">{{ $t('annotation_sidebar.progress.toggle') }}</v-btn>
+              <v-btn class="btn-toggle" plain x-small color="info" @click="toggleProgressBar">
+                {{ $t('annotation_sidebar.progress.toggle') }}
+              </v-btn>
               <annotation-progress :class="(showProgressBar)?'d-block':'d-none'" :progress="progress" />
             </v-col>
           </v-row>
@@ -1052,6 +1059,12 @@ export default {
         max-height: 150px;
         overflow-y: auto;
         opacity: 0.8;
+      }
+
+      .btn-toggle {
+        white-space: normal;
+        word-wrap: break-word;
+        text-decoration: underline;
       }
     }
   }
