@@ -22,6 +22,14 @@ export default Vue.extend({
       type: Number,
       default: 1,
       required: true
+    },
+    disablePrev: {
+      type: Boolean,
+      default: false
+    },
+    disableNext: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -38,10 +46,10 @@ export default Vue.extend({
       return parseInt(this.$route.query.page, 10)
     },
     isFirstPage(): boolean {
-      return this.page === 1
+      return this.page === 1 || this.disablePrev
     },
     isLastPage(): boolean {
-      return this.page === this.total || this.total === 0
+      return this.page === this.total || this.total === 0 || this.disableNext
     }
   },
 
