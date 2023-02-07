@@ -37,6 +37,7 @@
       :total="projects.count"
       :show-select="isStaff"
       @update:query="updateQuery"
+      @navigation="setPageNumber"
     />
     <p v-if="!isStaff" class="warning-text">
       {{ $t('generic.onlyDisplayCompletedProject', { number: projects.items.length }) }}
@@ -150,6 +151,7 @@ export default Vue.extend({
     async getProjectData() {
       this.isLoading = true
       const projects = await this.$services.project.list(this.$route.query)
+      const isEmptyProjectList = projects.items.length === 0
       if (this.isStaff) {
         this.projects = _.cloneDeep(projects)
       } else {
@@ -176,10 +178,11 @@ export default Vue.extend({
       const hasFinishedAll = this.projects.items.length === 0
       this.setProject({ hasFinishedAll })
       await this.checkQuestionnaire()
-      if (hasFinishedAll) {
+      if (hasFinishedAll && !isEmptyProjectList) {
         this.page = this.page + 1
+      } else {
+        this.isLoading = false
       }
-      this.isLoading = false
     },
 
     async checkQuestionnaire() {
@@ -207,6 +210,12 @@ export default Vue.extend({
 
     updateQuery(query: object) {
       this.$router.push(query)
+    },
+
+    setPageNumber(pageNumber: number) {
+      if (!this.isLoading && this.page !== pageNumber) {
+        this.page = pageNumber
+      }
     }
   }
 })
