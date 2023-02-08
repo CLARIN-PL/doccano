@@ -58,7 +58,7 @@ class ProjectProgressDetail(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
 
     def get(self, request, *args, **kwargs):
-        all_projects = Project.objects.filter(role_mappings__user=self.request.user)
+        all_projects = Project.objects.filter(role_mappings__user=self.request.user).order_by("created_at")
         all_project_data = []
         for project in all_projects:
             examples = Example.objects.filter(project=project.id).values("id")
