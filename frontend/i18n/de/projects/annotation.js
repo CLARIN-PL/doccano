@@ -23,6 +23,7 @@ export default {
   labelTypes: 'Etikettentypen',
   relation: 'Beziehung',
   span: 'Spanne',
+  warningOnly1Answer: "Bitte geben Sie nur 1 Antwort ein.",
   warningFrom2To10Words: "Bitte geben Sie 2-10 Wörter ein.",
   warningRequired: "Erforderlich.",
   warningInvalidChar: "Ungültiges Zeichen.",
