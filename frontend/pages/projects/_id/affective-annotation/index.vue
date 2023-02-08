@@ -1001,13 +1001,15 @@ export default {
       await this.list(this.doc.id)
     },
     async addWishToAuthor(text) {
-      await this.$services.affectiveTextlabel.create(
-        this.projectId,
-        this.doc.id,
-        text,
-        this.affectiveTextlabelQuestions.othersWishToAuthor
-      )
-      await this.list(this.doc.id)
+      if (this.affectiveOthersWishToAuthor.length === 0) {
+        await this.$services.affectiveTextlabel.create(
+          this.projectId,
+          this.doc.id,
+          text,
+          this.affectiveTextlabelQuestions.othersWishToAuthor
+        )
+        await this.list(this.doc.id)
+      }
     },
     async nullifyWishToAuthor() {
       this.affectiveOthersTmp.wishToAuthor = this.affectiveOthersWishToAuthor
