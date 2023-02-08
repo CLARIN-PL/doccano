@@ -250,7 +250,7 @@ export default {
           if (value) {
             const words_array = value.split(",")
             const count_ok = words_array.length === 1
-            return count_ok || "Please enter one answer."
+            return count_ok || this.$i18n.t('annotation.warningOnly1Answer')
           }
           return this.$i18n.t('annotation.warningRequired')
         },

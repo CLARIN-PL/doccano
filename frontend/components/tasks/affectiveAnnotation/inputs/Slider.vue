@@ -4,7 +4,7 @@
       <v-col :cols="(withCheckbox) ? 3 : 4" class="widget-row__category">
         {{ categoryLabel }}
         <span v-if="required" class="red--text"> * </span>
-        <span class="red--text" :class="(error) ? 'd-block' : 'd-none'">Response required</span>
+        <span class="red--text" :class="(error) ? 'd-block' : 'd-none'">{{ $t('annotation.warningRequired') }}</span>
       </v-col>
       <v-col :cols="(withCheckbox) ? 6 : 8" class="widget-row__slider">
         <v-slider
