@@ -154,7 +154,7 @@
         @unmarkCheckbox="restoreCategoryValue"
       />
       <textfield-with-seq-2-seq
-        :error="showErrors && wishToAuthor.length === 0"
+        :error="showErrors && (wishToAuthor.length === 0 || wishToAuthor.length > 1)"
         :read-only="readOnly"
         :text="$t('annotation.affectiveOthers.wishToAuthorCategory')"
         :category-label="$t('annotation.affectiveOthers.wishToAuthorCategory')"
@@ -248,7 +248,15 @@ export default {
       rules: [
         (value) => {
           if (value) {
-            const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż,().! -]+$/
+            const words_array = value.split(",")
+            const count_ok = words_array.length === 1
+            return count_ok || "Please enter one answer."
+          }
+          return this.$i18n.t('annotation.warningRequired')
+        },
+        (value) => {
+          if (value) {
+            const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
             return pattern.test(value) || this.$i18n.t('annotation.warningInvalidChar')
           }
           return true
@@ -310,7 +318,7 @@ export default {
     },
     textValidation(value, arrayToCheck) {
       let errorMessage = ""
-      const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż,().! -]+$/
+      const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż -]+$/
       if (!pattern.test(value)) {
         errorMessage = this.$i18n.t('annotation.warningInvalidChar')
       }
