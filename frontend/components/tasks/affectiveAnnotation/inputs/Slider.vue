@@ -1,8 +1,10 @@
 <template>
   <v-container class="widget">
     <v-row class="widget-row" justify="center" align="center">
-      <v-col :cols="(withCheckbox) ? 3 : 4" class="widget-row__category" :class="{ 'has-error': error }">
+      <v-col :cols="(withCheckbox) ? 3 : 4" class="widget-row__category">
         {{ categoryLabel }}
+        <span v-if="required" class="red--text"> * </span>
+        <span class="red--text" :class="(error) ? 'd-block' : 'd-none'">Response required</span>
       </v-col>
       <v-col :cols="(withCheckbox) ? 6 : 8" class="widget-row__slider">
         <v-slider
@@ -48,6 +50,10 @@ import { mdiCheck } from '@mdi/js'
 
 export default {
   props: {
+    required: {
+      type: Boolean,
+      default: true
+    },
     error: {
       type: Boolean,
       default: true
@@ -196,9 +202,5 @@ export default {
       line-height: 0.95;
     }
   }
-}
-
-.has-error {
-  color: red !important;
 }
 </style>

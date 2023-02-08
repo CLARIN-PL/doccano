@@ -1,11 +1,15 @@
 <template>
   <v-container class="widget">
-    <v-row v-if="question" class="widget__question" :class="{ 'has-error': error }">
+    <v-row v-if="question" class="widget__question">
       {{ question }}
+      <span v-if="required" class="red--text"> * </span>
+      <span class="red--text" :class="(error) ? 'd-block' : 'd-none'">Response required</span>
     </v-row>
     <v-row class="widget__answer" justify="center" align="center">
-      <v-col v-if="categoryLabel" :cols="(withCheckbox)?3:4" class="widget__category" :class="{ 'has-error': error }">
+      <v-col v-if="categoryLabel" :cols="(withCheckbox)?3:4" class="widget__category">
         {{ categoryLabel }}
+        <span v-if="required" class="red--text"> * </span>
+        <span class="red--text" :class="(error) ? 'd-block' : 'd-none'">Response required</span>
       </v-col>
       <v-col
         :cols="colsTextfield"
@@ -68,6 +72,10 @@ export default {
   },
 
   props: {
+    required: {
+      type: Boolean,
+      default: true
+    },
     error: {
       type: Boolean,
       default: true
