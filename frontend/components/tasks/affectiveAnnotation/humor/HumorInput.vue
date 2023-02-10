@@ -98,7 +98,7 @@
                                     class="subquestions__item" >
                                     <v-checkbox 
                                         v-model="substatement.isChecked"
-                                        :required="(substatement.isChecked && !substatement.answer)"
+                                        :error="(substatement.isChecked && !substatement.answer)"
                                         :readonly="readOnly"
                                         :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
                                         :label="$t(`annotation.humor.subquestion3.substatement${(idx+1)}`)"
