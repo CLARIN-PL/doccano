@@ -1001,18 +1001,15 @@ export default {
       await this.list(this.doc.id)
     },
     async addWishToAuthor(text) {
-      if (this.affectiveOthersWishToAuthor.length === 0) {
-        await this.$services.affectiveTextlabel.create(
-          this.projectId,
-          this.doc.id,
-          text,
-          this.affectiveTextlabelQuestions.othersWishToAuthor
-        )
-        await this.list(this.doc.id)
-      }
+      await this.$services.affectiveTextlabel.create(
+        this.projectId,
+        this.doc.id,
+        text,
+        this.affectiveTextlabelQuestions.othersWishToAuthor
+      )
+      await this.list(this.doc.id)
     },
     async nullifyWishToAuthor() {
-      this.affectiveOthersTmp.wishToAuthor = this.affectiveOthersWishToAuthor
       if (this.affectiveOthersWishToAuthor.length > 0) {
         const annotationId = this.affectiveOthersWishToAuthor[0].id
         const currentText = this.affectiveOthersWishToAuthor[0].text
@@ -1027,12 +1024,6 @@ export default {
       if (this.affectiveOthersWishToAuthor.length > 0) {
         const annotationId = this.affectiveOthersWishToAuthor[0].id
         await this.removeWishToAuthor(annotationId)
-        if (this.affectiveOthersTmp.wishToAuthor.length > 0) {
-          const text = this.affectiveOthersTmp.wishToAuthor[0].text
-          if (text !== this.strNullFlag) {
-            await this.addWishToAuthor(text)
-          }
-        }
       }
     },
     async updateScale(labelId, value) {
