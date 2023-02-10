@@ -98,7 +98,7 @@
                                     class="subquestions__item" >
                                     <v-checkbox 
                                         v-model="substatement.isChecked"
-                                        :required="(substatement.isChecked && !substatement.answer)"
+                                        :error="(substatement.isChecked && substatement.answer === emptyTextFlag)"
                                         :readonly="readOnly"
                                         :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
                                         :label="$t(`annotation.offensive.subquestion3.substatement${(idx+1)}`)"
@@ -136,7 +136,7 @@
                                     <p>
                                         <v-checkbox 
                                             v-model="substatement.isChecked"
-                                            :required="(substatement.isChecked && !substatement.answer)"
+                                            :error="(substatement.isChecked && substatement.answer === emptyTextFlag)"
                                             :readonly="readOnly"
                                             :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
                                             :label="$t(`annotation.offensive.subquestion4.substatement${(idx+1)}`)" 
@@ -226,6 +226,7 @@ export default Vue.extend({
       rules: {
         required: (value: any) => !!value || this.$i18n.t('rules.required')
       },
+      emptyTextFlag: '-',
       formData: {
         subquestion1: {
           value: 0,
@@ -510,7 +511,7 @@ export default Vue.extend({
       let eventName = textLabelValue ? 'update:label' : 'add:label'
       eventName = substatement.isChecked ? eventName : 'remove:label'
       if (!_.isEmpty(formData) && labelQuestion) {
-        const textfieldAnswer = formData.showTextbox && !formData.answer ? '-' : formData.answer
+        const textfieldAnswer = formData.showTextbox && !formData.answer ? this.emptyTextFlag : formData.answer
         const answer = formData.showTextbox ? textfieldAnswer : labelQuestion
         if (eventName === 'add:label' && answer) {
           this.$emit(eventName, question, answer)
