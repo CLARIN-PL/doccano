@@ -8,8 +8,15 @@
                 <ol class="widget__questions">
                     <li class="widget-questions__item questions-item --visible">
                         <p class="questions-item__text">
-                        <h4 :class="{'has-error': showErrors && !formData.subquestion1.isClicked}">
+                        <h4>
                             {{ $t('annotation.offensive.subquestion1')}}
+                            <span class="red--text"> * </span>
+                            <span
+                                class="red--text"
+                                :class="(showErrors && !formData.subquestion1.isClicked) ? 'd-block' : 'd-none'"
+                            >
+                                {{ $t('annotation.warningRequired') }}
+                            </span>
                         </h4>
                         <div class="questions-item__slider">
                             <span class="slider-text --start">
@@ -41,8 +48,15 @@
                     </li>
                     <li class="widget-questions__item questions-item --visible">
                         <p class="questions-item__text">
-                        <h4 :class="{'has-error': showErrors && !formData.subquestion2.isClicked}">
+                        <h4>
                             {{ $t('annotation.offensive.subquestion2')}}
+                            <span class="red--text"> * </span>
+                            <span
+                                class="red--text"
+                                :class="(showErrors && !formData.subquestion2.isClicked) ? 'd-block' : 'd-none'"
+                            >
+                                {{ $t('annotation.warningRequired') }}
+                            </span>
                         </h4>
                         <div class="questions-item__slider">
                             <span class="slider-text --start">
@@ -75,7 +89,7 @@
                     <li class="widget-questions__item questions-item"
                         :class="{'--visible': hasFilledTopQuestions}">
                         <p class="questions-item__text">
-                            <h4 :class="{'has-error': !hasValidSubquestion3}">
+                            <h4 :class="{'red--text': !hasValidSubquestion3}">
                                 {{ $t('annotation.offensive.subquestion3.question')}}
                             </h4>
                             <ul class="subquestions">
@@ -83,7 +97,8 @@
                                     :key="`substatement3_${idx}`"
                                     class="subquestions__item" >
                                     <v-checkbox 
-                                        v-model="substatement.isChecked" 
+                                        v-model="substatement.isChecked"
+                                        :required="(substatement.isChecked && !substatement.answer)"
                                         :readonly="readOnly"
                                         :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
                                         :label="$t(`annotation.offensive.subquestion3.substatement${(idx+1)}`)"
@@ -111,7 +126,7 @@
                     <li class="widget-questions__item questions-item" 
                         :class="{'--visible': hasFilledTopQuestions}">
                         <p class="questions-item__text">
-                            <h4 :class="{'has-error': !hasValidSubquestion4}">
+                            <h4 :class="{'red--text': !hasValidSubquestion4}">
                                 {{ $t('annotation.offensive.subquestion4.question')}}
                             </h4>
                                 <ul class="subquestions">
@@ -120,7 +135,8 @@
                                     class="subquestions__item" >
                                     <p>
                                         <v-checkbox 
-                                            v-model="substatement.isChecked" 
+                                            v-model="substatement.isChecked"
+                                            :required="(substatement.isChecked && !substatement.answer)"
                                             :readonly="readOnly"
                                             :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
                                             :label="$t(`annotation.offensive.subquestion4.substatement${(idx+1)}`)" 
@@ -298,6 +314,7 @@ export default Vue.extend({
     hasValidSubquestion3(): boolean {
       if (this.showErrors && this.hasFilledTopQuestions) {
         const answersSubquestion3 = this.formData.subquestion3.filter((item:any) => item.isChecked && !!item.answer)
+        console.log("Offensive - answersSubquestion3.length", answersSubquestion3.length)
         return answersSubquestion3.length > 0
       }
       return true
@@ -305,6 +322,7 @@ export default Vue.extend({
     hasValidSubquestion4(): boolean {
       if (this.showErrors && this.hasFilledTopQuestions) {
         const answersSubquestion4 = this.formData.subquestion4.filter((item:any) => item.isChecked)
+        console.log("Offensive - answersSubquestion4.length", answersSubquestion4.length)
         return answersSubquestion4.length > 0
       }
       return true
@@ -312,12 +330,15 @@ export default Vue.extend({
     hasErrors(): boolean {
       if (this.showErrors) {
         if (!this.value) {
+          console.log('A')
           return true
         }
         if (!this.formData.subquestion1.isClicked || !this.formData.subquestion2.isClicked) {
+          console.log('B')
           return true
         }
         if (!this.hasValidSubquestion3 || !this.hasValidSubquestion4) {
+          console.log('C')
           return true
         }
       }
@@ -539,14 +560,6 @@ export default Vue.extend({
 
   &.--visible {
     opacity: 1;
-  }
-
-  &__text {
-    h4 {
-      &.has-error {
-        color: red !important;
-      }
-    }
   }
 
   &__slider {
