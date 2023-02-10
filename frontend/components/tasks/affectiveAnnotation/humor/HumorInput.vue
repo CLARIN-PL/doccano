@@ -92,6 +92,12 @@
                             <h4 :class="{'red--text': !hasValidSubquestion3}">
                                 {{ $t('annotation.humor.subquestion3.question')}}
                             </h4>
+                            <span
+                                class="red--text"
+                                :class="!hasValidSubquestion3 ? 'd-block' : 'd-none'"
+                            >
+                                {{ $t('annotation.warningRequired') }}
+                            </span>
                             <ul class="subquestions">
                                 <li v-for="(substatement, idx) in formData.subquestion3"  
                                     :key="`substatement3_${idx}`"
@@ -104,7 +110,12 @@
                                         :label="$t(`annotation.humor.subquestion3.substatement${(idx+1)}`)"
                                         class="subquestions-item__checkbox"
                                         @change="onLabelChange(substatement, `subquestion3`, idx)" />
-
+                                    <span
+                                        class="red--text"
+                                        :class="(substatement.isChecked && !substatement.answer) ? 'd-block' : 'd-none'"
+                                    >
+                                        {{ $t('annotation.warningRequired') }}
+                                    </span>
                                     <textfield-modal
                                         v-if="substatement.isChecked"
                                         v-model="substatement.answer"

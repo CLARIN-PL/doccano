@@ -92,6 +92,12 @@
                             <h4 :class="{'red--text': !hasValidSubquestion3}">
                                 {{ $t('annotation.offensive.subquestion3.question')}}
                             </h4>
+                            <span
+                                class="red--text"
+                                :class="!hasValidSubquestion3 ? 'd-block' : 'd-none'"
+                            >
+                                {{ $t('annotation.warningRequired') }}
+                            </span>
                             <ul class="subquestions">
                                 <li v-for="(substatement, idx) in formData.subquestion3"  
                                     :key="`substatement3_${idx}`"
@@ -104,7 +110,12 @@
                                         :label="$t(`annotation.offensive.subquestion3.substatement${(idx+1)}`)"
                                         class="subquestions-item__checkbox"
                                         @change="onLabelChange(substatement, `subquestion3`, idx)" />
-
+                                    <span
+                                        class="red--text"
+                                        :class="(substatement.isChecked && substatement.answer === emptyTextFlag) ? 'd-block' : 'd-none'"
+                                    >
+                                            {{ $t('annotation.warningRequired') }}
+                                    </span>
                                     <textfield-modal
                                         v-if="substatement.isChecked && substatement.showTextbox"
                                         v-model="substatement.answer"
@@ -129,6 +140,12 @@
                             <h4 :class="{'red--text': !hasValidSubquestion4}">
                                 {{ $t('annotation.offensive.subquestion4.question')}}
                             </h4>
+                            <span
+                                class="red--text"
+                                :class="!hasValidSubquestion3 ? 'd-block' : 'd-none'"
+                            >
+                                {{ $t('annotation.warningRequired') }}
+                            </span>
                                 <ul class="subquestions">
                                     <li v-for="(substatement, idx) in formData.subquestion4" 
                                     :key="`substatement4_${idx}`"
@@ -143,21 +160,26 @@
                                             class="subquestions-item__checkbox"
                                             @change="onLabelChange(substatement, `subquestion4`, idx)"
                                         />
-
-                                    <textfield-modal
-                                        v-if="substatement.showTextbox && substatement.isChecked"
-                                        v-model="substatement.answer"
-                                        :required="true"
-                                        :readonly="readOnly"
-                                        :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
-                                        :question="$t(`annotation.offensive.subquestion4.substatement${(idx+1)}Question`)"
-                                        :full-question="`
-                                            ${$t(`annotation.offensive.subquestion4.substatement${(idx+1)}Question`)}
-                                             (${$t(`annotation.offensive.subquestion4.substatement${(idx+1)}`)})`"
-                                        :rules="[rules.required]"
-                                        class="subquestions-item__textfield"
-                                        @submit="onLabelChange(substatement, `subquestion4`, idx)"
-                                    />
+                                        <span
+                                            class="red--text"
+                                            :class="(substatement.isChecked && substatement.answer === emptyTextFlag) ? 'd-block' : 'd-none'"
+                                        >
+                                                {{ $t('annotation.warningRequired') }}
+                                        </span>
+                                        <textfield-modal
+                                            v-if="substatement.showTextbox && substatement.isChecked"
+                                            v-model="substatement.answer"
+                                            :required="true"
+                                            :readonly="readOnly"
+                                            :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
+                                            :question="$t(`annotation.offensive.subquestion4.substatement${(idx+1)}Question`)"
+                                            :full-question="`
+                                                ${$t(`annotation.offensive.subquestion4.substatement${(idx+1)}Question`)}
+                                                (${$t(`annotation.offensive.subquestion4.substatement${(idx+1)}`)})`"
+                                            :rules="[rules.required]"
+                                            class="subquestions-item__textfield"
+                                            @submit="onLabelChange(substatement, `subquestion4`, idx)"
+                                        />
                                     </p>
                                     </li>
                             </ul>
