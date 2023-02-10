@@ -273,7 +273,8 @@ export default {
       agreeableCategory: this.$i18n.t('annotation.affectiveOthers.agreeableCategory'),
       believableCategory: this.$i18n.t('annotation.affectiveOthers.believableCategory'),
       sympathyToAuthorCategory: this.$i18n.t('annotation.affectiveOthers.sympathyToAuthorCategory'),
-      needMoreInfoCategory: this.$i18n.t('annotation.affectiveOthers.needMoreInfoCategory')
+      needMoreInfoCategory: this.$i18n.t('annotation.affectiveOthers.needMoreInfoCategory'),
+      isWritingInput: false
     }
   },
 
@@ -300,6 +301,15 @@ export default {
     },
     hasErrors() {
       return (this.showErrors) ? !this.hasValidEntries : false
+    }
+  },
+
+  watch: {
+    wishToAuthor: {
+      deep: true,
+      handler() {
+        this.isWritingInput = false
+      }
     }
   },
 
@@ -342,7 +352,10 @@ export default {
       }
     },
     addWishToAuthor(text) {
-      this.$emit('add:wishToAuthor', text)
+      if (!this.isWritingInput) {
+        this.$emit('add:wishToAuthor', text)
+      }
+      this.isWritingInput = true
     },
     nullifyWishToAuthor() {
       this.$emit('nullify:wishToAuthor')
