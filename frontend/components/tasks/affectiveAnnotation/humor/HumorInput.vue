@@ -309,7 +309,6 @@ export default Vue.extend({
     hasValidSubquestion3(): boolean {
       if (this.showErrors && this.hasFilledTopQuestions) {
         const answersSubquestion3 = this.formData.subquestion3.filter((item:any) => item.isChecked && !!item.answer)
-        console.log("Humor - answersSubquestion3.length", answersSubquestion3.length)
         return answersSubquestion3.length > 0
       }
       return true
@@ -317,7 +316,6 @@ export default Vue.extend({
     hasValidSubquestion4(): boolean {
       if (this.showErrors && this.hasFilledTopQuestions) {
         const answersSubquestion4 = this.formData.subquestion4.filter((item:any) => item.isChecked)
-        console.log("Humor - answersSubquestion4.length", answersSubquestion4.length)
         return answersSubquestion4.length > 0
       }
       return true
