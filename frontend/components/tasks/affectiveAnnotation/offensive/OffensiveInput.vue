@@ -89,12 +89,12 @@
                     <li class="widget-questions__item questions-item"
                         :class="{'--visible': hasFilledTopQuestions}">
                         <p class="questions-item__text">
-                            <h4 :class="{'red--text': !hasValidSubquestion3}">
+                            <h4 :class="{'red--text': !hasValidSubquestion3 && !hasValidSubquestion4}">
                                 {{ $t('annotation.offensive.subquestion3.question')}}
                             </h4>
                             <span
                                 class="red--text"
-                                :class="!hasValidSubquestion3 ? 'd-block' : 'd-none'"
+                                :class="!hasValidSubquestion3 && !hasValidSubquestion4 ? 'd-block' : 'd-none'"
                             >
                                 {{ $t('annotation.warningRequired') }}
                             </span>
@@ -137,12 +137,12 @@
                     <li class="widget-questions__item questions-item" 
                         :class="{'--visible': hasFilledTopQuestions}">
                         <p class="questions-item__text">
-                            <h4 :class="{'red--text': !hasValidSubquestion4}">
+                            <h4 :class="{'red--text': !hasValidSubquestion3 && !hasValidSubquestion4}">
                                 {{ $t('annotation.offensive.subquestion4.question')}}
                             </h4>
                             <span
                                 class="red--text"
-                                :class="!hasValidSubquestion3 ? 'd-block' : 'd-none'"
+                                :class="!hasValidSubquestion3 && !hasValidSubquestion4 ? 'd-block' : 'd-none'"
                             >
                                 {{ $t('annotation.warningRequired') }}
                             </span>
@@ -356,7 +356,7 @@ export default Vue.extend({
         if (!this.formData.subquestion1.isClicked || !this.formData.subquestion2.isClicked) {
           return true
         }
-        if (!this.hasValidSubquestion3 || !this.hasValidSubquestion4) {
+        if (!this.hasValidSubquestion3 && !this.hasValidSubquestion4) {
           return true
         }
       }
