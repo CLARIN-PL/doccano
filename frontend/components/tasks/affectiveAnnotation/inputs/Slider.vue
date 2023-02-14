@@ -1,5 +1,5 @@
 <template>
-  <v-container class="widget">
+  <v-container v-if="showDimension" class="widget">
     <v-row class="widget-row" justify="center" align="top">
       <v-col :cols="(withCheckbox) ? 3 : 4" class="widget-row__category">
         {{ categoryLabel }}
@@ -106,7 +106,8 @@ export default {
       enableSlider: true,
       checkboxValue: false,
       nullFlag: -1,
-      unclickedFlag: -99
+      unclickedFlag: -99,
+      hideDimensionFlag: -9000
     }
   },
 
@@ -116,6 +117,12 @@ export default {
         return "transparent"
       }
       return this.color
+    },
+    showDimension() {
+      if (this.value < this.hideDimensionFlag) {
+        return false
+      }
+      return true
     }
   },
 

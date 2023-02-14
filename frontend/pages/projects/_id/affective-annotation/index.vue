@@ -41,7 +41,7 @@
                 visible: true
               },
               autoLabeling: {
-                visible: showAutoLabeling
+                visible: true
               },
               clear: {
                 visible: true,
@@ -147,23 +147,6 @@
                 ref="dimensionCard"
                 class="pa-4 dimension-card --sticky"
               >
-                <summary-input
-                  v-if="project.isSummaryMode || project.isCombinationMode"
-                  ref="summaryInput"
-                  class="mb-10"
-                  :text="doc.text"
-                  :tags="affectiveSummaryTags"
-                  :impressions="affectiveSummaryImpressions"
-                  :read-only="!canEdit"
-                  :show-borders="project.isCombinationMode"
-                  :show-errors="!hasValidEntries.isSummaryMode && hasClickedConfirmButton"
-                  @remove:tag="removeTag"
-                  @update:tag="updateTag"
-                  @add:tag="addTag"
-                  @remove:impression="removeImpression"
-                  @update:impression="updateImpression"
-                  @add:impression="addImpression"
-                />
                 <emotions-input
                   v-if="project.isEmotionsMode || project.isCombinationMode"
                   ref="emotionsInput"
@@ -273,7 +256,6 @@ import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
 import ToolbarArticle from '@/components/tasks/toolbar/ToolbarArticle'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
-import SummaryInput from '@/components/tasks/affectiveAnnotation/summary/SummaryInput.vue'
 import EmotionsInput from '@/components/tasks/affectiveAnnotation/emotions/EmotionsInput.vue'
 import EmotionsScales from '@/static/formats/affective_annotation/affective_emotions_scales.json'
 import OthersInput from '@/components/tasks/affectiveAnnotation/others/OthersInput.vue'
@@ -291,7 +273,6 @@ export default {
     ToolbarArticle,
     LabelGroup,
     LabelSelect,
-    SummaryInput,
     EmotionsInput,
     OthersInput,
     OffensiveInput,
@@ -421,9 +402,6 @@ export default {
     },
     canSkipForward() {
       return this.isAffectiveAnnotation ? this.isProjectAdmin : true
-    },
-    showAutoLabeling() {
-      return !this.isAffectiveAnnotation
     },
     showArticleViewer() {
       return !this.isSingleAnnView
@@ -665,7 +643,20 @@ export default {
         await this.maybeFetchSpanTypes(spans)
         this.spans = spans
         this.relations = relations
-        this.categories = await this.$services.textClassification.list(this.projectId, docId)
+        const fromAutoLabeling = await this.$services.textClassification.list(this.projectId, docId)
+        console.log("fromAutoLabeling", fromAutoLabeling)
+        this.categories = [
+          'Pozytywne',
+          'Radość',
+          'Zachwyt',
+          'Spokój',
+          'Zaskoczenie',
+          'Współczucie',
+          'Ironiczny',
+          'Żenujący',
+          'Polityczny',
+          'Interesujący'
+        ]
         this.textLabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
         this.scales = await this.$services.affectiveScale.list(this.projectId, docId)
         this.setAffectiveList()
@@ -689,6 +680,7 @@ export default {
         affectiveScalesValues[category] = item.scale
       })
       this.affectiveScalesValues = affectiveScalesValues
+      console.log("this.affectiveScalesValues", this.affectiveScalesValues)
     },
     async deleteSpan(id) {
       await this.$services.sequenceLabeling.delete(this.projectId, this.doc.id, id)
@@ -992,6 +984,7 @@ export default {
     &__header {
       &.--sticky {
         position: sticky;
+        background-color: #fff;
         padding: 20px;
         top: 55px;
         z-index: 1;
