@@ -41,7 +41,7 @@
                 color="primary"
                 height="55px"
                 class="ma-0"
-                :disabled="!text"
+                :disabled="!text || text === emptyTextFlag"
                 @click="submitAnswer"
               >
                 <v-icon>{{ mdiSend }}</v-icon>
@@ -95,28 +95,21 @@ export default {
       emptyTextFlag: '-',
       enableTextfield: true,
       showDialog: false,
-      dialogErrorMessage: ''
-    }
-  },
-
-  computed: {
-    text: {
-      get() {
-        return this.value === this.emptyTextFlag ? '' : this.value
-      },
-      set(val) {
-        this.$emit('input', val)
-      }
+      dialogErrorMessage: '',
+      text: (this.value === this.emptyTextFlag) ? '' : this.value
     }
   },
 
   methods: {
     submitAnswer() {
       const hasFilledText = this.required ? !!this.text : true
-      if (hasFilledText) {
+      const isEmptyTextFlag = this.text === this.emptyTextFlag
+      if (hasFilledText && !isEmptyTextFlag) {
         this.showDialog = false
+        this.$emit('input', this.text)
         this.$emit('submit', this.text)
       } else {
+        this.$emit('input', this.emptyTextFlag)
         this.dialogErrorMessage = this.$t('rules.required')
       }
     },
