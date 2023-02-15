@@ -1,5 +1,5 @@
 <template>
-  <v-container class="widget">
+  <v-container v-if="showComponent" class="widget">
     <v-row v-if="question" class="widget__question">
       {{ question }}
       <span v-if="required" class="red--text"> * </span>
@@ -72,6 +72,10 @@ export default {
   },
 
   props: {
+    showComponent: {
+      type: Boolean,
+      default: true
+    },
     required: {
       type: Boolean,
       default: true

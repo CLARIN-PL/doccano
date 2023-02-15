@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="showDimension" class="widget">
+  <v-container v-if="showComponent" class="widget">
     <v-row class="widget-row" justify="center" align="top">
       <v-col :cols="(withCheckbox) ? 3 : 4" class="widget-row__category">
         {{ categoryLabel }}
@@ -50,6 +50,10 @@ import { mdiCheck } from '@mdi/js'
 
 export default {
   props: {
+    showComponent: {
+      type: Boolean,
+      default: true
+    },
     required: {
       type: Boolean,
       default: true
@@ -106,8 +110,7 @@ export default {
       enableSlider: true,
       checkboxValue: false,
       nullFlag: -1,
-      unclickedFlag: -99,
-      hideDimensionFlag: -9000
+      unclickedFlag: -99
     }
   },
 
@@ -117,12 +120,6 @@ export default {
         return "transparent"
       }
       return this.color
-    },
-    showDimension() {
-      if (this.value < this.hideDimensionFlag) {
-        return false
-      }
-      return true
     }
   },
 
