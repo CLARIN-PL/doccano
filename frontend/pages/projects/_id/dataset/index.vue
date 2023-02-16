@@ -5,7 +5,8 @@
         <v-col cols="12" align="right">
           <v-btn
             v-if="!showTableAnnButton"
-            :disabled="!enableTableAnnButton"
+            :loading="isLoadingStartState"
+            :disabled="!enableTableAnnButton || isLoadingStartState"
             color="ms-4 my-1 mb-2 primary text-transform-none"
             @click="toLabeling"
           >
@@ -165,6 +166,7 @@ export default Vue.extend({
       item: { items: [] as ExampleDTO[] } as ExampleListDTO,
       selected: [] as ExampleDTO[],
       isLoading: false,
+      isLoadingStartState: false,
       isProjectAdmin: false,
       isConfirmed: ''
     }
@@ -254,15 +256,22 @@ export default Vue.extend({
         : this.item.items[0]
       const index = itemToAnnotate ? this.item.items.indexOf(itemToAnnotate) : 0
       const page = (index + 1).toString()
-      await this.startAnnotation()
-      this.movePage({ page })
+      await this.startAnnotation(() => {
+        this.movePage({ page })
+      })
     },
-    startAnnotation() {
+    startAnnotation(callback: Function) {
       const item = this.hasUnannotatedItem
         ? this.item.items.find((item: any) => !item.isConfirmed)
         : this.item.items[0]
       if (item && !item.isConfirmed) {
-        this.$services.example.annotateStartStates(this.projectId, item.id)
+        this.isLoadingStartState = true
+        this.$services.example.annotateStartStates(this.projectId, item.id).then(() => {
+          if (callback) {
+            callback()
+          }
+          this.isLoadingStartState = false
+        })
       }
     },
     async loadData() {
