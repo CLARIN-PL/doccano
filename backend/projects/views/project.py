@@ -26,7 +26,7 @@ class ProjectList(generics.ListCreateAPIView):
         return super().get_permissions()
 
     def get_queryset(self):
-        return Project.objects.filter(role_mappings__user=self.request.user)
+        return Project.objects.filter(role_mappings__user=self.request.user).order_by("created_at")
 
     def perform_create(self, serializer):
         project = serializer.save(created_by=self.request.user)
@@ -58,7 +58,7 @@ class ProjectProgressDetail(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
 
     def get(self, request, *args, **kwargs):
-        all_projects = Project.objects.filter(role_mappings__user=self.request.user)
+        all_projects = Project.objects.filter(role_mappings__user=self.request.user).order_by("created_at")
         all_project_data = []
         for project in all_projects:
             examples = Example.objects.filter(project=project.id).values("id")
