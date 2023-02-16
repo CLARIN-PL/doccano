@@ -147,6 +147,23 @@
                 ref="dimensionCard"
                 class="pa-4 dimension-card --sticky"
               >
+                <summary-input
+                  v-if="project.isSummaryMode"
+                  ref="summaryInput"
+                  class="mb-10"
+                  :text="doc.text"
+                  :tags="affectiveSummaryTags"
+                  :impressions="affectiveSummaryImpressions"
+                  :read-only="!canEdit"
+                  :show-borders="project.isCombinationMode"
+                  :show-errors="!hasValidEntries.isSummaryMode && hasClickedConfirmButton"
+                  @remove:tag="removeTag"
+                  @update:tag="updateTag"
+                  @add:tag="addTag"
+                  @remove:impression="removeTag"
+                  @update:impression="updateTag"
+                  @add:impression="addImpression"
+                />
                 <emotions-input
                   v-if="project.isEmotionsMode || project.isCombinationMode"
                   ref="emotionsInput"
@@ -154,6 +171,7 @@
                   :read-only="!canEdit"
                   :show-borders="project.isCombinationMode"
                   :show-errors="!hasValidEntries.isEmotionsMode && hasClickedConfirmButton"
+                  :dims-to-show="categories"
                   :general-positivity="affectiveScalesValues.positive"
                   :general-negativity="affectiveScalesValues.negative"
                   :joy="affectiveScalesValues.joy"
@@ -175,6 +193,7 @@
                   :read-only="!canEdit"
                   :show-borders="project.isCombinationMode"
                   :show-errors="!hasValidEntries.isOthersMode && hasClickedConfirmButton"
+                  :dims-to-show="categories"
                   :ironic="affectiveScalesValues.ironic"
                   :embarrassing="affectiveScalesValues.embarrassing"
                   :vulgar="affectiveScalesValues.vulgar"
@@ -189,11 +208,11 @@
                   @change="othersChangeHandler"
                   @nullifyCategoryValue="nullifyOthersValueHandler"
                   @restoreCategoryValue="restoreOthersValueHandler"
-                  @remove:wishToAuthor="removeWishToAuthor"
-                  @update:wishToAuthor="updateWishToAuthor"
+                  @remove:wishToAuthor="removeTag"
+                  @update:wishToAuthor="updateTag"
                   @add:wishToAuthor="addWishToAuthor"
                   @nullify:wishToAuthor="nullifyWishToAuthor"
-                  @restore:wishToAuthor="restoreWishToAuthor"
+                  @restore:wishToAuthor="removeWishToAuthor"
                 />
                 <offensive-input
                   v-if="project.isOffensiveMode || project.isCombinationMode"
@@ -256,6 +275,7 @@ import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
 import ToolbarArticle from '@/components/tasks/toolbar/ToolbarArticle'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
+import SummaryInput from '@/components/tasks/affectiveAnnotation/summary/SummaryInput.vue'
 import EmotionsInput from '@/components/tasks/affectiveAnnotation/emotions/EmotionsInput.vue'
 import EmotionsScales from '@/static/formats/affective_annotation/affective_emotions_scales.json'
 import OthersInput from '@/components/tasks/affectiveAnnotation/others/OthersInput.vue'
@@ -273,6 +293,7 @@ export default {
     ToolbarArticle,
     LabelGroup,
     LabelSelect,
+    SummaryInput,
     EmotionsInput,
     OthersInput,
     OffensiveInput,
@@ -794,7 +815,6 @@ export default {
     async confirm() {
       const DATE_FORMAT = 'DD-MM-YYYY HH:mm:ss'
       if (this.project.isCombinationMode) {
-        this.hasValidEntries.isSummaryMode = this.isAllAffectiveSummaryAdded()
         this.hasValidEntries.isOthersMode = this.isAllAffectiveOthersAdded()
         this.hasValidEntries.isEmotionsMode = this.isAllAffectiveEmotionsAdded()
       } else if (this.project.isSummaryMode) {
@@ -861,19 +881,6 @@ export default {
       )
       await this.list(this.doc.id)
     },
-    async removeImpression(annotationId) {
-      await this.$services.affectiveTextlabel.delete(this.projectId, this.doc.id, annotationId)
-      await this.list(this.doc.id)
-    },
-    async updateImpression(annotationId, text) {
-      await this.$services.affectiveTextlabel.changeText(
-        this.projectId,
-        this.doc.id,
-        annotationId,
-        text
-      )
-      await this.list(this.doc.id)
-    },
     async addImpression(text) {
       await this.$services.affectiveTextlabel.create(
         this.projectId,
@@ -911,18 +918,12 @@ export default {
       const previousValue = this.affectiveOthersTmp[category] || 0
       await this.othersChangeHandler(previousValue, category)
     },
-    async removeWishToAuthor(annotationId) {
-      await this.$services.affectiveTextlabel.delete(this.projectId, this.doc.id, annotationId)
-      await this.list(this.doc.id)
-    },
-    async updateWishToAuthor(annotationId, text) {
-      await this.$services.affectiveTextlabel.changeText(
-        this.projectId,
-        this.doc.id,
-        annotationId,
-        text
-      )
-      await this.list(this.doc.id)
+    async removeWishToAuthor() {
+      if (this.affectiveOthersWishToAuthor.length > 0) {
+        const annotationId = this.affectiveOthersWishToAuthor[0].id
+        await this.$services.affectiveTextlabel.delete(this.projectId, this.doc.id, annotationId)
+        await this.list(this.doc.id)
+      }
     },
     async addWishToAuthor(text) {
       await this.$services.affectiveTextlabel.create(
@@ -938,16 +939,10 @@ export default {
         const annotationId = this.affectiveOthersWishToAuthor[0].id
         const currentText = this.affectiveOthersWishToAuthor[0].text
         if (currentText !== this.strNullFlag) {
-          await this.updateWishToAuthor(annotationId, this.strNullFlag)
+          await this.updateTag(annotationId, this.strNullFlag)
         }
       } else {
         await this.addWishToAuthor(this.strNullFlag)
-      }
-    },
-    async restoreWishToAuthor() {
-      if (this.affectiveOthersWishToAuthor.length > 0) {
-        const annotationId = this.affectiveOthersWishToAuthor[0].id
-        await this.removeWishToAuthor(annotationId)
       }
     },
     async updateScale(labelId, value) {

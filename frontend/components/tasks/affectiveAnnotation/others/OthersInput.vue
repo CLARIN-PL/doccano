@@ -5,6 +5,7 @@
     <div class="others-input__content">
       <slider
         :error="showErrors && ironic === flagSliderUnclicked"
+        :show-component="showIronicCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.ironicCategory')"
         color="blue"
@@ -20,6 +21,7 @@
       />
       <slider
         :error="showErrors && embarrassing === flagSliderUnclicked"
+        :show-component="showEmbarrassingCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.embarrassingCategory')"
         color="blue"
@@ -35,6 +37,7 @@
       />
       <slider
         :error="showErrors && vulgar === flagSliderUnclicked"
+        :show-component="showVulgarCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.vulgarCategory')"
         color="blue"
@@ -50,6 +53,7 @@
       />
       <slider
         :error="showErrors && politic === flagSliderUnclicked"
+        :show-component="showPoliticCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.politicCategory')"
         color="blue"
@@ -65,6 +69,7 @@
       />
       <slider
         :error="showErrors && interesting === flagSliderUnclicked"
+        :show-component="showInterestingCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.interestingCategory')"
         color="blue"
@@ -80,6 +85,7 @@
       />
       <slider
         :error="showErrors && comprehensible === flagSliderUnclicked"
+        :show-component="showComprehensibleCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.comprehensibleCategory')"
         color="blue"
@@ -95,6 +101,7 @@
       />
       <slider
         :error="showErrors && agreeable === flagSliderUnclicked"
+        :show-component="showAgreeableCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.agreeableCategory')"
         color="blue"
@@ -110,6 +117,7 @@
       />
       <slider
         :error="showErrors && believable === flagSliderUnclicked"
+        :show-component="showBelievableCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.believableCategory')"
         color="blue"
@@ -125,6 +133,7 @@
       />
       <slider
         :error="showErrors && needMoreInfo === flagSliderUnclicked"
+        :show-component="showNeedMoreInfoCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.needMoreInfoCategory')"
         color="blue"
@@ -140,6 +149,7 @@
       />
       <slider
         :error="showErrors && sympathyToAuthor === flagSliderUnclicked"
+        :show-component="showSympathyToAuthorCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveOthers.sympathyToAuthorCategory')"
         color="blue"
@@ -155,6 +165,7 @@
       />
       <textfield-with-seq-2-seq
         :error="showErrors && (wishToAuthor.length === 0 || wishToAuthor.length > 1)"
+        :show-component="showWishToAuthorCategory"
         :read-only="readOnly"
         :text="$t('annotation.affectiveOthers.wishToAuthorCategory')"
         :category-label="$t('annotation.affectiveOthers.wishToAuthorCategory')"
@@ -240,6 +251,10 @@ export default {
     wishToAuthor: {
       type: Array,
       default: () => []
+    },
+    dimsToShow: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -301,6 +316,50 @@ export default {
     },
     hasErrors() {
       return (this.showErrors) ? !this.hasValidEntries : false
+    },
+    showIronicCategory() {
+      const cat = this.ironicCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showEmbarrassingCategory() {
+      const cat = this.embarrassingCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showVulgarCategory() {
+      const cat = this.vulgarCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showPoliticCategory() {
+      const cat = this.politicCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showInterestingCategory() {
+      const cat = this.interestingCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showComprehensibleCategory() {
+      const cat = this.comprehensibleCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showAgreeableCategory() {
+      const cat = this.agreeableCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showBelievableCategory() {
+      const cat = this.believableCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showSympathyToAuthorCategory() {
+      const cat = this.sympathyToAuthorCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showNeedMoreInfoCategory() {
+      const cat = this.needMoreInfoCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showWishToAuthorCategory() {
+      const cat = "Czego życzę autorowi tego tekstu?"
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
     }
   },
 

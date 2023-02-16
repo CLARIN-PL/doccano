@@ -6,6 +6,7 @@
     <div class="emotions-input__content">
       <slider
         :error="showErrors && generalPositivity === flagSliderUnclicked"
+        :show-component="showPositiveCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.positiveCategory')"
         color="green"
@@ -16,6 +17,7 @@
       />
       <slider
         :error="showErrors && generalNegativity === flagSliderUnclicked"
+        :show-component="showNegativeCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.negativeCategory')"
         color="red"
@@ -30,6 +32,7 @@
     <div class="emotions-input__content">
       <slider
         :error="showErrors && joy === flagSliderUnclicked"
+        :show-component="showJoyCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.joyCategory')"
         color="pink"
@@ -40,6 +43,7 @@
       />
       <slider
         :error="showErrors && admiration === flagSliderUnclicked"
+        :show-component="showAdmirationCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.admirationCategory')"
         color="purple"
@@ -50,6 +54,7 @@
       />
       <slider
         :error="showErrors && inspiration === flagSliderUnclicked"
+        :show-component="showInspirationCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.inspirationCategory')"
         color="indigo"
@@ -60,6 +65,7 @@
       />
       <slider
         :error="showErrors && peace === flagSliderUnclicked"
+        :show-component="showPeaceCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.peaceCategory')"
         color="teal"
@@ -70,6 +76,7 @@
       />
       <slider
         :error="showErrors && surprise === flagSliderUnclicked"
+        :show-component="showSurpriseCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.surpriseCategory')"
         color="amber"
@@ -80,6 +87,7 @@
       />
       <slider
         :error="showErrors && sympathy === flagSliderUnclicked"
+        :show-component="showSympathyCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.sympathyCategory')"
         color="cyan"
@@ -90,6 +98,7 @@
       />
       <slider
         :error="showErrors && fear === flagSliderUnclicked"
+        :show-component="showFearCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.fearCategory')"
         color="brown"
@@ -100,6 +109,7 @@
       />
       <slider
         :error="showErrors && sadness === flagSliderUnclicked"
+        :show-component="showSadnessCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.sadnessCategory')"
         color="blue-grey darken-4"
@@ -110,6 +120,7 @@
       />
       <slider
         :error="showErrors && disgust === flagSliderUnclicked"
+        :show-component="showDisgustCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.disgustCategory')"
         color="lime darken-4"
@@ -120,6 +131,7 @@
       />
       <slider
         :error="showErrors && anger === flagSliderUnclicked"
+        :show-component="showAngerCategory"
         :read-only="readOnly"
         :category-label="$t('annotation.affectiveEmotions.angerCategory')"
         color="red darken-4"
@@ -200,6 +212,10 @@ export default {
     anger: {
       type: Number,
       default: -99
+    },
+    dimsToShow: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -246,6 +262,54 @@ export default {
     },
     hasErrors() {
       return (this.showErrors) ? !this.hasValidEntries : false
+    },
+    showPositiveCategory() {
+      const cat = this.positiveCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showNegativeCategory() {
+      const cat = this.negativeCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showJoyCategory() {
+      const cat = this.joyCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showAdmirationCategory() {
+      const cat = this.admirationCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showInspirationCategory() {
+      const cat = this.inspirationCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showPeaceCategory() {
+      const cat = this.peaceCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showSurpriseCategory() {
+      const cat = this.surpriseCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showSympathyCategory() {
+      const cat = this.sympathyCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showFearCategory() {
+      const cat = this.fearCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showSadnessCategory() {
+      const cat = this.sadnessCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showDisgustCategory() {
+      const cat = this.disgustCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
+    },
+    showAngerCategory() {
+      const cat = this.angerCategory
+      return this.dimsToShow.findIndex((item) => item === cat) !== -1
     }
   },
 
