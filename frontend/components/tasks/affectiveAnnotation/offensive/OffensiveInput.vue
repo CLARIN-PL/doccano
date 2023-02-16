@@ -6,7 +6,10 @@
                 <h3 class="widget__title">{{ $t('annotation.offensive.question')}}</h3>
                 <v-divider />
                 <ol class="widget__questions">
-                    <li class="widget-questions__item questions-item --visible">
+                    <li
+                        class="widget-questions__item questions-item --visible"
+                        :class="(formData.subquestion1.isShown) ? 'd-block' : 'd-none'"
+                    >
                         <p class="questions-item__text">
                         <h4>
                             {{ $t('annotation.offensive.subquestion1')}}
@@ -46,7 +49,10 @@
                         </div>
                         </p>
                     </li>
-                    <li class="widget-questions__item questions-item --visible">
+                    <li
+                        class="widget-questions__item questions-item --visible"
+                        :class="(formData.subquestion2.isShown) ? 'd-block' : 'd-none'"
+                    >
                         <p class="questions-item__text">
                         <h4>
                             {{ $t('annotation.offensive.subquestion2')}}
@@ -89,19 +95,22 @@
                     <li class="widget-questions__item questions-item"
                         :class="{'--visible': hasFilledTopQuestions}">
                         <p class="questions-item__text">
-                            <h4 :class="{'red--text': !hasValidSubquestion3 && !hasValidSubquestion4}">
-                                {{ $t('annotation.offensive.subquestion3.question')}}
-                            </h4>
-                            <span
-                                class="red--text"
-                                :class="!hasValidSubquestion3 && !hasValidSubquestion4 ? 'd-block' : 'd-none'"
-                            >
-                                {{ $t('annotation.warningRequired') }}
-                            </span>
+                            <div :class="{'d-none': !showSubquestion3Header}">
+                                <h4 :class="{'red--text': !hasValidSubquestion3 && !hasValidSubquestion4}">
+                                    {{ $t('annotation.offensive.subquestion3.question')}}
+                                </h4>
+                                <span
+                                    class="red--text"
+                                    :class="!hasValidSubquestion3 && !hasValidSubquestion4 ? 'd-block' : 'd-none'"
+                                >
+                                    {{ $t('annotation.warningRequired') }}
+                                </span>
+                            </div>
                             <ul class="subquestions">
                                 <li v-for="(substatement, idx) in formData.subquestion3"  
                                     :key="`substatement3_${idx}`"
-                                    class="subquestions__item" >
+                                    class="subquestions__item"
+                                    :class="(substatement.isShown) ? 'd-block' : 'd-none'" >
                                     <v-checkbox 
                                         v-model="substatement.isChecked"
                                         :error="(substatement.isChecked && substatement.answer === emptyTextFlag)"
@@ -137,19 +146,22 @@
                     <li class="widget-questions__item questions-item" 
                         :class="{'--visible': hasFilledTopQuestions}">
                         <p class="questions-item__text">
-                            <h4 :class="{'red--text': !hasValidSubquestion3 && !hasValidSubquestion4}">
-                                {{ $t('annotation.offensive.subquestion4.question')}}
-                            </h4>
-                            <span
-                                class="red--text"
-                                :class="!hasValidSubquestion3 && !hasValidSubquestion4 ? 'd-block' : 'd-none'"
-                            >
-                                {{ $t('annotation.warningRequired') }}
-                            </span>
+                            <div :class="{'d-none': !showSubquestion4Header}">
+                                <h4 :class="{'red--text': !hasValidSubquestion3 && !hasValidSubquestion4}">
+                                    {{ $t('annotation.offensive.subquestion4.question')}}
+                                </h4>
+                                <span
+                                    class="red--text"
+                                    :class="!hasValidSubquestion3 && !hasValidSubquestion4 ? 'd-block' : 'd-none'"
+                                >
+                                    {{ $t('annotation.warningRequired') }}
+                                </span>
+                            </div>
                                 <ul class="subquestions">
                                     <li v-for="(substatement, idx) in formData.subquestion4" 
                                     :key="`substatement4_${idx}`"
-                                    class="subquestions__item" >
+                                    class="subquestions__item"
+                                    :class="(substatement.isShown) ? 'd-block' : 'd-none'" >
                                     <p>
                                         <v-checkbox 
                                             v-model="substatement.isChecked"
@@ -239,6 +251,10 @@ export default Vue.extend({
     textLabels: {
       type: Array,
       default: () => []
+    },
+    dimsToShow: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -253,12 +269,14 @@ export default Vue.extend({
         subquestion1: {
           value: 0,
           isClicked: false,
-          isSubmitting: false
+          isSubmitting: false,
+          isShown: true
         },
         subquestion2: {
           value: 0,
           isClicked: false,
-          isSubmitting: false
+          isSubmitting: false,
+          isShown: true
         },
         subquestion3: [],
         subquestion4: []
@@ -267,12 +285,14 @@ export default Vue.extend({
         subquestion1: {
           value: 0,
           isClicked: false,
-          isSubmitting: false
+          isSubmitting: false,
+          isShown: true
         },
         subquestion2: {
           value: 0,
           isClicked: false,
-          isSubmitting: false
+          isSubmitting: false,
+          isShown: true
         },
         subquestion3: [],
         subquestion4: []
@@ -348,6 +368,14 @@ export default Vue.extend({
       }
       return true
     },
+    showSubquestion3Header(): boolean {
+      // @ts-ignore
+      return this.formData.subquestion3.some((item) => item.isShown)
+    },
+    showSubquestion4Header(): boolean {
+      // @ts-ignore
+      return this.formData.subquestion4.some((item) => item.isShown)
+    },
     hasErrors(): boolean {
       if (this.showErrors) {
         if (!this.value) {
@@ -400,14 +428,17 @@ export default Vue.extend({
       handler(val) {
         if (val.length) {
           const keys = ['subquestion1', 'subquestion2']
+          const dimsToShow = this.dimsToShow
           keys.forEach((key) => {
             const polishAnnotation: any = _.get(this.polishAnnotation.offensive, key)
             const scaleValue = val.find((scale: any) => scale.text === polishAnnotation)
+            const isShown = dimsToShow.findIndex((item) => item === polishAnnotation) !== -1
             if (scaleValue) {
               _.set(this.formData, `${key}.value`, scaleValue.scale)
               _.set(this.formData, `${key}.isClicked`, true)
               _.set(this.formData, `${key}.isSubmitting`, false)
             }
+            _.set(this.formData, `${key}.isShown`, isShown)
           })
         } else {
           this.formData = {
@@ -417,6 +448,13 @@ export default Vue.extend({
               subquestion2: _.cloneDeep(this.originalFormData.subquestion2)
             }
           }
+          const keys = ['subquestion1', 'subquestion2']
+          const dimsToShow = this.dimsToShow
+          keys.forEach((key) => {
+            const polishAnnotation: any = _.get(this.polishAnnotation.offensive, key)
+            const isShown = dimsToShow.findIndex((item) => item === polishAnnotation) !== -1
+            _.set(this.formData, `${key}.isShown`, isShown)
+          })
         }
       }
     },
@@ -425,15 +463,19 @@ export default Vue.extend({
       handler(val) {
         if (val.length) {
           const keys = ['subquestion3', 'subquestion4']
+          const dimsToShow = this.dimsToShow
+          const questions = this.polishAnnotation.offensive
           val.forEach((textLabel: any) => {
             const substatementIndex = textLabel.substatementKey.split('.substatement')[1]
             const subquestionIndex = textLabel.substatementKey.split('.')[0]
             const formDataKey = `${subquestionIndex}[${parseInt(substatementIndex) - 1}]`
             const formData = _.get(this.formData, formDataKey)
+            const isShown = dimsToShow.findIndex((item) => item === textLabel.question) !== -1
             if (formData) {
               _.set(this.formData, `${formDataKey}.isChecked`, !!textLabel.text)
               _.set(this.formData, `${formDataKey}.isSubmitting`, false)
               _.set(this.formData, `${formDataKey}.answer`, textLabel.text)
+              _.set(this.formData, `${formDataKey}.isShown`, isShown)
             }
           })
           keys.forEach((key) => {
@@ -441,15 +483,20 @@ export default Vue.extend({
             const subquestionLength = this.formData[key].length
             for (let i: number = 0; i < subquestionLength; i++) {
               const substatementKey = `${key}.substatement${i + 1}`
+              // @ts-ignore
+              const question = questions[key].question + " - " + questions[key][`substatement${i + 1}`]
               const isStored = val.find(
                 (textLabel: any) => textLabel.substatementKey === substatementKey
               )
+              const isShown = dimsToShow.findIndex((item) => item === question) !== -1
               if (!isStored) {
                 // @ts-ignore
                 this.formData[key][i].answer = ''
                 // @ts-ignore
                 this.formData[key][i].isSubmitting = false
               }
+              // @ts-ignore
+              this.formData[key][i].isShown = isShown
             }
           })
         } else {
@@ -460,6 +507,20 @@ export default Vue.extend({
               subquestion4: _.cloneDeep(this.originalFormData.subquestion4)
             }
           }
+          const keys = ['subquestion3', 'subquestion4']
+          const questions = this.polishAnnotation.offensive
+          const dimsToShow = this.dimsToShow
+          keys.forEach((key) => {
+            // @ts-ignore
+            const subquestionLength = this.formData[key].length
+            for (let i: number = 0; i < subquestionLength; i++) {
+              const substatementKey = `substatement${i + 1}`
+              // @ts-ignore
+              const question = questions[key].question + " - " + questions[key][substatementKey]
+              // @ts-ignore
+              this.formData[key][i].isShown = dimsToShow.findIndex((item) => item === question) !== -1
+            }
+          })
         }
       }
     }
@@ -570,6 +631,7 @@ export default Vue.extend({
 
   &__questions {
     padding: none;
+    list-style-type: none;
   }
 }
 

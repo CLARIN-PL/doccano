@@ -115,34 +115,6 @@
             </v-col>
             <v-col :cols="showArticleViewer ? 7 : 12" class="content-article__container">
               <v-card
-                v-shortkey="shortKeysCategory"
-                class="annotation-card --hidden"
-                @shortkey="addOrRemoveCategory"
-              >
-                <v-card-title v-if="categoryTypes.length" class="annotation-card__title">
-                  <label-group
-                    v-if="labelOption === 0"
-                    :read-only="!canEdit"
-                    :labels="categoryTypes"
-                    :annotations="categories"
-                    :single-label="project.singleClassClassification"
-                    @add="addCategory"
-                    @remove="removeCategory"
-                  />
-                  <label-select
-                    v-else
-                    :read-only="!canEdit"
-                    :labels="categoryTypes"
-                    :annotations="categories"
-                    :single-label="project.singleClassClassification"
-                    @add="addCategory"
-                    @remove="removeCategory"
-                  />
-                </v-card-title>
-                <v-divider />
-              </v-card>
-              <v-divider />
-              <v-card
                 v-if="isScaleImported"
                 ref="dimensionCard"
                 class="pa-4 dimension-card --sticky"
@@ -227,6 +199,7 @@
                   :scales="scales"
                   :text-labels="textLabels"
                   :read-only="!canEdit"
+                  :dims-to-show="categories"
                   @update:scale="updateScale"
                   @add:label="addLabel"
                   @update:label="updateTag"
@@ -245,6 +218,7 @@
                   :scales="scales"
                   :text-labels="textLabels"
                   :read-only="!canEdit"
+                  :dims-to-show="categories"
                   @update:scale="updateScale"
                   @add:label="addLabel"
                   @update:label="updateTag"
@@ -268,8 +242,6 @@ import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 import { mdiText, mdiFormatListBulleted } from '@mdi/js'
 import moment from 'moment'
-import LabelGroup from '@/components/tasks/textClassification/LabelGroup'
-import LabelSelect from '@/components/tasks/textClassification/LabelSelect'
 import LayoutText from '@/components/tasks/layout/LayoutText'
 import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
@@ -291,8 +263,6 @@ export default {
     ToolbarLaptop,
     ToolbarMobile,
     ToolbarArticle,
-    LabelGroup,
-    LabelSelect,
     SummaryInput,
     EmotionsInput,
     OthersInput,
@@ -676,7 +646,14 @@ export default {
           'Ironiczny',
           'Żenujący',
           'Polityczny',
-          'Interesujący'
+          'Interesujący',
+          "Może kogoś atakować / obrażać / lekceważyć",
+          "Ze względu na co obraża - Płeć",
+          "Ze względu na co obraża - Narodowość",
+          "Może kogoś bawić?",
+          "Autor śmieje się z - Płeć",
+          "Autor śmieje się z - Narodowość",
+          "Autor śmieje się z - Przekonania religijne"
         ]
         this.textLabels = await this.$services.affectiveTextlabel.list(this.projectId, docId)
         this.scales = await this.$services.affectiveScale.list(this.projectId, docId)
@@ -701,7 +678,6 @@ export default {
         affectiveScalesValues[category] = item.scale
       })
       this.affectiveScalesValues = affectiveScalesValues
-      console.log("this.affectiveScalesValues", this.affectiveScalesValues)
     },
     async deleteSpan(id) {
       await this.$services.sequenceLabeling.delete(this.projectId, this.doc.id, id)
