@@ -2,6 +2,7 @@ from django.db.models import Count, Manager
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.db.models.functions import TruncMinute, TruncDate
 import datetime
 
 
@@ -70,6 +71,17 @@ class ExampleStateManager(Manager):
         confirmed_time_examples = self.filter(confirmed_by__in=users, confirmed_at__gte=startdate, confirmed_at__lte=enddate).values().order_by("confirmed_at")
         return confirmed_time_examples
 
+    def filter_confirmed_state_minutes_by_user(self, user, startdate, enddate):
+        tz = timezone.get_current_timezone()
+        startdate = timezone.make_aware(datetime.datetime.fromordinal(startdate.toordinal()), tz, is_dst=True)
+        enddate = timezone.make_aware(datetime.datetime.fromordinal(enddate.toordinal()), tz, is_dst=True)
+        confirmed_time_examples = (
+            self.filter(confirmed_by=user, confirmed_at__gte=startdate, confirmed_at__lte=enddate)
+            .annotate(minute=TruncMinute("confirmed_at"), date=TruncDate("confirmed_at"))
+            .values("date", "minute", "confirmed_by__username", "example_id")
+            .annotate(count=Count("example", distinct=True)).order_by("date")
+        )
+        return confirmed_time_examples
 
 class ExampleStartStateManager(Manager):
     def get_started_time_by_example(self, example, users, startdate, enddate):
@@ -81,5 +93,17 @@ class ExampleStartStateManager(Manager):
 
     def get_user_started_time_by_date(self, users, date):
         started_time_examples = self.filter(started_by__in=users, started_at__date=date).values().order_by("started_at")
+        return started_time_examples
+
+    def filter_started_state_minutes_by_user(self, user, startdate, enddate):
+        tz = timezone.get_current_timezone()
+        startdate = timezone.make_aware(datetime.datetime.fromordinal(startdate.toordinal()), tz, is_dst=True)
+        enddate = timezone.make_aware(datetime.datetime.fromordinal(enddate.toordinal()), tz, is_dst=True)
+        started_time_examples = (
+            self.filter(started_by=user, started_at__gte=startdate, started_at__lte=enddate)
+            .annotate(minute=TruncMinute("started_at"), date=TruncDate("started_at"))
+            .values("date", "minute", "started_by__username", "example_id")
+            .annotate(count=Count("example", distinct=True)).order_by("date")
+        )
         return started_time_examples
         

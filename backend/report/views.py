@@ -6,10 +6,12 @@ from rest_framework.views import APIView
 
 from examples.models import ExampleState, ExampleAnnotateStartState
 from questionnaires.models import QuestionnaireState, Answer
+from labels.models import Label, Scale, TextLabel
 from datetime import datetime
 
 from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly
 from django.contrib.auth.models import User
+from itertools import chain
 
 
 class DateConverter:
@@ -300,4 +302,176 @@ class AllUserAvgDailyQuestionnaireTimeAPI(APIView):
             return Response(data=data, status=status.HTTP_200_OK)
         else:
             data = {"average_daily_questionnaire_time (seconds)": 0, "daily_questionnaire_time": []}
+            return Response(data=data, status=status.HTTP_200_OK)
+
+
+class UserDailyAvgActiveActiveMinutesAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
+
+    def get(self, request, *args, **kwargs):
+        user_id = self.kwargs["user_id"]
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        scale_label_created_minutes_by_user = Scale.objects.filter_created_labels_by_minutes(user_id, startdate, enddate)
+        text_label_created_minutes_by_user = TextLabel.objects.filter_created_labels_by_minutes(user_id, startdate, enddate)
+        started_minutes_by_user = ExampleAnnotateStartState.objects.filter_started_state_minutes_by_user(user_id, startdate, enddate)
+        confirmed_minutes_by_user = ExampleState.objects.filter_confirmed_state_minutes_by_user(user_id, startdate, enddate)
+        all_labels = list(chain(scale_label_created_minutes_by_user, text_label_created_minutes_by_user, started_minutes_by_user, confirmed_minutes_by_user))
+        if len(all_labels) != 0:
+            label_created_df = pd.DataFrame(all_labels)
+            annotation_time_df = label_created_df.groupby('date')['minute'].nunique().reset_index().rename(columns={'minute':'total_active_minutes'})
+            daily_active_annotation_time = annotation_time_df.to_dict(orient='records')
+            avg_daily_annotation_time = annotation_time_df['total_active_minutes'].mean()
+            data = {"average_daily_active_annotation_time (minutes)": avg_daily_annotation_time, "daily_active_annotation_time": daily_active_annotation_time}
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            data = {"average_daily_active_annotation_time (minutes)": 0, "daily_active_annotation_time": []}
+            return Response(data=data, status=status.HTTP_200_OK)
+
+
+class AllUserDailyAvgActiveMinutesAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
+
+    def get(self, request, *args, **kwargs):
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        all_user_ids = User.objects.all().values_list('id', flat=True)
+        all_user_period_active_annotation_time = []
+        for user_id in all_user_ids:
+            scale_label_created_minutes_by_user = Scale.objects.filter_created_labels_by_minutes(user_id, startdate, enddate)
+            text_label_created_minutes_by_user = TextLabel.objects.filter_created_labels_by_minutes(user_id, startdate, enddate)
+            started_minutes_by_user = ExampleAnnotateStartState.objects.filter_started_state_minutes_by_user(user_id, startdate, enddate)
+            confirmed_minutes_by_user = ExampleState.objects.filter_confirmed_state_minutes_by_user(user_id, startdate, enddate)
+            all_labels = list(chain(scale_label_created_minutes_by_user, text_label_created_minutes_by_user, started_minutes_by_user, confirmed_minutes_by_user))            
+            if len(all_labels) != 0:
+                label_created_df = pd.DataFrame(all_labels)
+                annotation_time_df = label_created_df.groupby('date')['minute'].nunique().reset_index().rename(columns={'minute':'total_active_minutes'})
+                cols = label_created_df.columns.tolist()
+                if 'user__username' in cols:
+                    annotation_time_df['user_id'] = label_created_df['user__username'].unique()[0]
+                elif 'confirmed_by__username' in cols:
+                    annotation_time_df['user_id'] = label_created_df['confirmed_by__username'].unique()[0]
+                elif 'started_by__username' in cols:
+                    annotation_time_df['user_id'] = label_created_df['started_by__username'].unique()[0]
+                all_user_period_active_annotation_time.append(annotation_time_df)
+
+        if all_user_period_active_annotation_time:
+            all_user_period_active_annotation_time_df = pd.concat(all_user_period_active_annotation_time)
+            all_user_daily_avg_active_annotation_time = all_user_period_active_annotation_time_df.groupby('date')['total_active_minutes'].mean().reset_index(name='avg_active_annotation_time_daily (minutes)')
+            all_user_daily_avg_active_annotation_time = all_user_daily_avg_active_annotation_time.to_dict(orient='records')
+            list_user_avg_active_annotation_time = all_user_period_active_annotation_time_df.groupby(["user_id"])['total_active_minutes'].mean().to_list()
+            all_user_avg_active_annotation_time = sum(list_user_avg_active_annotation_time)/len(list_user_avg_active_annotation_time)
+            data = {"average_daily_active_annotation_time (minutes)": all_user_avg_active_annotation_time, "daily_active_annotation_time": all_user_daily_avg_active_annotation_time}
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            data = {"average_daily_active_annotation_time (minutes)": 0, "daily_active_annotation_time": []}
+            return Response(data=data, status=status.HTTP_200_OK)
+
+
+class UserAvgSingleTextActiveMinutesAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
+
+    def get(self, request, *args, **kwargs):
+        user_id = self.kwargs["user_id"]
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        scale_label_created_minutes_by_user = Scale.objects.filter_created_labels_by_minutes(user_id, startdate, enddate)
+        text_label_created_minutes_by_user = TextLabel.objects.filter_created_labels_by_minutes(user_id, startdate, enddate)
+        started_minutes_by_user = ExampleAnnotateStartState.objects.filter_started_state_minutes_by_user(user_id, startdate, enddate)
+        confirmed_minutes_by_user = ExampleState.objects.filter_confirmed_state_minutes_by_user(user_id, startdate, enddate)
+        all_labels = list(chain(scale_label_created_minutes_by_user, text_label_created_minutes_by_user, started_minutes_by_user, confirmed_minutes_by_user))
+        if len(all_labels) != 0:
+            label_created_df = pd.DataFrame(all_labels)
+            annotation_time_df = label_created_df.groupby(['example_id', 'date'])['minute'].nunique().reset_index().rename(columns={'minute':'total_active_minutes'})
+            avg_single_annotation_time = annotation_time_df['total_active_minutes'].mean()
+            daily_avg_single_ann_time_df = annotation_time_df.groupby('date')['total_active_minutes'].mean().reset_index(name='avg_active_annotation_time_daily (minutes)')
+            daily_avg_single_ann_time = daily_avg_single_ann_time_df.to_dict(orient='records')
+            data = {"average_single_text_annotation_time (active minutes)": avg_single_annotation_time, "daily_avg_sinlge_text_annotation_time (active minutes)": daily_avg_single_ann_time}
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            data = {"average_single_text_annotation_time (active minutes)": 0, "daily_avg_sinlge_text_annotation_time (active minutes)": []}
+            return Response(data=data, status=status.HTTP_200_OK)
+
+
+class AllUsersAvgSingleTextActiveMinutesAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]     
+
+    def get(self, request, *args, **kwargs):
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        all_user_ids = User.objects.all().values_list('id', flat=True)
+        all_user_annotation_activity_list = []
+        for user in all_user_ids:
+            scale_label_created_minutes_by_user = Scale.objects.filter_created_labels_by_minutes(user, startdate, enddate)
+            text_label_created_minutes_by_user = TextLabel.objects.filter_created_labels_by_minutes(user, startdate, enddate)
+            started_minutes_by_user = ExampleAnnotateStartState.objects.filter_started_state_minutes_by_user(user, startdate, enddate)
+            confirmed_minutes_by_user = ExampleState.objects.filter_confirmed_state_minutes_by_user(user, startdate, enddate)
+            all_activities = list(chain(scale_label_created_minutes_by_user, text_label_created_minutes_by_user, started_minutes_by_user, confirmed_minutes_by_user))
+            if len(all_activities) != 0:
+                activities_df = pd.DataFrame(all_activities)
+                avg_single_text_ann_time_df = activities_df.groupby(['example_id', 'date'])['minute'].nunique().reset_index().rename(columns={'minute':'total_active_minutes'}).groupby('date')['total_active_minutes'].mean().reset_index(name='avg_active_annotation_time_daily (minutes)')
+                cols = activities_df.columns.tolist()
+                if 'user__username' in cols:
+                    avg_single_text_ann_time_df['user_id'] = activities_df['user__username'].unique()[0]
+                elif 'confirmed_by__username' in cols:
+                    avg_single_text_ann_time_df['user_id'] = activities_df['confirmed_by__username'].unique()[0]
+                elif 'started_by__username' in cols:
+                    avg_single_text_ann_time_df['user_id'] = activities_df['started_by__username'].unique()[0]
+                all_user_annotation_activity_list.append(avg_single_text_ann_time_df)
+
+        if all_user_annotation_activity_list:
+            all_user_avg_single_text_ann_time_daily_df = pd.concat(all_user_annotation_activity_list)
+            avg_single_text_annotation_time = all_user_avg_single_text_ann_time_daily_df.groupby('user_id')['avg_active_annotation_time_daily (minutes)'].mean().reset_index(name='avg_single_per_user')['avg_single_per_user'].mean()
+            avg_daily_sisngle_text_annotation_time = all_user_avg_single_text_ann_time_daily_df.groupby('date')['avg_active_annotation_time_daily (minutes)'].mean().reset_index(name='avg_single_text_ann_time_per_day (active minutes)')
+            list_daily_sisngle_text_annotation_time = avg_daily_sisngle_text_annotation_time.to_dict(orient='records')
+            data = {"all_user_avg_single_text_ann_time (active minutes)": avg_single_text_annotation_time, "daily_avg_single_text_ann_time (active minutes)": list_daily_sisngle_text_annotation_time}
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            data = {"all_user_avg_single_text_ann_time (active minutes)": 0, "daily_avg_single_text_ann_time (active minutes)": []}
+            return Response(data=data, status=status.HTTP_200_OK)
+
+
+class UserQuestionnaireActiveMinutesAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
+
+    def get(self, request, *args, **kwargs):
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        user_id = self.kwargs["user_id"]
+        user = User.objects.get(id=user_id)
+        daily_questionnaire_mins = Answer.objects.count_number_activate_minutes_by_day(user, startdate, enddate)
+        if daily_questionnaire_mins:
+            daily_questionnaire_mins_df = pd.DataFrame(daily_questionnaire_mins)
+            avg_daily_questionnaire_mins = daily_questionnaire_mins_df['total_active_mins'].mean()
+            data = {"avg_questionnaire_active_mins": avg_daily_questionnaire_mins, "daily_questionnaire_mins": daily_questionnaire_mins}
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            data = {"avg_questionnaire_active_mins": 0, "daily_questionnaire_mins": []}
+            return Response(data=data, status=status.HTTP_200_OK)
+
+
+class AllUsersQuestionnaireActiveMinutesAPI(APIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
+
+    def get(self, request, *args, **kwargs):
+        startdate = self.kwargs["startdate"]
+        enddate = self.kwargs["enddate"]
+        all_user_ids = User.objects.all().values_list('id', flat=True)
+        all_user_questionnaire_activity_list = []
+        for user in all_user_ids:
+            daily_questionnaire_mins = Answer.objects.count_number_activate_minutes_by_day(user, startdate, enddate)
+            if daily_questionnaire_mins:
+                daily_questionnaire_mins_df = pd.DataFrame(daily_questionnaire_mins)
+                daily_questionnaire_mins_df['user_id'] = user
+                all_user_questionnaire_activity_list.append(daily_questionnaire_mins_df)
+
+        if all_user_questionnaire_activity_list:
+            all_user_questionnaire_activity_df = pd.concat(all_user_questionnaire_activity_list)
+            avg_daily_questionnaire_mins = all_user_questionnaire_activity_df.groupby('user_id')['total_active_mins'].mean().reset_index(name='avg_questionnaire_active_mins')['avg_questionnaire_active_mins'].mean()
+            avg_daily_questionnaire_mins_df = all_user_questionnaire_activity_df.groupby('date')['total_active_mins'].mean().reset_index(name='avg_daily_questionnaire_active_mins')
+            list_daily_questionnaire_mins = avg_daily_questionnaire_mins_df.to_dict(orient='records')
+            data = {"all_user_avg_questionnaire_active_mins": avg_daily_questionnaire_mins, "daily_avg_questionnaire_active_mins": list_daily_questionnaire_mins}
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            data = {"all_user_avg_questionnaire_active_mins": 0, "daily_avg_questionnaire_active_mins": []}
             return Response(data=data, status=status.HTTP_200_OK)

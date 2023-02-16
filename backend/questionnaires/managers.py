@@ -2,6 +2,7 @@ from django.db.models import Count, Manager
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.db.models.functions import TruncMinute, TruncDate
 import datetime
 
 
@@ -48,4 +49,15 @@ class AnswerStateManager(Manager):
             self.filter(user_id=user, created_at__date=date, question_id__questionnaire_id__in=questionnaire_ids)
             .values("created_at", "question_id__questionnaire_id").order_by("created_at")
         )
-        
+
+    def count_number_activate_minutes_by_day(self, user, startdate, enddate):
+        tz = timezone.get_current_timezone()
+        startdate = timezone.make_aware(datetime.datetime.fromordinal(startdate.toordinal()), tz, is_dst=True)
+        enddate = timezone.make_aware(datetime.datetime.fromordinal(enddate.toordinal()), tz, is_dst=True)
+        return (
+            self.filter(user_id=user, created_at__gte=startdate, created_at__lte=enddate)
+            .annotate(date=TruncDate("created_at"), minute=TruncMinute("created_at"))
+            .values("date", "user__username")
+            .annotate(total_active_mins=Count("minute", distinct=True))
+            .order_by("date")
+        )
