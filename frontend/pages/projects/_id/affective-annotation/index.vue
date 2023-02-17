@@ -88,19 +88,23 @@
             :disable-next="!canNavigateForward"
             class="d-flex d-sm-none header-toolbar --mobile"
           />
-          <v-row>
-            <v-col cols="12" md="9">
-              <p ref="entityText" class="header-text">
-                {{ doc.text }}
-              </p>
-            </v-col>
-            <v-col cols="12" md="3" class="d-sm-none d-md-block text-center">
-              <v-btn class="btn-toggle" plain x-small color="info" @click="toggleProgressBar">
-                {{ $t('annotation_sidebar.progress.toggle') }}
-              </v-btn>
-              <annotation-progress :class="(showProgressBar)?'d-block':'d-none'" :progress="progress" />
-            </v-col>
-          </v-row>
+          <v-card>
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" md="9">
+                  <p ref="entityText" class="header-text">
+                    {{ doc.text }}
+                  </p>
+                </v-col>
+                <v-col cols="12" md="3" class="d-sm-none d-md-block text-center">
+                  <v-btn class="btn-toggle" plain x-small color="info" @click="toggleProgressBar">
+                    {{ $t('annotation_sidebar.progress.toggle') }}
+                  </v-btn>
+                  <annotation-progress :class="(showProgressBar)?'d-block':'d-none'" :progress="progress" />
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
         </div>
       </template>
       <template #content>
@@ -1030,7 +1034,7 @@ export default {
     &__header {
       &.--sticky {
         position: sticky;
-        padding: 20px;
+
         top: 55px;
         z-index: 1;
       }
