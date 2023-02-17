@@ -3,12 +3,11 @@
     <layout-text
       v-if="doc.id"
       v-shortkey="shortKeysSpans"
-      class="layout-text"
-      :class="{ '--sticky': hasStickyView }"
+      class="layout-text --sticky"
       @shortkey="changeSelectedLabel"
     >
       <template #header>
-        <div class="layout-text__header" :class="{ '--sticky': hasStickyView }">
+        <div class="layout-text__header --sticky">
           <v-alert
             :value="!canConfirm && hasClickedConfirmButton"
             class="header-alert"
@@ -83,8 +82,13 @@
           >
             <v-spacer />
           </toolbar-laptop>
-          <toolbar-mobile :total="docs.count" class="d-flex d-sm-none header-toolbar --mobile" />
-          <v-card v-show="hasStickyView">
+          <toolbar-mobile
+            :total="docs.count"
+            :disable-prev="!canNavigateBackward"
+            :disable-next="!canNavigateForward"
+            class="d-flex d-sm-none header-toolbar --mobile"
+          />
+          <v-card>
             <v-card-text>
               <v-row>
                 <v-col cols="12" md="9">
@@ -92,8 +96,11 @@
                     {{ doc.text }}
                   </p>
                 </v-col>
-                <v-col cols="12" md="3" class="d-sm-none d-md-block">
-                  <annotation-progress :progress="progress" />
+                <v-col cols="12" md="3" class="d-sm-none d-md-block text-center">
+                  <v-btn class="btn-toggle" plain x-small color="info" @click="toggleProgressBar">
+                    {{ $t('annotation_sidebar.progress.toggle') }}
+                  </v-btn>
+                  <annotation-progress :class="(showProgressBar)?'d-block':'d-none'" :progress="progress" />
                 </v-col>
               </v-row>
             </v-card-text>
@@ -101,15 +108,7 @@
         </div>
       </template>
       <template #content>
-        <div class="layout-text__content" :class="{ '--expanded': hasStickyView }">
-          <v-row class="content__title">
-            <v-col cols="12">
-              <h3 class="mt-3 mb-2">
-                {{ doc.meta.meta.article_title }}
-              </h3>
-              <v-divider />
-            </v-col>
-          </v-row>
+        <div class="layout-text__content --expanded">
           <v-row class="mt-3 content__article">
             <v-col v-if="showArticleViewer" cols="5" class="content-article__toolbar">
               <toolbar-article
@@ -121,8 +120,7 @@
             <v-col :cols="showArticleViewer ? 7 : 12" class="content-article__container">
               <v-card
                 v-shortkey="shortKeysCategory"
-                class="annotation-card"
-                :class="{ '--hidden': hasStickyView }"
+                class="annotation-card --hidden"
                 @shortkey="addOrRemoveCategory"
               >
                 <v-card-title v-if="categoryTypes.length" class="annotation-card__title">
@@ -146,41 +144,12 @@
                   />
                 </v-card-title>
                 <v-divider />
-                <div class="annotation-card__text pa-4" :class="{ '--sticky': hasStickyView }">
-                  <entity-editor
-                    ref="entityEditor"
-                    class="entity-editor"
-                    :class="{ '--transparent': hasStickyView }"
-                    :dark="$vuetify.theme.dark"
-                    :rtl="isRTL"
-                    :read-only="!canEdit"
-                    :text="doc.text"
-                    :entities="spans"
-                    :entity-labels="spanTypes"
-                    :relations="relations"
-                    :relation-labels="relationTypes"
-                    :allow-overlapping="project.allowOverlapping"
-                    :grapheme-mode="project.graphemeMode"
-                    :selected-label="selectedLabel"
-                    :relation-mode="relationMode"
-                    @addEntity="addSpan"
-                    @addRelation="addRelation"
-                    @click:entity="updateSpan"
-                    @click:relation="updateRelation"
-                    @contextmenu:entity="deleteSpan"
-                    @contextmenu:relation="deleteRelation"
-                  />
-                </div>
               </v-card>
               <v-divider />
               <v-card
                 v-if="isScaleImported"
                 ref="dimensionCard"
-                class="pa-4 dimension-card"
-                :style="`margin-top: ${
-                  hasStickyView ? $refs.entityEditor.$el.clientHeight / 2 : 0
-                }px`"
-                :class="{ '--sticky': hasStickyView }"
+                class="pa-4 dimension-card --sticky"
               >
                 <summary-input
                   v-if="project.isSummaryMode || project.isCombinationMode"
@@ -291,11 +260,6 @@
           </v-row>
         </div>
       </template>
-      <template #sidebar>
-        <div class="layout-text__sidebar">
-          <annotation-progress :progress="progress" />
-        </div>
-      </template>
       <resting-period-modal v-if="showRestingMessage" :end-time="restingEndTime" />
     </layout-text>
   </div>
@@ -312,7 +276,6 @@ import LayoutText from '@/components/tasks/layout/LayoutText'
 import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
 import ToolbarArticle from '@/components/tasks/toolbar/ToolbarArticle'
-import EntityEditor from '@/components/tasks/sequenceLabeling/EntityEditor.vue'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
 import SummaryInput from '@/components/tasks/affectiveAnnotation/summary/SummaryInput.vue'
 import EmotionsInput from '@/components/tasks/affectiveAnnotation/emotions/EmotionsInput.vue'
@@ -326,7 +289,6 @@ import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
 export default {
   components: {
     AnnotationProgress,
-    EntityEditor,
     LayoutText,
     ToolbarLaptop,
     ToolbarMobile,
@@ -404,7 +366,7 @@ export default {
         isOthersMode: false
       },
       hasClickedConfirmButton: false,
-      hasStickyView: false,
+      showProgressBar: true,
       firstView: true
     }
   },
@@ -560,14 +522,6 @@ export default {
     }
   },
 
-  beforeMount() {
-    window.addEventListener('scroll', this.onScrollListener)
-  },
-
-  beforeDestroy() {
-    window.removeEventListener('scroll', this.onScrollListener)
-  },
-
   mounted() {
     this.isLoaded = true
   },
@@ -581,33 +535,8 @@ export default {
       'getQuestionnaire'
     ]),
 
-    onScrollListener: _.debounce(function () {
-      if (this.isLoaded) {
-        const entityEditor = this.$refs.entityEditor
-        const margin = 100
-        if (entityEditor) {
-          const { bottom } = entityEditor.$el.getBoundingClientRect()
-          this.hasStickyView = bottom - margin < 0
-        }
-      }
-    }, 50),
-
-    getDimensionComponentRef() {
-      let dimensionRef = 'summaryInput'
-      if (this.isCombinationMode) {
-        dimensionRef = 'summaryInput'
-      } else if (this.isSummaryMode) {
-        dimensionRef = 'summaryInput'
-      } else if (this.isEmotionsMode) {
-        dimensionRef = 'emotionsInput'
-      } else if (this.isOthersMode) {
-        dimensionRef = 'othersInput'
-      } else if (this.isHumorMode) {
-        dimensionRef = 'humorInput'
-      } else if (this.isOffensiveMode) {
-        dimensionRef = 'offensiveInput'
-      }
-      return this.$refs[dimensionRef]
+    toggleProgressBar() {
+      this.showProgressBar = !this.showProgressBar
     },
 
     async checkRestingPeriod() {
@@ -1105,7 +1034,7 @@ export default {
     &__header {
       &.--sticky {
         position: sticky;
-        padding: 20px;
+
         top: 55px;
         z-index: 1;
       }
@@ -1117,6 +1046,12 @@ export default {
         max-height: 150px;
         overflow-y: auto;
         opacity: 0.8;
+      }
+
+      .btn-toggle {
+        white-space: normal;
+        word-wrap: break-word;
+        text-decoration: underline;
       }
     }
   }
@@ -1138,13 +1073,6 @@ export default {
     > div > div > svg:last-of-type {
       height: 0;
       overflow: hidden;
-    }
-
-    .entity-editor {
-      &.--transparent {
-        height: 0;
-        overflow: hidden;
-      }
     }
   }
 
