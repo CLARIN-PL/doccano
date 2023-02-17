@@ -96,8 +96,18 @@ export default {
       enableTextfield: true,
       showDialog: false,
       dialogErrorMessage: '',
-      text: (this.value === this.emptyTextFlag) ? '' : this.value
+      text: ''
     }
+  },
+
+  watch: {
+    value() {
+      this.valueChangeHandler()
+    }
+  },
+
+  created() {
+    this.valueChangeHandler()
   },
 
   methods: {
@@ -119,6 +129,9 @@ export default {
       } else {
         this.showDialog = false
       }
+    },
+    valueChangeHandler() {
+      this.text = (this.value === this.emptyTextFlag) ? '' : this.value
     }
   }
 }
