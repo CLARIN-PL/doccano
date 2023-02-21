@@ -10,15 +10,23 @@ export class APIExampleRepository implements ExampleRepository {
     projectId: string,
     { limit = '10', offset = '0', q = '', isChecked = '' }: SearchOption
   ): Promise<ExampleItemList> {
-    const url = `/projects/${projectId}/examples?limit=${limit}&offset=${offset}&q=${q}&confirmed=${isChecked}`
-    const response = await this.request.get(url)
-    return plainToInstance(ExampleItemList, response.data)
+    let result = Promise.resolve({count: 0, next: null, prev: null, items: []})
+    if (String(projectId) !== "undefined") {
+      const url = `/projects/${projectId}/examples?limit=${limit}&offset=${offset}&q=${q}&confirmed=${isChecked}`
+      const response = await this.request.get(url)
+      result =  response.data
+    }
+    return result
   }
 
-  async articleIds(projectId: string, limit = '999999'): Promise<Array<string>> {
-    const url = `/projects/${projectId}/article_ids?limit=${limit}&offset=0`
-    const response = await this.request.get(url)
-    return response.data.results.map((i: any) => i.article_id)
+  async fetchArticleIds(projectId: string, limit = '999999'): Promise<Array<string>> {
+    let results = Promise.resolve([])
+    if (String(projectId) !== "undefined") {
+      const url = `/projects/${projectId}/article_ids?limit=${limit}&offset=0`
+      const response = await this.request.get(url)
+      results = response.data.results.map((i: any) => i.article_id)
+    }
+    return results
   }
 
   async create(projectId: string, item: ExampleItem): Promise<ExampleItem> {
@@ -50,9 +58,13 @@ export class APIExampleRepository implements ExampleRepository {
   }
 
   async listStates(projectId: string, exampleId: number): Promise<ExampleStateItemList> {
-    const url = `/projects/${projectId}/examples/${exampleId}/states`
-    const response = await this.request.get(url)
-    return plainToInstance(ExampleStateItemList, response.data)
+    let result = Promise.resolve({count: 0, next: null, prev: null, items: []})
+    if (String(projectId) !== "undefined" && String(exampleId) !== "undefined") {
+      const url = `/projects/${projectId}/examples/${exampleId}/states`
+      const response = await this.request.get(url)
+      result = response.data
+    }
+    return result
   }
 
   async confirm(projectId: string, exampleId: number): Promise<void> {
