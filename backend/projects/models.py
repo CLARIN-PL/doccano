@@ -230,6 +230,47 @@ class AffectiveAnnotationProject(Project):
         return True
 
 
+class DynamicAnnotationProject(Project):
+    allow_overlapping = models.BooleanField(default=False)
+    grapheme_mode = models.BooleanField(default=False)
+    use_relation = models.BooleanField(default=False)
+    is_summary_mode = models.BooleanField(default=False)
+    is_emotions_mode = models.BooleanField(default=False)
+    is_offensive_mode = models.BooleanField(default=False)
+    is_humor_mode = models.BooleanField(default=False)
+    is_others_mode = models.BooleanField(default=False)
+    is_single_ann_view = models.BooleanField(default=True)
+    is_combination_mode = models.BooleanField(default=False)
+
+    @property
+    def is_text_project(self) -> bool:
+        return True
+
+    @property
+    def is_article_project(self) -> bool:
+        return True
+
+    @property
+    def is_affective_annotation_project(self) -> bool:
+        return True
+
+    @property
+    def is_dynamic_dimension_project(self) -> bool:
+        return True
+
+    @property
+    def can_define_label(self) -> bool:
+        return True
+
+    @property
+    def can_define_category(self) -> bool:
+        return True
+
+    @property
+    def can_define_span(self) -> bool:
+        return True
+
+
 class Tag(models.Model):
     text = models.TextField()
     project = models.ForeignKey(to=Project, on_delete=models.CASCADE, related_name="tags")
@@ -282,3 +323,36 @@ class Member(models.Model):
 
     class Meta:
         unique_together = ("user", "project")
+
+
+class DynamicDimension(models.Model):
+    name = models.CharField(max_length=255)
+    type = models.CharField(max_length=255, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
+class ProjectDimension(models.Model):
+    project = models.ForeignKey(to=Project, on_delete=models.CASCADE, related_name="dimensions")
+    dimension = models.ForeignKey(to=DynamicDimension, on_delete=models.CASCADE, related_name="projects", null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.dimension.name
+
+
+class DimensionMetaData(models.Model):
+    dimension = models.ForeignKey(to=DynamicDimension, on_delete=models.CASCADE, related_name="dimension_meta_data")
+    codename = models.CharField(max_length=255)
+    value = models.JSONField(default=dict)
+    required = models.BooleanField(default=False)
+    readonly = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.codename
