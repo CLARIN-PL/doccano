@@ -16,6 +16,7 @@ IMAGE_CLASSIFICATION = "ImageClassification"
 INTENT_DETECTION_AND_SLOT_FILLING = "IntentDetectionAndSlotFilling"
 ARTICLE_ANNOTATION = "ArticleAnnotation"
 AFFECTIVE_ANNOTATION = "AffectiveAnnotation"
+DYNAMIC_ANNOTATION = "DynamicAnnotation"
 PROJECT_CHOICES = (
     (DOCUMENT_CLASSIFICATION, "document classification"),
     (SEQUENCE_LABELING, "sequence labeling"),
@@ -25,6 +26,7 @@ PROJECT_CHOICES = (
     (IMAGE_CLASSIFICATION, "image classification"),
     (ARTICLE_ANNOTATION, "article annotation"),
     (AFFECTIVE_ANNOTATION, "affective annotation"),
+    (DYNAMIC_ANNOTATION, "dynamic annotation"),
 )
 
 
@@ -241,6 +243,7 @@ class DynamicAnnotationProject(Project):
     is_others_mode = models.BooleanField(default=False)
     is_single_ann_view = models.BooleanField(default=True)
     is_combination_mode = models.BooleanField(default=False)
+        
 
     @property
     def is_text_project(self) -> bool:
@@ -342,7 +345,7 @@ class ProjectDimension(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.dimension.name
+        return self.dimension.id
 
 
 class DimensionMetaData(models.Model):

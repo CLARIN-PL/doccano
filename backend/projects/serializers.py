@@ -12,7 +12,10 @@ from .models import (
     Tag,
     TextClassificationProject,
     ArticleAnnotationProject,
-    AffectiveAnnotationProject
+    AffectiveAnnotationProject,
+    DynamicAnnotationProject,
+    ProjectDimension,
+    DynamicDimension,
 )
 
 
@@ -42,6 +45,21 @@ class TagSerializer(serializers.ModelSerializer):
             "id",
             "project",
             "text",
+        )
+        read_only_fields = ("id", "project")
+
+
+class ProjectDimensionSerializer(serializers.ModelSerializer):
+    dimension = serializers.PrimaryKeyRelatedField(
+        queryset=DynamicDimension.objects.all(), many=True)
+    project = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProjectDimension
+        fields = (
+            "id",
+            "project",
+            "dimension",
         )
         read_only_fields = ("id", "project")
 
@@ -132,6 +150,22 @@ class AffectiveAnnotationProjectSerializer(ProjectSerializer):
     class Meta(ProjectSerializer.Meta):
         model = AffectiveAnnotationProject
         fields = ProjectSerializer.Meta.fields + ["allow_overlapping", "grapheme_mode", "use_relation", "is_summary_mode", "is_emotions_mode", "is_offensive_mode", "is_humor_mode", "is_others_mode", "is_single_ann_view", "is_combination_mode"]
+
+
+class DynamicAnnotationProjectSerializer(ProjectSerializer):
+    dimension = ProjectDimensionSerializer(many=True, required=False)
+
+    class Meta(ProjectSerializer.Meta):
+        model = DynamicAnnotationProject
+        fields = ProjectSerializer.Meta.fields + ["allow_overlapping", "grapheme_mode", "use_relation", "is_summary_mode", "is_emotions_mode", "is_offensive_mode", "is_humor_mode", "is_others_mode", "is_single_ann_view", "is_combination_mode", "dimension"]
+
+    def create(self, validated_data):
+        dimensions_data = validated_data.pop('dimension')
+        project = self.Meta.model.objects.create(**validated_data)
+        for dimension_data in dimensions_data:
+            dimension = dimension_data['dimension'][0]
+            project_dimension = ProjectDimension.objects.create(project=project, dimension=dimension)
+        return project
 
 
 class ProjectPolymorphicSerializer(PolymorphicSerializer):
