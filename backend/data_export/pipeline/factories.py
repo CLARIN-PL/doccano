@@ -26,6 +26,7 @@ from projects.models import (
     Project,
     ARTICLE_ANNOTATION,
     AFFECTIVE_ANNOTATION,
+    DYNAMIC_ANNOTATION,
 )
 
 
@@ -55,6 +56,7 @@ def create_formatter(project: Project, file_format: str) -> List[Formatter]:
     mapper_relation_extraction = {DATA: "text"}
     mapper_article_annotation = {DATA: "text", Categories.column: "cats"}
     mapper_affective_annotation = {DATA: "text"}
+
     mapping: Dict[str, Dict[str, List[Formatter]]] = {
         DOCUMENT_CLASSIFICATION: {
             CSV.name: [
@@ -174,6 +176,53 @@ def create_formatter(project: Project, file_format: str) -> List[Formatter]:
                 RenameFormatter(**mapper_affective_annotation)
             ],
         },
+        DYNAMIC_ANNOTATION: {
+            JSON.name: [
+                TupledTextFormatter(TextQuestions.column),
+                RenameFormatter(**mapper_affective_annotation),
+            ]
+            if is_summary_mode
+            else [
+                TupledSpanFormatter(Scales.column),
+                RenameFormatter(**mapper_affective_annotation),
+            ]
+            if is_emotions_mode
+            else [
+                TupledSpanFormatter(Scales.column),
+                TupledTextFormatter(TextQuestions.column),
+                RenameFormatter(**mapper_affective_annotation)
+            ],
+            JSONL.name: [
+                TupledTextFormatter(TextQuestions.column),
+                RenameFormatter(**mapper_affective_annotation),
+            ]
+            if is_summary_mode
+            else [
+                TupledSpanFormatter(Scales.column),
+                RenameFormatter(**mapper_affective_annotation),
+            ]
+            if is_emotions_mode
+            else [
+                TupledSpanFormatter(Scales.column),
+                TupledTextFormatter(TextQuestions.column),
+                RenameFormatter(**mapper_affective_annotation)
+            ],    
+            JSONArticle.name: [
+                TupledTextFormatter(TextQuestions.column),
+                RenameFormatter(**mapper_affective_annotation),
+            ]
+            if is_summary_mode
+            else [
+                TupledSpanFormatter(Scales.column),
+                RenameFormatter(**mapper_affective_annotation),
+            ]
+            if is_emotions_mode
+            else [
+                TupledSpanFormatter(Scales.column),
+                TupledTextFormatter(TextQuestions.column),
+                RenameFormatter(**mapper_affective_annotation)
+            ],
+        },
     }
     return mapping[project.project_type][file_format]
 
@@ -191,6 +240,7 @@ def select_label_collection(project: Project) -> List[Type[Labels]]:
         INTENT_DETECTION_AND_SLOT_FILLING: [Categories, Spans],
         ARTICLE_ANNOTATION: [Categories, Spans, Relations] if use_relation else [Categories, Spans],
         AFFECTIVE_ANNOTATION: [TextQuestions] if is_summary_mode else [Scales] if is_emotions_mode else [Scales, TextQuestions],
+        DYNAMIC_ANNOTATION: [TextQuestions] if is_summary_mode else [Scales] if is_emotions_mode else [Scales, TextQuestions],
     }
     return mapping[project.project_type]
 

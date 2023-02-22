@@ -11,6 +11,7 @@ from projects.models import (
     SPEECH2TEXT,
     ARTICLE_ANNOTATION,
     AFFECTIVE_ANNOTATION,
+    DYNAMIC_ANNOTATION,
 )
 
 EXAMPLE_DIR = Path(__file__).parent.resolve() / "examples"
@@ -112,3 +113,9 @@ AFFECTIVE_ANNOTATION_DIR = EXAMPLE_DIR / "affective_annotation"
 Options.register(AFFECTIVE_ANNOTATION, JSON, AFFECTIVE_ANNOTATION_DIR / "example.json")
 Options.register(AFFECTIVE_ANNOTATION, JSONL, AFFECTIVE_ANNOTATION_DIR / "example.jsonl")
 Options.register(AFFECTIVE_ANNOTATION, JSONArticle, AFFECTIVE_ANNOTATION_DIR / "article_example.json")
+
+# Dynamic Annotation
+DYNAMIC_ANNOTATION_DIR = EXAMPLE_DIR / "dynamic_annotation"
+Options.register(DYNAMIC_ANNOTATION, JSON, DYNAMIC_ANNOTATION_DIR / "example.json")
+Options.register(DYNAMIC_ANNOTATION, JSONL, DYNAMIC_ANNOTATION_DIR / "example.jsonl")
+Options.register(DYNAMIC_ANNOTATION, JSONArticle, DYNAMIC_ANNOTATION_DIR / "article_example.json")
