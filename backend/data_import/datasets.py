@@ -29,6 +29,7 @@ from projects.models import (
     SPEECH2TEXT,
     ARTICLE_ANNOTATION,
     AFFECTIVE_ANNOTATION,
+    DYNAMIC_ANNOTATION,
     Project,
 )
 
@@ -307,6 +308,7 @@ def select_dataset(project: Project, task: str, file_format: Format) -> Type[Dat
         SPEECH2TEXT: BinaryDataset,
         ARTICLE_ANNOTATION: CategoryAndSpanDataset,
         AFFECTIVE_ANNOTATION: AffectiveDataset,
+        DYNAMIC_ANNOTATION: AffectiveDataset,
     }
     if task not in mapping:
         task = project.project_type
