@@ -12,6 +12,7 @@ from projects.models import (
     SPEECH2TEXT,
     ARTICLE_ANNOTATION,
     AFFECTIVE_ANNOTATION,
+    DYNAMIC_ANNOTATION,
     Member,
     Role,
 )
@@ -72,6 +73,7 @@ def make_project(task: str, users: List[str], roles: List[str], collaborative_an
         INTENT_DETECTION_AND_SLOT_FILLING: "IntentDetectionAndSlotFillingProject",
         ARTICLE_ANNOTATION: "ArticleAnnotationProject",
         AFFECTIVE_ANNOTATION: "AffectiveAnnotationProject",
+        DYNAMIC_ANNOTATION: "DynamicAnnotationProject",
     }.get(task, "Project")
     project = mommy.make(
         _model=project_model,

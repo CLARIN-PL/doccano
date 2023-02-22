@@ -136,6 +136,33 @@ class TestAffectiveAnnotationProjectCreation(CRUDMixin):
         self.assertEqual(response.data["allow_overlapping"], self.data["allow_overlapping"])
         self.assertEqual(response.data["grapheme_mode"], self.data["grapheme_mode"])
         self.assertEqual(response.data["is_emotions_mode"], self.data["is_emotions_mode"])
+
+
+class TestDynamicAnnotationProjectCreation(CRUDMixin):
+    @classmethod
+    def setUpTestData(cls):
+        create_default_roles()
+        cls.user = make_user()
+        cls.url = reverse(viewname="project_list")
+        cls.data = {
+            "name": "example",
+            "project_type": "DynamicAnnotation",
+            "description": "example",
+            "guideline": "example",
+            "allow_overlapping": True,
+            "grapheme_mode": True,
+            "dimension": [{"dimension": [2]}, {"dimension": [13]}, {"dimension": [15]}, {"dimension": [24]}],
+            "resourcetype": "DynamicAnnotationProject",
+            "is_combination_mode": True,
+        }
+
+    def test_allows_staff_user_to_create_project(self):
+        self.user.is_staff = True
+        self.user.save()
+        response = self.assert_create(self.user, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["allow_overlapping"], self.data["allow_overlapping"])
+        self.assertEqual(response.data["grapheme_mode"], self.data["grapheme_mode"])
+        self.assertEqual(response.data["is_combination_mode"], self.data["is_combination_mode"])
         
 
 class TestProjectDetailAPI(CRUDMixin):
