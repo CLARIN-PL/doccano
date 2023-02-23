@@ -284,7 +284,7 @@ export default Vue.extend({
       }
       this.item = await this.$services.example.list(this.projectId, query)
 
-      const limit = 100
+      const limit = 1000
       const requests = this.item.items
         .filter((item: any) => item.isConfirmed)
         .map((item: any) => this.$services.example.listStates(this.projectId, item.id))

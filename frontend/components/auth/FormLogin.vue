@@ -87,7 +87,7 @@ export default Vue.extend({
     ]),
     async setQuestionnaireData() {
       const ids = _.flatMap(qCategories, 'id')
-      const limit = 100
+      const limit = 1000
       const serverDateFormat = 'YYYY-MM-DDThh:mm:ss'
       const dateFormat = 'DD-MM-YYYY'
       const questionnairePromises = ids.map((id) => {
