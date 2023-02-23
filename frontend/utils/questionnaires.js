@@ -355,36 +355,46 @@ export function getQuestionnairesToShow(firstQuestionnaireEverStr) {
                                         .diff(moment(todayTime), 'hours'))
                     const isFirstSignIn = hourDiff < .5
                     isShowing = !isFilled && isFirstSignIn
+                    isShowing = false
                 } else if(questionnaireType.id === "2.1") {
                     isShowing = !isFilled
+                    isShowing = false
                 } else if(questionnaireType.id === "2.2") {
                     isShowing = !isFilled && hasPassedResearchTime
+                    isShowing = false
                 } else if(questionnaireType.id === "3.1") {
                     const weekDiff = Math.abs(moment(todayTime)
                                     .diff(moment(defaultTime, DATE_FORMAT), 'weeks'))
                     const hasPassedOneWeek = weekDiff >= 1
                     isShowing = !isFilled && hasPassedOneWeek
+                    isShowing = false
                 } else if(questionnaireType.id === "3.2") {
                     isShowing = !isFilled && hasPassedResearchTime
+                    isShowing = false
                 } else if(questionnaireType.id === "4.1") {
                     isShowing = !isFilled && !hasAnnotatedToday
+                    isShowing = false
                 }  else if(questionnaireType.id === "4.2") {
                     const currentHour = todayTime.getHours()
                     const isEvening = currentHour >= 17 && currentHour < 23
                     isShowing = !isFilled && isEvening && hasAnnotatedToday
+                    isShowing = false
                 } else if(questionnaireType.id === "4.3") {
                     isFilled = !!filled.find((fill)=> fill === `4.3_${textCountToday}`)
                     const hasAnnotatedBatch = hasAnnotatedToday 
                                             && textCountToday > 0 
                                             && textCountToday%TEXT_BATCH_COUNT === 0
                     isShowing = !isFilled && hasAnnotatedBatch
+                    isShowing = false
                 } else if(questionnaireType.id === "5.1") {
                     isShowing = !isFilled && hasPassedResearchTime
+                    isShowing = false
                 } else if(questionnaireType.id === "6.1") {
                     const weekDiff = Math.abs(moment(todayTime)
                                     .diff(moment(defaultTime, DATE_FORMAT), 'weeks'))
                     const hasPassedTwoWeeks = weekDiff >= 2
                     isShowing = !isFilled && hasPassedTwoWeeks
+                    isShowing = false
                 }
 
                 if(isShowing && !toShow.includes(questionnaireType.id)) {
