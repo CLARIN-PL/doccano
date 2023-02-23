@@ -244,7 +244,7 @@ export default {
     },
     async list() {
       const typeId = this.toShowId.split('.')[0]
-      const limit = 100
+      const limit = 1000
       const questionnaires = await this.$services.questionnaire.listQuestionnairesByTypeId({
         questionnaireTypeId: typeId,
         limit
