@@ -381,12 +381,15 @@ export default {
       this.setArticleData()
       this.loadLabels()
     })
+    const dims = this.currentDimensions
+    console.log("dimensions:", dims)
   },
 
   computed: {
     ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId']),
     ...mapGetters('config', ['isRTL']),
     ...mapGetters('user', ['getAnnotation']),
+    ...mapGetters('projects', ['currentDimensions']),
     shortKeysSpans() {
       return Object.fromEntries(this.spanTypes.map((item) => [item.id, [item.suffixKey]]))
     },

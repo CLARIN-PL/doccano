@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { toRefs, useContext, useFetch, ref, watch } from '@nuxtjs/composition-api'
 import LabelGroup from '@/components/tasks/textClassification/LabelGroup'
 import LabelSelect from '@/components/tasks/textClassification/LabelSelect'
@@ -124,6 +125,15 @@ export default {
       removeTeacher,
       shortKeys
     }
+  },
+
+  computed: {
+    ...mapGetters('projects', ['currentDimensions'])
+  },
+
+  mounted() {
+    const dims = this.currentDimensions
+    console.log("dimensions:", dims)
   }
 }
 </script>

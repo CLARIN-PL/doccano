@@ -1,0 +1,27 @@
+import ApiService from '@/services/api.service'
+import { DimensionRepository } from '~/domain/models/dimension/dimensionRepository'
+import { DimensionItem, DimensionItemList } from '~/domain/models/dimension/dimension'
+
+export class APIDimensionRepository implements DimensionRepository {
+  constructor(private readonly request = ApiService) {}
+
+  async list(projectId: string): Promise<DimensionItemList> {
+    const url = `/projects/${projectId}/dimensions`
+    const response = await this.request.get(url)
+    const dimensions = response.data.map(
+      (item: any) => new DimensionItem(item.dimension_id, item.dimension_name, item.dimension_type, item.dimension_metadata)
+    )
+    return new DimensionItemList(dimensions)
+  }
+
+  async create(projectId: string, name: string, type: string, metadata: string): Promise<DimensionItem> {
+    const url = `/projects/${projectId}/dimensions`
+    const response = await this.request.post(url, { name, type, metadata })
+    return new DimensionItem(response.data.id, response.data.name, response.data.type, response.data.metadata)
+  }
+
+  async delete(projectId: string, dimensionId: number): Promise<void> {
+    const url = `/projects/${projectId}/dimensions/${dimensionId}`
+    await this.request.delete(url)
+  }
+}
