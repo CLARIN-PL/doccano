@@ -177,10 +177,10 @@ export default Vue.extend({
       }
       const hasFinishedAll = this.projects.items.length === 0
       this.setProject({ hasFinishedAll })
-      await this.checkQuestionnaire()
       if (hasFinishedAll && !isEmptyProjectList) {
         this.page = this.page + 1
       } else {
+        await this.checkQuestionnaire()
         this.isLoading = false
       }
     },
