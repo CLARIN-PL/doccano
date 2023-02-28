@@ -1,4 +1,4 @@
-import { DimensionItem, DimensionItemList } from '~/domain/models/project/dimension'
+import { DimensionItem, DimensionItemList } from '~/domain/models/dimension/dimension'
 
 export interface DimensionRepository {
     list(projectId: string): Promise<DimensionItemList>

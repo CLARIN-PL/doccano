@@ -6,7 +6,7 @@ export class APIDimensionRepository implements DimensionRepository {
   constructor(private readonly request = ApiService) {}
 
   async list(projectId: string): Promise<DimensionItemList> {
-    const url = `/projects/${projectId}/dimensions`
+    const url = `/projects/${projectId}/dimension-detail`
     const response = await this.request.get(url)
     const dimensions = response.data.map(
       (item: any) => new DimensionItem(item.dimension_id, item.dimension_name, item.dimension_type, item.dimension_metadata)
