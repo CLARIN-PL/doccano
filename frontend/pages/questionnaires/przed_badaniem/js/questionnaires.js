@@ -563,224 +563,224 @@ export const qTypes = [
                         questions: [
                             {
                                 type: "slider",
-                                text: "Zazwyczaj nie śmieję się i nie żartuję zbytnio z innymi ludźmi.",
+                                text: "Rzadko śmieję się lub żartuję z innymi ludźmi.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Jeśli czuję się przygnębiony, zwykle mogę się rozweselić humorem.",
+                                text: "Gdy czuję się przygnębiony(a), zazwyczaj potrafię sam(a) się rozweselić.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Jeśli ktoś popełni błąd, często będę tym dokuczać.",
+                                text: "Jeżeli ktoś popełni błąd, wypowiadam uszczypliwą uwagę.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Pozwalam ludziom śmiać się ze mnie lub żartować moim kosztem bardziej niż powinienem.",
+                                text: "Bardziej niż powinienem/powinnam, pozwalam ludziom śmiać się ze mnie lub bawić się moim kosztem.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Nie muszę ciężko pracować nad rozśmieszaniem innych ludzi — wydaje mi się, że jestem osobą z natury dowcipną.",
+                                text: "Nie sprawia mi dużej trudności rozśmieszenie innych. Wydaje mi się, że jestem osobą obdarzoną naturalnym poczuciem humoru.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Nawet gdy jestem sam, często bawią mnie absurdy życia.",
+                                text: "Nawet kiedy jestem sam(a), często rozśmieszają mnie absurdalne sytuacje życiowe.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Ludzie nigdy nie są urażeni ani zranieni moim poczuciem humoru.",
+                                text: "Ludzie nigdy nie czują się urażeni ani dotknięci moim poczuciem humoru.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Często daję się ponieść umniejszaniu sobie, jeśli rozśmiesza to moją rodzinę lub przyjaciół.",
+                                text: "Często przesadzam w ośmieszaniu siebie, jeżeli bawi to moją rodzinę lub przyjaciół.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Rzadko rozśmieszam innych ludzi opowiadając zabawne historie o sobie.",
+                                text: "Rzadko rozśmieszam innych, opowiadając zabawne historyjki o sobie",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Jeśli czuję się zdenerwowany lub nieszczęśliwy, zwykle staram się wymyślić coś zabawnego w tej sytuacji, aby poczuć się lepiej.",
+                                text: "Jeżeli jestem zmartwiony(a) lub czuję się nieszczęśliwy(a), zazwyczaj staram się znaleźć coś zabawnego w tej sytuacji, aby poprawić sobie humor.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Kiedy opowiadam dowcipy lub mówię śmieszne rzeczy, zwykle nie przejmuję się tym, jak inni ludzie to odbierają.",
+                                text: "Opowiadając dowcipy lub zabawne historie, zazwyczaj nie zastanawiam się nad tym czy ktoś poczuje się dotknięty/urażony.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Często staram się, aby ludzie bardziej mnie polubili lub zaakceptowali, mówiąc coś śmiesznego o moich własnych słabościach, błędach lub wadach.",
+                                text: "Często staram się sprawić, aby ludzie bardziej polubili lub zaakceptowali mnie poprzez opowiadanie zabawnych rzeczy o własnych słabościach, gafach lub błędach.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Z najbliższymi przyjaciółmi dużo się śmieję i żartuję.",
+                                text: "Dużo śmieję się i często żartuję w gronie moich najbliższych przyjaciół.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Moje humorystyczne spojrzenie na życie powstrzymuje mnie przed nadmiernym denerwowaniem się lub przygnębieniem z powodu różnych rzeczy.",
+                                text: "Moje pełne humoru spojrzenie na życie sprawia, że mniej martwię się różnymi sprawami.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Nie lubię, gdy ludzie używają humoru jako sposobu na krytykowanie lub poniżanie kogoś.",
+                                text: "Nie podoba mi się kiedy ktoś wykorzystuje humor w celu ośmieszania lub poniżania innych.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Rzadko używam humoru, by sobie umniejszać.",
+                                text: "Rzadko mówię zabawne rzeczy, które mogłyby mnie ośmieszyć.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Zazwyczaj nie lubię opowiadać dowcipów ani bawić ludzi.",
+                                text: "Zazwyczaj nie lubię opowiadać dowcipów ani rozśmieszać ludzi.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Jeśli jestem sam i czuję się nieszczęśliwy, staram się wymyślić coś zabawnego, aby podnieść się na duchu.",
+                                text: "Kiedy jestem sam(a) i czuję się nieszczęśliwy(a), staram się myśleć o czymś zabawnym, aby poprawić sobie humor.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Czasami myślę o czymś, co jest tak zabawne, że nie mogę się powstrzymać przed powiedzeniem tego, nawet jeśli nie jest to odpowiednie do sytuacji.",
+                                text: "Czasami kiedy myślę o czymś zabawnym, nie mogę się powstrzymać od opowiedzenia o tym, nawet jeśli wiem, że jest to niestosowne w danej sytuacji.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Często przekraczam granicę w umniejszaniu sobie, kiedy robię sobie żarty lub próbuję być zabawny.",
+                                text: "Często przekraczam granicę w ośmieszaniu siebie, kiedy opowiadam dowcipy lub staram się być zabawny(a).",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Lubię bawić ludzi.",
+                                text: "Sprawia mi przyjemność rozśmieszanie ludzi.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Jeśli czuję się smutny lub zdenerwowany, zwykle tracę poczucie humoru.",
+                                text: "Zazwyczaj, kiedy jestem smutny(a), tracę poczucie humoru.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Nigdy nie śmieję się z innych, nawet jeśli robią to wszyscy moi znajomi.",
+                                text: "Nigdy nie wyśmiewam się z innych, nawet jeśli robią to moi przyjaciele.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Kiedy jestem z przyjaciółmi lub rodziną, często wydaję się być tym, z którego inni ludzie się śmieją lub z którego żartują.",
+                                text: "Kiedy jestem ze znajomymi lub rodziną często mam wrażenie, że to ze mnie się śmieją lub żartują.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Nieczęsto żartuję z przyjaciółmi.",
+                                text: "Rzadko wygłupiam się z moimi przyjaciółmi.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Z mojego doświadczenia wynika, że myślenie o jakimś zabawnym aspekcie sytuacji jest często bardzo skutecznym sposobem radzenia sobie z problemami.",
+                                text: "Z doświadczenia wiem, że myślenie o jakimś zabawnym aspekcie sytuacji często jest bardzo dobrym sposobem radzenia sobie z problemami.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Jeśli kogoś nie lubię, często używam humoru lub przekomarzania się, aby mu umniejszyć.",
+                                text: "Jeśli kogoś nie lubię często posługuję się żartem lub kpiną aby go ośmieszyć lub poniżyć.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Jeśli mam problemy lub czuję się nieszczęśliwy, często ukrywam to przez żarty, aby nawet moi najbliżsi przyjaciele nie wiedzieli, jak naprawdę się czuję.",
+                                text: "Jeśli mam problemy lub czuję się nieszczęśliwy(a), często ukrywam to żartując i nawet moi najbliżsi przyjaciele nie wiedzą co naprawdę czuję.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Zwykle nie potrafię wymyślić dowcipnych rzeczy do powiedzenia, gdy jestem z innymi ludźmi.",
+                                text: "Zazwyczaj nie przychodzi mi do głowy nic zabawnego, kiedy jestem w towarzystwie innych ludzi.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Nie muszę przebywać z innymi ludźmi, żeby czuć się rozbawiony - zwykle potrafię znaleźć rzeczy do śmiechu nawet wtedy, gdy jestem sam.",
+                                text: "Nie potrzebuję towarzystwa innych ludzi, aby czuć się rozbawiony(a) – zazwyczaj znajduję powody do śmiechu nawet, kiedy jestem sam(a).",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Nawet jeśli coś jest dla mnie naprawdę zabawne, nie będę się z tego śmiał ani żartował, jeśli ktoś będzie urażony.",
+                                text: "Nawet jeśli coś jest dla mnie bardzo zabawne nie będę się z tego śmiać ani żartować jeśli wiem, że może to kogoś urazić.",
                                 min: 1,
                                 max: 5,
                                 value: -1
                             },
                             {
                                 type: "slider",
-                                text: "Pozwalając innym na śmianie się ze mnie jest moim sposobem na utrzymanie moich przyjaciół i rodziny w dobrym nastroju.",
+                                text: "Pozwalanie innym na śmianie się ze mnie jest sposobem na utrzymanie moich przyjaciół i rodziny w dobrym nastroju.",
                                 min: 1,
                                 max: 5,
                                 value: -1
