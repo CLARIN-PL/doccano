@@ -32,7 +32,8 @@ def populate_dimension_metadata(apps, schema_editor):
         "slider_min": 0,
         "slider_max": 10,
         "slider_step": 1,
-        "with_checkbox": 1
+        "with_checkbox": 1,
+        "checkbox_codename": "DIM_OTH10"
     }
     meta_checkbox_sc_values = {
         "is_multiple_answers": 0,

@@ -351,7 +351,7 @@ class ProjectDimension(models.Model):
 class DimensionMetaData(models.Model):
     dimension = models.ForeignKey(to=DynamicDimension, on_delete=models.CASCADE, related_name="dimension_meta_data")
     codename = models.CharField(max_length=255)
-    value = models.JSONField(default=dict)
+    config = models.JSONField(default=dict)
     required = models.BooleanField(default=False)
     readonly = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
