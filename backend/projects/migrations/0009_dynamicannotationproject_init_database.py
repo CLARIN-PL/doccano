@@ -46,7 +46,7 @@ def populate_dimensions(apps, schema_editor):
         'W jaki sposób? - Lekceważenie',
         'W jaki sposób? - Upokorzenie',
         'W jaki sposób? - Inne',
-        'Mnie bawi/śmieszy?',
+        'Bawi/śmieszny mnie',
         'Może kogoś bawić?',
         'Autor śmieje się z - Płeć',
         'Autor śmieje się z - Narodowość',
