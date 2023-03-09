@@ -19,6 +19,7 @@ from .models import (
     DimensionMetaData,
 )
 
+from label_types.models import ScaleType
 
 class MemberSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
@@ -103,6 +104,8 @@ class DynamicDimensionSerializer(serializers.ModelSerializer):
         project_id = self.context['view'].kwargs.get('project_id')
         current_project = Project.objects.get(id=project_id)
         ProjectDimension.objects.create(project=current_project, dimension=dimension)
+        if dimension.type == "slider":
+            ScaleType.objects.create(text=dimension.name, project=current_project)
         return dimension
 
 
