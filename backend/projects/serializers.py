@@ -16,6 +16,7 @@ from .models import (
     DynamicAnnotationProject,
     ProjectDimension,
     DynamicDimension,
+    DimensionMetaData,
 )
 
 
@@ -62,6 +63,47 @@ class ProjectDimensionSerializer(serializers.ModelSerializer):
             "dimension",
         )
         read_only_fields = ("id", "project")
+
+
+class DimensionMetaDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DimensionMetaData
+        fields = (
+            "id",
+            "dimension",
+            "codename",
+            "config",
+            "required",
+            "readonly",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = ("id", "dimension", "created_at", "updated_at")
+      
+
+class DynamicDimensionSerializer(serializers.ModelSerializer):
+    dimension_meta_data = DimensionMetaDataSerializer(required=True, many=True)
+    
+    class Meta:
+        model = DynamicDimension
+        fields = (
+            "id",
+            "name",
+            "type",
+            "dimension_meta_data",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = ("id", "created_at", "updated_at")
+
+    def create(self, validated_data):
+        dimension_meta_data = validated_data.pop("dimension_meta_data")
+        dimension = self.Meta.model.objects.create(**validated_data)
+        metadata = DimensionMetaData.objects.create(dimension=dimension, **dimension_meta_data[0])
+        project_id = self.context['view'].kwargs.get('project_id')
+        current_project = Project.objects.get(id=project_id)
+        ProjectDimension.objects.create(project=current_project, dimension=dimension)
+        return dimension
 
 
 class ProjectSerializer(serializers.ModelSerializer):
