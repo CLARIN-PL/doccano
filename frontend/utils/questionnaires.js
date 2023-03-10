@@ -334,14 +334,6 @@ export function getQuestionnairesToShow() {
         console.error(error)
     }
 
-    const duplicatePairs = [["3.1", "3.2"]]
-    const hasDuplicates = duplicatePairs.some((duplicatePair)=> _.intersection(duplicatePair, toShow).length > 0)
-    if(hasDuplicates) {
-        const pairs = _.flatten(duplicatePairs)
-        const toBeKept = [...duplicatePairs.map((duplicatePair)=> duplicatePair[duplicatePair.length-1])]
-        toShow = toShow.filter((ts)=> pairs.includes(ts) ? toBeKept.includes(ts) : true)
-    }
-
     return toShow
 }
 
