@@ -14,10 +14,10 @@ export class APIDimensionRepository implements DimensionRepository {
     return new DimensionItemList(dimensions)
   }
 
-  async create(projectId: string, name: string, type: string, metadata: string): Promise<DimensionItem> {
+  async create(projectId: string, name: string, type: string, dimension_meta_data: string): Promise<DimensionItem> {
     const url = `/projects/${projectId}/dimensions`
-    const response = await this.request.post(url, { name, type, metadata })
-    return new DimensionItem(response.data.id, response.data.name, response.data.type, response.data.metadata)
+    const response = await this.request.post(url, { name, type, dimension_meta_data })
+    return new DimensionItem(response.data.id, response.data.name, response.data.type, response.data.dimension_meta_data)
   }
 
   async delete(projectId: string, dimensionId: number): Promise<void> {
