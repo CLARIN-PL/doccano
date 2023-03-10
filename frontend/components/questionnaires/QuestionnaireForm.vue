@@ -1,9 +1,9 @@
 <template>
   <v-row align="center" justify="center" >
-    <v-col cols="8" v-if="showGreetingCard">
+    <v-col v-if="showGreetingCard" cols="8">
       <greeting-card @click="onClickGreetingCardButton" />
     </v-col>
-    <v-col cols="8" v-else>
+    <v-col v-else cols="8">
       <div ref="header">
         <v-alert
             v-model="showWarning"
