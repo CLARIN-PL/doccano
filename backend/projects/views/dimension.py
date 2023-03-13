@@ -25,3 +25,13 @@ class DynamicDimensionList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save()
+
+
+class GetAllDynamicDimensions(generics.ListAPIView):
+    serializer_class = DynamicDimensionSerializer
+    pagination_class = None
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return DynamicDimension.objects.all()
+    
