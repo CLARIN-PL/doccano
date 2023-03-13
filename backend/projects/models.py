@@ -346,6 +346,9 @@ class ProjectDimension(models.Model):
 
     def __str__(self):
         return self.dimension.id
+    
+    class Meta:
+        unique_together = ("project", "dimension")
 
 
 class DimensionMetaData(models.Model):

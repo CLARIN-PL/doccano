@@ -56,6 +56,9 @@ class ProjectDimensionSerializer(serializers.ModelSerializer):
         queryset=DynamicDimension.objects.all(), many=True)
     project = serializers.SerializerMethodField()
 
+    def get_project(self, instance):
+        return (self.context['view'].kwargs.get('project_id'))
+
     class Meta:
         model = ProjectDimension
         fields = (
