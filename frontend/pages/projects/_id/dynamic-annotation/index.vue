@@ -33,22 +33,6 @@
         <v-divider />
         <v-card-text class="title highlight" style="white-space: pre-wrap" v-text="example.text" />
       </v-card>
-      <v-card>
-        <v-card-text>
-          <ul>
-            <li v-for="(dimension, dimensionIdx) in dimensions" :key="`dimension-${dimensionIdx}`">
-              <component
-                :is="dimension.component"
-                v-model="dimension.value"
-                :question="dimension.question"
-                :extra-question="dimension.extraQuestion"
-                :settings="dimension.settings"
-                :read-only="dimension.readOnly"
-              />
-            </li>
-          </ul>
-        </v-card-text>
-      </v-card>
     </template>
     <template #sidebar>
       <annotation-progress :progress="progress" />
@@ -66,14 +50,11 @@ import ListMetadata from '@/components/tasks/metadata/ListMetadata'
 import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
 import ButtonLabelSwitch from '@/components/tasks/toolbar/buttons/ButtonLabelSwitch'
-import CheckboxInput from '@/components/tasks/dynamicAnnotation/CheckboxInput.vue'
-import SliderInput from '@/components/tasks/dynamicAnnotation/SliderInput.vue'
 import { useExampleItem } from '@/composables/useExampleItem'
 import { useLabelList } from '@/composables/useLabelList'
 import { useProjectItem } from '@/composables/useProjectItem'
 import { useTeacherList } from '@/composables/useTeacherList'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
-import TextfieldModal from '~/components/tasks/affectiveAnnotation/inputs/TextfieldModal.vue'
 
 export default {
   components: {
@@ -84,10 +65,7 @@ export default {
     LayoutText,
     ListMetadata,
     ToolbarLaptop,
-    ToolbarMobile,
-    CheckboxInput,
-    SliderInput,
-    TextfieldModal
+    ToolbarMobile
   },
   layout: 'workspace',
 
@@ -146,26 +124,6 @@ export default {
       removeTeacher,
       shortKeys
     }
-<<<<<<< HEAD
-=======
-  },
-
-  computed: {
-    ...mapGetters('projects', ['currentDimensions'])
-  },
-
-  async mounted() {
-    console.log('projectId:', this.$route.params.id)
-
-    const dims = this.currentDimensions
-    console.log('dimensions:', dims)
-    const listAllDimensions = await this.$services.dimension.listAllDimensions()
-    console.log('listAllDimensions:', listAllDimensions)
-    const getDimensionMetaData = await this.$services.dimension.getDimensionMetaData(1)
-    console.log('getDimensionMetaData:', getDimensionMetaData)
-
-    // await this.$services.dimension.assignDimensions(this.$route.params.id, [1, 2, 3])
->>>>>>> 0a47715c (feat: dimensions fe (in progress))
   }
 }
 </script>

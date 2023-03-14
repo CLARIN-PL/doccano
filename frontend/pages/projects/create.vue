@@ -7,6 +7,7 @@ import Vue from 'vue'
 import _ from 'lodash'
 import FormCreate from '~/components/project/FormCreate.vue'
 import { ProjectDTO, ProjectWriteDTO } from '~/services/application/project/projectData'
+import { DimensionDTO } from '~/services/application/dimension/dimensionData'
 
 export default Vue.extend({
   components: {
@@ -19,6 +20,7 @@ export default Vue.extend({
 
   data() {
     return {
+      dimensions: [] as DimensionDTO[],
       editedItem: {
         name: '',
         description: '',
@@ -32,7 +34,8 @@ export default Vue.extend({
         affectiveProjectMode: 'isSummaryMode',
         isSingleAnnView: false,
         isCombinationMode: false,
-        tags: [] as string[]
+        tags: [] as string[],
+        dimension: [] as any[]
       } as ProjectWriteDTO,
       defaultItem: {
         name: '',
@@ -47,7 +50,8 @@ export default Vue.extend({
         affectiveProjectMode: 'isSummaryMode',
         isSingleAnnView: false,
         isCombinationMode: false,
-        tags: [] as string[]
+        tags: [] as string[],
+        dimension: [] as any[]
       } as ProjectWriteDTO
     }
   },
@@ -68,8 +72,12 @@ export default Vue.extend({
     },
     getProjectItem(): ProjectWriteDTO {
       const editedItem: any = _.cloneDeep(this.editedItem)
-      if (this.editedItem.affectiveProjectMode) {
-        editedItem[this.editedItem.affectiveProjectMode] = true
+      if (editedItem.projectType !== 'AffectiveAnnotation') {
+        editedItem.affectiveProjectMode = ''
+      }
+
+      if (editedItem.affectiveProjectMode) {
+        editedItem[editedItem.affectiveProjectMode] = true
       }
       const affectiveProjectModes = [
         'isHumorMode',
@@ -80,9 +88,17 @@ export default Vue.extend({
       ]
       affectiveProjectModes.forEach((key: string) => {
         const mode = editedItem[key] || false
-        editedItem[key] = this.editedItem.isCombinationMode ? false : mode
+        editedItem[key] = editedItem.isCombinationMode ? false : mode
       })
       delete editedItem.affectiveProjectMode
+
+      if (this.editedItem.projectType === 'DynamicAnnotation') {
+        editedItem.dimension = editedItem.dimension.map((dim: number) => {
+          return {
+            dimension: [dim]
+          }
+        })
+      }
       return editedItem
     },
     async getBlobScaleData(project: ProjectDTO): Promise<Blob[]> {

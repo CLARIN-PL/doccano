@@ -12,6 +12,7 @@ export class ProjectDTO {
   singleClassClassification: boolean
   pageLink: string
   tags: Object[] | string[]
+  dimension: Object[] | string[]
   canDefineLabel: boolean
   canDefineRelation: boolean
   isTextProject: boolean
@@ -59,6 +60,7 @@ export class ProjectDTO {
     this.isEmotionsMode = item.isEmotionsMode
     this.isSingleAnnView = item.isSingleAnnView
     this.isCombinationMode = item.isCombinationMode
+    this.dimension = item.dimension
   }
 }
 
@@ -84,6 +86,7 @@ export type ProjectWriteDTO = Pick<
   | 'isSingleAnnView'
   | 'isCompleted'
   | 'isCombinationMode'
+  | 'dimension'
 > & { tags: string[] }
 
 export class ProjectListDTO {

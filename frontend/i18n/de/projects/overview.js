@@ -19,7 +19,8 @@ export default {
     'Bildklassifikation',
     'Sprache zu Text',
     'Artikelanmerkung',
-    'Affektive Anmerkung'
+    'Affektive Anmerkung',
+    'Dynamische Anmerkung'
   ],
   tags: 'Stichworte',
   allowSingleLabel: 'Einzelne Beschriftung zulassen',

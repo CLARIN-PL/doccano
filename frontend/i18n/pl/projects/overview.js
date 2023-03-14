@@ -19,7 +19,8 @@ export default {
     'Klasyfikacja obrazu',
     'Mowa na tekst',
     'Anotacja do artykułu',
-    'Anotacja afektywna'
+    'Anotacja afektywna',
+    'Anotacja dynamiczna'
   ],
   tags: 'Tagi',
   allowSingleLabel: 'Pozwól na pojedynczą etykietę',

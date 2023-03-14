@@ -12,7 +12,7 @@ export default {
   deleteProjectMessage: '你确定要删除这些项目吗？',
   search: '搜索',
   projectTypes: ['文本分类', '序列标注', '序列到序列', '意图检测和槽填充', '图像分类', '文字转语音', 
-  '文章注释', '情感注释'],
+  '文章注释', '情感注释', '动态标注'],
   tags: '标签', 
   allowSingleLabel: '允许单一标签', 
   allowOverlapping: '允许重叠的实体', 

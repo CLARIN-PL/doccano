@@ -19,7 +19,8 @@ export default {
     'Image Classification',
     'Speech to Text',
     'Article Annotation',
-    'Affective Annotation'
+    'Affective Annotation',
+    'Dynamic Annotation'
   ],
   tags: 'Tags',
   allowSingleLabel: 'Allow single label',

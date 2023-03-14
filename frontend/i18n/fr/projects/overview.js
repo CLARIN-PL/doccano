@@ -17,7 +17,8 @@ export default {
     "Classification d'images",
     'De la parole au texte',
     "Annotations d'articles",
-    'Annotation affective'
+    'Annotation affective',
+    'Annotation dynamique'
   ],
   tags: "Balises",
   allowSingleLabel: "Autoriser une seule étiquette",
