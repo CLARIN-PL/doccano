@@ -232,7 +232,7 @@ def populate_dimension_metadata(apps, schema_editor):
     meta_values =  emo_meta_configs + other_meta_configs + [meta_config_zgadzam_to_czuje]*4 + [meta_checkbox_sc_values]*2 + [meta_config_humor_offensive]*2 + [meta_checkbox_mc_values_1]*9 + [meta_checkbox_mc_values_2]*8 + [meta_config_humor_offensive]*2 + [meta_checkbox_mc_values_3]*9 + [meta_checkbox_mc_values_4]*15    
     dimensions = list(range(1, 70))
     meta_required_field = [1]*12 + [0]*12 + [1]*2 + [0]*17 + [1]*2 + [0]*24
-    meta_readonly_field = [1]*69
+    meta_readonly_field = [0]*69
 
     DimensionMetadata = apps.get_model('projects', 'DimensionMetaData')
     Dimensions = apps.get_model('projects', 'DynamicDimension')
