@@ -132,7 +132,7 @@ export default {
   },
 
   async mounted() {
-    console.log(this.params)
+    console.log("projectId:", this.$route.params.id)
 
     const dims = this.currentDimensions
     console.log("dimensions:", dims)
@@ -141,10 +141,7 @@ export default {
     const getDimensionMetaData = await this.$services.dimension.getDimensionMetaData(1)
     console.log("getDimensionMetaData:", getDimensionMetaData)
 
-    // await this.$services.dimension.assignDimensions()
-
-    // const listAllDimensions = await this.$services.dimension.listAllDimensions()
-    // console.log("listAllDimensions:", listAllDimensions)
+    // await this.$services.dimension.assignDimensions(this.$route.params.id, [1, 2, 3])
   }
 }
 </script>

@@ -89,6 +89,6 @@ class ProjectDimensionDetail(generics.RetrieveAPIView):
                 if "is_multiple_answers" in dim_metadata_raw.config.keys():
                     dim_metadata_raw.config['is_multiple_answers'] = bool(dim_metadata_raw.config['is_multiple_answers'])
                 dim_metadata.append({"codename": dim_metadata_raw.codename, "config": dim_metadata_raw.config, "required": dim_metadata_raw.required, "readonly": dim_metadata_raw.readonly})
-            data = {"dimension_id": dim.id, "dimension_name": dim.name, "dimension_type": dim.type, "dimension_metadata": dim_metadata}
+            data = {"id": dim.id, "name": dim.name, "type": dim.type, "dimension_meta_data": dim_metadata}
             final_data.append(data)
         return Response(data=final_data, status=status.HTTP_200_OK)
