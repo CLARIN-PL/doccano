@@ -61,7 +61,7 @@
         />
         <v-row v-if="isDynamicAnnotationProject">
           <v-col col="12">
-            <dimension-modal
+            <dimension-input
               v-model="dimensionsModalData"
               :required="false"
               question="Dimensions"
@@ -185,11 +185,11 @@
 import Vue from 'vue'
 import { mdiCheckBold } from '@mdi/js'
 import { projectNameRules, descriptionRules, projectTypeRules } from '@/rules/index'
-import DimensionModal from '~/components/tasks/affectiveAnnotation/inputs/DimensionModal.vue'
+import DimensionInput from '~/components/tasks/affectiveAnnotation/inputs/DimensionInput.vue'
 
 export default Vue.extend({
   components: {
-    DimensionModal
+    DimensionInput
   },
   props: {
     name: {

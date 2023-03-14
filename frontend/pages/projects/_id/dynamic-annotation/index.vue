@@ -338,10 +338,24 @@ export default {
               this.$forceUpdate()
             })
           })
+        } else {
+          Object.keys(this.formData.dimensions).forEach((key) => {
+            this.formData.dimensions[key].forEach((dim) => {
+              const index = this.formData.dimensions[key].indexOf(dim)
+              if (dim.type === 'slider') {
+                const formDataKey = `[${key}][${index}]`
+                _.set(this.formData.dimensions, `${formDataKey}.value`, '')
+                _.set(this.formData.dimensions, `${formDataKey}.isClicked`, false)
+                _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, false)
+                _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
+              }
+              this.$forceUpdate()
+            })
+          })
         }
       }
     },
-    textLabels: {
+    textLabelValues: {
       deep: true,
       handler(val) {
         if (val.length) {

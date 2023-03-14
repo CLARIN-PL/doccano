@@ -9,7 +9,7 @@ export class APIDimensionRepository implements DimensionRepository {
     const url = `/projects/dimensions`
     const response = await this.request.get(url)
     const dimensions = response.data.map(
-      (item: any) => new DimensionItem(item.id, item.name, item.type, item.dimension_metadata)
+      (item: any) => new DimensionItem(item.id, item.name, item.type, item.dimension_meta_data)
     )
     return new DimensionItemList(dimensions)
   }

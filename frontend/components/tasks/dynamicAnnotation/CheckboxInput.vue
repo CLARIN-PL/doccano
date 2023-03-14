@@ -19,14 +19,14 @@
           >
             <v-checkbox
               v-model="formData.checkedOptions"
-              :required="required"
+              :required="playground ? false : required"
               :readonly="preview || readOnly"
               :disabled="formData.isSubmitting"
-              :rules="[
-                rules.requiredMultipleCheckboxes,
-                rules.minAnswerNumber,
-                rules.maxAnswerNumber
-              ]"
+              :rules="
+                playground
+                  ? []
+                  : [rules.requiredMultipleCheckboxes, rules.minAnswerNumber, rules.maxAnswerNumber]
+              "
               multiple
               hide-details
               :value="playground ? option.value : option"
@@ -41,8 +41,8 @@
     <div v-else>
       <v-checkbox
         v-model="formData.isChecked"
-        :required="required"
-        :rules="[rules.requiredSingleCheckbox]"
+        :required="playground ? false : required"
+        :rules="playground ? [] : [rules.requiredSingleCheckbox]"
         :readonly="preview || readOnly"
         :disabled="formData.isSubmitting"
         :label="name + (required ? ' *' : '')"

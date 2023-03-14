@@ -73,6 +73,7 @@
           class="dimension-form__checkbox"
           label="With checkbox"
           color="primary"
+          :required="formData.withCheckbox"
           :rules="[rules.mustSetCheckboxName]"
         />
       </v-col>
@@ -147,8 +148,8 @@ export default Vue.extend({
           parseInt(v) >= base.formData.sliderMin || 'Must be bigger or equal to min',
         mustSetCheckboxName: () =>
           base.formData.withCheckbox
-            ? !!base.formData.checkboxCodename
-            : true || 'Must set checkbox name',
+            ? base.formData.checkboxCodename !== ''
+            : true || 'Please set checkbox codename',
         required: (v: string) =>
           String(v) !== 'undefined' || String(v) !== '' || String(v) !== 'null' || 'Required'
       }
