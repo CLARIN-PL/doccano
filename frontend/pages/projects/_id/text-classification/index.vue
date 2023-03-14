@@ -131,9 +131,20 @@ export default {
     ...mapGetters('projects', ['currentDimensions'])
   },
 
-  mounted() {
+  async mounted() {
+    console.log(this.params)
+
     const dims = this.currentDimensions
     console.log("dimensions:", dims)
+    const listAllDimensions = await this.$services.dimension.listAllDimensions()
+    console.log("listAllDimensions:", listAllDimensions)
+    const getDimensionMetaData = await this.$services.dimension.getDimensionMetaData(1)
+    console.log("getDimensionMetaData:", getDimensionMetaData)
+
+    // await this.$services.dimension.assignDimensions()
+
+    // const listAllDimensions = await this.$services.dimension.listAllDimensions()
+    // console.log("listAllDimensions:", listAllDimensions)
   }
 }
 </script>

@@ -14,14 +14,30 @@ export class APIDimensionRepository implements DimensionRepository {
     return new DimensionItemList(dimensions)
   }
 
+  async listAllDimensions(): Promise<DimensionItemList> {
+    const url = `/projects/dimensions`
+    const response = await this.request.get(url)
+    const dimensions = response.data.map(
+      (item: any) => new DimensionItem(item.dimension_id, item.dimension_name, item.dimension_type, item.dimension_metadata)
+    )
+    return new DimensionItemList(dimensions)
+  }
+
+  async getDimensionMetaData(dimensionId: number): Promise<string> {
+    const url = `/projects/dimensions/${dimensionId}/metadata`
+    const response = await this.request.get(url)
+    return response.data
+  }
+
+  async assignDimensions(projectId: string, dimensionIds: number[]): Promise<void> {
+    const url = `/projects/${projectId}/assign_dimensions`
+    const response = await this.request.post(url, { "dimension": dimensionIds })
+    console.log(response.data)
+  }
+
   async create(projectId: string, name: string, type: string, dimension_meta_data: string): Promise<DimensionItem> {
     const url = `/projects/${projectId}/dimensions`
     const response = await this.request.post(url, { name, type, dimension_meta_data })
     return new DimensionItem(response.data.id, response.data.name, response.data.type, response.data.dimension_meta_data)
-  }
-
-  async delete(projectId: string, dimensionId: number): Promise<void> {
-    const url = `/projects/${projectId}/dimensions/${dimensionId}`
-    await this.request.delete(url)
   }
 }
