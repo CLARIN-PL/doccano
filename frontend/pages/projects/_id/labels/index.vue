@@ -60,6 +60,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import _ from 'lodash'
 import ActionMenu from '@/components/label/ActionMenu.vue'
 import FormDelete from '@/components/label/FormDelete.vue'
 import LabelList from '@/components/label/LabelList.vue'
@@ -213,9 +214,12 @@ export default Vue.extend({
     async list() {
       this.isLoading = true
       this.items = await this.service.list(this.projectId)
+      if (!Array.isArray(this.items) && this.items.items) {
+        this.items = _.cloneDeep(this.items.items)
+      }
       this.$nextTick(() => {
         if (this.isDynamicAnnotation && this.tab === 1) {
-          this.dimensionItems = this.items.items.map((item: DimensionDTO) => {
+          this.dimensionItems = this.items.map((item: DimensionDTO) => {
             const groupMap = {
               DIM_OTH: 'Others',
               DIM_OF: 'Offensive',

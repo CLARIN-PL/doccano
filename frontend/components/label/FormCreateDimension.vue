@@ -208,56 +208,68 @@ export default Vue.extend({
       const refForm: any = this.$refs.form
       refForm.reset()
     },
+    getFormRequest(): any {
+      const dynamicGroups = this.items.filter((item) => item.group === 'Dynamic')
+      const request = {
+        name: this.formData.dimensionName,
+        type: this.formData.dimensionType,
+        dimension_meta_data: [
+          {
+            codename: `DIM_DYN_${dynamicGroups.length + 1}`,
+            config: {},
+            required: Number(this.formData.required),
+            readonly: Number(this.formData.readOnly)
+          }
+        ]
+      }
+      if (this.formData.dimensionType === 'slider') {
+        request.dimension_meta_data[0].config = {
+          slider_min: this.formData.slider.sliderMin,
+          slider_max: this.formData.slider.sliderMax,
+          slider_step: this.formData.slider.sliderStep,
+          with_checkbox: Number(this.formData.slider.withCheckbox),
+          minVal_description: this.formData.slider.minValDescription,
+          maxVal_description: this.formData.slider.maxValDescription
+        }
+        if (this.formData.slider.withCheckbox) {
+          // @ts-ignore
+          request.dimension_meta_data[0].config.checkbox_codename =
+            this.formData.slider.checkboxCodename
+        }
+      } else if (this.formData.dimensionType === 'checkbox') {
+        request.dimension_meta_data[0].config = {
+          is_multiple_answers: Number(this.formData.checkbox.isMultipleAnswers),
+          min_answer_number: this.formData.checkbox.minAnswerNumber,
+          max_answer_number: this.formData.checkbox.maxAnswerNumber,
+          options: this.formData.checkbox.options.map((opt: any) => {
+            return opt.text
+          })
+        }
+      }
+      return request
+    },
     async onClickSaveButton() {
       const refForm: any = this.$refs.form
       const valid = await refForm.validate()
       if (valid) {
         this.loading = true
-        const dynamicGroups = this.items.filter((item) => item.group === 'Dynamic')
-        const request = {
-          name: this.formData.dimensionName,
-          type: this.formData.dimensionType,
-          dimension_meta_data: [
-            {
-              codename: `DIM_DYN_${dynamicGroups.length + 1}`,
-              config: {},
-              required: Number(this.formData.required),
-              readonly: Number(this.formData.readOnly)
-            }
-          ]
-        }
-
-        if (this.formData.dimensionType === 'slider') {
-          request.dimension_meta_data[0].config = {
-            slider_min: this.formData.slider.sliderMin,
-            slider_max: this.formData.slider.sliderMax,
-            slider_step: this.formData.slider.sliderStep,
-            with_checkbox: Number(this.formData.slider.withCheckbox),
-            minVal_description: this.formData.slider.minValDescription,
-            maxVal_description: this.formData.slider.maxValDescription
-          }
-          if (this.formData.slider.withCheckbox) {
-            // @ts-ignore
-            request.dimension_meta_data[0].config.checkbox_codename =
-              this.formData.slider.checkboxCodename
-          }
-        } else if (this.formData.dimensionType === 'checkbox') {
-          request.dimension_meta_data[0].config = {
-            is_multiple_answers: Number(this.formData.checkbox.isMultipleAnswers),
-            min_answer_number: this.formData.checkbox.minAnswerNumber,
-            max_answer_number: this.formData.checkbox.maxAnswerNumber,
-            options: this.formData.checkbox.options.map((opt: any) => {
-              return opt.text
-            })
-          }
-        }
-        this.$emit('submit', request)
+        const request = this.getFormRequest()
+        this.$emit('submit', { request, redirect: true })
       } else {
         this.loading = false
       }
     },
-    onClickSaveAndAddButton() {
-      this.resetForm()
+    async onClickSaveAndAddButton() {
+      const refForm: any = this.$refs.form
+      const valid = await refForm.validate()
+      if (valid) {
+        this.loading = true
+        const request = this.getFormRequest()
+        this.$emit('submit', { request, redirect: false })
+        this.resetForm()
+      } else {
+        this.loading = false
+      }
     },
     isUsedName(text: string): boolean {
       return this.items.filter((item: any) => item.text === text).length > 0
