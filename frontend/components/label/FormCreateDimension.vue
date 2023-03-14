@@ -155,8 +155,8 @@ export default Vue.extend({
           sliderMin: 0,
           sliderMax: 10,
           sliderStep: 1,
-          appendText: '',
-          prependText: '',
+          minValDescription: '',
+          maxValDescription: '',
           withCheckbox: false,
           checkboxCodename: ''
         },
@@ -233,8 +233,8 @@ export default Vue.extend({
             slider_max: this.formData.slider.sliderMax,
             slider_step: this.formData.slider.sliderStep,
             with_checkbox: Number(this.formData.slider.withCheckbox),
-            minVal_description: this.formData.slider.appendText,
-            maxVal_description: this.formData.slider.prependText
+            minVal_description: this.formData.slider.minValDescription,
+            maxVal_description: this.formData.slider.maxValDescription
           }
           if (this.formData.slider.withCheckbox) {
             // @ts-ignore

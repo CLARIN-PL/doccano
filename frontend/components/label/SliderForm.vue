@@ -48,7 +48,7 @@
       </v-col>
       <v-col cols="6" sm="6" class="pt-0">
         <v-text-field
-          v-model.trim="formData.appendText"
+          v-model.trim="formData.minValDescription"
           :disabled="loading"
           :counter="50"
           :rules="[rules.maxLength50]"
@@ -58,7 +58,7 @@
       </v-col>
       <v-col cols="6" sm="6" class="pt-0">
         <v-text-field
-          v-model.trim="formData.prependText"
+          v-model.trim="formData.maxValDescription"
           :disabled="loading"
           :counter="50"
           :rules="[rules.maxLength50]"
@@ -121,8 +121,8 @@ export default Vue.extend({
         sliderMin: 0,
         sliderMax: 10,
         sliderStep: 1,
-        appendText: '',
-        prependText: '',
+        minValDescription: '',
+        maxValDescription: '',
         withCheckbox: false,
         checkboxCodename: ''
       }

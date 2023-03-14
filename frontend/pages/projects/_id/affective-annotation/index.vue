@@ -385,12 +385,15 @@ export default {
       this.loadLabels()
     })
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     const dims = this.currentDimensions
 <<<<<<< HEAD
 >>>>>>> d7aad52c (feat: tidied the pages)
 =======
 >>>>>>> d7aad52c (feat: tidied the pages)
+=======
+>>>>>>> c3a00824 (feat: replaced image, tidied labels page, dataset page fix)
   },
 
   computed: {

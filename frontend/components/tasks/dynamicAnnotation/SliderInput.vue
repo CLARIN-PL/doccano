@@ -9,7 +9,7 @@
         <div class="questions-item__slider">
           <div class="slider__slider">
             <span class="slider-text --start">
-              {{ config.appendText || 'Wcale' }}
+              {{ config.minValDescription }}
             </span>
             <v-slider
               v-model="formData.value"
@@ -32,7 +32,7 @@
             />
 
             <span class="slider-text --end">
-              {{ config.prependText || 'W pełni' }}
+              {{ config.maxValDescription }}
             </span>
           </div>
 
@@ -74,6 +74,8 @@ export default Vue.extend({
           sliderMin: 0,
           sliderMax: 10,
           sliderStep: 1,
+          minValDescription: '',
+          maxValDescription: '',
           withCheckbox: false,
           checkboxCodename: ''
         }
