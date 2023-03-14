@@ -100,7 +100,10 @@
                   <v-btn class="btn-toggle" plain x-small color="info" @click="toggleProgressBar">
                     {{ $t('annotation_sidebar.progress.toggle') }}
                   </v-btn>
-                  <annotation-progress :class="(showProgressBar)?'d-block':'d-none'" :progress="progress" />
+                  <annotation-progress
+                    :class="showProgressBar ? 'd-block' : 'd-none'"
+                    :progress="progress"
+                  />
                 </v-col>
               </v-row>
             </v-card-text>
@@ -381,6 +384,10 @@ export default {
       this.setArticleData()
       this.loadLabels()
     })
+<<<<<<< HEAD
+=======
+    const dims = this.currentDimensions
+>>>>>>> d7aad52c (feat: tidied the pages)
   },
 
   computed: {

@@ -137,13 +137,11 @@ export default Vue.extend({
     },
 
     isAffectiveAnnotation(): boolean {
-      return false
-      // return this.project.projectType === 'AffectiveAnnotation'
+      return this.project.projectType === 'AffectiveAnnotation'
     },
 
     isDynamicAnnotation(): boolean {
-      return true
-      // return this.project.projectType === 'DynamicAnnotation'
+      return this.project.projectType === 'DynamicAnnotation'
     },
 
     labelType(): string {

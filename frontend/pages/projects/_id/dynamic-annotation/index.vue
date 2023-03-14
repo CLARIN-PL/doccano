@@ -33,6 +33,22 @@
         <v-divider />
         <v-card-text class="title highlight" style="white-space: pre-wrap" v-text="example.text" />
       </v-card>
+      <v-card>
+        <v-card-text>
+          <ul>
+            <li v-for="(dimension, dimensionIdx) in dimensions" :key="`dimension-${dimensionIdx}`">
+              <component
+                :is="dimension.component"
+                v-model="dimension.value"
+                :question="dimension.question"
+                :extra-question="dimension.extraQuestion"
+                :settings="dimension.settings"
+                :read-only="dimension.readOnly"
+              />
+            </li>
+          </ul>
+        </v-card-text>
+      </v-card>
     </template>
     <template #sidebar>
       <annotation-progress :progress="progress" />
@@ -42,6 +58,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { toRefs, useContext, useFetch, ref, watch } from '@nuxtjs/composition-api'
 import LabelGroup from '@/components/tasks/textClassification/LabelGroup'
 import LabelSelect from '@/components/tasks/textClassification/LabelSelect'
@@ -50,11 +67,14 @@ import ListMetadata from '@/components/tasks/metadata/ListMetadata'
 import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
 import ButtonLabelSwitch from '@/components/tasks/toolbar/buttons/ButtonLabelSwitch'
+import CheckboxInput from '@/components/tasks/dynamicAnnotation/CheckboxInput.vue'
+import SliderInput from '@/components/tasks/dynamicAnnotation/SliderInput.vue'
 import { useExampleItem } from '@/composables/useExampleItem'
 import { useLabelList } from '@/composables/useLabelList'
 import { useProjectItem } from '@/composables/useProjectItem'
 import { useTeacherList } from '@/composables/useTeacherList'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
+import TextfieldModal from '~/components/tasks/affectiveAnnotation/inputs/TextfieldModal.vue'
 
 export default {
   components: {
@@ -65,7 +85,10 @@ export default {
     LayoutText,
     ListMetadata,
     ToolbarLaptop,
-    ToolbarMobile
+    ToolbarMobile,
+    CheckboxInput,
+    SliderInput,
+    TextfieldModal
   },
   layout: 'workspace',
 
@@ -124,6 +147,83 @@ export default {
       removeTeacher,
       shortKeys
     }
+  },
+
+  data() {
+    return {
+      dimensions: [
+        {
+          question: 'slider title',
+          type: 'slider',
+          component: SliderInput,
+          settings: {
+            showCheckbox: false
+          },
+          value: 0,
+          readOnly: false
+        },
+        {
+          question: 'slider title',
+          type: 'slider',
+          component: SliderInput,
+          extraQuestion: 'test',
+          settings: {
+            showCheckbox: true
+          },
+          value: 0,
+          readOnly: false
+        },
+        {
+          question: 'checkbox title',
+          type: 'checkbox',
+          component: CheckboxInput,
+          settings: {
+            showTextfield: false
+          },
+          value: 0,
+          readOnly: false
+        },
+        {
+          question: 'checkbox title',
+          type: 'checkbox_with_text',
+          component: CheckboxInput,
+          settings: {
+            showTextfield: true
+          },
+          value: 0,
+          readOnly: false
+        },
+        {
+          question: 'textbox title',
+          type: 'textfield',
+          component: 'textfield-modal',
+          value: 0,
+          readOnly: false,
+          settings: {
+            showCheckbox: true
+          }
+        },
+        {
+          question: 'textbox title',
+          type: 'textfield',
+          component: TextfieldModal,
+          value: 0,
+          readOnly: false,
+          settings: {
+            showCheckbox: true
+          }
+        }
+      ]
+    }
+  },
+
+  computed: {
+    ...mapGetters('projects', ['currentDimensions'])
+  },
+
+  mounted() {
+    const dims = this.currentDimensions
+    console.log('dimensions:', dims)
   }
 }
 </script>
