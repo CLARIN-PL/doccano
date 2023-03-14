@@ -387,6 +387,9 @@ export default {
 <<<<<<< HEAD
 =======
     const dims = this.currentDimensions
+<<<<<<< HEAD
+>>>>>>> d7aad52c (feat: tidied the pages)
+=======
 >>>>>>> d7aad52c (feat: tidied the pages)
   },
 

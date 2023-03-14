@@ -66,14 +66,11 @@ import ListMetadata from '@/components/tasks/metadata/ListMetadata'
 import ToolbarLaptop from '@/components/tasks/toolbar/ToolbarLaptop'
 import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
 import ButtonLabelSwitch from '@/components/tasks/toolbar/buttons/ButtonLabelSwitch'
-import CheckboxInput from '@/components/tasks/dynamicAnnotation/CheckboxInput.vue'
-import SliderInput from '@/components/tasks/dynamicAnnotation/SliderInput.vue'
 import { useExampleItem } from '@/composables/useExampleItem'
 import { useLabelList } from '@/composables/useLabelList'
 import { useProjectItem } from '@/composables/useProjectItem'
 import { useTeacherList } from '@/composables/useTeacherList'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
-import TextfieldModal from '~/components/tasks/affectiveAnnotation/inputs/TextfieldModal.vue'
 
 export default {
   components: {
@@ -85,8 +82,6 @@ export default {
     ListMetadata,
     ToolbarLaptop,
     ToolbarMobile,
-    CheckboxInput,
-    SliderInput,
     TextfieldModal
   },
   layout: 'workspace',
