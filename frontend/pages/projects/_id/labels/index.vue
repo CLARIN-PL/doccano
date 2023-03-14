@@ -137,7 +137,13 @@ export default Vue.extend({
     },
 
     isAffectiveAnnotation(): boolean {
-      return this.project.projectType === 'AffectiveAnnotation'
+      return false
+      // return this.project.projectType === 'AffectiveAnnotation'
+    },
+
+    isDynamicAnnotation(): boolean {
+      return true
+      // return this.project.projectType === 'DynamicAnnotation'
     },
 
     isDynamicAnnotation(): boolean {
