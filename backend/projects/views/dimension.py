@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from projects.models import DynamicDimension, DimensionMetaData, ProjectDimension
 from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly
 from projects.serializers import DynamicDimensionSerializer, DimensionMetaDataSerializer, ProjectDimensionSerializer
+from label_types.models import ScaleType
 
 
 class DimensionMetaDataList(generics.ListCreateAPIView):
@@ -51,5 +52,7 @@ class AddProjectDimension(generics.CreateAPIView):
             project_dimension = ProjectDimension.objects.create(
                 project_id=project_id, dimension=dimension
             )
+            if dimension.id > 69 and dimension.type=='slider':
+                ScaleType.objects.create(text=dimension.name, project_id=project_id)
         return project_dimension
     
