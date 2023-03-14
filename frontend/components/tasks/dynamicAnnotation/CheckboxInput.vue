@@ -19,8 +19,14 @@
           >
             <v-checkbox
               v-model="formData.checkedOptions"
+              :required="required"
               :readonly="preview || readOnly"
               :disabled="formData.isSubmitting"
+              :rules="[
+                rules.requiredMultipleCheckboxes,
+                rules.minAnswerNumber,
+                rules.maxAnswerNumber
+              ]"
               multiple
               hide-details
               :value="playground ? option.value : option"
@@ -35,9 +41,11 @@
     <div v-else>
       <v-checkbox
         v-model="formData.isChecked"
+        :required="required"
+        :rules="[rules.requiredSingleCheckbox]"
         :readonly="preview || readOnly"
         :disabled="formData.isSubmitting"
-        :label="name"
+        :label="name + (required ? ' *' : '')"
         class="content-item__checkbox"
         @click="onCheckboxClick"
       />
@@ -52,6 +60,10 @@ export default Vue.extend({
     name: {
       type: String,
       default: 'Name'
+    },
+    formDataKey: {
+      type: String,
+      default: ''
     },
     value: {
       type: [Array, String, Boolean],
@@ -93,6 +105,21 @@ export default Vue.extend({
         isSubmitting: false,
         errorMessage: '',
         checkedOptions: []
+      }
+    }
+  },
+  computed: {
+    rules() {
+      return {
+        requiredMultipleCheckboxes: () =>
+          this.required ? !!this.formData.checkedOptions.length : true || 'Required',
+        minAnswerNumber: () =>
+          this.formData.checkedOptions.length >= this.config.minAnswerNumber ||
+          `Please select at least ${this.config.minAnswerNumber} options`,
+        maxAnswerNumber: () =>
+          this.formData.checkedOptions.length <= this.config.maxAnswerNumber ||
+          `You can only select up to ${this.config.maxAnswerNumber} options`,
+        requiredSingleCheckbox: () => (this.required ? this.formData.isChecked : true || 'Required')
       }
     }
   },

@@ -14,6 +14,8 @@
             <v-slider
               v-model="formData.value"
               class="slider"
+              :required="required"
+              :rules="[rules.required]"
               :color="!formData.isCheckboxChecked && formData.isClicked ? 'primary' : 'grey'"
               :thumb-size="!formData.isCheckboxChecked && formData.isClicked ? 12 : 0"
               :thumb-color="
@@ -23,11 +25,12 @@
               ticks="always"
               ticks-size="3"
               :disabled="formData.isCheckboxChecked"
-              :readonly="preview || readOnly || formData.isSubmitting"
+              :readonly="formData.isCheckboxChecked || preview || readOnly || formData.isSubmitting"
               :min="sliderMin"
               :max="sliderMax"
               :tick-labels="tickLabels"
               :step="sliderStep"
+              :hide-details="false"
               @change="onSliderChange"
             />
 
@@ -39,9 +42,10 @@
           <div class="slider__checkbox">
             <checkbox-input
               v-if="config.withCheckbox && checkbox.metadata.length"
+              v-model="formData.isCheckboxChecked"
               :name="checkbox.name"
               :config="checkbox.metadata[0].value"
-              :required="checkbox.metadata[0].required"
+              :required="false"
               :read-only="readOnly || preview || checkbox.metadata[0].readOnly"
               @change="onCheckboxChange"
             />
@@ -63,9 +67,22 @@ export default Vue.extend({
       type: String,
       default: 'Name'
     },
+    formDataKey: {
+      type: String,
+      default: ''
+    },
     value: {
       type: [Number, String],
       default: 0
+    },
+    state: {
+      type: Object,
+      default: () => {
+        return {
+          isSubmitting: false,
+          isClicked: false
+        }
+      }
     },
     config: {
       type: Object,
@@ -124,6 +141,12 @@ export default Vue.extend({
     }
   },
   computed: {
+    rules() {
+      const base = this
+      return {
+        required: () => (base.required ? base.state.isClicked : true || 'Required')
+      }
+    },
     sliderMin(): number {
       let sliderMin = 0
       if (
@@ -164,6 +187,9 @@ export default Vue.extend({
     }
   },
   watch: {
+    state(val) {
+      this.formData = { ...this.formData, ...val }
+    },
     value(val) {
       this.formData.value = val
     },
@@ -175,9 +201,16 @@ export default Vue.extend({
     }
   },
   created() {
+    this.setFormData()
     this.setCheckboxData()
   },
   methods: {
+    setFormData() {
+      this.formData = {
+        ...this.formData,
+        ...{ ...this.state, value: this.value }
+      }
+    },
     setCheckboxData() {
       if (this.config.withCheckbox && this.items.length) {
         const checkbox =
@@ -195,13 +228,15 @@ export default Vue.extend({
       if (val) {
         this.formData.tempValue = this.formData.value
         this.formData.value = 0
+        this.$emit('update:scale', { formDataKey: this.formDataKey, val: -1 })
       } else {
         this.formData.value = this.formData.tempValue
+        this.$emit('update:scale', { formDataKey: this.formDataKey, val: this.formData.tempValue })
       }
     },
     onSliderChange(val: number) {
       this.formData.isClicked = true
-      this.$emit('input', val)
+      this.$emit('update:scale', { formDataKey: this.formDataKey, val })
     }
   }
 })

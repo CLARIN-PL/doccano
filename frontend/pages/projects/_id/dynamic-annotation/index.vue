@@ -116,18 +116,40 @@
                 class="pa-4 dimension-card --sticky"
               >
                 <v-card-text>
-                  <ul>
-                    <li v-for="(item, idx) in formData.dimensions" :key="`dimension_${idx}`">
-                      <component
-                        :is="getComponent(item)"
-                        :name="item.name"
-                        :items="dimensionTypes"
-                        :config="getItemConfig(item)"
-                        :required="item.metadata[0].required"
-                        :read-only="item.metadata[0].readonly"
-                      />
-                    </li>
-                  </ul>
+                  <v-form ref="dimensionForm">
+                    <ul>
+                      <li
+                        v-for="(key, idx) in Object.keys(formData.dimensions)"
+                        :key="`dimension-group_${idx}`"
+                      >
+                        <h2>
+                          {{ key }}
+                        </h2>
+                        <ul>
+                          <li
+                            v-for="(dim, dimIdx) in formData.dimensions[key]"
+                            :key="`dimension-group--${key}_${dimIdx}`"
+                          >
+                            <component
+                              :is="getDimComponent(dim)"
+                              :value="dim.value"
+                              :name="dim.name"
+                              :form-data-key="`[${key}][${dimIdx}]`"
+                              :state="getDimState(dim)"
+                              :items="dimensionTypes"
+                              :config="getDimConfig(dim)"
+                              :required="dim.metadata[0].required"
+                              :read-only="dim.metadata[0].readonly"
+                              @update:scale="onDynamicComponentUpdateScale"
+                              @add:label="onDynamicComponentAddLabel"
+                              @update:label="onDynamicComponentUpdateLabel"
+                              @remove:label="onDynamicComponentRemoveLabel"
+                            />
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </v-form>
                 </v-card-text>
                 <v-btn block color="primary" @click="scrollToTop">
                   {{ $i18n.t('generic.goToTop') }}
@@ -185,7 +207,7 @@ export default {
       scaleTypes: [],
       dimensionTypes: [],
       formData: {
-        dimensions: []
+        dimensions: {}
       },
       project: {},
       enableAutoLabeling: false,
@@ -201,6 +223,7 @@ export default {
       restingEndTime: '',
       hasCheckedPreviousDoc: false,
       hasValidEntries: {},
+      canConfirm: false,
       hasClickedConfirmButton: false,
       showProgressBar: true
     }
@@ -213,7 +236,7 @@ export default {
     await this.setHasCheckedPreviousDoc()
     this.$nextTick(() => {
       this.setArticleData()
-      this.list()
+      this.list(this.doc.id)
     })
   },
 
@@ -221,6 +244,46 @@ export default {
     ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId']),
     ...mapGetters('config', ['isRTL']),
     ...mapGetters('user', ['getAnnotation']),
+    scaleValues(): any[] {
+      return this.scales.map((scale: any) => {
+        const scaleType: any =
+          this.scaleTypes.find((scaleType: any) => scaleType.id === scale.label) || {}
+        return {
+          ...scale,
+          ...scaleType,
+          scaleTypeId: scale.label
+        }
+      })
+    },
+    textLabelValues(): any[] {
+      return this.textLabels.map((textLabel: any) => {
+        const substatementQuestion = textLabel.question
+        /* const annotation = _.cloneDeep(this.polishAnnotation.humor) as any
+        let substatementKey = ''
+        Object.keys(annotation).forEach((subKey: string) => {
+          if (typeof annotation[subKey] === 'object') {
+            Object.keys(annotation[subKey]).every((subKey2: string) => {
+              let isKey = annotation[subKey][subKey2] === textLabel.question
+              if (textLabel.question.includes(' - ')) {
+                const questions = textLabel.question.split(' - ')
+                isKey =
+                  annotation[subKey].question === questions[0] &&
+                  annotation[subKey][subKey2] === questions[1]
+              }
+              if (isKey) {
+                substatementKey = `${subKey}.${subKey2}`
+              }
+              return !isKey
+            })
+          }
+        }) */
+        return {
+          ...textLabel,
+          substatementQuestion
+          // substatementKey
+        }
+      })
+    },
     projectId() {
       return this.$route.params.id
     },
@@ -253,14 +316,65 @@ export default {
     },
     showAutoLabeling() {
       return !this.isDynamicAnnotation
-    },
-    canConfirm() {
-      const canConfirm = true
-      return canConfirm
     }
   },
 
   watch: {
+    scaleValues: {
+      deep: true,
+      handler(val) {
+        if (val.length) {
+          Object.keys(this.formData.dimensions).forEach((key) => {
+            this.formData.dimensions[key].forEach((dim) => {
+              const scaleValue = val.find((scale: any) => scale.text === dim.name)
+              const index = this.formData.dimensions[key].indexOf(dim)
+              if (scaleValue) {
+                const formDataKey = `[${key}][${index}]`
+                _.set(this.formData.dimensions, `${formDataKey}.value`, scaleValue.scale)
+                _.set(this.formData.dimensions, `${formDataKey}.isClicked`, true)
+                _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, false)
+                _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
+              }
+              this.$forceUpdate()
+            })
+          })
+        }
+      }
+    },
+    textLabels: {
+      deep: true,
+      handler(val) {
+        if (val.length) {
+          /*  val.forEach((textLabel: any) => {
+            const substatementIndex = textLabel.substatementKey.split('.substatement')[1]
+            const subquestionIndex = textLabel.substatementKey.split('.')[0]
+            const formDataKey = `${subquestionIndex}[${parseInt(substatementIndex) - 1}]`
+            const formData = _.get(this.formData, formDataKey)
+            if (formData) {
+              _.set(this.formData, `${formDataKey}.isChecked`, !!textLabel.text)
+              _.set(this.formData, `${formDataKey}.isSubmitting`, false)
+              _.set(this.formData, `${formDataKey}.answer`, textLabel.text)
+            }
+          })
+          Object.keys(this.formData.dimensions).forEach((key) => {
+            // @ts-ignore
+            const subquestionLength = this.formData[key].length
+            for (let i: number = 0; i < subquestionLength; i++) {
+              const substatementKey = `${key}.substatement${i + 1}`
+              const isStored = val.find(
+                (textLabel: any) => textLabel.substatementKey === substatementKey
+              )
+              if (!isStored) {
+                // @ts-ignore
+                this.formData[key][i].answer = ''
+                // @ts-ignore
+                this.formData[key][i].isSubmitting = false
+              }
+            }
+          }) */
+        }
+      }
+    },
     getAnnotation: {
       deep: true,
       handler(val) {
@@ -315,14 +429,19 @@ export default {
       'initQuestionnaire',
       'getQuestionnaire'
     ]),
-    getComponent(dimension) {
+    getDimComponent(dimension: DimensionDTO) {
       if (dimension.type === 'slider') {
         return SliderInput
       } else if (dimension.type === 'checkbox') {
         return CheckboxInput
       }
     },
-    getItemConfig(item: DimensionDTO) {
+    getDimState(dimension: DimensionDTO) {
+      return {
+        ...dimension
+      }
+    },
+    getDimConfig(item: DimensionDTO) {
       let config = { config: {} }
       if (item.metadata && item.metadata[0]) {
         config = { ...config, ...objectKeysSnakeToCamel(item.metadata[0]) }
@@ -377,7 +496,7 @@ export default {
       await this.$services.dimension.list(this.projectId).then((res) => {
         this.dimensionTypes = res.items
         this.$nextTick(() => {
-          this.formData.dimensions = this.dimensionTypes.map((item) => {
+          const dimensions = this.dimensionTypes.map((item) => {
             const groupMap = {
               DIM_OTH: 'Others',
               DIM_OF: 'Offensive',
@@ -396,8 +515,20 @@ export default {
                 item.group = 'Dynamic'
               }
             }
+
+            if (item.type === 'slider') {
+              const scale = this.scaleTypes.find((scaleType) => scaleType.text === item.name)
+              item.questionId = scale ? scale.id : null
+            }
+
+            item.value = ''
+            item.isValidated = false
+            item.isClicked = false
+            item.isSubmitting = false
+
             return item
           })
+          this.formData.dimensions = _.groupBy(dimensions, 'group')
         })
       })
     },
@@ -441,28 +572,79 @@ export default {
         this.scales = await this.$services.affectiveScale.list(this.projectId, docId)
       }
     },
-    async updateScale(labelId, value) {
-      if (labelId) {
-        await this.$services.affectiveScale.create(this.projectId, this.doc.id, labelId, value)
+    onDynamicComponentUpdateScale: _.debounce(async function ({ formDataKey, val }) {
+      const base = this as any
+      const dimensionData = _.get(base.formData.dimensions, formDataKey)
+      if (dimensionData && dimensionData.questionId) {
+        _.set(base.formData.dimensions, `${formDataKey}.isClicked`, true)
+        _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
+        await this.$services.affectiveScale.create(
+          this.projectId,
+          this.doc.id,
+          dimensionData.questionId,
+          val
+        )
+        _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, false)
+        await this.list(this.doc.id)
+      }
+    }, 100),
+    async onDynamicComponentRemoveLabel({ formDataKey }) {
+      const base = this as any
+      const dimensionData = _.get(base.formData.dimensions, formDataKey)
+      if (dimensionData && dimensionData.questionId) {
+        _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
+
+        await this.$services.affectiveTextlabel.delete(
+          this.projectId,
+          this.doc.id,
+          dimensionData.questionId
+        )
+        _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, false)
+
         await this.list(this.doc.id)
       }
     },
-    async addLabel(question, answer) {
-      if (question && answer) {
+    async onDynamicComponentUpdateLabel({ formDataKey, value }) {
+      const base = this as any
+      const dimensionData = _.get(base.formData.dimensions, formDataKey)
+
+      if (dimensionData && dimensionData.questionId) {
+        _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
+
+        await this.$services.affectiveTextlabel.changeText(
+          this.projectId,
+          this.doc.id,
+          dimensionData.questionId,
+          value
+        )
+        _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, false)
+
+        await this.list(this.doc.id)
+      }
+    },
+    async onDynamicComponentAddLabel({ formDataKey, value }) {
+      const base = this as any
+      const dimensionData = _.get(base.formData.dimensions, formDataKey)
+
+      if (dimensionData && dimensionData.name) {
+        _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         await this.$services.affectiveTextlabel.create(
           this.projectId,
           this.doc.id,
-          answer,
-          question
+          value,
+          dimensionData.name
         )
+        _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, false)
+
         await this.list(this.doc.id)
       }
     },
     async clear() {
       await this.clearScales()
       await this.clearTextLabels()
-
-      await this.list(this.doc.id)
+      this.$nextTick(async () => {
+        await this.list(this.doc.id)
+      })
     },
     async clearScales() {
       await this.$services.affectiveScale.clear(this.projectId, this.doc.id)
@@ -479,8 +661,8 @@ export default {
     },
     async confirm() {
       const DATE_FORMAT = 'DD-MM-YYYY HH:mm:ss'
-      // do something
-      // set has valid entries
+      this.canConfirm = this.$refs.dimensionForm.validate()
+      console.log(this.canConfirm)
       this.hasClickedConfirmButton = this.canConfirm ? false : !this.isProjectAdmin
       if (this.canConfirm || this.isProjectAdmin) {
         await this.$services.example.confirm(this.projectId, this.doc.id)

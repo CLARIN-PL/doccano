@@ -60,7 +60,8 @@ export default Vue.extend({
     async create() {
       const projectItem = this.getProjectItem()
       const project = await this.$services.project.create(projectItem)
-      if (project.projectType === 'AffectiveAnnotation') {
+      const projectTypesWithAutoUploadScaleTypes = ['AffectiveAnnotation', 'DynamicAnnotation']
+      if (projectTypesWithAutoUploadScaleTypes.includes(project.projectType)) {
         if (!project.isSummaryMode) {
           await this.uploadScaleTypeFile(project)
         }
@@ -98,6 +99,7 @@ export default Vue.extend({
             dimension: [dim]
           }
         })
+        editedItem.isCombinationMode = true
       }
       return editedItem
     },

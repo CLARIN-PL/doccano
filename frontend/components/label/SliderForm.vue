@@ -52,7 +52,7 @@
           :disabled="loading"
           :counter="50"
           :rules="[rules.maxLength50]"
-          label="Append"
+          label="Min val description"
           outlined
         />
       </v-col>
@@ -62,7 +62,7 @@
           :disabled="loading"
           :counter="50"
           :rules="[rules.maxLength50]"
-          label="Prepend"
+          label="Max val description"
           outlined
         />
       </v-col>
@@ -73,23 +73,20 @@
           class="dimension-form__checkbox"
           label="With checkbox"
           color="primary"
-          required
-          hide-details
+          :rules="[rules.mustSetCheckboxName]"
         />
       </v-col>
       <v-col cols="12" sm="12">
-        <v-form ref="withCheckboxForm">
-          <v-select
-            v-model="formData.checkboxCodename"
-            v-show="Boolean(formData.withCheckbox)"
-            :disabled="loading"
-            :items="checkboxOptions"
-            label="Checkbox codename"
-            :required="Boolean(formData.withCheckbox)"
-            :rules="[rules.required]"
-            outlined
-          />
-        </v-form>
+        <v-select
+          v-model="formData.checkboxCodename"
+          v-show="Boolean(formData.withCheckbox)"
+          :disabled="loading"
+          :items="checkboxOptions"
+          label="Checkbox codename"
+          :required="Boolean(formData.withCheckbox)"
+          :rules="[rules.required, rules.mustSetCheckboxName]"
+          outlined
+        />
       </v-col>
     </v-row>
   </v-form>
@@ -148,6 +145,10 @@ export default Vue.extend({
           parseInt(v) < base.formData.sliderMax || 'Must be lesser than max',
         mustBeBiggerThanMin: (v: string) =>
           parseInt(v) >= base.formData.sliderMin || 'Must be bigger or equal to min',
+        mustSetCheckboxName: () =>
+          base.formData.withCheckbox
+            ? !!base.formData.checkboxCodename
+            : true || 'Must set checkbox name',
         required: (v: string) =>
           String(v) !== 'undefined' || String(v) !== '' || String(v) !== 'null' || 'Required'
       }

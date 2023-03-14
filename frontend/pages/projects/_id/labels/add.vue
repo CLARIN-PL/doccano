@@ -115,6 +115,10 @@ export default Vue.extend({
                   break
                 }
               }
+
+              if (!item.group) {
+                item.group = 'Dynamic'
+              }
             }
             return item
           })

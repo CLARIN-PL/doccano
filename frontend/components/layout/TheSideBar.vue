@@ -1,9 +1,9 @@
 <template>
   <v-list dense>
-    <v-btn 
+    <v-btn
       v-if="showAnnotationButton"
       color="ms-4 my-1 mb-2 primary text-transform-none"
-      nuxt 
+      nuxt
       @click="toLabeling"
     >
       <v-icon left>
@@ -73,10 +73,8 @@ export default {
 
   computed: {
     showAnnotationButton() {
-      return !this.isAffectiveAnnotation
-    },
-    isAffectiveAnnotation() {
-      return this.project.projectType === 'AffectiveAnnotation'
+      const hideAnnotationButtonProjectTypes = ['AffectiveAnnotation', 'DynamicAnnotation']
+      return !hideAnnotationButtonProjectTypes.includes(this.project.projectType)
     },
     filteredItems() {
       const items = [

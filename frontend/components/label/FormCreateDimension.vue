@@ -97,6 +97,15 @@
               >
                 Save and add another
               </v-btn>
+              <v-btn
+                color="primary"
+                :loading="loading"
+                :disabled="loading"
+                outlined
+                @click="onClickClearButton"
+              >
+                Clear
+              </v-btn>
             </slot>
           </v-col>
         </v-row>
@@ -259,6 +268,9 @@ export default Vue.extend({
         this.loading = false
       }
     },
+    onClickClearButton() {
+      this.resetForm()
+    },
     async onClickSaveAndAddButton() {
       const refForm: any = this.$refs.form
       const valid = await refForm.validate()
@@ -267,12 +279,13 @@ export default Vue.extend({
         const request = this.getFormRequest()
         this.$emit('submit', { request, redirect: false })
         this.resetForm()
+        this.loading = false
       } else {
         this.loading = false
       }
     },
     isUsedName(text: string): boolean {
-      return this.items.filter((item: any) => item.text === text).length > 0
+      return this.items.filter((item: any) => item.name === text).length > 0
     }
   }
 })
