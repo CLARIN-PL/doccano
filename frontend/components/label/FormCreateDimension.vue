@@ -274,7 +274,6 @@ export default Vue.extend({
     async onClickSaveAndAddButton() {
       const refForm: any = this.$refs.form
       let valid = await refForm.validate()
-      console.log(valid)
       const request = this.getFormRequest()
       // hacky, v-form validation doesnt work with multiple nested elements
       if (request.type === 'slider') {
@@ -283,20 +282,19 @@ export default Vue.extend({
           : true
       } else if (request.type === 'checkbox') {
         valid = request.dimension_meta_data[0].config.is_multiple_answers
-          ? request.dimension_meta_data[0].config.min <=
-              request.dimension_meta_data[0].config.max &&
-            request.dimension_meta_data[0].config.min <=
-              request.dimension_meta_data[0].options.length &&
-            request.dimension_meta_data[0].config.max <=
-              request.dimension_meta_data[0].config.options.length
-          : // && request.dimension_meta_data[0].config.options.filter((opt) => !!opt).length
-            // && !request.dimension_meta_data[0].config.options.find((opt) => !opt)
-            true
+          ? request.dimension_meta_data[0].config.min_answer_number <=
+              request.dimension_meta_data[0].config.max_answer_number &&
+            request.dimension_meta_data[0].config.min_answer_number <=
+              request.dimension_meta_data[0].config.options.length &&
+            request.dimension_meta_data[0].config.max_answer_number <=
+              request.dimension_meta_data[0].config.options.length &&
+            request.dimension_meta_data[0].config.options.filter((opt: any) => !!opt).length &&
+            !request.dimension_meta_data[0].config.options.find((opt: any) => !opt)
+          : true
       }
-      console.log(valid, request)
       if (valid) {
         this.loading = true
-        // this.$emit('submit', { request, redirect: false })
+        this.$emit('submit', { request, redirect: false })
         this.resetForm()
         this.loading = false
       } else {

@@ -85,6 +85,7 @@
           :items="checkboxOptions"
           label="Checkbox codename"
           :required="Boolean(formData.withCheckbox)"
+          :error-messages="formData.withCheckbox && !formData.checkboxCodename ? 'Required' : ''"
           :rules="[rules.required, rules.mustSetCheckboxName]"
           outlined
         />

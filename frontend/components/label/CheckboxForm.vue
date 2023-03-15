@@ -56,6 +56,7 @@
                 :disabled="loading"
                 label="Checkbox option"
                 :rules="[rules.required, rules.nameDuplicated]"
+                :error-messages="getOptionErrorMessages(formData.options[idx])"
                 required
                 outlined
               />
@@ -157,6 +158,14 @@ export default Vue.extend({
   methods: {
     isUsedName(text: string): boolean {
       return this.formData.options.filter((opt: any) => opt.text === text).length > 1
+    },
+    getOptionErrorMessages(option: any) {
+      const messages = []
+      if (this.formData.isMultipleAnswers) {
+        const hasEmptyText = option.text === ''
+        hasEmptyText && messages.push('Required')
+      }
+      return messages
     },
     onClickDeleteButton(idx: number) {
       this.formData.options.splice(idx, 1)
