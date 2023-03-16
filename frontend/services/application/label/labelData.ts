@@ -7,6 +7,7 @@ export class LabelDTO {
   suffixKey: string | null
   backgroundColor: string
   textColor: string
+  [key: string]: any
 
   constructor(item: LabelItem) {
     this.id = item.id

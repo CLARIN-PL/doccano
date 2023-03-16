@@ -29,8 +29,8 @@ export class APIDimensionRepository implements DimensionRepository {
     return new DimensionItem(response.data.id, response.data.name, response.data.type, response.data.metadata)
   }
 
-  async delete(projectId: string, dimensionId: number): Promise<void> {
-    const url = `/projects/${projectId}/dimensions/${dimensionId}`
-    await this.request.delete(url)
+  async assign(projectId: string, dimension: number[]) : Promise<void> {
+    const url = `projects/${projectId}/assign_dimensions`
+    await this.request.post(url, { dimension })
   }
 }

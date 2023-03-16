@@ -176,6 +176,7 @@ export default Vue.extend({
     onClickAddButton() {
       this.formData.options.push({ value: this.formData.options.length + 1, text: '' })
       if (this.$refs.checkboxForm) {
+        // @ts-ignore
         this.$refs.checkboxForm.validate()
       }
     }

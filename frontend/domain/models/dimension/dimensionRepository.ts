@@ -4,5 +4,5 @@ export interface DimensionRepository {
     listAll(): Promise<DimensionItemList>
     list(projectId: string): Promise<DimensionItemList>
     create(projectId: string, name: string, type: string, dimension_meta_data: string): Promise<DimensionItem>
-    delete(projectId: string, dimensionId: number): Promise<void>
+    assign(projectId: string, dimension: number[]): Promise<void>
 }

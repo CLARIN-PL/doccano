@@ -185,7 +185,7 @@
 import Vue from 'vue'
 import { mdiCheckBold } from '@mdi/js'
 import { projectNameRules, descriptionRules, projectTypeRules } from '@/rules/index'
-import DimensionInput from '~/components/tasks/affectiveAnnotation/inputs/DimensionInput.vue'
+import DimensionInput from '~/components/tasks/dynamicAnnotation/DimensionInput.vue'
 
 export default Vue.extend({
   components: {

@@ -40,14 +40,6 @@
       >
         {{ $t('generic.delete') }}
       </v-btn>
-      <v-btn
-        v-if="showAddPredefinedDimensions"
-        class="text-capitalize ms-2"
-        :disabled="hasAddedAllPredefinedDimensions"
-        outlined
-      >
-        Add Predefined Dimensions
-      </v-btn>
       <v-dialog v-model="dialogDelete">
         <form-delete :selected="selected" @cancel="dialogDelete = false" @remove="remove" />
       </v-dialog>
@@ -109,18 +101,8 @@ export default Vue.extend({
   },
 
   computed: {
-    showAddPredefinedDimensions(): boolean {
-      return this.isDynamicAnnotation && this.tab === 1
-    },
     showDeleteButton(): boolean {
       return !(this.isDynamicAnnotation && this.tab === 1)
-    },
-    hasAddedAllPredefinedDimensions(): boolean {
-      const predefinedDimensionsLength = 69
-      return (
-        this.dimensionItems.filter((item) => item.group !== 'Dynamic').length >=
-        predefinedDimensionsLength
-      )
     },
     canDelete(): boolean {
       return this.selected.length > 0
@@ -237,7 +219,7 @@ export default Vue.extend({
       }
       this.$nextTick(() => {
         if (this.isDynamicAnnotation && this.tab === 1) {
-          this.dimensionItems = this.items.map((item: DimensionDTO) => {
+          this.dimensionItems = this.items.map((item: any) => {
             const groupMap = {
               DIM_OTH: 'Others',
               DIM_OF: 'Offensive',

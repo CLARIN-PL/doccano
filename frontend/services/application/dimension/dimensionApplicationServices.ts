@@ -16,7 +16,7 @@ export class DimensionApplicationService {
     return await this.repository.create(projectId, name, type, metadata)
   }
 
-  public async delete(projectId: string, dimensionId: number): Promise<void> {
-    await this.repository.delete(projectId, dimensionId)
+  public async assign(projectId: string, dimension: number[]): Promise<void> {
+    await this.repository.assign(projectId, dimension)
   }
 }

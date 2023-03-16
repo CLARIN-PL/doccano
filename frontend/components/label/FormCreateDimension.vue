@@ -1,115 +1,132 @@
 <template>
   <v-card>
-    <v-card-title class="mb-10">Create New Dimension</v-card-title>
+    <v-card-title class="mb-10">Add Dimension</v-card-title>
     <v-card-text>
-      <v-form ref="form" v-model="valid" class="dimension-form">
-        <v-row>
-          <v-col cols="12" sm="6">
-            <v-row>
-              <v-col cols="12" sm="12" class="pb-0">
-                <v-text-field
-                  v-model.trim="formData.dimensionName"
-                  :counter="100"
-                  :disabled="loading"
-                  label="Dimension Name"
-                  :rules="[rules.required, rules.nameDuplicated, rules.maxLength100]"
-                  outlined
-                  required
-                  @input="$emit('update:text', $event)"
-                />
-              </v-col>
-              <v-col cols="12" sm="6" class="pt-0">
-                <v-checkbox
-                  v-model="formData.required"
-                  :disabled="loading"
-                  label="Required"
-                  color="primary"
-                  required
-                  hide-details
-                  class="dimension-form__checkbox"
-                />
-              </v-col>
-              <v-col cols="12" sm="6" class="pt-0">
-                <v-checkbox
-                  v-model="formData.readOnly"
-                  :disabled="loading"
-                  class="dimension-form__checkbox"
-                  label="Read only"
-                  color="primary"
-                  required
-                  hide-details
-                />
-              </v-col>
+      <v-row>
+        <v-col cols="12" sm="6">
+          <v-row>
+            <v-form ref="form" v-model="valid" class="dimension-form">
               <v-col cols="12" sm="12">
-                <v-select
-                  v-model="formData.dimensionType"
-                  :disabled="loading"
-                  :items="dimensionTypeOptions"
-                  :rules="[rules.required]"
-                  label="Dimension type"
-                  outlined
-                  required
-                />
+                <v-radio-group v-model="formData.isCreatingNewDimension">
+                  <v-radio label="Create new dimension" :value="true"></v-radio>
+                  <v-radio
+                    label="Add predefined dimensions"
+                    :disabled="hasAddedAllPredefinedDimensions"
+                    :value="false"
+                  ></v-radio>
+                </v-radio-group>
               </v-col>
-              <v-col cols="12" sm="12" class="dimension-form__detail">
-                <component
-                  v-model="isDimensionDetailFormValid"
-                  :is="getDimensionDetailFormComponent(formData.dimensionType)"
-                  :loading="loading"
-                  :required="formData.required"
-                  :items="items"
-                  v-bind.sync="formData"
-                />
-              </v-col>
-            </v-row>
-          </v-col>
-          <v-col cols="12" sm="6">
-            <div class="dimension-form__preview" :class="{ '--preview': formData.dimensionType }">
-              <component
-                :is="getDimensionDetailPreviewComponent(formData.dimensionType)"
-                :name="formData.dimensionName"
-                :items="items"
-                :playground="true"
-                :config="formData[formData.dimensionType]"
-                :required="formData.required"
-                :read-only="loading || formData.readOnly"
-              />
-            </div>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" sm="12" class="pt-10">
-            <v-spacer />
-            <slot :valid="valid">
-              <v-btn
-                color="primary"
-                :loading="loading"
-                :disabled="loading"
-                @click="onClickSaveButton"
-                >Save</v-btn
-              >
-              <v-btn
-                color="primary"
-                :loading="loading"
-                :disabled="loading"
-                outlined
-                @click="onClickSaveAndAddButton"
-              >
-                Save and add another
-              </v-btn>
-              <v-btn
-                color="primary"
-                :loading="loading"
-                :disabled="loading"
-                outlined
-                @click="onClickClearButton"
-              >
-                Clear
-              </v-btn>
-            </slot>
-          </v-col>
-        </v-row>
-      </v-form>
+              <template v-if="formData.isCreatingNewDimension">
+                <v-col cols="12" sm="12" class="pb-0">
+                  <v-text-field
+                    v-model.trim="formData.dimensionName"
+                    :counter="100"
+                    :disabled="loading"
+                    label="Dimension Name"
+                    :rules="[rules.required, rules.nameDuplicated, rules.maxLength100]"
+                    outlined
+                    required
+                    @input="$emit('update:text', $event)"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6" class="pt-0">
+                  <v-checkbox
+                    v-model="formData.required"
+                    :disabled="loading"
+                    label="Required"
+                    color="primary"
+                    required
+                    hide-details
+                    class="dimension-form__checkbox"
+                  />
+                </v-col>
+                <v-col cols="12" sm="6" class="pt-0">
+                  <v-checkbox
+                    v-model="formData.readOnly"
+                    :disabled="loading"
+                    class="dimension-form__checkbox"
+                    label="Read only"
+                    color="primary"
+                    required
+                    hide-details
+                  />
+                </v-col>
+                <v-col cols="12" sm="12">
+                  <v-select
+                    v-model="formData.dimensionType"
+                    :disabled="loading"
+                    :items="dimensionTypeOptions"
+                    :rules="[rules.required]"
+                    label="Dimension type"
+                    outlined
+                    required
+                  />
+                </v-col>
+                <v-col cols="12" sm="12" class="dimension-form__detail">
+                  <component
+                    v-model="isDimensionDetailFormValid"
+                    :is="getDimensionDetailFormComponent(formData.dimensionType)"
+                    :loading="loading"
+                    :required="formData.required"
+                    :items="items"
+                    v-bind.sync="formData"
+                  />
+                </v-col>
+              </template>
+              <template v-else>
+                <v-col cols="12" sm="12" class="dimension-form__detail">
+                  <dimension-input
+                    v-model="formData.dimensions"
+                    :required="true"
+                    question="Dimensions"
+                  />
+                </v-col>
+              </template>
+            </v-form>
+          </v-row>
+        </v-col>
+        <v-col cols="12" sm="6" v-if="formData.isCreatingNewDimension">
+          <div class="dimension-form__preview" :class="{ '--preview': formData.dimensionType }">
+            <component
+              :is="getDimensionDetailPreviewComponent(formData.dimensionType)"
+              :name="formData.dimensionName"
+              :items="items"
+              :playground="true"
+              :config="formData[formData.dimensionType]"
+              :required="formData.required"
+              :read-only="loading || formData.readOnly"
+            />
+          </div>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" sm="12" class="pt-10">
+          <v-spacer />
+          <slot :valid="valid">
+            <v-btn color="primary" :loading="loading" :disabled="loading" @click="onClickSaveButton"
+              >Save</v-btn
+            >
+            <v-btn
+              color="primary"
+              :loading="loading"
+              :disabled="loading"
+              outlined
+              @click="onClickSaveAndAddButton"
+            >
+              Save and add another
+            </v-btn>
+            <v-btn
+              color="primary"
+              :loading="loading"
+              :disabled="loading"
+              outlined
+              @click="onClickClearButton"
+            >
+              Clear
+            </v-btn>
+          </slot>
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
@@ -123,13 +140,15 @@ import CheckboxForm from './CheckboxForm.vue'
 import { LabelDTO } from '~/services/application/label/labelData'
 import CheckboxInput from '~/components/tasks/dynamicAnnotation/CheckboxInput.vue'
 import SliderInput from '~/components/tasks/dynamicAnnotation/SliderInput.vue'
+import DimensionInput from '~/components/tasks/dynamicAnnotation/DimensionInput.vue'
 
 export default Vue.extend({
   components: {
     SliderForm,
     CheckboxForm,
     SliderInput,
-    CheckboxInput
+    CheckboxInput,
+    DimensionInput
   },
 
   props: {
@@ -156,8 +175,10 @@ export default Vue.extend({
         }
       ],
       formData: {
+        dimensions: [],
         dimensionName: '',
         dimensionType: '',
+        isCreatingNewDimension: true,
         required: false,
         readOnly: false,
         slider: {
@@ -181,6 +202,12 @@ export default Vue.extend({
   },
 
   computed: {
+    hasAddedAllPredefinedDimensions(): boolean {
+      const predefinedDimensionsLength = 69
+      return (
+        this.items.filter((item) => item.group !== 'Dynamic').length >= predefinedDimensionsLength
+      )
+    },
     rules() {
       return {
         required: (v: string) => !!v || 'Required',
@@ -195,7 +222,9 @@ export default Vue.extend({
   },
 
   mounted() {
-    this.resetForm()
+    if (this.$refs.form) {
+      this.$refs.form.resetValidation()
+    }
   },
 
   methods: {
@@ -215,9 +244,35 @@ export default Vue.extend({
     },
     resetForm() {
       const refForm: any = this.$refs.form
-      refForm.reset()
+      refForm && refForm.resetValidation()
+      this.formData = {
+        ...this.formData,
+        ...{
+          dimensions: [],
+          dimensionName: '',
+          dimensionType: '',
+          isCreatingNewDimension: true,
+          required: false,
+          readOnly: false,
+          slider: {
+            sliderMin: 0,
+            sliderMax: 10,
+            sliderStep: 1,
+            minValDescription: '',
+            maxValDescription: '',
+            withCheckbox: false,
+            checkboxCodename: ''
+          },
+          checkbox: {
+            isMultipleAnswers: false,
+            minAnswerNumber: 1,
+            maxAnswerNumber: 1,
+            options: []
+          }
+        }
+      }
     },
-    getFormRequest(): any {
+    getCreateDimensionFormRequest(): any {
       const dynamicGroups = this.items.filter((item) => item.group === 'Dynamic')
       const request = {
         name: this.formData.dimensionName,
@@ -257,48 +312,77 @@ export default Vue.extend({
       }
       return request
     },
-    async onClickSaveButton() {
-      const refForm: any = this.$refs.form
-      const valid = await refForm.validate()
+    async createDimension(redirect = true) {
+      const valid = await this.validateForm()
       if (valid) {
+        const request = this.getCreateDimensionFormRequest()
         this.loading = true
-        const request = this.getFormRequest()
-        this.$emit('submit', { request, redirect: true })
+        this.$emit('submit:create', { request, redirect })
+        this.resetForm()
+        this.loading = false
       } else {
+        console.error('Failed to create dimension')
         this.loading = false
       }
+    },
+    async addExistingDimension(redirect = true) {
+      const valid = await this.validateForm()
+      if (valid) {
+        const request = { dimension: this.formData.dimensions }
+        this.loading = true
+        this.$emit('submit:add', { request, redirect })
+        this.resetForm()
+        this.loading = false
+      } else {
+        console.error('Failed to add dimension')
+        this.loading = false
+      }
+    },
+    onClickSaveButton() {
+      if (this.formData.isCreatingNewDimension) {
+        this.createDimension(true)
+      } else {
+        this.addExistingDimension(true)
+      }
+    },
+    async validateForm() {
+      let valid = true
+      const refForm: any = this.$refs.form
+      if (refForm) {
+        valid = await refForm.validate()
+      }
+      if (this.formData.isCreatingNewDimension) {
+        const request = this.getCreateDimensionFormRequest()
+        // hacky, v-form validation doesnt work with multiple nested elements
+        if (request.type === 'slider') {
+          const additionalCheck = request.dimension_meta_data[0].config.with_checkbox
+            ? !!request.dimension_meta_data[0].config.checkbox_codename
+            : true
+          valid = valid && additionalCheck
+        } else if (request.type === 'checkbox') {
+          const additionalCheck = request.dimension_meta_data[0].config.is_multiple_answers
+            ? request.dimension_meta_data[0].config.min_answer_number <=
+                request.dimension_meta_data[0].config.max_answer_number &&
+              request.dimension_meta_data[0].config.min_answer_number <=
+                request.dimension_meta_data[0].config.options.length &&
+              request.dimension_meta_data[0].config.max_answer_number <=
+                request.dimension_meta_data[0].config.options.length &&
+              request.dimension_meta_data[0].config.options.filter((opt: any) => !!opt).length &&
+              !request.dimension_meta_data[0].config.options.find((opt: any) => !opt)
+            : true
+          valid = valid && additionalCheck
+        }
+      }
+      return valid
     },
     onClickClearButton() {
       this.resetForm()
     },
-    async onClickSaveAndAddButton() {
-      const refForm: any = this.$refs.form
-      let valid = await refForm.validate()
-      const request = this.getFormRequest()
-      // hacky, v-form validation doesnt work with multiple nested elements
-      if (request.type === 'slider') {
-        valid = request.dimension_meta_data[0].config.with_checkbox
-          ? !!request.dimension_meta_data[0].config.checkbox_codename
-          : true
-      } else if (request.type === 'checkbox') {
-        valid = request.dimension_meta_data[0].config.is_multiple_answers
-          ? request.dimension_meta_data[0].config.min_answer_number <=
-              request.dimension_meta_data[0].config.max_answer_number &&
-            request.dimension_meta_data[0].config.min_answer_number <=
-              request.dimension_meta_data[0].config.options.length &&
-            request.dimension_meta_data[0].config.max_answer_number <=
-              request.dimension_meta_data[0].config.options.length &&
-            request.dimension_meta_data[0].config.options.filter((opt: any) => !!opt).length &&
-            !request.dimension_meta_data[0].config.options.find((opt: any) => !opt)
-          : true
-      }
-      if (valid) {
-        this.loading = true
-        this.$emit('submit', { request, redirect: false })
-        this.resetForm()
-        this.loading = false
+    onClickSaveAndAddButton() {
+      if (this.formData.isCreatingNewDimension) {
+        this.createDimension(false)
       } else {
-        this.loading = false
+        this.addExistingDimension(false)
       }
     },
     isUsedName(text: string): boolean {
@@ -309,6 +393,8 @@ export default Vue.extend({
 </script>
 <style lang="scss" scoped>
 .dimension-form {
+  width: 100%;
+
   &__checkbox {
     margin-top: 0;
   }

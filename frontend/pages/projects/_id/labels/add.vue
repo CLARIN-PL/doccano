@@ -1,6 +1,11 @@
 <template>
   <div v-if="type === 'dimension'">
-    <form-create-dimension :items="dimensionItems" @submit="onSubmitFormCreateDimension" />
+    <form-create-dimension
+      ref="formCreateDimension"
+      :items="dimensionItems"
+      @submit:create="onSubmitCreateDimension"
+      @submit:add="onSubmitAddDimension"
+    />
   </div>
   <form-create v-else v-slot="slotProps" v-bind.sync="editedItem" :items="items">
     <v-btn :disabled="!slotProps.valid" color="primary" class="text-capitalize" @click="save">
@@ -127,7 +132,7 @@ export default Vue.extend({
         this.items = await this.service.list(this.projectId)
       }
     },
-    async onSubmitFormCreateDimension({ request, redirect }) {
+    async onSubmitCreateDimension({ request, redirect }) {
       await this.$services.dimension.create(
         this.projectId,
         request.name,
@@ -136,6 +141,14 @@ export default Vue.extend({
       )
       if (redirect) {
         this.$router.push(this.localePath(`/projects/${this.projectId}/labels`))
+      }
+    },
+    async onSubmitAddDimension({ request, redirect }) {
+      await this.$services.dimension.assign(this.projectId, request.dimension)
+      if (redirect) {
+        this.$router.push(this.localePath(`/projects/${this.projectId}/labels`))
+      } else {
+        this.$refs.formCreateDimension && this.$refs.formCreateDimension.resetForm()
       }
     },
     async save() {

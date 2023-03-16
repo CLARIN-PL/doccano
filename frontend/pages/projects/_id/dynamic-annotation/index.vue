@@ -164,7 +164,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 import { mdiText, mdiFormatListBulleted } from '@mdi/js'
@@ -175,7 +175,6 @@ import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
 import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
 import { objectKeysSnakeToCamel } from '~/utils/stringHelpers'
-import { DimensionDTO } from '~/services/application/dimension/dimensionData'
 import SliderInput from '~/components/tasks/dynamicAnnotation/SliderInput.vue'
 import CheckboxInput from '~/components/tasks/dynamicAnnotation/CheckboxInput.vue'
 
@@ -244,10 +243,9 @@ export default {
     ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId']),
     ...mapGetters('config', ['isRTL']),
     ...mapGetters('user', ['getAnnotation']),
-    scaleValues(): any[] {
-      return this.scales.map((scale: any) => {
-        const scaleType: any =
-          this.scaleTypes.find((scaleType: any) => scaleType.id === scale.label) || {}
+    scaleValues() {
+      return this.scales.map((scale) => {
+        const scaleType = this.scaleTypes.find((scaleType) => scaleType.id === scale.label) || {}
         return {
           ...scale,
           ...scaleType,
@@ -255,10 +253,10 @@ export default {
         }
       })
     },
-    textLabelValues(): any[] {
-      return this.textLabels.map((textLabel: any) => {
+    textLabelValues() {
+      return this.textLabels.map((textLabel) => {
         const substatementQuestion = textLabel.question
-        /* const annotation = _.cloneDeep(this.polishAnnotation.humor) as any
+        /* const annotation = _.cloneDeep(this.polishAnnotation.humor) 
         let substatementKey = ''
         Object.keys(annotation).forEach((subKey: string) => {
           if (typeof annotation[subKey] === 'object') {
@@ -326,7 +324,7 @@ export default {
         if (val.length) {
           Object.keys(this.formData.dimensions).forEach((key) => {
             this.formData.dimensions[key].forEach((dim) => {
-              const scaleValue = val.find((scale: any) => scale.text === dim.name)
+              const scaleValue = val.find((scale) => scale.text === dim.name)
               const index = this.formData.dimensions[key].indexOf(dim)
               if (scaleValue) {
                 const formDataKey = `[${key}][${index}]`
@@ -359,7 +357,7 @@ export default {
       deep: true,
       handler(val) {
         if (val.length) {
-          /*  val.forEach((textLabel: any) => {
+          /*  val.forEach((textLabel) => {
             const substatementIndex = textLabel.substatementKey.split('.substatement')[1]
             const subquestionIndex = textLabel.substatementKey.split('.')[0]
             const formDataKey = `${subquestionIndex}[${parseInt(substatementIndex) - 1}]`
@@ -376,7 +374,7 @@ export default {
             for (let i: number = 0; i < subquestionLength; i++) {
               const substatementKey = `${key}.substatement${i + 1}`
               const isStored = val.find(
-                (textLabel: any) => textLabel.substatementKey === substatementKey
+                (textLabel) => textLabel.substatementKey === substatementKey
               )
               if (!isStored) {
                 // @ts-ignore
@@ -443,19 +441,19 @@ export default {
       'initQuestionnaire',
       'getQuestionnaire'
     ]),
-    getDimComponent(dimension: DimensionDTO) {
+    getDimComponent(dimension) {
       if (dimension.type === 'slider') {
         return SliderInput
       } else if (dimension.type === 'checkbox') {
         return CheckboxInput
       }
     },
-    getDimState(dimension: DimensionDTO) {
+    getDimState(dimension) {
       return {
         ...dimension
       }
     },
-    getDimConfig(item: DimensionDTO) {
+    getDimConfig(item) {
       let config = { config: {} }
       if (item.metadata && item.metadata[0]) {
         config = { ...config, ...objectKeysSnakeToCamel(item.metadata[0]) }
@@ -561,23 +559,24 @@ export default {
       )
     },
     async setArticleData() {
-      if (this.docs.items && this.docs.items.length) {
-        const doc = this.docs.items[0]
-        const isCheckedQuery = this.$route.query.isChecked || ''
-        this.currentArticleId = doc.articleId
-        this.currentWholeArticle = await this.$services.example.fetchByLimit(
-          this.projectId,
-          this.docs.count.toString(),
-          this.currentArticleId,
+      const base = this
+      if (base.docs.items && base.docs.items.length) {
+        const doc = base.docs.items[0]
+        const isCheckedQuery = base.$route.query.isChecked || ''
+        base.currentArticleId = doc.articleId
+        base.currentWholeArticle = await base.$services.example.fetchByLimit(
+          base.projectId,
+          base.docs.count.toString(),
+          base.currentArticleId,
           isCheckedQuery
         )
-        this.currentWholeArticle.items = _.orderBy(this.currentWholeArticle.items, 'order')
-        const allArticleIds = await this.$services.example.fetchArticleIds(
-          this.projectId,
-          this.docs.count.toString()
+        base.currentWholeArticle.items = _.orderBy(base.currentWholeArticle.items, 'order')
+        const allArticleIds = await base.$services.example.fetchArticleIds(
+          base.projectId,
+          base.docs.count.toString()
         )
-        this.articleTotal = allArticleIds.length
-        this.articleIndex = allArticleIds.indexOf(this.currentArticleId) + 1
+        base.articleTotal = allArticleIds.length
+        base.articleIndex = allArticleIds.indexOf(base.currentArticleId) + 1
       }
     },
     async list(docId) {
@@ -587,7 +586,7 @@ export default {
       }
     },
     onDynamicComponentUpdateScale: _.debounce(async function ({ formDataKey, val }) {
-      const base = this as any
+      const base = this
       const dimensionData = _.get(base.formData.dimensions, formDataKey)
       if (dimensionData && dimensionData.questionId) {
         _.set(base.formData.dimensions, `${formDataKey}.isClicked`, true)
@@ -603,7 +602,7 @@ export default {
       }
     }, 100),
     async onDynamicComponentRemoveLabel({ formDataKey }) {
-      const base = this as any
+      const base = this
       const dimensionData = _.get(base.formData.dimensions, formDataKey)
       if (dimensionData && dimensionData.questionId) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
@@ -619,7 +618,7 @@ export default {
       }
     },
     async onDynamicComponentUpdateLabel({ formDataKey, value }) {
-      const base = this as any
+      const base = this
       const dimensionData = _.get(base.formData.dimensions, formDataKey)
 
       if (dimensionData && dimensionData.questionId) {
@@ -637,7 +636,7 @@ export default {
       }
     },
     async onDynamicComponentAddLabel({ formDataKey, value }) {
-      const base = this as any
+      const base = this
       const dimensionData = _.get(base.formData.dimensions, formDataKey)
 
       if (dimensionData && dimensionData.name) {

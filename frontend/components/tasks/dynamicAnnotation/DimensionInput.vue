@@ -1,37 +1,69 @@
 <template>
-  <v-dialog v-model="showDialog" max-width="800" scrollable persistent class="widget-dialog">
-    <v-card>
-      <v-card-title class="widget-dialog__title pa-5">
-        <p class="">Dimensions ({{ selected.length }} selected)</p>
-        <small v-if="dialogErrorMessage" class="red--text"> *{{ dialogErrorMessage }} </small>
-      </v-card-title>
-      <v-card-text class="widget-dialog__text">
-        <div
-          v-for="(dimensionGroup, idx) in Object.keys(groupedDimensionOptions)"
-          :key="`dimension-group_${idx}`"
+  <div class="widget">
+    <div class="widget__answer" justify="center" align="center">
+      <div class="widget__textfield" @click="onDimensionSelectionClick">
+        <v-select
+          v-model="selected"
+          :items="dimensionOptions"
+          label="Dimensions"
+          readonly
+          multiple
+          outlined
+          :required="required"
+          :rules="rules"
         >
-          <h2 class="checkbox-title">{{ dimensionGroup || 'Dimension' }}</h2>
-          <div class="checkbox-list --col-3">
-            <v-checkbox
-              v-for="(dimension, dimensionIdx) in groupedDimensionOptions[dimensionGroup]"
-              :key="`checkbox-${dimensionGroup}-${dimensionIdx}`"
-              v-model="selected"
-              multiple
-              :label="dimension.text"
-              :value="dimension.value"
-              class="checkbox-list__item"
-            />
+          <template #selection="{ item, index }">
+            <v-chip v-if="index < 3">
+              <span>{{ item.text }}</span>
+            </v-chip>
+            <span v-if="index === 3" class="text-grey text-caption align-self-center">
+              (+{{ selected.length - 3 }} others)
+            </span>
+          </template>
+        </v-select>
+      </div>
+    </div>
+
+    <v-dialog v-model="showDialog" max-width="800" scrollable persistent class="widget-dialog">
+      <v-card>
+        <v-card-title class="widget-dialog__title pa-5">
+          <p class="">Dimensions ({{ selected.length }} selected)</p>
+          <small v-if="dialogErrorMessage" class="red--text"> *{{ dialogErrorMessage }} </small>
+        </v-card-title>
+        <v-card-text class="widget-dialog__text">
+          <div
+            v-for="(dimensionGroup, idx) in Object.keys(groupedDimensionOptions)"
+            :key="`dimension-group_${idx}`"
+          >
+            <h2 class="checkbox-title">{{ dimensionGroup || 'Dimension' }}</h2>
+            <div class="checkbox-list --col-3">
+              <v-checkbox
+                v-for="(dimension, dimensionIdx) in groupedDimensionOptions[dimensionGroup]"
+                :key="`checkbox-${dimensionGroup}-${dimensionIdx}`"
+                v-model="selected"
+                :hint="dimension.type"
+                persistent-hint
+                multiple
+                :label="dimension.text"
+                :value="dimension.value"
+                class="checkbox-list__item"
+              >
+                {{ dimension.type }}
+              </v-checkbox>
+            </div>
           </div>
-        </div>
-      </v-card-text>
-      <v-card-actions class="pa-5">
-        <v-spacer />
-        <v-btn @click="onClearButtonClick"> Clear </v-btn>
-        <v-btn primary color="primary" @click="onSubmitButtonClick"> Close </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-</template><script>
+        </v-card-text>
+        <v-card-actions class="pa-5">
+          <v-spacer />
+          <v-btn @click="onClearButtonClick"> Clear </v-btn>
+          <v-btn primary color="primary" @click="onSubmitButtonClick"> Close </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
+</template>
+
+<script>
 import { mdiSend } from '@mdi/js'
 
 export default {
@@ -66,6 +98,13 @@ export default {
   },
 
   computed: {
+    rules() {
+      const rules = []
+      if (this.required) {
+        rules.push(() => Boolean(this.selected.length) || 'Required')
+      }
+      return rules
+    },
     selected: {
       get() {
         return this.value
@@ -128,6 +167,7 @@ export default {
         this.dialogErrorMessage = ''
       } else {
         this.dialogErrorMessage = this.$t('rules.required')
+        this.showDialog = false
       }
     },
     onDimensionSelectionClick() {
@@ -136,8 +176,8 @@ export default {
   }
 }
 </script>
-    
-    <style lang="scss">
+
+<style lang="scss">
 .widget {
   word-wrap: normal;
   word-break: break-word;
@@ -204,8 +244,8 @@ export default {
   grid-template-columns: repeat(2, 1fr);
   border: 2px solid #ddd;
   border-radius: 2px;
-  margin-bottom: 30px;
-  padding: 10px;
+  margin-bottom: 40px;
+  padding: 10px 15px;
 
   &.--col-3 {
     grid-template-columns: repeat(3, 1fr);
@@ -214,6 +254,9 @@ export default {
   .v-input.v-input--selection-controls {
     margin-top: 0 !important;
   }
+
+  .v-messages__message {
+    padding-left: 35px;
+  }
 }
 </style>
-    
