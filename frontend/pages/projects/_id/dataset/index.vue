@@ -259,14 +259,18 @@ export default Vue.extend({
   methods: {
     ...mapActions('user', ['setAnnotation']),
     async toLabeling() {
-      const itemToAnnotate: undefined | ExampleDTO = this.hasUnannotatedItem
-        ? this.item.items.find((item: any) => !item.isConfirmed)
-        : this.item.items[0]
-      const index = itemToAnnotate ? this.item.items.indexOf(itemToAnnotate) : 0
-      const page = (index + 1).toString()
-      await this.startAnnotation(() => {
-        this.movePage({ page })
-      })
+      try {
+        const itemToAnnotate: undefined | ExampleDTO = this.hasUnannotatedItem
+          ? this.item.items.find((item: any) => !item.isConfirmed)
+          : this.item.items[0]
+        const index = itemToAnnotate ? this.item.items.indexOf(itemToAnnotate) : 0
+        const page = (index + 1).toString()
+        await this.startAnnotation(() => {
+          this.movePage({ page })
+        })
+      } catch (e) {
+        console.error(e)
+      }
     },
     startAnnotation(callback: Function) {
       const item = this.hasUnannotatedItem
