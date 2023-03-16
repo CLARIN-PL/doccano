@@ -83,6 +83,10 @@ export default {
     value: {
       type: Array,
       default: () => []
+    },
+    assignedDimensions: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -122,7 +126,12 @@ export default {
   methods: {
     async setDimensionList() {
       await this.$services.dimension.listAll().then((response) => {
-        this.dimensions = response.items
+        const dimensions = response.items
+        if (this.assignedDimensions.length) {
+          this.dimensions = _.differenceBy(dimensions, this.assignedDimensions, 'name')
+        } else {
+          this.dimensions = dimensions
+        }
       })
     },
     setDimensionOptions() {

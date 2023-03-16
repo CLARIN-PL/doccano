@@ -77,6 +77,7 @@
                 <v-col cols="12" sm="12" class="dimension-form__detail">
                   <dimension-input
                     v-model="formData.dimensions"
+                    :assigned-dimensions="items"
                     :required="true"
                     question="Dimensions"
                   />
@@ -133,6 +134,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
+import _ from 'lodash'
 import { mdiReload } from '@mdi/js'
 import SliderForm from './SliderForm.vue'
 import CheckboxForm from './CheckboxForm.vue'
@@ -163,6 +165,7 @@ export default Vue.extend({
     return {
       valid: false,
       loading: false,
+      dimensions: [],
       isDimensionDetailFormValid: false,
       dimensionTypeOptions: [
         {
@@ -203,10 +206,7 @@ export default Vue.extend({
 
   computed: {
     hasAddedAllPredefinedDimensions(): boolean {
-      const predefinedDimensionsLength = 69
-      return (
-        this.items.filter((item) => item.group !== 'Dynamic').length >= predefinedDimensionsLength
-      )
+      return _.differenceBy(this.dimensions, this.items, 'name').length === 0
     },
     rules() {
       return {
@@ -221,6 +221,10 @@ export default Vue.extend({
     }
   },
 
+  async created() {
+    await this.setDimensionList()
+  },
+
   mounted() {
     if (this.$refs.form) {
       this.$refs.form.resetValidation()
@@ -228,6 +232,11 @@ export default Vue.extend({
   },
 
   methods: {
+    async setDimensionList() {
+      await this.$services.dimension.listAll().then((response) => {
+        this.dimensions = response.items
+      })
+    },
     getDimensionDetailPreviewComponent() {
       if (this.formData.dimensionType === 'slider') {
         return SliderInput
