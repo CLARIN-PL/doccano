@@ -10,6 +10,7 @@ from projects.models import (
     SPEECH2TEXT,
     ARTICLE_ANNOTATION,
     AFFECTIVE_ANNOTATION,
+    DYNAMIC_ANNOTATION
 )
 
 
@@ -24,6 +25,7 @@ class TestOptions(unittest.TestCase):
             SPEECH2TEXT,
             ARTICLE_ANNOTATION,
             AFFECTIVE_ANNOTATION,
+            DYNAMIC_ANNOTATION,
         ]
         for task in tasks:
             with self.subTest(task=task):

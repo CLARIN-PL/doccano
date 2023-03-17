@@ -12,6 +12,7 @@ from projects.models import (
     SPEECH2TEXT,
     ARTICLE_ANNOTATION,
     AFFECTIVE_ANNOTATION,
+    DYNAMIC_ANNOTATION,
     Member,
     Role,
 )
@@ -72,6 +73,7 @@ def make_project(task: str, users: List[str], roles: List[str], collaborative_an
         INTENT_DETECTION_AND_SLOT_FILLING: "IntentDetectionAndSlotFillingProject",
         ARTICLE_ANNOTATION: "ArticleAnnotationProject",
         AFFECTIVE_ANNOTATION: "AffectiveAnnotationProject",
+        DYNAMIC_ANNOTATION: "DynamicAnnotationProject",
     }.get(task, "Project")
     project = mommy.make(
         _model=project_model,
@@ -90,6 +92,18 @@ def make_project(task: str, users: List[str], roles: List[str], collaborative_an
 
 def make_tag(project):
     return mommy.make("Tag", project=project)
+
+
+def make_dimension(name: str = "test_dynamic_dimension", type: str = "checkbox"):
+    return mommy.make("DynamicDimension", name=name, type=type)
+
+
+def make_dimension_meta_data(dimension, codename: str = "test_dimension_meta_data", config: dict = {}, required: bool = True, readonly: bool = False):
+    return mommy.make("DimensionMetaData", dimension=dimension, codename=codename, config=config, required=required, readonly=readonly)
+
+
+def make_project_dimension(project, dimension):
+    return mommy.make("ProjectDimension", project=project, dimension=dimension)
 
 
 def prepare_project(task: str = "Any", collaborative_annotation=False, **kwargs):

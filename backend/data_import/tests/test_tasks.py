@@ -21,6 +21,7 @@ from projects.models import (
     SEQUENCE_LABELING,
     ARTICLE_ANNOTATION,
     AFFECTIVE_ANNOTATION,
+    DYNAMIC_ANNOTATION,
 )
 from projects.tests.utils import prepare_project
 
@@ -462,6 +463,36 @@ class TestImportAffectiveAnnotation(TestImportData):
 
     def test_scale_and_cats(self):
         filename = "affective_annotation/example.json"
+        file_format = "JSON"
+        dataset = [
+            ("Stół z powyłamywanymi nogami", {"scale": [(1, "happy"), (4, "sadness"), (2, "negative")], "label": [("I dont know", "None")]}),
+            ("W Szczebrzeszynie chrząszcz brzmi w trzcinie.", {"scale": [(1, "sorrow"), (3, "sadness"), (2, "positive")], "label": [("happy", "None")]}),
+            ("Nowa generacja biosensora pozwoli na bieżąco analizować próbki potu", {"scale": [(1, "sorrow"), (5, "sadness"), (2, "positive")], "label": [("happy", "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)"), ("funny", "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst?")]}),
+        ]
+        self.import_dataset(filename, file_format, self.task)
+        self.assert_examples(dataset)
+
+
+class TestImportDynamicAnnotation(TestImportData):
+    task = DYNAMIC_ANNOTATION
+
+    def setUp(self):
+        self.project = prepare_project(self.task)
+        self.user = self.project.admin
+        self.data_path = pathlib.Path(__file__).parent / "data"
+        self.upload_id = _get_file_id()
+
+    def assert_examples(self, dataset):
+        self.assertEqual(Example.objects.count(), len(dataset))
+        for text, expected_labels in dataset:
+            example = Example.objects.get(text=text)
+            scale = set([(scale.scale, scale.label.text) for scale in example.scales.all()])
+            labels = set([(text_label.text, text_label.question) for text_label in example.texts.all()])
+            self.assertEqual(scale, set(expected_labels["scale"]))
+            self.assertEqual(labels, set(expected_labels['label']))
+
+    def test_scale_and_cats(self):
+        filename = "dynamic_annotation/example.json"
         file_format = "JSON"
         dataset = [
             ("Stół z powyłamywanymi nogami", {"scale": [(1, "happy"), (4, "sadness"), (2, "negative")], "label": [("I dont know", "None")]}),
