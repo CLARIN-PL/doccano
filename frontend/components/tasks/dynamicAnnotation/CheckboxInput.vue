@@ -32,9 +32,13 @@
               :value="playground ? option.value : option"
               :label="playground ? option.text : option"
               class="content-item__checkbox"
-              @click="onCheckboxClick"
+              @click="onCheckboxChange"
             />
           </li>
+          <p>
+            Please choose at least {{ config.minAnswerNumber }} option up to
+            {{ config.maxAnswerNumber }} option
+          </p>
         </ul>
       </div>
     </div>
@@ -47,12 +51,13 @@
         :disabled="formData.isSubmitting"
         :label="name + (required ? ' *' : '')"
         class="content-item__checkbox"
-        @click="onCheckboxClick"
+        @click="onCheckboxChange"
       />
     </div>
   </div>
 </template>
 <script lang="ts">
+import _ from 'lodash'
 import Vue from 'vue'
 
 export default Vue.extend({
@@ -80,6 +85,17 @@ export default Vue.extend({
         }
       }
     },
+    item: {
+      type: Object,
+      default: () => {
+        return {
+          id: '',
+          value: '',
+          isSubmitting: false,
+          isChecked: false
+        }
+      }
+    },
     readOnly: {
       type: Boolean,
       default: false
@@ -104,9 +120,20 @@ export default Vue.extend({
         isChecked: false,
         isSubmitting: false,
         errorMessage: '',
-        checkedOptions: []
+        checkedOptions: [] as string[]
       }
     }
+  },
+  watch: {
+    item: {
+      deep: true,
+      handler() {
+        this.setFormDataFromItem()
+      }
+    }
+  },
+  created() {
+    this.setFormDataFromItem()
   },
   computed: {
     rules() {
@@ -124,9 +151,32 @@ export default Vue.extend({
     }
   },
   methods: {
+    setFormDataFromValue() {
+      const val: any = this.value
+      if (Array.isArray(val)) {
+        this.formData.checkedOptions = val
+      } else if (typeof val === 'boolean') {
+        this.formData.isChecked = val
+      }
+      this.$forceUpdate()
+    },
+    setFormDataFromItem() {
+      if (this.config.isMultipleAnswers) {
+        const val: any = this.item.tempValue ? this.item.tempValue : this.item.value
+        if (val && typeof val === 'string') {
+          this.formData.checkedOptions = val.split(';')
+        } else if (val && Array.isArray(val)) {
+          this.formData.checkedOptions = val
+        }
+      } else {
+        this.formData.isChecked =
+          !!this.item.isChecked || !!this.item.value || !!this.item.tempValue
+      }
+      this.$forceUpdate()
+    },
     parseConfigOptions(val: string) {
       let options = []
-      if (val.includes('; ')) {
+      if (val.includes(';')) {
         options = val.split(';').map((v) => v.trim())
       } else if (Array.isArray(val)) {
         if (val.length && typeof val[0] === 'object' && !this.playground) {
@@ -138,38 +188,57 @@ export default Vue.extend({
       return options
     },
     validateCheckbox() {
+      let isValidated = true
       if (this.config.isMultipleAnswers) {
         if (this.required && !this.formData.checkedOptions.length) {
           this.formData.errorMessage = 'This field is required'
+          isValidated = false
         }
         if (this.formData.checkedOptions.length < this.config.minAnswerNumber) {
           this.formData.errorMessage = `Please mark at least ${this.config.minAnswerNumber} answers`
+          isValidated = false
         }
         if (this.formData.checkedOptions.length > this.config.maxAnswerNumber) {
-          this.formData.errorMessage = 'Max answer number reached'
+          this.formData.errorMessage = 'Max answer chosen'
+          isValidated = false
         }
       } else if (this.required && !this.formData.isChecked) {
         this.formData.errorMessage = 'This field is required'
+        isValidated = false
       }
+      return isValidated
     },
-    onCheckboxClick() {
-      if (this.config.isMultipleAnswers) {
-        let isValidated = true
-        if (
-          this.config.maxAnswerNumber &&
-          this.formData.checkedOptions.length > this.config.maxAnswerNumber
-        ) {
-          isValidated = false
-          this.formData.errorMessage = `You can only select up to ${this.config.maxAnswerNumber} options`
+    onCheckboxChange($event: any) {
+      console.log($event, 'test')
+      const isValidated = this.validateCheckbox()
+      const tempValue: any = this.config.isMultipleAnswers
+        ? _.cloneDeep(this.formData.checkedOptions)
+        : this.formData.isChecked
+
+      if (!isValidated) {
+        if (this.config.isMultipleAnswers) {
+          this.formData.checkedOptions = _.cloneDeep(tempValue)
+        } else {
+          this.formData.isChecked = !!tempValue
         }
-        if (isValidated) {
-          this.formData.errorMessage = ''
-          this.$emit('input', this.formData.checkedOptions)
-          this.$emit('change', this.formData.checkedOptions)
+      } else if (this.config.isMultipleAnswers && isValidated) {
+        this.formData.errorMessage = ''
+        const value = this.formData.checkedOptions.join(';')
+        if (!this.item.questionId) {
+          this.$emit('add:label', { formDataKey: this.formDataKey, value })
+        } else if (this.item.questionId && this.formData.checkedOptions.length) {
+          this.$emit('update:label', { formDataKey: this.formDataKey, value })
+        } else if (this.item.questionId && !this.formData.checkedOptions.length) {
+          this.$emit('delete:label', { formDataKey: this.formDataKey, value })
         }
-      } else {
+        this.$emit('input', this.formData.checkedOptions)
+      } else if (!this.config.isMultipleAnswers && isValidated) {
+        if (this.item.questionId) {
+          this.$emit('delete:label', { formDataKey: this.formDataKey })
+        } else {
+          this.$emit('add:label', { formDataKey: this.formDataKey, value: this.name })
+        }
         this.$emit('input', this.formData.isChecked)
-        this.$emit('change', this.formData.isChecked)
       }
     }
   }

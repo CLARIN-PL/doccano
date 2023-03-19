@@ -23,7 +23,12 @@
                     :counter="100"
                     :disabled="loading"
                     label="Dimension Name"
-                    :rules="[rules.required, rules.nameDuplicated, rules.maxLength100]"
+                    :rules="[
+                      rules.required,
+                      rules.nameDuplicated,
+                      rules.maxLength100,
+                      rules.nameStringOnly
+                    ]"
                     outlined
                     required
                     @input="$emit('update:text', $event)"
@@ -165,7 +170,7 @@ export default Vue.extend({
     return {
       valid: false,
       loading: false,
-      dimensions: [],
+      dimensions: [] as any[],
       isDimensionDetailFormValid: false,
       dimensionTypeOptions: [
         {
@@ -178,7 +183,7 @@ export default Vue.extend({
         }
       ],
       formData: {
-        dimensions: [],
+        dimensions: [] as any[],
         dimensionName: '',
         dimensionType: '',
         isCreatingNewDimension: true,
@@ -211,6 +216,12 @@ export default Vue.extend({
     rules() {
       return {
         required: (v: string) => !!v || 'Required',
+        nameStringOnly: (
+          v: string // @ts-ignore
+        ) => {
+          const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
+          return pattern.test(v) || this.$i18n.t('annotation.warningInvalidChar')
+        },
         maxLength100: (
           v: string // @ts-ignore
         ) => (v && v.length <= 100) || this.$t('rules.labelNameRules').labelLessThan100Chars,
@@ -227,6 +238,7 @@ export default Vue.extend({
 
   mounted() {
     if (this.$refs.form) {
+      // @ts-ignore
       this.$refs.form.resetValidation()
     }
   },

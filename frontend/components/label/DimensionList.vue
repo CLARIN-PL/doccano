@@ -167,8 +167,8 @@ export default Vue.extend({
     },
     getParsedValue(value: string, key: string) {
       let result = value
-      if (key === 'options' && value.includes(';')) {
-        result = value.split(';').join('</li><li class="metadata-options__item">')
+      if (key === 'options' && value.includes(',')) {
+        result = value.split(',').join('</li><li class="metadata-options__item">')
         result = `<ul class="metadata-options"><li class="metadata-options__item">${result}</li></ul>`
       } else if (key === 'options' && Array.isArray(value)) {
         result = value.join('</li><li class="metadata-options__item">')

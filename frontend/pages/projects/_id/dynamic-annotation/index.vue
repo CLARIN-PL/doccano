@@ -134,8 +134,9 @@
                               :is="getDimComponent(dim)"
                               :value="dim.value"
                               :name="dim.name"
+                              :key="dim.key"
                               :form-data-key="`[${key}][${dimIdx}]`"
-                              :state="getDimState(dim)"
+                              :item="dim"
                               :items="dimensionTypes"
                               :config="getDimConfig(dim)"
                               :required="dim.metadata[0].required"
@@ -255,31 +256,11 @@ export default {
     },
     textLabelValues() {
       return this.textLabels.map((textLabel) => {
-        const substatementQuestion = textLabel.question
-        /* const annotation = _.cloneDeep(this.polishAnnotation.humor) 
-        let substatementKey = ''
-        Object.keys(annotation).forEach((subKey: string) => {
-          if (typeof annotation[subKey] === 'object') {
-            Object.keys(annotation[subKey]).every((subKey2: string) => {
-              let isKey = annotation[subKey][subKey2] === textLabel.question
-              if (textLabel.question.includes(' - ')) {
-                const questions = textLabel.question.split(' - ')
-                isKey =
-                  annotation[subKey].question === questions[0] &&
-                  annotation[subKey][subKey2] === questions[1]
-              }
-              if (isKey) {
-                substatementKey = `${subKey}.${subKey2}`
-              }
-              return !isKey
-            })
-          }
-        }) */
-        return {
-          ...textLabel,
-          substatementQuestion
-          // substatementKey
+        const answer = textLabel.text
+        if (answer.includes(';')) {
+          textLabel.answers = answer.split(';')
         }
+        return textLabel
       })
     },
     projectId() {
@@ -326,30 +307,23 @@ export default {
             this.formData.dimensions[key].forEach((dim) => {
               const scaleValue = val.find((scale) => scale.text === dim.name)
               const index = this.formData.dimensions[key].indexOf(dim)
-              if (scaleValue) {
-                const formDataKey = `[${key}][${index}]`
+              const formDataKey = `[${key}][${index}]`
+              if (scaleValue && dim.type === 'slider') {
+                const isDisabled = scaleValue.scale === -1
+                _.set(this.formData.dimensions, `${formDataKey}.questionId`, scaleValue.id)
                 _.set(this.formData.dimensions, `${formDataKey}.value`, scaleValue.scale)
                 _.set(this.formData.dimensions, `${formDataKey}.isClicked`, true)
-                _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, false)
+                _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, isDisabled)
+                _.set(this.formData.dimensions, `${formDataKey}.isCheckboxChecked`, isDisabled)
                 _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
+                const formKey = _.get(this.formData.dimensions, `${formDataKey}.key`) || 0
+                _.set(this.formData.dimensions, `${formDataKey}.key`, formKey + 1)
               }
               this.$forceUpdate()
             })
           })
         } else {
-          Object.keys(this.formData.dimensions).forEach((key) => {
-            this.formData.dimensions[key].forEach((dim) => {
-              const index = this.formData.dimensions[key].indexOf(dim)
-              if (dim.type === 'slider') {
-                const formDataKey = `[${key}][${index}]`
-                _.set(this.formData.dimensions, `${formDataKey}.value`, '')
-                _.set(this.formData.dimensions, `${formDataKey}.isClicked`, false)
-                _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, false)
-                _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
-              }
-              this.$forceUpdate()
-            })
-          })
+          this.resetFormData()
         }
       }
     },
@@ -357,33 +331,32 @@ export default {
       deep: true,
       handler(val) {
         if (val.length) {
-          /*  val.forEach((textLabel) => {
-            const substatementIndex = textLabel.substatementKey.split('.substatement')[1]
-            const subquestionIndex = textLabel.substatementKey.split('.')[0]
-            const formDataKey = `${subquestionIndex}[${parseInt(substatementIndex) - 1}]`
-            const formData = _.get(this.formData, formDataKey)
-            if (formData) {
-              _.set(this.formData, `${formDataKey}.isChecked`, !!textLabel.text)
-              _.set(this.formData, `${formDataKey}.isSubmitting`, false)
-              _.set(this.formData, `${formDataKey}.answer`, textLabel.text)
-            }
-          })
           Object.keys(this.formData.dimensions).forEach((key) => {
-            // @ts-ignore
-            const subquestionLength = this.formData[key].length
-            for (let i: number = 0; i < subquestionLength; i++) {
-              const substatementKey = `${key}.substatement${i + 1}`
-              const isStored = val.find(
-                (textLabel) => textLabel.substatementKey === substatementKey
-              )
-              if (!isStored) {
-                // @ts-ignore
-                this.formData[key][i].answer = ''
-                // @ts-ignore
-                this.formData[key][i].isSubmitting = false
+            this.formData.dimensions[key].forEach((dim) => {
+              const textLabel = val.find((v) => v.question === dim.name)
+              const index = this.formData.dimensions[key].indexOf(dim)
+              const formDataKey = `[${key}][${index}]`
+              const formData = _.get(this.formData.dimensions, `${formDataKey}`)
+              const formKey = _.get(this.formData.dimensions, `${formDataKey}.key`) || 0
+              if (textLabel && dim.type === 'checkbox') {
+                const config = this.getDimConfig(formData)
+                _.set(this.formData.dimensions, `${formDataKey}.questionId`, textLabel.id)
+                let answer = textLabel.text.includes(';')
+                  ? textLabel.text.split(';')
+                  : textLabel.text
+
+                answer = config.isMultipleAnswers ? [answer] : !!answer
+                _.set(this.formData.dimensions, `${formDataKey}.value`, answer)
+                _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
+                _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, false)
+                _.set(this.formData.dimensions, `${formDataKey}.isChecked`, true)
+                _.set(this.formData.dimensions, `${formDataKey}.key`, formKey + 1)
               }
-            }
-          }) */
+            })
+            this.$forceUpdate()
+          })
+        } else {
+          this.resetFormData()
         }
       }
     },
@@ -441,16 +414,32 @@ export default {
       'initQuestionnaire',
       'getQuestionnaire'
     ]),
+    resetFormData() {
+      Object.keys(this.formData.dimensions).forEach((key) => {
+        this.formData.dimensions[key] = this.formData.dimensions[key].map((dim) => {
+          if (dim.type === 'checkbox' && !this.textLabelValues.length) {
+            dim.questionId = ''
+            dim.value = ''
+            dim.isSubmitting = false
+            dim.isDisabled = false
+            dim.isChecked = false
+            dim.key = dim.key + 1
+          } else if (dim.type === 'slider' && !this.scales.length) {
+            dim.value = ''
+            dim.isSubmitting = false
+            dim.isDisabled = false
+            dim.isClicked = false
+            dim.key = dim.key + 1
+          }
+          return dim
+        })
+      })
+    },
     getDimComponent(dimension) {
       if (dimension.type === 'slider') {
         return SliderInput
       } else if (dimension.type === 'checkbox') {
         return CheckboxInput
-      }
-    },
-    getDimState(dimension) {
-      return {
-        ...dimension
       }
     },
     getDimConfig(item) {
@@ -588,7 +577,7 @@ export default {
     onDynamicComponentUpdateScale: _.debounce(async function ({ formDataKey, val }) {
       const base = this
       const dimensionData = _.get(base.formData.dimensions, formDataKey)
-      if (dimensionData && dimensionData.questionId) {
+      if (dimensionData && dimensionData.questionId && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isClicked`, true)
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         await this.$services.affectiveScale.create(
@@ -604,7 +593,7 @@ export default {
     async onDynamicComponentRemoveLabel({ formDataKey }) {
       const base = this
       const dimensionData = _.get(base.formData.dimensions, formDataKey)
-      if (dimensionData && dimensionData.questionId) {
+      if (dimensionData && dimensionData.questionId && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
 
         await this.$services.affectiveTextlabel.delete(
@@ -621,7 +610,7 @@ export default {
       const base = this
       const dimensionData = _.get(base.formData.dimensions, formDataKey)
 
-      if (dimensionData && dimensionData.questionId) {
+      if (dimensionData && dimensionData.questionId && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
 
         await this.$services.affectiveTextlabel.changeText(
@@ -639,7 +628,7 @@ export default {
       const base = this
       const dimensionData = _.get(base.formData.dimensions, formDataKey)
 
-      if (dimensionData && dimensionData.name) {
+      if (dimensionData && dimensionData.name && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         await this.$services.affectiveTextlabel.create(
           this.projectId,
@@ -675,7 +664,6 @@ export default {
     async confirm() {
       const DATE_FORMAT = 'DD-MM-YYYY HH:mm:ss'
       this.canConfirm = this.$refs.dimensionForm.validate()
-      console.log(this.canConfirm)
       this.hasClickedConfirmButton = this.canConfirm ? false : !this.isProjectAdmin
       if (this.canConfirm || this.isProjectAdmin) {
         await this.$services.example.confirm(this.projectId, this.doc.id)

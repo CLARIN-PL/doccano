@@ -51,7 +51,7 @@
           v-model.trim="formData.minValDescription"
           :disabled="loading"
           :counter="50"
-          :rules="[rules.maxLength50]"
+          :rules="[rules.maxLength50, rules.nameStringOnly]"
           label="Min val description"
           outlined
         />
@@ -61,7 +61,7 @@
           v-model.trim="formData.maxValDescription"
           :disabled="loading"
           :counter="50"
-          :rules="[rules.maxLength50]"
+          :rules="[rules.maxLength50, rules.nameStringOnly]"
           label="Max val description"
           outlined
         />
@@ -134,6 +134,12 @@ export default Vue.extend({
         min0: (v: string) => parseInt(v) >= 0 || 'Must be bigger or equal to 0',
         min01: (v: string) => Number(v) >= 0.1 || 'Must be bigger or equal to 0.1',
         min1: (v: string) => parseInt(v) >= 1 || 'Must be bigger or equal to 1',
+        nameStringOnly: (
+          v: string // @ts-ignore
+        ) => {
+          const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
+          return pattern.test(v) || this.$i18n.t('annotation.warningInvalidChar')
+        },
         maxMargin: () =>
           base.formData.sliderMax - base.formData.sliderMin <= base.maxMargin ||
           'Difference should be lesser or equal to 20',

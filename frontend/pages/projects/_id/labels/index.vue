@@ -213,9 +213,9 @@ export default Vue.extend({
   methods: {
     async list() {
       this.isLoading = true
-      this.items = await this.service.list(this.projectId)
-      if (!Array.isArray(this.items) && this.items.items) {
-        this.items = _.cloneDeep(this.items.items)
+      const items = await this.service.list(this.projectId)
+      if (!Array.isArray(items) && items.items) {
+        this.items = _.cloneDeep(items.items)
       }
       this.$nextTick(() => {
         if (this.isDynamicAnnotation && this.tab === 1) {

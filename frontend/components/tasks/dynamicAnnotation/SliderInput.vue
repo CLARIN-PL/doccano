@@ -38,16 +38,17 @@
               {{ config.maxValDescription }}
             </span>
           </div>
-
           <div class="slider__checkbox">
             <checkbox-input
               v-if="config.withCheckbox && checkbox.metadata.length"
               v-model="formData.isCheckboxChecked"
+              :key="checkbox.key"
               :name="checkbox.name"
+              :item="checkbox"
               :config="checkbox.metadata[0].value"
               :required="false"
               :read-only="readOnly || preview || checkbox.metadata[0].readOnly"
-              @change="onCheckboxChange"
+              @input="onCheckboxInput"
             />
           </div>
         </div>
@@ -75,7 +76,7 @@ export default Vue.extend({
       type: [Number, String],
       default: 0
     },
-    state: {
+    item: {
       type: Object,
       default: () => {
         return {
@@ -133,6 +134,8 @@ export default Vue.extend({
         isSubmitting: false
       },
       checkbox: {
+        key: 0,
+        tempValue: false,
         name: '',
         type: '',
         group: '',
@@ -144,7 +147,7 @@ export default Vue.extend({
     rules() {
       const base = this
       return {
-        required: () => (base.required ? base.state.isClicked : true || 'Required')
+        required: () => (base.required ? base.item.isClicked : true || 'Required')
       }
     },
     sliderMin(): number {
@@ -187,7 +190,14 @@ export default Vue.extend({
     }
   },
   watch: {
-    state(val) {
+    formData: {
+      deep: true,
+      handler(val) {
+        this.checkbox.tempValue = val.isCheckboxChecked
+        this.checkbox.key += 1
+      }
+    },
+    item(val) {
       this.formData = { ...this.formData, ...val }
     },
     value(val) {
@@ -208,8 +218,10 @@ export default Vue.extend({
     setFormData() {
       this.formData = {
         ...this.formData,
-        ...{ ...this.state, value: this.value }
+        ...{ ...this.item, value: this.value }
       }
+
+      this.checkbox.tempValue = this.formData.isCheckboxChecked
     },
     setCheckboxData() {
       if (this.config.withCheckbox && this.items.length) {
@@ -224,14 +236,18 @@ export default Vue.extend({
         }
       }
     },
-    onCheckboxChange(val: any) {
+    onCheckboxInput() {
+      const val = this.formData.isCheckboxChecked
       if (val) {
         this.formData.tempValue = this.formData.value
         this.formData.value = 0
         this.$emit('update:scale', { formDataKey: this.formDataKey, val: -1 })
       } else {
-        this.formData.value = this.formData.tempValue
-        this.$emit('update:scale', { formDataKey: this.formDataKey, val: this.formData.tempValue })
+        const value =
+          this.formData.tempValue && this.formData.tempValue !== -1 ? this.formData.tempValue : 0
+        this.formData.value = value
+        this.formData.tempValue = value
+        this.$emit('update:scale', { formDataKey: this.formDataKey, val: value })
       }
     },
     onSliderChange(val: number) {
@@ -243,6 +259,8 @@ export default Vue.extend({
 </script>
 <style lang="scss" scoped>
 .slider-input {
+  overflow: hidden;
+
   &.--preview {
     zoom: 0.8;
     border: 1px solid #ddd;

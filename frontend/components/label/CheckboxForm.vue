@@ -55,7 +55,7 @@
                 v-model.trim="formData.options[idx].text"
                 :disabled="loading"
                 label="Checkbox option"
-                :rules="[rules.required, rules.nameDuplicated]"
+                :rules="[rules.required, rules.nameDuplicated, rules.nameStringOnly]"
                 :error-messages="getOptionErrorMessages(formData.options[idx])"
                 required
                 outlined
@@ -126,6 +126,12 @@ export default Vue.extend({
         nameDuplicated: (
           v: string // @ts-ignore
         ) => !this.isUsedName(v) || base.$t('rules.labelNameRules').duplicated,
+        nameStringOnly: (
+          v: string // @ts-ignore
+        ) => {
+          const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
+          return pattern.test(v) || this.$i18n.t('annotation.warningInvalidChar')
+        },
         required: (v: string) =>
           String(v) !== 'undefined' || String(v) !== '' || String(v) !== 'null' || 'Required',
         min0: (v: string) => parseInt(v) >= 0 || 'Must be bigger or equal to 0',
@@ -170,6 +176,7 @@ export default Vue.extend({
     onClickDeleteButton(idx: number) {
       this.formData.options.splice(idx, 1)
       if (this.$refs.checkboxForm) {
+        // @ts-ignore
         this.$refs.checkboxForm.validate()
       }
     },
