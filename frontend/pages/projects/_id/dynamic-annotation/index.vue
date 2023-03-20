@@ -495,7 +495,7 @@ export default {
     async setLabelData() {
       this.scaleTypes = await this.$services.scaleType.list(this.projectId)
       await this.$services.dimension.list(this.projectId).then((res) => {
-        this.dimensionTypes = res.items
+        this.dimensionTypes = _.uniqBy(res.items, 'name')
         this.$nextTick(() => {
           const dimensions = this.dimensionTypes.map((item) => {
             const groupMap = {

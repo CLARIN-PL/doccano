@@ -195,11 +195,11 @@ export default Vue.extend({
           isValidated = false
         }
         if (this.formData.checkedOptions.length < this.config.minAnswerNumber) {
-          this.formData.errorMessage = `Please mark at least ${this.config.minAnswerNumber} answers`
+          this.formData.errorMessage = `Please mark at least ${this.config.minAnswerNumber} options`
           isValidated = false
         }
         if (this.formData.checkedOptions.length > this.config.maxAnswerNumber) {
-          this.formData.errorMessage = 'Max answer chosen'
+          this.formData.errorMessage = `You can only choose up to ${this.config.maxAnswerNumber} options`
           isValidated = false
         }
       } else if (this.required && !this.formData.isChecked) {
@@ -209,11 +209,19 @@ export default Vue.extend({
       return isValidated
     },
     onCheckboxChange($event: any) {
-      console.log($event, 'test')
+      const { returnValue } = $event
+      const isAdding = returnValue
       const isValidated = this.validateCheckbox()
-      const tempValue: any = this.config.isMultipleAnswers
+      let tempValue: any = this.config.isMultipleAnswers
         ? _.cloneDeep(this.formData.checkedOptions)
         : this.formData.isChecked
+
+      if (isAdding) {
+        tempValue = _.cloneDeep(this.formData.checkedOptions).splice(
+          0,
+          this.formData.checkedOptions.length - 1
+        )
+      }
 
       if (!isValidated) {
         if (this.config.isMultipleAnswers) {
