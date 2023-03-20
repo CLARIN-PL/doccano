@@ -125,13 +125,14 @@
                         <h2>
                           {{ key }}
                         </h2>
-                        <ul>
+                        <ol>
                           <li
                             v-for="(dim, dimIdx) in formData.dimensions[key]"
                             :key="`dimension-group--${key}_${dimIdx}`"
                           >
                             <component
                               :is="getDimComponent(dim)"
+                              :ref="`dimension_${key}_${dimIdx}`"
                               :value="dim.value"
                               :name="dim.name"
                               :key="dim.key"
@@ -140,14 +141,14 @@
                               :items="dimensionTypes"
                               :config="getDimConfig(dim)"
                               :required="dim.metadata[0].required"
-                              :read-only="dim.metadata[0].readonly"
+                              :read-only="!canEdit || dim.isSubmitting || dim.metadata[0].readonly"
                               @update:scale="onDynamicComponentUpdateScale"
                               @add:label="onDynamicComponentAddLabel"
                               @update:label="onDynamicComponentUpdateLabel"
                               @remove:label="onDynamicComponentRemoveLabel"
                             />
                           </li>
-                        </ul>
+                        </ol>
                       </li>
                     </ul>
                   </v-form>
@@ -230,19 +231,21 @@ export default {
   },
 
   async fetch() {
-    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+    // this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
     await this.setProjectData()
     await this.setDoc()
     await this.setHasCheckedPreviousDoc()
     this.$nextTick(() => {
       this.setArticleData()
       this.list(this.doc.id)
+      this.canConfirm = false
     })
   },
 
   computed: {
     ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId']),
     ...mapGetters('config', ['isRTL']),
+    ...mapGetters('projects', ['currentDimensions']),
     ...mapGetters('user', ['getAnnotation']),
     scaleValues() {
       return this.scales.map((scale) => {
@@ -256,10 +259,6 @@ export default {
     },
     textLabelValues() {
       return this.textLabels.map((textLabel) => {
-        const answer = textLabel.text
-        if (answer.includes(';')) {
-          textLabel.answers = answer.split(';')
-        }
         return textLabel
       })
     },
@@ -341,11 +340,14 @@ export default {
               if (textLabel && dim.type === 'checkbox') {
                 const config = this.getDimConfig(formData)
                 _.set(this.formData.dimensions, `${formDataKey}.questionId`, textLabel.id)
-                let answer = textLabel.text.includes(';')
-                  ? textLabel.text.split(';')
-                  : textLabel.text
-
-                answer = config.isMultipleAnswers ? [answer] : !!answer
+                let multipleAnswers =
+                  typeof textLabel.text === 'string' && textLabel.text.includes('_')
+                    ? textLabel.text.split('_')
+                    : textLabel.text
+                multipleAnswers = Array.isArray(multipleAnswers)
+                  ? multipleAnswers
+                  : [multipleAnswers]
+                const answer = config.isMultipleAnswers ? multipleAnswers : !!textLabel.text
                 _.set(this.formData.dimensions, `${formDataKey}.value`, answer)
                 _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
                 _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, false)
@@ -424,11 +426,12 @@ export default {
             dim.isDisabled = false
             dim.isChecked = false
             dim.key = dim.key + 1
-          } else if (dim.type === 'slider' && !this.scales.length) {
-            dim.value = ''
+          } else if (dim.type === 'slider' && !this.scaleValues.length) {
+            dim.value = 0
             dim.isSubmitting = false
             dim.isDisabled = false
             dim.isClicked = false
+            dim.isCheckboxChecked = false
             dim.key = dim.key + 1
           }
           return dim
@@ -494,43 +497,46 @@ export default {
     },
     async setLabelData() {
       this.scaleTypes = await this.$services.scaleType.list(this.projectId)
-      await this.$services.dimension.list(this.projectId).then((res) => {
-        this.dimensionTypes = _.uniqBy(res.items, 'name')
-        this.$nextTick(() => {
-          const dimensions = this.dimensionTypes.map((item) => {
-            const groupMap = {
-              DIM_OTH: 'Others',
-              DIM_OF: 'Offensive',
-              DIM_HUM: 'Humor',
-              DIM_EMO: 'Emotions'
-            }
-            if (item.metadata && item.metadata.length) {
-              const codename = item.metadata[0].codename
-              for (const [key, value] of Object.entries(groupMap)) {
-                if (codename.includes(key)) {
-                  item.group = value
-                  break
-                }
+      let dimensions = _.cloneDeep(this.currentDimensions)
+      if (!dimensions.length) {
+        const response = await this.$services.dimension.list(this.projectId)
+        dimensions = response.items
+      }
+      this.dimensionTypes = _.uniqBy(dimensions, 'name')
+      this.$nextTick(() => {
+        const dimensions = this.dimensionTypes.map((item) => {
+          const groupMap = {
+            DIM_OTH: 'Others',
+            DIM_OF: 'Offensive',
+            DIM_HUM: 'Humor',
+            DIM_EMO: 'Emotions'
+          }
+          if (item.metadata && item.metadata.length) {
+            const codename = item.metadata[0].codename
+            for (const [key, value] of Object.entries(groupMap)) {
+              if (codename.includes(key)) {
+                item.group = value
+                break
               }
-              if (!item.group) {
-                item.group = 'Dynamic'
-              }
             }
-
-            if (item.type === 'slider') {
-              const scale = this.scaleTypes.find((scaleType) => scaleType.text === item.name)
-              item.questionId = scale ? scale.id : null
+            if (!item.group) {
+              item.group = 'Dynamic'
             }
+          }
 
-            item.value = ''
-            item.isValidated = false
-            item.isClicked = false
-            item.isSubmitting = false
+          if (item.type === 'slider') {
+            const scale = this.scaleTypes.find((scaleType) => scaleType.text === item.name)
+            item.questionId = scale ? scale.id : null
+          }
 
-            return item
-          })
-          this.formData.dimensions = _.groupBy(dimensions, 'group')
+          item.value = ''
+          item.isValidated = false
+          item.isClicked = false
+          item.isSubmitting = false
+
+          return item
         })
+        this.formData.dimensions = _.groupBy(dimensions, 'group')
       })
     },
     async setProjectData() {

@@ -74,6 +74,10 @@ export default Vue.extend({
       type: [Array, String, Boolean],
       default: () => []
     },
+    useValue: {
+      type: Boolean,
+      default: false
+    },
     config: {
       type: Object,
       default() {
@@ -90,7 +94,7 @@ export default Vue.extend({
       default: () => {
         return {
           id: '',
-          value: '',
+          value: [],
           isSubmitting: false,
           isChecked: false
         }
@@ -128,12 +132,12 @@ export default Vue.extend({
     item: {
       deep: true,
       handler() {
-        this.setFormDataFromItem()
+        this.setFormData()
       }
     }
   },
   created() {
-    this.setFormDataFromItem()
+    this.setFormData()
   },
   computed: {
     rules() {
@@ -151,28 +155,28 @@ export default Vue.extend({
     }
   },
   methods: {
-    setFormDataFromValue() {
-      const val: any = this.value
-      if (Array.isArray(val)) {
-        this.formData.checkedOptions = val
-      } else if (typeof val === 'boolean') {
-        this.formData.isChecked = val
+    setFormData() {
+      if (this.useValue) {
+        this.setFormDataFromValue()
+      } else {
+        this.setFormDataFromItem()
       }
-      this.$forceUpdate()
+    },
+    setFormDataFromValue() {
+      if (this.config.isMultipleAnswers) {
+        this.formData.checkedOptions = Array.isArray(this.value) ? this.value : []
+      } else {
+        this.formData.isChecked = !!this.value
+      }
     },
     setFormDataFromItem() {
       if (this.config.isMultipleAnswers) {
-        const val: any = this.item.tempValue ? this.item.tempValue : this.item.value
-        if (val && typeof val === 'string') {
-          this.formData.checkedOptions = val.split(';')
-        } else if (val && Array.isArray(val)) {
-          this.formData.checkedOptions = val
-        }
+        const val: any = this.item.tempValue || this.item.value
+        this.formData.checkedOptions = Array.isArray(val) ? val : []
       } else {
-        this.formData.isChecked =
-          !!this.item.isChecked || !!this.item.value || !!this.item.tempValue
+        const val: any = this.item.tempValue || this.item.value
+        this.formData.isChecked = !!val
       }
-      this.$forceUpdate()
     },
     parseConfigOptions(val: string) {
       let options = []
@@ -208,30 +212,25 @@ export default Vue.extend({
       }
       return isValidated
     },
-    onCheckboxChange($event: any) {
-      const { returnValue } = $event
-      const isAdding = returnValue
+    onCheckboxChange() {
       const isValidated = this.validateCheckbox()
       let tempValue: any = this.config.isMultipleAnswers
         ? _.cloneDeep(this.formData.checkedOptions)
         : this.formData.isChecked
 
-      if (isAdding) {
-        tempValue = _.cloneDeep(this.formData.checkedOptions).splice(
-          0,
-          this.formData.checkedOptions.length - 1
-        )
-      }
-
       if (!isValidated) {
         if (this.config.isMultipleAnswers) {
+          tempValue = _.cloneDeep(this.formData.checkedOptions).splice(
+            0,
+            this.formData.checkedOptions.length - 1
+          )
           this.formData.checkedOptions = _.cloneDeep(tempValue)
         } else {
           this.formData.isChecked = !!tempValue
         }
       } else if (this.config.isMultipleAnswers && isValidated) {
         this.formData.errorMessage = ''
-        const value = this.formData.checkedOptions.join(';')
+        const value = this.formData.checkedOptions.join('_')
         if (!this.item.questionId) {
           this.$emit('add:label', { formDataKey: this.formDataKey, value })
         } else if (this.item.questionId && this.formData.checkedOptions.length) {

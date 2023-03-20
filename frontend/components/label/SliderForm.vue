@@ -27,7 +27,7 @@
           :rules="[
             rules.required,
             rules.min1,
-            rules.mustBeBiggerThanMin,
+            rules.mustBeBiggerOrEqualThanMin,
             rules.maxMargin,
             rules.number
           ]"
@@ -137,7 +137,7 @@ export default Vue.extend({
         nameStringOnly: (
           v: string // @ts-ignore
         ) => {
-          const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
+          const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż,().! -]+$/
           return pattern.test(v) || this.$i18n.t('annotation.warningInvalidChar')
         },
         maxMargin: () =>
@@ -151,7 +151,7 @@ export default Vue.extend({
           'Must be within difference of max and min',
         mustBeLesserThanMax: (v: string) =>
           parseInt(v) < base.formData.sliderMax || 'Must be lesser than max',
-        mustBeBiggerThanMin: (v: string) =>
+        mustBeBiggerOrEqualThanMin: (v: string) =>
           parseInt(v) >= base.formData.sliderMin || 'Must be bigger or equal to min',
         mustSetCheckboxName: () =>
           base.formData.withCheckbox
@@ -182,7 +182,7 @@ export default Vue.extend({
   methods: {
     setCheckboxOptions() {
       this.checkboxOptions = this.items
-        .filter((item: any) => item.type === 'checkbox')
+        .filter((item: any) => item.type === 'checkbox' && !item.metadata[0].isMultipleAnswers)
         .map((item: any) => {
           return {
             value: item.metadata[0].codename,
