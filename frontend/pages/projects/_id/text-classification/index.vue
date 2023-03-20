@@ -141,23 +141,6 @@ export default {
       removeTeacher,
       shortKeys
     }
-  },
-
-  computed: {
-    ...mapGetters('projects', ['currentDimensions'])
-  },
-
-  async mounted() {
-    console.log('projectId:', this.$route.params.id)
-
-    const dims = this.currentDimensions
-    console.log('dimensions:', dims)
-    const listAllDimensions = await this.$services.dimension.listAllDimensions()
-    console.log('listAllDimensions:', listAllDimensions)
-    const getDimensionMetaData = await this.$services.dimension.getDimensionMetaData(1)
-    console.log('getDimensionMetaData:', getDimensionMetaData)
-
-    // await this.$services.dimension.assignDimensions(this.$route.params.id, [1, 2, 3])
   }
 }
 </script>
