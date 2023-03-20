@@ -5,11 +5,18 @@ import { DimensionItem, DimensionItemList } from '~/domain/models/dimension/dime
 export class APIDimensionRepository implements DimensionRepository {
   constructor(private readonly request = ApiService) {}
 
-  async listAll(): Promise<DimensionItemList> {
+  async listAllDimensions(): Promise<DimensionItemList> {
     const url = `/projects/dimensions`
     const response = await this.request.get(url)
     const dimensions = response.data.map(
-      (item: any) => new DimensionItem(item.id, item.name, item.type, item.dimension_meta_data)
+      function(item: any) {
+        const dimension_meta_data = item.dimension_meta_data
+        for (let idx = 0; idx < dimension_meta_data.length; idx++) {
+          dimension_meta_data[idx].config.with_checkbox = !!dimension_meta_data[idx].config.with_checkbox
+          dimension_meta_data[idx].config.is_multiple_answers = !!dimension_meta_data[idx].config.is_multiple_answers
+        }
+        return new DimensionItem(item.id, item.name, item.type, dimension_meta_data)
+      }
     )
     return new DimensionItemList(dimensions)
   }
@@ -18,9 +25,28 @@ export class APIDimensionRepository implements DimensionRepository {
     const url = `/projects/${projectId}/dimension-detail`
     const response = await this.request.get(url)
     const dimensions = response.data.map(
-      (item: any) => new DimensionItem(item.id, item.name, item.type, item.dimension_meta_data)
+      function(item: any) {
+        const dimension_meta_data = item.dimension_meta_data
+        for (let idx = 0; idx < dimension_meta_data.length; idx++) {
+          dimension_meta_data[idx].config.with_checkbox = !!dimension_meta_data[idx].config.with_checkbox
+          dimension_meta_data[idx].config.is_multiple_answers = !!dimension_meta_data[idx].config.is_multiple_answers
+        }
+        return new DimensionItem(item.id, item.name, item.type, dimension_meta_data)
+      }
     )
     return new DimensionItemList(dimensions)
+  }
+
+
+  async getDimensionMetaData(dimensionId: number): Promise<string> {
+    const url = `/projects/dimensions/${dimensionId}/metadata`
+    const response = await this.request.get(url)
+    const dimension_meta_data = response.data
+    for (let idx = 0; idx < dimension_meta_data.length; idx++) {
+      dimension_meta_data[idx].config.with_checkbox = !!dimension_meta_data[idx].config.with_checkbox
+      dimension_meta_data[idx].config.is_multiple_answers = !!dimension_meta_data[idx].config.is_multiple_answers
+    }
+    return dimension_meta_data
   }
 
   async create(projectId: string, name: string, type: string, dimension_meta_data: string): Promise<DimensionItem> {
@@ -29,7 +55,7 @@ export class APIDimensionRepository implements DimensionRepository {
     return new DimensionItem(response.data.id, response.data.name, response.data.type, response.data.metadata)
   }
 
-  async assign(projectId: string, dimension: number[]) : Promise<void> {
+  async assignDimensions(projectId: string, dimension: number[]) : Promise<void> {
     const url = `projects/${projectId}/assign_dimensions`
     await this.request.post(url, { dimension })
   }

@@ -125,7 +125,7 @@ export default {
   },
   methods: {
     async setDimensionList() {
-      await this.$services.dimension.listAll().then((response) => {
+      await this.$services.dimension.listAllDimensions().then((response) => {
         const dimensions = response.items
         if (this.assignedDimensions.length) {
           this.dimensions = _.differenceBy(dimensions, this.assignedDimensions, 'name')

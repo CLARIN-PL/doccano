@@ -146,7 +146,7 @@ export default Vue.extend({
     },
     // @ts-ignore
     async onSubmitAddDimension({ request, redirect }) {
-      await this.$services.dimension.assign(this.projectId, request.dimension)
+      await this.$services.dimension.assignDimensions(this.projectId, request.dimension)
       if (redirect) {
         this.$router.push(this.localePath(`/projects/${this.projectId}/labels`))
       } else {
