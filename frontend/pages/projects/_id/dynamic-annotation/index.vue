@@ -117,15 +117,13 @@
               >
                 <v-card-text>
                   <v-form ref="dimensionForm">
-                    <ul>
+                    <ul class="dimension-group-list">
                       <li
                         v-for="(key, idx) in Object.keys(formData.dimensions)"
                         :key="`dimension-group_${idx}`"
+                        class="dimension-group-list__item"
                       >
-                        <h2>
-                          {{ key }}
-                        </h2>
-                        <ol>
+                        <ol class="dimension-list">
                           <li
                             v-for="(dim, dimIdx) in formData.dimensions[key]"
                             :key="`dimension-group--${key}_${dimIdx}`"
@@ -133,15 +131,16 @@
                             <component
                               :is="getDimComponent(dim)"
                               :ref="`dimension_${key}_${dimIdx}`"
+                              :key="dim.key"
                               :value="dim.value"
                               :name="dim.name"
-                              :key="dim.key"
                               :form-data-key="`[${key}][${dimIdx}]`"
                               :item="dim"
                               :items="dimensionTypes"
                               :config="getDimConfig(dim)"
                               :required="dim.metadata[0].required"
                               :read-only="!canEdit || dim.isSubmitting || dim.metadata[0].readonly"
+                              class="dimension-list__item"
                               @update:scale="onDynamicComponentUpdateScale"
                               @add:label="onDynamicComponentAddLabel"
                               @update:label="onDynamicComponentUpdateLabel"
@@ -226,7 +225,7 @@ export default {
       hasValidEntries: {},
       canConfirm: false,
       hasClickedConfirmButton: false,
-      showProgressBar: true
+      showProgressBar: false
     }
   },
 
@@ -255,11 +254,6 @@ export default {
           ...scaleType,
           scaleTypeId: scale.label
         }
-      })
-    },
-    textLabelValues() {
-      return this.textLabels.map((textLabel) => {
-        return textLabel
       })
     },
     projectId() {
@@ -309,7 +303,7 @@ export default {
               const formDataKey = `[${key}][${index}]`
               if (scaleValue && dim.type === 'slider') {
                 const isDisabled = scaleValue.scale === -1
-                _.set(this.formData.dimensions, `${formDataKey}.questionId`, scaleValue.id)
+                // _.set(this.formData.dimensions, `${formDataKey}.questionId`, scaleValue.id)
                 _.set(this.formData.dimensions, `${formDataKey}.value`, scaleValue.scale)
                 _.set(this.formData.dimensions, `${formDataKey}.isClicked`, true)
                 _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, isDisabled)
@@ -326,7 +320,7 @@ export default {
         }
       }
     },
-    textLabelValues: {
+    textLabels: {
       deep: true,
       handler(val) {
         if (val.length) {
@@ -419,9 +413,9 @@ export default {
     resetFormData() {
       Object.keys(this.formData.dimensions).forEach((key) => {
         this.formData.dimensions[key] = this.formData.dimensions[key].map((dim) => {
-          if (dim.type === 'checkbox' && !this.textLabelValues.length) {
+          if (dim.type === 'checkbox' && !this.textLabels.length) {
             dim.questionId = ''
-            dim.value = ''
+            dim.value = false
             dim.isSubmitting = false
             dim.isDisabled = false
             dim.isChecked = false
@@ -512,27 +506,19 @@ export default {
             DIM_EMO: 'Emotions'
           }
           if (item.metadata && item.metadata.length) {
-            const codename = item.metadata[0].codename
-            for (const [key, value] of Object.entries(groupMap)) {
-              if (codename.includes(key)) {
-                item.group = value
-                break
-              }
-            }
-            if (!item.group) {
-              item.group = 'Dynamic'
-            }
+            const { codename } = item.metadata[0]
+            item.group = Object.keys(groupMap).find((key) => codename.includes(key)) || 'Dynamic'
           }
-
           if (item.type === 'slider') {
             const scale = this.scaleTypes.find((scaleType) => scaleType.text === item.name)
             item.questionId = scale ? scale.id : null
+            item.value = 0
+          } else if (item.type === 'checkbox') {
+            const { isMultipleAnswers } = item.metadata[0]
+            const textLabel = this.textLabels.find((textLabel) => textLabel.text === item.name)
+            item.questionId = textLabel ? textLabel.id : null
+            item.value = isMultipleAnswers ? [] : false
           }
-
-          item.value = ''
-          item.isValidated = false
-          item.isClicked = false
-          item.isSubmitting = false
 
           return item
         })
@@ -761,6 +747,30 @@ export default {
       left: 0;
       right: 0;
     }
+  }
+}
+
+.dimension-group-list {
+  padding: 0;
+
+  &__item {
+    > h3 {
+      margin-bottom: 15px;
+    }
+
+    list-style: none;
+    padding: 15px 0;
+    margin: 20px 0;
+
+    &:not(:last-of-type) {
+      border-bottom: 1px solid #ddd;
+    }
+  }
+}
+
+.dimension-list {
+  &__item {
+    margin-bottom: 10px;
   }
 }
 </style>

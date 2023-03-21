@@ -79,8 +79,8 @@
       </v-col>
       <v-col cols="12" sm="12">
         <v-select
-          v-model="formData.checkboxCodename"
           v-show="Boolean(formData.withCheckbox)"
+          v-model="formData.checkboxCodename"
           :disabled="loading"
           :items="checkboxOptions"
           label="Checkbox codename"

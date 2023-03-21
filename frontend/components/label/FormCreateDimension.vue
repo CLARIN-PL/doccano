@@ -69,8 +69,8 @@
                 </v-col>
                 <v-col cols="12" sm="12" class="dimension-form__detail">
                   <component
-                    v-model="isDimensionDetailFormValid"
                     :is="getDimensionDetailFormComponent(formData.dimensionType)"
+                    v-model="isDimensionDetailFormValid"
                     :loading="loading"
                     :required="formData.required"
                     :items="items"
@@ -91,7 +91,7 @@
             </v-form>
           </v-row>
         </v-col>
-        <v-col cols="12" sm="6" v-if="formData.isCreatingNewDimension">
+        <v-col v-if="formData.isCreatingNewDimension" cols="12" sm="6">
           <div class="dimension-form__preview" :class="{ '--preview': formData.dimensionType }">
             <component
               :is="getDimensionDetailPreviewComponent(formData.dimensionType)"

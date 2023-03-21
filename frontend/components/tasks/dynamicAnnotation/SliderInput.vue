@@ -1,9 +1,9 @@
 <template>
-  <div class="slider-input" :class="{ '--preview': preview }">
+  <div class="slider-input" :class="{ '--preview': preview, '--readonly': readOnly }">
     <div class="questions-item">
       <div class="questions-item__text">
         <h4 v-if="name">
-          {{ name }}
+          {{ capitalize(name) }}
           <span v-if="required" class="red--text">*</span>
         </h4>
         <div class="questions-item__slider">
@@ -42,7 +42,6 @@
               v-if="config.withCheckbox && checkbox.metadata.length"
               v-model="formData.isCheckboxChecked"
               :use-value="true"
-              :key="checkbox.key"
               :name="checkbox.name"
               :item="checkbox"
               :config="checkbox.metadata[0].value"
@@ -59,6 +58,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import CheckboxInput from './CheckboxInput.vue'
+import { capitalize } from '~/utils/stringHelpers'
 export default Vue.extend({
   components: {
     CheckboxInput
@@ -149,7 +149,7 @@ export default Vue.extend({
       const base = this
       const rules = []
       if (base.required && !base.readOnly) {
-        rules.push(() => base.item.isClicked || 'Required')
+        rules.push(() => base.formData.isClicked || 'Required')
       }
       return rules
     },
@@ -218,6 +218,7 @@ export default Vue.extend({
     this.setCheckboxData()
   },
   methods: {
+    capitalize,
     setFormData() {
       const { tempValue } = this.formData
       this.formData = {
@@ -231,7 +232,7 @@ export default Vue.extend({
     },
     setCheckboxData() {
       if (this.config.withCheckbox && this.items.length) {
-        const checkbox =
+        const checkbox: any =
           this.items.find(
             (item: any) => item.metadata[0].codename === this.config.checkboxCodename
           ) || {}
@@ -249,10 +250,9 @@ export default Vue.extend({
       const val = this.formData.isCheckboxChecked
       if (val) {
         this.formData.tempValue = this.formData.value
-        this.$nextTick(() => {
-          this.$emit('update:scale', { formDataKey: this.formDataKey, val: -1 })
-        })
+        this.$emit('update:scale', { formDataKey: this.formDataKey, val: -1 })
       } else {
+        this.formData.value = this.formData.tempValue
         this.$emit('update:scale', { formDataKey: this.formDataKey, val: this.formData.value })
       }
     },
@@ -272,6 +272,10 @@ export default Vue.extend({
     border: 1px solid #ddd;
     border-radius: 2px;
     padding: 10px;
+  }
+
+  &.--readonly {
+    opacity: 0.7;
   }
 }
 .questions-item {

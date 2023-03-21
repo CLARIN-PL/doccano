@@ -1,9 +1,9 @@
 <template>
-  <div class="checkbox-input" :class="{ '--preview': preview }">
+  <div class="checkbox-input" :class="{ '--preview': preview, '--readonly': readOnly }">
     <div v-if="config.isMultipleAnswers" class="questions-item">
       <div class="questions-item__text">
         <h4 v-if="name">
-          {{ name }}
+          {{ capitalize(name) }}
           <span v-if="required" class="red--text">*</span>
         </h4>
         <span v-if="formData.errorMessage" class="d-block red--text">
@@ -35,10 +35,7 @@
               @click="onCheckboxChange"
             />
           </li>
-          <p>
-            Please choose at least {{ config.minAnswerNumber }} option up to
-            {{ config.maxAnswerNumber }} option
-          </p>
+          <p></p>
         </ul>
       </div>
     </div>
@@ -59,6 +56,7 @@
 <script lang="ts">
 import _ from 'lodash'
 import Vue from 'vue'
+import { capitalize } from '~/utils/stringHelpers'
 
 export default Vue.extend({
   props: {
@@ -72,7 +70,7 @@ export default Vue.extend({
     },
     value: {
       type: [Array, String, Boolean],
-      default: () => []
+      default: () => [] as any[]
     },
     useValue: {
       type: Boolean,
@@ -128,6 +126,21 @@ export default Vue.extend({
       }
     }
   },
+  computed: {
+    rules() {
+      return {
+        requiredMultipleCheckboxes: () =>
+          this.required ? !!this.formData.checkedOptions.length : true || 'Required',
+        minAnswerNumber: () =>
+          this.formData.checkedOptions.length >= this.config.minAnswerNumber ||
+          `You must choose at least ${this.config.minAnswerNumber} options`,
+        maxAnswerNumber: () =>
+          this.formData.checkedOptions.length <= this.config.maxAnswerNumber ||
+          `You can choose only up to ${this.config.maxAnswerNumber} options`,
+        requiredSingleCheckbox: () => (this.required ? this.formData.isChecked : true || 'Required')
+      }
+    }
+  },
   watch: {
     item: {
       deep: true,
@@ -139,22 +152,8 @@ export default Vue.extend({
   created() {
     this.setFormData()
   },
-  computed: {
-    rules() {
-      return {
-        requiredMultipleCheckboxes: () =>
-          this.required ? !!this.formData.checkedOptions.length : true || 'Required',
-        minAnswerNumber: () =>
-          this.formData.checkedOptions.length >= this.config.minAnswerNumber ||
-          `Please select at least ${this.config.minAnswerNumber} options`,
-        maxAnswerNumber: () =>
-          this.formData.checkedOptions.length <= this.config.maxAnswerNumber ||
-          `You can only select up to ${this.config.maxAnswerNumber} options`,
-        requiredSingleCheckbox: () => (this.required ? this.formData.isChecked : true || 'Required')
-      }
-    }
-  },
   methods: {
+    capitalize,
     setFormData() {
       if (this.useValue) {
         this.setFormDataFromValue()
@@ -258,6 +257,10 @@ export default Vue.extend({
     border: 1px solid #ddd;
     border-radius: 2px;
     padding: 10px;
+  }
+
+  &.--readonly {
+    opacity: 0.7;
   }
 }
 .questions-item {

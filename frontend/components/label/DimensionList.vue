@@ -71,7 +71,7 @@
                             </span>
                           </v-col>
                           <v-col cols="6">
-                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <!-- eslint-disable vue/no-v-html -->
                             <span
                               class="metadata-pair --value"
                               v-html="getParsedValue(pairVal.value, pairVal.key)"

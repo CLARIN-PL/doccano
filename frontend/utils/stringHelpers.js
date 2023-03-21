@@ -18,3 +18,4 @@ export function objectKeysSnakeToCamel(object) {
       [snakeToCamel(key)]: value
     }), {})
 }
+
