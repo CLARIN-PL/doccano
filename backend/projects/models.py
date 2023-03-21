@@ -329,16 +329,13 @@ class Member(models.Model):
 
 
 class DynamicDimension(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     type = models.CharField(max_length=255, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
-    
-    class Meta:
-        unique_together = ("name", "type")
 
 
 class ProjectDimension(models.Model):
@@ -356,7 +353,7 @@ class ProjectDimension(models.Model):
 
 class DimensionMetaData(models.Model):
     dimension = models.ForeignKey(to=DynamicDimension, on_delete=models.CASCADE, related_name="dimension_meta_data")
-    codename = models.CharField(max_length=255)
+    codename = models.CharField(max_length=255, unique=True)
     config = models.JSONField(default=dict)
     required = models.BooleanField(default=False)
     readonly = models.BooleanField(default=False)
@@ -365,6 +362,3 @@ class DimensionMetaData(models.Model):
 
     def __str__(self):
         return self.dimension.id
-    
-    class Meta:
-        unique_together = ("dimension", "codename")
