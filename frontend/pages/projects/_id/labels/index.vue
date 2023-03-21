@@ -140,10 +140,6 @@ export default Vue.extend({
       return this.project.projectType === 'DynamicAnnotation'
     },
 
-    isDynamicAnnotation(): boolean {
-      return this.project.projectType === 'DynamicAnnotation'
-    },
-
     labelType(): string {
       if (this.hasMultiType) {
         if (this.isIntentDetectionAndSlotFilling) {
