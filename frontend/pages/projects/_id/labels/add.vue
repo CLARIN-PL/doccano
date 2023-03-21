@@ -106,7 +106,7 @@ export default Vue.extend({
       if (this.type === 'dimension') {
         await this.$services.dimension.list(this.projectId).then((response: DimensionListDTO) => {
           this.dimensionItems = response.items.map((item: DimensionDTO) => {
-            const groupMap = {
+            const groupMap: any = {
               DIM_OTH: 'Others',
               DIM_OF: 'Offensive',
               DIM_HUM: 'Humor',
@@ -114,7 +114,8 @@ export default Vue.extend({
             }
             if (item.metadata && item.metadata.length) {
               const { codename } = item.metadata[0]
-              const groupMapKey = Object.keys(groupMap).find((key) => codename.includes(key))
+              const groupMapKey: any =
+                Object.keys(groupMap).find((key) => codename.includes(key)) || ''
               item.group = groupMap[groupMapKey] || 'Dynamic'
             }
             return item

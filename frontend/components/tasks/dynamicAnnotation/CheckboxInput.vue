@@ -121,7 +121,7 @@ export default Vue.extend({
         isDisabled: false,
         isChecked: false,
         isSubmitting: false,
-        errorMessage: '',
+        errorMessage: '' as any,
         checkedOptions: [] as string[]
       }
     }

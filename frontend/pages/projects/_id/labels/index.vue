@@ -220,7 +220,7 @@ export default Vue.extend({
       this.$nextTick(() => {
         if (this.isDimensionsTab) {
           this.dimensionItems = items.map((item: any) => {
-            const groupMap = {
+            const groupMap: any = {
               DIM_OTH: 'Others',
               DIM_OF: 'Offensive',
               DIM_HUM: 'Humor',
@@ -228,7 +228,8 @@ export default Vue.extend({
             }
             if (item.metadata && item.metadata.length) {
               const { codename } = item.metadata[0]
-              const groupMapKey = Object.keys(groupMap).find((key) => codename.includes(key))
+              const groupMapKey: string =
+                Object.keys(groupMap).find((key) => codename.includes(key)) || ''
               item.group = groupMap[groupMapKey] || 'Dynamic'
             }
             if (item.type === 'checkbox') {
