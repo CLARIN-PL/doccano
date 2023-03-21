@@ -24,6 +24,7 @@
             :rules="[
               rules.required,
               rules.number,
+              rules.integer,
               rules.mustBeLesserThanMax,
               required ? rules.min1 : rules.min0,
               rules.maxOptionsLength
@@ -41,6 +42,7 @@
             :rules="[
               rules.required,
               rules.number,
+              rules.integer,
               rules.mustBeBiggerThanMin,
               rules.maxOptionsLength
             ]"
@@ -140,6 +142,7 @@ export default Vue.extend({
           this.$t('rules.required'),
         min0: (v: string) => parseInt(v) >= 0 || base.$t('mustBeBiggerOrEqualTo', { value: 0 }),
         min1: (v: string) => parseInt(v) >= 1 || base.$t('mustBeBiggerOrEqualTo', { value: 1 }),
+        integer: (v: string) => Number.isInteger(Number(v)) || this.$i18n.t('rules.mustBeInteger'),
         number: (v: string) => !Number.isNaN(Number(v)) || base.$t('mustBeNumber'),
         maxOptionsLength: (v: string) =>
           ((base.required ? parseInt(v) > 0 : true) &&
