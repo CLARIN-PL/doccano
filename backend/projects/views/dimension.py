@@ -31,7 +31,7 @@ class DynamicDimensionList(generics.ListCreateAPIView):
 class GetAllDynamicDimensions(generics.ListAPIView):
     serializer_class = DynamicDimensionSerializer
     pagination_class = None
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
 
     def get_queryset(self):
         return DynamicDimension.objects.all()
@@ -39,6 +39,7 @@ class GetAllDynamicDimensions(generics.ListAPIView):
 
 class AddProjectDimension(generics.CreateAPIView):
     serializer_class = ProjectDimensionSerializer
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
 
     def get_queryset(self):
         return ProjectDimension.objects.all()
