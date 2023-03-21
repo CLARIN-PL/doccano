@@ -1,5 +1,19 @@
 export default {
   required: 'Obligatoire',
+  readOnly: 'Lecture seule',
+  checkboxCodenameRequired: 'Le nom de code de la case à cocher est requis',
+  mustBeBiggerOrEqualTo: 'Doit être supérieur ou égal à {value}',
+  mustBeLesserOrEqualTo: 'Doit être inférieur ou égal à {value}',
+  diffMustBeLesserOrEqualTo: 'La différence doit être inférieure ou égale à {value}',
+  lengthMustBeLesserOrEqualTo: 'La longueur doit être inférieure ou égale à {value}',
+  mustBeWithinDifferenceOfMaxAndMin: "Doit être dans la différence entre max et min",
+  mustBeNumber: "Doit être un nombre",
+  mustBeInteger: "Doit être un entier",
+  mustBeLesserThanMax: "Doit être inférieur à max",
+  mustBeLesserOrEqualThanMax: "Doit être inférieur ou égal à max",
+  mustBeBiggerOrEqualThanMin: "Doit être supérieur ou égal à min",
+  pleaseChooseAtLeast: "Veuillez choisir au moins {value} options",
+  youCanOnlyChooseUpTo: "Vous ne pouvez choisir que jusqu'à {value} options",
   inputTextRules: {
     numericOnly: "Veuillez n'utiliser que des caractères numériques (0-9)"
   },

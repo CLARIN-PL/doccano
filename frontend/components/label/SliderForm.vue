@@ -136,9 +136,12 @@ export default Vue.extend({
     rules() {
       const base = this
       return {
-        min0: (v: string) => parseInt(v) >= 0 || 'Must be bigger or equal to 0',
-        min01: (v: string) => Number(v) >= 0.1 || 'Must be bigger or equal to 0.1',
-        min1: (v: string) => parseInt(v) >= 1 || 'Must be bigger or equal to 1',
+        min0: (v: string) =>
+          parseInt(v) >= 0 || this.$t('rules.mustBeBiggerOrEqualTo', { value: 0 }),
+        min01: (v: string) =>
+          Number(v) >= 0.1 || this.$t('rules.mustBeBiggerOrEqualTo', { value: 0.1 }),
+        min1: (v: string) =>
+          parseInt(v) >= 1 || this.$t('rules.mustBeBiggerOrEqualTo', { value: 1 }),
         nameStringOnly: (
           v: string // @ts-ignore
         ) => {
@@ -147,23 +150,24 @@ export default Vue.extend({
         },
         maxMargin: () =>
           base.formData.sliderMax - base.formData.sliderMin <= base.maxMargin ||
-          `Difference should be lesser or equal to ${base.maxMargin}`,
-        number: (v: string) => !Number.isNaN(Number(v)) || 'Must be number',
-        integer: (v: string) => Number.isInteger(Number(v)) || 'Must be integer',
+          this.$t('rules.diffMustBeLesserOrEqualTo', { value: base.maxMargin }),
+        number: (v: string) => !Number.isNaN(Number(v)) || this.$i18n.t('rules.mustBeNumber'),
+        integer: (v: string) => Number.isInteger(Number(v)) || this.$i18n.t('rules.mustBeInteger'),
         maxLength50: (v: string) =>
           v.length <= base.maxStringLength ||
-          `Length must be less or equal to ${base.maxStringLength}`,
+          this.$i18n.t('rules.lengthMustBeLesserOrEqualTo', { value: 50 }),
         mustBeWithinMargin: (v: string) =>
           parseInt(v) <= base.formData.sliderMax - base.formData.sliderMin ||
-          'Must be within difference of max and min',
+          this.$i18n.t('rules.mustBeWithinDifferenceOfMaxAndMin'),
         mustBeLesserThanMax: (v: string) =>
-          parseInt(v) < base.formData.sliderMax || 'Must be lesser than max',
+          parseInt(v) < base.formData.sliderMax || this.$i18n.t('rules.mustBeLesserThanMax'),
         mustBeBiggerOrEqualThanMin: (v: string) =>
-          parseInt(v) >= base.formData.sliderMin || 'Must be bigger or equal to min',
+          parseInt(v) >= base.formData.sliderMin ||
+          this.$i18n.t('rules.mustBeBiggerOrEqualThanMin'),
         mustSetCheckboxName: () =>
           base.formData.withCheckbox
             ? base.formData.checkboxCodename !== ''
-            : true || 'Please set checkbox codename',
+            : true || this.$t('rules.checkboxCodenameRequired'),
         required: (v: string) =>
           String(v) !== 'undefined' ||
           String(v) !== '' ||

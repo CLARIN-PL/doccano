@@ -13,7 +13,7 @@
                 >
                   <v-radio :label="$t('labels.createNewDimension')" :value="true"></v-radio>
                   <v-radio
-                    :label="$t('labels.assignPredefinedDimensions')"
+                    :label="$t('labels.assignPredefinedDimension')"
                     :disabled="hasAddedAllPredefinedDimensions"
                     :value="false"
                   ></v-radio>

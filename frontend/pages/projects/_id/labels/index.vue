@@ -11,8 +11,8 @@
         <v-tab v-if="project.useRelation" class="text-capitalize">Relation</v-tab>
       </template>
       <template v-else-if="isDynamicAnnotation">
-        <v-tab class="text-capitalize">Scale</v-tab>
-        <v-tab class="text-capitalize">Dimensions</v-tab>
+        <v-tab class="text-capitalize">{{ $t('labels.scale') }}</v-tab>
+        <v-tab class="text-capitalize">{{ $t('labels.dimensions') }}</v-tab>
       </template>
       <template v-else-if="isAffectiveAnnotation">
         <v-tab class="text-capitalize">Category</v-tab>

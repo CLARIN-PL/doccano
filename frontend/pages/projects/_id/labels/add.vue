@@ -9,7 +9,7 @@
   </div>
   <form-create v-else v-slot="slotProps" v-bind.sync="editedItem" :items="items">
     <v-btn :disabled="!slotProps.valid" color="primary" class="text-capitalize" @click="save">
-      Save
+      {{ $t('labels.save') }}
     </v-btn>
 
     <v-btn
@@ -19,7 +19,7 @@
       outlined
       @click="saveAndAnother"
     >
-      Save and add another
+      {{ $t('labels.saveAndAddAnother') }}
     </v-btn>
   </form-create>
 </template>

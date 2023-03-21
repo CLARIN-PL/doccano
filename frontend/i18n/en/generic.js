@@ -26,5 +26,5 @@ export default {
     message3: 'Please refresh this page when the time to rest has ended.'
   },
   goToTop: "Go back to the top",
-  group: "Group"
+  group: "Group",
 }

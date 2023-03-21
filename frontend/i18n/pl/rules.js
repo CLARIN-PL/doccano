@@ -1,5 +1,19 @@
 export default {
   required: 'Wymagany',
+  readOnly: 'Tylko do odczytu',
+  checkboxCodenameRequired: 'Nazwa kodowa pola wyboru jest wymagana',
+  mustBeBiggerOrEqualTo: 'Musi być większy lub równy {value}',
+  mustBeLesserOrEqualTo: 'Musi być mniejsze lub równe {value}',
+  diffMustBeLesserOrEqualTo: 'Różnica musi być mniejsza lub równa {value}',
+  lengthMustBeLesserOrEqualTo: 'Długość musi być mniejsza lub równa {value}',
+  mustBeWithinDifferenceOfMaxAndMin: "Musi mieścić się w zakresie różnicy max i min",
+  mustBeNumber: "Musi to być liczba",
+  mustBeInteger: "Musi być liczbą całkowitą",
+  mustBeLesserThanMax: "Musi być mniejszy niż max",
+  mustBeLesserOrEqualThanMax: "Musi być mniejszy lub równy max",
+  mustBeBiggerOrEqualThanMin: "Musi być większe lub równe niż min",
+  pleaseChooseAtLeast: "Proszę wybrać co najmniej {value} opcji",
+  youCanOnlyChooseUpTo: "Możesz wybrać maksymalnie {value} opcji",
   inputTextRules: {
     numericOnly: 'Proszę używać tylko znaków numerycznych (0-9).'
   },

@@ -133,10 +133,14 @@ export default Vue.extend({
           this.required ? !!this.formData.checkedOptions.length : true || this.$t('rules.required'),
         minAnswerNumber: () =>
           this.formData.checkedOptions.length >= this.config.minAnswerNumber ||
-          `You must choose at least ${this.config.minAnswerNumber} options`,
+          this.$t('rules.pleaseChooseAtLeast', {
+            value: this.config.minAnswerNumber
+          }),
         maxAnswerNumber: () =>
           this.formData.checkedOptions.length <= this.config.maxAnswerNumber ||
-          `You can choose only up to ${this.config.maxAnswerNumber} options`,
+          this.$t('rules.youCanOnlyChooseUpTo', {
+            value: this.config.maxAnswerNumber
+          }),
         requiredSingleCheckbox: () =>
           this.required ? this.formData.isChecked : true || this.$t('rules.required')
       }
@@ -195,19 +199,23 @@ export default Vue.extend({
       let isValidated = true
       if (this.config.isMultipleAnswers) {
         if (this.required && !this.formData.checkedOptions.length) {
-          this.formData.errorMessage = 'This field is required'
+          this.formData.errorMessage = this.$t('rules.required')
           isValidated = false
         }
         if (this.formData.checkedOptions.length < this.config.minAnswerNumber) {
-          this.formData.errorMessage = `Please mark at least ${this.config.minAnswerNumber} options`
+          this.formData.errorMessage = this.$t('rules.pleaseChooseAtLeast', {
+            value: this.config.minAnswerNumber
+          })
           isValidated = false
         }
         if (this.formData.checkedOptions.length > this.config.maxAnswerNumber) {
-          this.formData.errorMessage = `You can only choose up to ${this.config.maxAnswerNumber} options`
+          this.formData.errorMessage = this.$t('rules.youCanOnlyChooseUpTo', {
+            value: this.config.maxAnswerNumber
+          })
           isValidated = false
         }
       } else if (this.required && !this.formData.isChecked) {
-        this.formData.errorMessage = 'This field is required'
+        this.formData.errorMessage = this.$t('rules.required')
         isValidated = false
       }
       return isValidated

@@ -11,6 +11,7 @@ export default {
   linkName: 'Link name',
   linkMessage: 'Link name is required',
   key: 'Key',
+  
   deleteLabel: 'Delete Label',
   deleteMessage: 'Are you sure you want to delete these labels from this project?',
   importTitle: 'Upload Label',
@@ -34,4 +35,7 @@ export default {
   withCheckbox: "With checkbox",
   checkboxCodename: "Checkbox codename",
   hasMultipleAnswers: 'Has multiple answers',
+  addDimension: 'Add dimensions',
+  checkboxOption: "Checkbox option",
+  addOption: "Add option"
 }

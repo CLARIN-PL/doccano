@@ -25,5 +25,6 @@ export default {
     message2: 'Możesz kontynuować anotację od:',
     message3: 'Odśwież tę stronę, gdy czas na odpoczynek się skończy.'
   },
-  goToTop: "Wróć na górę"
+  goToTop: "Wróć na górę",
+  group: "Grupa"
 }

@@ -137,17 +137,19 @@ export default Vue.extend({
           String(v) !== '' ||
           String(v) !== 'null' ||
           this.$t('rules.required'),
-        min0: (v: string) => parseInt(v) >= 0 || 'Must be bigger or equal to 0',
-        min1: (v: string) => parseInt(v) >= 1 || 'Must be bigger or equal to 1',
-        number: (v: string) => !Number.isNaN(Number(v)) || 'Must be number',
+        min0: (v: string) => parseInt(v) >= 0 || base.$t('mustBeBiggerOrEqualTo', { value: 0 }),
+        min1: (v: string) => parseInt(v) >= 1 || base.$t('mustBeBiggerOrEqualTo', { value: 1 }),
+        number: (v: string) => !Number.isNaN(Number(v)) || base.$t('mustBeNumber'),
         maxOptionsLength: (v: string) =>
           ((base.required ? parseInt(v) > 0 : true) &&
             parseInt(v) <= base.formData.options.length) ||
-          'Must be lesser or equal to the number of options',
+          base.$t('mustBeLesserOrEqualTo', { value: base.formData.options.length }),
         mustBeLesserThanMax: (v: string) =>
-          parseInt(v) <= base.formData.maxAnswerNumber || 'Must be lesser or equal to max',
+          parseInt(v) <= base.formData.maxAnswerNumber ||
+          base.$t('rules.mustBeLesserOrEqualThanMax'),
         mustBeBiggerThanMin: (v: string) =>
-          parseInt(v) >= base.formData.minAnswerNumber || 'Must be bigger or equal to min'
+          parseInt(v) >= base.formData.minAnswerNumber ||
+          base.$t('rules.mustBeBiggerOrEqualThanMin')
       }
     }
   },
