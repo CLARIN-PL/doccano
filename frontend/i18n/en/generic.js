@@ -27,4 +27,5 @@ export default {
   },
   goToTop: "Go back to the top",
   group: "Group",
+  preview: "Preview",
 }

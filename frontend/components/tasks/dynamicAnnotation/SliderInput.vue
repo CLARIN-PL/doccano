@@ -292,7 +292,7 @@ export default Vue.extend({
   }
 
   &.--readonly {
-    opacity: 0.7;
+    opacity: 0.85;
   }
 }
 .questions-item {

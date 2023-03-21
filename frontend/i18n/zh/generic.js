@@ -25,5 +25,6 @@ export default {
     message3: '请在休息时间结束后刷新此页面.'
   },
   goToTop: "返回顶部",
-  group: '组'
+  group: '组',
+  preview: "预览"
 }

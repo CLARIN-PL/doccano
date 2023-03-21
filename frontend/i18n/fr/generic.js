@@ -25,5 +25,6 @@ export default {
     message3: 'Veuillez actualiser cette page lorsque le temps de repos est terminé.'
   },
   goToTop: "Revenir en haut",
-  group: 'Groupe'
+  group: 'Groupe',
+  preview: "Aperçu",
 }

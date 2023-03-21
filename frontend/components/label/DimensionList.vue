@@ -85,7 +85,7 @@
                 </v-col>
                 <v-spacer />
                 <v-col v-if="item.metadata && item.metadata.length" cols="4">
-                  <h3>Preview</h3>
+                  <h3>{{ $t('generic.preview') }}</h3>
                   <br />
                   <component
                     :is="getComponent(item)"

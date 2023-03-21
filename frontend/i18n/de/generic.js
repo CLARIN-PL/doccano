@@ -25,5 +25,6 @@ export default {
     message3: 'Bitte aktualisieren Sie diese Seite, wenn die Ruhezeit abgelaufen ist.'
   },
   goToTop: "Gehen Sie zurück nach oben",
-  generic: "Gruppe"
+  group: "Gruppe",
+  preview: "Vorschau"
 }

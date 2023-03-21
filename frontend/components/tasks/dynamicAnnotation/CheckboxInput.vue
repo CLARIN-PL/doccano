@@ -32,7 +32,7 @@
               :value="playground ? option.value : option"
               :label="playground ? option.text : option"
               class="content-item__checkbox"
-              @click="onCheckboxChange"
+              @click="onCheckboxClick"
             />
           </li>
           <p></p>
@@ -48,7 +48,7 @@
         :disabled="preview || formData.isSubmitting"
         :label="name + (required ? ' *' : '')"
         class="content-item__checkbox"
-        @click="onCheckboxChange"
+        @click="onCheckboxClick"
       />
     </div>
   </div>
@@ -220,7 +220,7 @@ export default Vue.extend({
       }
       return isValidated
     },
-    onCheckboxChange() {
+    onCheckboxClick() {
       const isValidated = this.validateCheckbox()
       let tempValue: any = this.config.isMultipleAnswers
         ? _.cloneDeep(this.formData.checkedOptions)

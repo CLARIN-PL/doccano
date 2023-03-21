@@ -26,5 +26,6 @@ export default {
     message3: 'Odśwież tę stronę, gdy czas na odpoczynek się skończy.'
   },
   goToTop: "Wróć na górę",
-  group: "Grupa"
+  group: "Grupa",
+  preview: "Podgląd"
 }

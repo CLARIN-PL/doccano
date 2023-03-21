@@ -59,6 +59,7 @@
                 :error-messages="getOptionErrorMessages(formData.options[idx])"
                 required
                 outlined
+                @input="onOptionsTextInput"
               />
             </v-col>
             <v-col cols="3" sm="3" class="pt-0">
@@ -177,6 +178,12 @@ export default Vue.extend({
         hasEmptyText && messages.push(this.$t('rules.required'))
       }
       return messages
+    },
+    onOptionsTextInput() {
+      if (this.$refs.checkboxForm) {
+        // @ts-ignore
+        this.$refs.checkboxForm.validate()
+      }
     },
     onClickDeleteButton(idx: number) {
       this.formData.options.splice(idx, 1)

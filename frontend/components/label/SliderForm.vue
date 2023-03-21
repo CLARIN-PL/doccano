@@ -88,7 +88,7 @@
           :label="$t('labels.checkboxCodename')"
           :required="Boolean(formData.withCheckbox)"
           :error-messages="
-            formData.withCheckbox && !formData.checkboxCodename ? this.$t('rules.required') : ''
+            formData.withCheckbox && !formData.checkboxCodename ? $t('rules.required') : ''
           "
           :rules="[rules.required, rules.mustSetCheckboxName]"
           outlined
