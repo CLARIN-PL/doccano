@@ -1,5 +1,6 @@
 export default {
   required: 'Required',
+  readOnly: 'Read only',
   inputTextRules: {
     numericOnly: 'Please use only numeric (0-9) characters'
   },

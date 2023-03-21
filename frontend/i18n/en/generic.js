@@ -25,5 +25,6 @@ export default {
     message2: 'You can continue annotating at:',
     message3: 'Please refresh this page when the time to rest has ended.'
   },
-  goToTop: "Go back to the top"
+  goToTop: "Go back to the top",
+  group: "Group"
 }

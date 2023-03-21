@@ -37,5 +37,9 @@ export default {
   enableOthers: 'Enable user to measure other parameters',
   articleViewMode: 'View annotation as part of an article',
   singleTextViewMode: 'View annotation as a single text',
-  combinationMode: 'Combine all annotation modes'
+  combinationMode: 'Combine all annotation modes',
+  dimensions: 'Dimensions',
+  selected: 'selected',
+  clear: 'Clear',
+  close: 'Close'
 }

@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title class="mb-10">Add Dimension</v-card-title>
+    <v-card-title class="mb-10">{{ $t('labels.addDimension') }} </v-card-title>
     <v-card-text>
       <v-row>
         <v-col cols="12" sm="6">
@@ -11,9 +11,9 @@
                   v-model="formData.isCreatingNewDimension"
                   @change="setAssignedDimensions"
                 >
-                  <v-radio label="Create new dimension" :value="true"></v-radio>
+                  <v-radio :label="$t('labels.createNewDimension')" :value="true"></v-radio>
                   <v-radio
-                    label="Add predefined dimensions"
+                    :label="$t('labels.assignPredefinedDimensions')"
                     :disabled="hasAddedAllPredefinedDimensions"
                     :value="false"
                   ></v-radio>
@@ -25,7 +25,7 @@
                     v-model.trim="formData.dimensionName"
                     :counter="100"
                     :disabled="loading"
-                    label="Dimension Name"
+                    :label="$t('labels.dimensionName')"
                     :rules="[
                       rules.required,
                       rules.nameDuplicated,
@@ -41,7 +41,7 @@
                   <v-checkbox
                     v-model="formData.required"
                     :disabled="loading"
-                    label="Required"
+                    :label="$t('rules.required')"
                     color="primary"
                     required
                     hide-details
@@ -53,7 +53,7 @@
                     v-model="formData.readOnly"
                     :disabled="loading"
                     class="dimension-form__checkbox"
-                    label="Read only"
+                    :label="$t('rules.readOnly')"
                     color="primary"
                     required
                     hide-details
@@ -65,7 +65,7 @@
                     :disabled="loading"
                     :items="dimensionTypeOptions"
                     :rules="[rules.required]"
-                    label="Dimension type"
+                    :label="$t('labels.dimensionType')"
                     outlined
                     required
                   />
@@ -87,7 +87,6 @@
                     v-model="formData.dimensions"
                     :assigned-dimensions="assignedDimensions"
                     :required="true"
-                    question="Dimensions"
                   />
                 </v-col>
               </template>
@@ -112,8 +111,12 @@
         <v-col cols="12" sm="12" class="pt-10">
           <v-spacer />
           <slot :valid="valid">
-            <v-btn color="primary" :loading="loading" :disabled="loading" @click="onClickSaveButton"
-              >Save</v-btn
+            <v-btn
+              color="primary"
+              :loading="loading"
+              :disabled="loading"
+              @click="onClickSaveButton"
+              >{{ $t('labels.save') }}</v-btn
             >
             <v-btn
               color="primary"
@@ -122,7 +125,7 @@
               outlined
               @click="onClickSaveAndAddButton"
             >
-              Save and add another
+              {{ $t('labels.saveAndAddAnother') }}
             </v-btn>
             <v-btn
               color="primary"
@@ -131,7 +134,7 @@
               outlined
               @click="onClickClearButton"
             >
-              Clear
+              {{ $t('overview.clear') }}
             </v-btn>
           </slot>
         </v-col>
@@ -213,7 +216,7 @@ export default Vue.extend({
     },
     rules() {
       return {
-        required: (v: string) => !!v || 'Required',
+        required: (v: string) => !!v || this.$t('rules.required'),
         nameStringOnly: (
           v: string // @ts-ignore
         ) => {

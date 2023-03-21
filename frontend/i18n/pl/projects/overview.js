@@ -37,5 +37,9 @@ export default {
   enableOthers: 'Umożliwić użytkownikowi pomiar innych parametrów',
   articleViewMode: 'Wyświetl adnotację jako część artykułu',
   singleTextViewMode: 'Wyświetl adnotację jako pojedynczy tekst',
-  combinationMode: 'Połącz wszystkie tryby adnotacji'
+  combinationMode: 'Połącz wszystkie tryby adnotacji',
+  dimensions: 'Wymiary',
+  selected: "wybrany",
+  clear: 'Wyczyść',
+  close: 'Zamknij'
 }

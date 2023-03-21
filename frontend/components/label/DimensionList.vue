@@ -152,8 +152,8 @@ export default Vue.extend({
     headers() {
       return [
         { text: this.$t('generic.name'), value: 'name' },
-        { text: 'Type', value: 'type' },
-        { text: 'Group', value: 'group' }
+        { text: this.$t('generic.type'), value: 'type' },
+        { text: this.$t('generic.group'), value: 'group' }
       ]
     }
   },
@@ -168,12 +168,16 @@ export default Vue.extend({
     },
     getParsedValue(value: string, key: string) {
       let result = value
-      if (key === 'options' && value.includes(',')) {
-        result = value.split(',').join('</li><li class="metadata-options__item">')
+      if (key === 'options' && value && value.includes(';')) {
+        result = value.split(';').join('</li><li class="metadata-options__item">')
         result = `<ul class="metadata-options"><li class="metadata-options__item">${result}</li></ul>`
       } else if (key === 'options' && Array.isArray(value)) {
-        result = value.join('</li><li class="metadata-options__item">')
-        result = `<ul class="metadata-options"><li class="metadata-options__item">${result}</li></ul>`
+        if (value.length) {
+          result = value.join('</li><li class="metadata-options__item">')
+          result = `<ul class="metadata-options"><li class="metadata-options__item">${result}</li></ul>`
+        } else {
+          result = ''
+        }
       }
       return result
     },

@@ -5,7 +5,7 @@
         <v-text-field
           v-model.number="formData.sliderMin"
           :disabled="loading"
-          label="Min"
+          :label="$t('labels.min')"
           type="number"
           :rules="[
             rules.required,
@@ -24,7 +24,7 @@
           v-model.number="formData.sliderMax"
           :disabled="loading"
           type="number"
-          label="Max"
+          :label="$t('labels.max')"
           :rules="[
             rules.required,
             rules.min1,
@@ -42,7 +42,7 @@
           v-model.number="formData.sliderStep"
           :disabled="loading"
           type="number"
-          label="Step"
+          :label="$t('labels.step')"
           :rules="[rules.required, rules.mustBeWithinMargin, rules.number, rules.min01]"
           outlined
           required
@@ -54,7 +54,7 @@
           :disabled="loading"
           :counter="50"
           :rules="[rules.maxLength50, rules.nameStringOnly]"
-          label="Min val description"
+          :label="$t('labels.minValDescription')"
           outlined
         />
       </v-col>
@@ -64,7 +64,7 @@
           :disabled="loading"
           :counter="50"
           :rules="[rules.maxLength50, rules.nameStringOnly]"
-          label="Max val description"
+          :label="$t('labels.maxValDescription')"
           outlined
         />
       </v-col>
@@ -73,7 +73,7 @@
           v-model="formData.withCheckbox"
           :disabled="loading"
           class="dimension-form__checkbox"
-          label="With checkbox"
+          :label="$t('labels.withCheckbox')"
           color="primary"
           :required="formData.withCheckbox"
           :rules="[rules.mustSetCheckboxName]"
@@ -85,9 +85,11 @@
           v-model="formData.checkboxCodename"
           :disabled="loading"
           :items="checkboxOptions"
-          label="Checkbox codename"
+          :label="$t('labels.checkboxCodename')"
           :required="Boolean(formData.withCheckbox)"
-          :error-messages="formData.withCheckbox && !formData.checkboxCodename ? 'Required' : ''"
+          :error-messages="
+            formData.withCheckbox && !formData.checkboxCodename ? this.$t('rules.required') : ''
+          "
           :rules="[rules.required, rules.mustSetCheckboxName]"
           outlined
         />
@@ -118,6 +120,7 @@ export default Vue.extend({
       valid: false,
       checkboxOptions: [] as any[],
       maxMargin: 20,
+      maxStringLength: 50,
       formData: {
         sliderMin: 0,
         sliderMax: 10,
@@ -144,10 +147,12 @@ export default Vue.extend({
         },
         maxMargin: () =>
           base.formData.sliderMax - base.formData.sliderMin <= base.maxMargin ||
-          'Difference should be lesser or equal to 20',
+          `Difference should be lesser or equal to ${base.maxMargin}`,
         number: (v: string) => !Number.isNaN(Number(v)) || 'Must be number',
         integer: (v: string) => Number.isInteger(Number(v)) || 'Must be integer',
-        maxLength50: (v: string) => v.length <= 50 || 'Length must be less or equal to 50',
+        maxLength50: (v: string) =>
+          v.length <= base.maxStringLength ||
+          `Length must be less or equal to ${base.maxStringLength}`,
         mustBeWithinMargin: (v: string) =>
           parseInt(v) <= base.formData.sliderMax - base.formData.sliderMin ||
           'Must be within difference of max and min',
@@ -160,7 +165,10 @@ export default Vue.extend({
             ? base.formData.checkboxCodename !== ''
             : true || 'Please set checkbox codename',
         required: (v: string) =>
-          String(v) !== 'undefined' || String(v) !== '' || String(v) !== 'null' || 'Required'
+          String(v) !== 'undefined' ||
+          String(v) !== '' ||
+          String(v) !== 'null' ||
+          base.$t('rules.required')
       }
     }
   },

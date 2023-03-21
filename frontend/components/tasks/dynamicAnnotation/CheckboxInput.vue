@@ -130,14 +130,15 @@ export default Vue.extend({
     rules() {
       return {
         requiredMultipleCheckboxes: () =>
-          this.required ? !!this.formData.checkedOptions.length : true || 'Required',
+          this.required ? !!this.formData.checkedOptions.length : true || this.$t('rules.required'),
         minAnswerNumber: () =>
           this.formData.checkedOptions.length >= this.config.minAnswerNumber ||
           `You must choose at least ${this.config.minAnswerNumber} options`,
         maxAnswerNumber: () =>
           this.formData.checkedOptions.length <= this.config.maxAnswerNumber ||
           `You can choose only up to ${this.config.maxAnswerNumber} options`,
-        requiredSingleCheckbox: () => (this.required ? this.formData.isChecked : true || 'Required')
+        requiredSingleCheckbox: () =>
+          this.required ? this.formData.isChecked : true || this.$t('rules.required')
       }
     }
   },
@@ -235,7 +236,6 @@ export default Vue.extend({
         } else if (this.item.questionId && this.formData.checkedOptions.length) {
           this.$emit('update:label', { formDataKey: this.formDataKey, value })
         } else if (this.item.questionId && !this.formData.checkedOptions.length) {
-          console.log('masuk')
           this.$emit('delete:label', { formDataKey: this.formDataKey, value })
         }
         this.$emit('input', this.formData.checkedOptions)

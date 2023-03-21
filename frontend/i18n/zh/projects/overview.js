@@ -28,5 +28,9 @@ export default {
   enableOthers: '使用户能够测量其他参数', 
   articleViewMode: '查看注释作为文章的一部分',
   singleTextViewMode: '查看注释为单个文本',
-  combinationMode: '结合所有注释模式'
+  combinationMode: '结合所有注释模式',
+  dimensions: '方面',
+  selected: '选择',
+  clear: '清除',
+  close:'关闭'
 }

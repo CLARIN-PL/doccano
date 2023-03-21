@@ -5,7 +5,7 @@
         <v-select
           v-model="selected"
           :items="dimensionOptions"
-          label="Dimensions"
+          :label="$t('overview.dimensions')"
           readonly
           multiple
           outlined
@@ -17,7 +17,7 @@
               <span>{{ item.text }}</span>
             </v-chip>
             <span v-if="index === 3" class="text-grey text-caption align-self-center">
-              (+{{ selected.length - 3 }} others)
+              (+{{ selected.length - 3 }} $t('overview.others'))
             </span>
           </template>
         </v-select>
@@ -27,7 +27,10 @@
     <v-dialog v-model="showDialog" max-width="800" scrollable persistent class="widget-dialog">
       <v-card>
         <v-card-title class="widget-dialog__title pa-5">
-          <p class="">Dimensions ({{ selected.length }} selected)</p>
+          <p class="">
+            {{ $t('overview.dimensions') }} ({{ selected.length }} {{ $t('overview.selected') }})
+          </p>
+          <br />
           <small v-if="dialogErrorMessage" class="red--text"> *{{ dialogErrorMessage }} </small>
         </v-card-title>
         <v-card-text class="widget-dialog__text">
@@ -35,7 +38,7 @@
             v-for="(dimensionGroup, idx) in Object.keys(groupedDimensionOptions)"
             :key="`dimension-group_${idx}`"
           >
-            <h2 class="checkbox-title">{{ dimensionGroup || 'Dimension' }}</h2>
+            <h2 class="checkbox-title">{{ dimensionGroup || $t('overview.dimensions') }}</h2>
             <div class="checkbox-list --col-3">
               <v-checkbox
                 v-for="(dimension, dimensionIdx) in groupedDimensionOptions[dimensionGroup]"
@@ -55,8 +58,10 @@
         </v-card-text>
         <v-card-actions class="pa-5">
           <v-spacer />
-          <v-btn @click="onClearButtonClick"> Clear </v-btn>
-          <v-btn primary color="primary" @click="onSubmitButtonClick"> Close </v-btn>
+          <v-btn @click="onClearButtonClick">{{ $t('overview.clear') }}</v-btn>
+          <v-btn primary color="primary" @click="onSubmitButtonClick">
+            {{ $t('overview.close') }}</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -105,7 +110,7 @@ export default {
     rules() {
       const rules = []
       if (this.required) {
-        rules.push(() => Boolean(this.selected.length) || 'Required')
+        rules.push(() => Boolean(this.selected.length) || this.$t('rules.required'))
       }
       return rules
     },

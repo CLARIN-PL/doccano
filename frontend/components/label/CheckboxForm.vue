@@ -7,7 +7,7 @@
             v-model="formData.isMultipleAnswers"
             :disabled="loading"
             class="mt-0"
-            label="Has multiple answers"
+            :label="$t('labels.hasMultipleAnswers')"
             color="primary"
             required
             hide-details
@@ -20,7 +20,7 @@
             v-model.number="formData.minAnswerNumber"
             :disabled="loading"
             type="number"
-            label="Min"
+            :label="$t('labels.min')"
             :rules="[
               rules.required,
               rules.number,
@@ -37,7 +37,7 @@
             v-model.number="formData.maxAnswerNumber"
             :disabled="loading"
             type="number"
-            label="Max"
+            :label="$t('labels.max')"
             :rules="[
               rules.required,
               rules.number,
@@ -54,7 +54,7 @@
               <v-text-field
                 v-model.trim="formData.options[idx].text"
                 :disabled="loading"
-                label="Checkbox option"
+                :label="$t('labels.checkboxOption')"
                 :rules="[rules.required, rules.nameDuplicated, rules.nameStringOnly]"
                 :error-messages="getOptionErrorMessages(formData.options[idx])"
                 required
@@ -66,7 +66,7 @@
                 :disabled="loading || formData.options.length == 1"
                 @click="onClickDeleteButton(idx)"
               >
-                Delete
+                {{ $t('generic.delete') }}
               </v-btn>
             </v-col>
           </v-row>
@@ -76,7 +76,7 @@
             :disabled="loading || formData.options.length === maxOptionCount"
             @click="onClickAddButton"
           >
-            Add option
+            {{ $t('labels.addOption') }}
           </v-btn>
         </v-col>
       </v-row>
@@ -133,7 +133,10 @@ export default Vue.extend({
           return pattern.test(v) || this.$i18n.t('annotation.warningInvalidChar')
         },
         required: (v: string) =>
-          String(v) !== 'undefined' || String(v) !== '' || String(v) !== 'null' || 'Required',
+          String(v) !== 'undefined' ||
+          String(v) !== '' ||
+          String(v) !== 'null' ||
+          this.$t('rules.required'),
         min0: (v: string) => parseInt(v) >= 0 || 'Must be bigger or equal to 0',
         min1: (v: string) => parseInt(v) >= 1 || 'Must be bigger or equal to 1',
         number: (v: string) => !Number.isNaN(Number(v)) || 'Must be number',
@@ -169,7 +172,7 @@ export default Vue.extend({
       const messages = []
       if (this.formData.isMultipleAnswers) {
         const hasEmptyText = option.text === ''
-        hasEmptyText && messages.push('Required')
+        hasEmptyText && messages.push(this.$t('rules.required'))
       }
       return messages
     },

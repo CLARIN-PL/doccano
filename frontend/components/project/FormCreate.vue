@@ -61,11 +61,7 @@
         />
         <v-row v-if="isDynamicAnnotationProject">
           <v-col col="12">
-            <dimension-input
-              v-model="dimensionsModalData"
-              :required="false"
-              question="Dimensions"
-            />
+            <dimension-input v-model="dimensionsModalData" :required="false" />
           </v-col>
         </v-row>
         <v-row>

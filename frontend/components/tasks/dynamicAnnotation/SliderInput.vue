@@ -150,7 +150,7 @@ export default Vue.extend({
       const base = this
       const rules = []
       if (base.required && !base.readOnly) {
-        rules.push(() => base.formData.isClicked || 'Required')
+        rules.push(() => base.formData.isClicked || this.$t('rules.required'))
       }
       return rules
     },

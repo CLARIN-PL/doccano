@@ -83,8 +83,8 @@ export default Vue.extend({
       roles: [] as RoleDTO[],
       username: '',
       rules: {
-        userRequired: (v: UserDTO) => (!!v && !!v.username) || 'Required',
-        roleRequired: (v: RoleDTO) => (!!v && !!v.rolename) || 'Required'
+        userRequired: (v: UserDTO) => (!!v && !!v.username) || this.$t('rules.required'),
+        roleRequired: (v: RoleDTO) => (!!v && !!v.rolename) || this.$t('rules.required')
       },
       mdiAccount,
       mdiCreditCardOutline
