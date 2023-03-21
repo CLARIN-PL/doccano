@@ -336,6 +336,9 @@ class DynamicDimension(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        unique_together = ("name", "type")
 
 
 class ProjectDimension(models.Model):
@@ -362,3 +365,6 @@ class DimensionMetaData(models.Model):
 
     def __str__(self):
         return self.dimension.id
+    
+    class Meta:
+        unique_together = ("dimension", "codename")
