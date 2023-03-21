@@ -235,6 +235,7 @@ export default Vue.extend({
         } else if (this.item.questionId && this.formData.checkedOptions.length) {
           this.$emit('update:label', { formDataKey: this.formDataKey, value })
         } else if (this.item.questionId && !this.formData.checkedOptions.length) {
+          console.log('masuk')
           this.$emit('delete:label', { formDataKey: this.formDataKey, value })
         }
         this.$emit('input', this.formData.checkedOptions)

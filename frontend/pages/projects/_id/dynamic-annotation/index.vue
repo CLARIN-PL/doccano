@@ -144,7 +144,7 @@
                               @update:scale="onDynamicComponentUpdateScale"
                               @add:label="onDynamicComponentAddLabel"
                               @update:label="onDynamicComponentUpdateLabel"
-                              @remove:label="onDynamicComponentRemoveLabel"
+                              @delete:label="onDynamicComponentRemoveLabel"
                             />
                           </li>
                         </ol>
@@ -230,7 +230,7 @@ export default {
   },
 
   async fetch() {
-    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+    // this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
     await this.setProjectData()
     await this.setDoc()
     await this.setHasCheckedPreviousDoc()
@@ -419,14 +419,14 @@ export default {
             dim.isSubmitting = false
             dim.isDisabled = false
             dim.isChecked = false
-            dim.key = dim.key + 1
+            dim.key = (dim.key || 0) + 1
           } else if (dim.type === 'slider' && !this.scaleValues.length) {
             dim.value = 0
             dim.isSubmitting = false
             dim.isDisabled = false
             dim.isClicked = false
             dim.isCheckboxChecked = false
-            dim.key = dim.key + 1
+            dim.key = (dim.key || 0) + 1
           }
           return dim
         })
@@ -675,10 +675,25 @@ export default {
         })
         this.hasClickedConfirmButton = false
         this.scrollToTop()
+      } else {
+        this.scrollToFaultyQuestion()
       }
     },
     onConfirmationAlertClose() {
       this.hasClickedConfirmButton = false
+    },
+    scrollToFaultyQuestion() {
+      setTimeout(() => {
+        const errorClass = `.v-input.error--text`
+        const errorElements = Array.from(document.querySelectorAll(errorClass))
+        if (errorElements && errorElements.length) {
+          const y = errorElements[0].getBoundingClientRect().top + window.scrollY + -350
+          window.scroll({
+            top: y,
+            behavior: 'smooth'
+          })
+        }
+      }, 50)
     },
     scrollToTop() {
       window.scrollTo({
