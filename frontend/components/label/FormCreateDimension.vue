@@ -7,7 +7,10 @@
           <v-row>
             <v-form ref="form" v-model="valid" class="dimension-form">
               <v-col cols="12" sm="12">
-                <v-radio-group v-model="formData.isCreatingNewDimension">
+                <v-radio-group
+                  v-model="formData.isCreatingNewDimension"
+                  @change="setAssignedDimensions"
+                >
                   <v-radio label="Create new dimension" :value="true"></v-radio>
                   <v-radio
                     label="Add predefined dimensions"
@@ -73,7 +76,7 @@
                     v-model="isDimensionDetailFormValid"
                     :loading="loading"
                     :required="formData.required"
-                    :items="items"
+                    :items="assignedDimensions"
                     v-bind.sync="formData"
                   />
                 </v-col>
@@ -82,7 +85,7 @@
                 <v-col cols="12" sm="12" class="dimension-form__detail">
                   <dimension-input
                     v-model="formData.dimensions"
-                    :assigned-dimensions="items"
+                    :assigned-dimensions="assignedDimensions"
                     :required="true"
                     question="Dimensions"
                   />
@@ -96,7 +99,7 @@
             <component
               :is="getDimensionDetailPreviewComponent(formData.dimensionType)"
               :name="formData.dimensionName"
-              :items="items"
+              :items="assignedDimensions"
               :playground="true"
               :config="formData[formData.dimensionType]"
               :required="formData.required"
@@ -138,13 +141,12 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue'
+import Vue from 'vue'
 import _ from 'lodash'
 import { mdiReload } from '@mdi/js'
 import SliderForm from './SliderForm.vue'
 import CheckboxForm from './CheckboxForm.vue'
 
-import { LabelDTO } from '~/services/application/label/labelData'
 import CheckboxInput from '~/components/tasks/dynamicAnnotation/CheckboxInput.vue'
 import SliderInput from '~/components/tasks/dynamicAnnotation/SliderInput.vue'
 import DimensionInput from '~/components/tasks/dynamicAnnotation/DimensionInput.vue'
@@ -158,19 +160,12 @@ export default Vue.extend({
     DimensionInput
   },
 
-  props: {
-    items: {
-      type: Array as PropType<LabelDTO[]>,
-      default: () => [],
-      required: true
-    }
-  },
-
   data() {
     return {
       valid: false,
       loading: false,
-      dimensions: [] as any[],
+      assignedDimensions: [] as any[],
+      allDimensions: [] as any[],
       isDimensionDetailFormValid: false,
       dimensionTypeOptions: [
         {
@@ -210,8 +205,11 @@ export default Vue.extend({
   },
 
   computed: {
+    projectId() {
+      return this.$route.params.id
+    },
     hasAddedAllPredefinedDimensions(): boolean {
-      return _.differenceBy(this.dimensions, this.items, 'name').length === 0
+      return _.differenceBy(this.allDimensions, this.assignedDimensions, 'name').length === 0
     },
     rules() {
       return {
@@ -244,10 +242,16 @@ export default Vue.extend({
   },
 
   methods: {
-    async setDimensionList() {
-      await this.$services.dimension.listAllDimensions().then((response) => {
-        this.dimensions = response.items
+    async setAssignedDimensions() {
+      await this.$services.dimension.list(this.projectId).then((response: any) => {
+        this.assignedDimensions = response.items
       })
+    },
+    async setDimensionList() {
+      await this.$services.dimension.listAllDimensions().then((response: any) => {
+        this.allDimensions = response.items
+      })
+      this.setAssignedDimensions()
     },
     getDimensionDetailPreviewComponent() {
       if (this.formData.dimensionType === 'slider') {
@@ -294,7 +298,7 @@ export default Vue.extend({
       }
     },
     getCreateDimensionFormRequest(): any {
-      const dynamicGroups = this.items.filter((item) => item.group === 'Dynamic')
+      const dynamicGroups = this.assignedDimensions.filter((item) => item.group === 'Dynamic')
       const request = {
         name: this.formData.dimensionName,
         type: this.formData.dimensionType,
@@ -407,7 +411,7 @@ export default Vue.extend({
       }
     },
     isUsedName(text: string): boolean {
-      return this.items.filter((item: any) => item.name === text).length > 0
+      return this.assignedDimensions.filter((item: any) => item.name === text).length > 0
     }
   }
 })

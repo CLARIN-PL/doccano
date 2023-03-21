@@ -32,7 +32,7 @@
         @download="download"
       />
       <v-btn
-        v-if="showDeleteButton"
+        v-if="!isDimensionsTab"
         class="text-capitalize ms-2"
         :disabled="!canDelete"
         outlined
@@ -45,12 +45,7 @@
       </v-dialog>
     </v-card-title>
     <div v-if="isDynamicAnnotation && tab == 1">
-      <dimension-list
-        v-model="selected"
-        :items="dimensionItems"
-        :is-loading="isLoading"
-        @edit="editDimensionItem"
-      />
+      <dimension-list v-model="selected" :items="dimensionItems" :is-loading="isLoading" />
     </div>
     <div v-else>
       <label-list v-model="selected" :items="items" :is-loading="isLoading" @edit="editItem" />
@@ -61,6 +56,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import _ from 'lodash'
+import { mapGetters, mapActions } from 'vuex'
 import ActionMenu from '@/components/label/ActionMenu.vue'
 import FormDelete from '@/components/label/FormDelete.vue'
 import LabelList from '@/components/label/LabelList.vue'
@@ -95,14 +91,16 @@ export default Vue.extend({
       dimensionItems: [] as DimensionDTO[],
       selected: [] as LabelDTO[],
       isLoading: false,
+      isLoadingAddPage: false,
       tab: 0,
       project: {} as ProjectDTO
     }
   },
 
   computed: {
-    showDeleteButton(): boolean {
-      return !(this.isDynamicAnnotation && this.tab === 1)
+    ...mapGetters('projects', ['currentDimensions']),
+    isDimensionsTab(): boolean {
+      return this.isDynamicAnnotation && this.tab === 1
     },
     canDelete(): boolean {
       return this.selected.length > 0
@@ -211,15 +209,21 @@ export default Vue.extend({
   },
 
   methods: {
+    ...mapActions('projects', ['setCurrentDimensions']),
     async list() {
       this.isLoading = true
-      const items = await this.service.list(this.projectId)
-      if (!Array.isArray(items) && items.items) {
-        this.items = _.cloneDeep(items.items)
+      let items = this.isDimensionsTab ? this.currentDimensions : []
+      if (!items.length) {
+        const response = await this.service.list(this.projectId)
+        items = response.items ? response.items : response
+      }
+      if (items) {
+        this.items = _.cloneDeep(items)
+        this.isDimensionsTab && this.setCurrentDimensions(items)
       }
       this.$nextTick(() => {
-        if (this.isDynamicAnnotation && this.tab === 1) {
-          this.dimensionItems = this.items.map((item: any) => {
+        if (this.isDimensionsTab) {
+          this.dimensionItems = items.map((item: any) => {
             const groupMap = {
               DIM_OTH: 'Others',
               DIM_OF: 'Offensive',
@@ -227,16 +231,12 @@ export default Vue.extend({
               DIM_EMO: 'Emotions'
             }
             if (item.metadata && item.metadata.length) {
-              const codename = item.metadata[0].codename
-              for (const [key, value] of Object.entries(groupMap)) {
-                if (codename.includes(key)) {
-                  item.group = value
-                  break
-                }
-              }
-              if (!item.group) {
-                item.group = 'Dynamic'
-              }
+              const { codename } = item.metadata[0]
+              const groupMapKey = Object.keys(groupMap).find((key) => codename.includes(key))
+              item.group = groupMap[groupMapKey] || 'Dynamic'
+            }
+            if (item.type === 'checkbox') {
+              item.value = false
             }
             return item
           })
@@ -258,10 +258,6 @@ export default Vue.extend({
 
     editItem(item: LabelDTO) {
       this.$router.push(`labels/${item.id}/edit?type=${this.labelType}`)
-    },
-
-    editDimensionItem(item: LabelDTO) {
-      this.$router.push(`labels/${item.id}/edit?type=dimension`)
     }
   }
 })

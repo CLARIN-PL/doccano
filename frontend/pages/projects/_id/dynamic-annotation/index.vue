@@ -230,7 +230,7 @@ export default {
   },
 
   async fetch() {
-    // this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
     await this.setProjectData()
     await this.setDoc()
     await this.setHasCheckedPreviousDoc()
@@ -303,7 +303,7 @@ export default {
               const formDataKey = `[${key}][${index}]`
               if (scaleValue && dim.type === 'slider') {
                 const isDisabled = scaleValue.scale === -1
-                // _.set(this.formData.dimensions, `${formDataKey}.questionId`, scaleValue.id)
+                _.set(this.formData.dimensions, `${formDataKey}.questionId`, scaleValue.id)
                 _.set(this.formData.dimensions, `${formDataKey}.value`, scaleValue.scale)
                 _.set(this.formData.dimensions, `${formDataKey}.isClicked`, true)
                 _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, isDisabled)
@@ -507,7 +507,8 @@ export default {
           }
           if (item.metadata && item.metadata.length) {
             const { codename } = item.metadata[0]
-            item.group = Object.keys(groupMap).find((key) => codename.includes(key)) || 'Dynamic'
+            const groupMapKey = Object.keys(groupMap).find((key) => codename.includes(key))
+            item.group = groupMap[groupMapKey] || 'Dynamic'
           }
           if (item.type === 'slider') {
             const scale = this.scaleTypes.find((scaleType) => scaleType.text === item.name)

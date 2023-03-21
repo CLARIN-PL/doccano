@@ -113,17 +113,9 @@ export default Vue.extend({
               DIM_EMO: 'Emotions'
             }
             if (item.metadata && item.metadata.length) {
-              const codename = item.metadata[0].codename
-              for (const [key, value] of Object.entries(groupMap)) {
-                if (codename.includes(key)) {
-                  item.group = value
-                  break
-                }
-              }
-
-              if (!item.group) {
-                item.group = 'Dynamic'
-              }
+              const { codename } = item.metadata[0]
+              const groupMapKey = Object.keys(groupMap).find((key) => codename.includes(key))
+              item.group = groupMap[groupMapKey] || 'Dynamic'
             }
             return item
           })

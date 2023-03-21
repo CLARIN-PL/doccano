@@ -90,6 +90,7 @@
                   <component
                     :is="getComponent(item)"
                     :name="item.name"
+                    :item="item"
                     :items="items"
                     :config="getItemConfig(item)"
                     :required="item.metadata ? item.metadata[0].required : false"

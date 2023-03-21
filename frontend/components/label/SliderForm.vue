@@ -10,6 +10,7 @@
           :rules="[
             rules.required,
             rules.min0,
+            rules.integer,
             rules.maxMargin,
             rules.number,
             rules.mustBeLesserThanMax
@@ -27,6 +28,7 @@
           :rules="[
             rules.required,
             rules.min1,
+            rules.integer,
             rules.mustBeBiggerOrEqualThanMin,
             rules.maxMargin,
             rules.number

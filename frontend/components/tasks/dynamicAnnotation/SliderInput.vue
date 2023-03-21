@@ -23,7 +23,6 @@
               "
               :track-color="!formData.isCheckboxChecked && formData.isClicked ? '' : 'grey'"
               ticks="always"
-              ticks-size="3"
               :disabled="!!formData.isCheckboxChecked"
               :readonly="!!formData.isCheckboxChecked || preview || readOnly"
               :min="sliderMin"
@@ -59,6 +58,8 @@
 import Vue from 'vue'
 import CheckboxInput from './CheckboxInput.vue'
 import { capitalize } from '~/utils/stringHelpers'
+import { roundWithMaxPrecision } from '~/utils/numberHelpers'
+
 export default Vue.extend({
   components: {
     CheckboxInput
@@ -159,7 +160,8 @@ export default Vue.extend({
         !Number.isNaN(Number(this.config.sliderMin)) &&
         this.config.sliderMin >= this.minValue &&
         this.config.sliderMax - this.config.sliderMin <= this.maxMargin &&
-        this.config.sliderMin <= this.config.sliderMax
+        this.config.sliderMin <= this.config.sliderMax &&
+        Number.isInteger(Number(this.config.sliderMin))
       ) {
         sliderMin = this.config.sliderMin
       }
@@ -171,7 +173,8 @@ export default Vue.extend({
         !Number.isNaN(Number(this.config.sliderMax)) &&
         this.config.sliderMax > this.minMaxValue &&
         this.config.sliderMax - this.config.sliderMin <= this.maxMargin &&
-        this.config.sliderMax >= this.config.sliderMin
+        this.config.sliderMax >= this.config.sliderMin &&
+        Number.isInteger(Number(this.config.sliderMax))
       ) {
         sliderMax = this.config.sliderMax
       }
@@ -181,7 +184,7 @@ export default Vue.extend({
       let sliderStep = 1
       if (
         !Number.isNaN(Number(this.config.sliderStep)) &&
-        this.config.sliderStep > this.minStepValue &&
+        this.config.sliderStep >= this.minStepValue &&
         this.config.sliderStep <= this.config.sliderMax - this.config.sliderMin
       ) {
         sliderStep = this.config.sliderStep
@@ -192,7 +195,18 @@ export default Vue.extend({
       let max: number = this.sliderMax || 0
       max = max > this.sliderMin ? max : this.sliderMin
       max = max + 1
-      return Array.from(Array(max).keys())
+      max = Math.round(max / this.sliderStep)
+      const labels = Array.from(Array(max).keys()).map((key) => {
+        const res = key * (this.sliderStep * 10)
+        return roundWithMaxPrecision(res, 1) / 10
+      })
+      if (!labels.includes(this.sliderMin)) {
+        labels.unshift(this.sliderMin)
+      }
+      if (!labels.includes(this.sliderMax)) {
+        labels.push(this.sliderMax)
+      }
+      return labels
     }
   },
   watch: {
@@ -209,6 +223,9 @@ export default Vue.extend({
     config: {
       deep: true,
       handler() {
+        if (this.playground) {
+          this.formData.value = 0
+        }
         this.setCheckboxData()
       }
     }

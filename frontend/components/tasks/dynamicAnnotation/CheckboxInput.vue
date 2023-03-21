@@ -21,7 +21,7 @@
               v-model="formData.checkedOptions"
               :required="required"
               :readonly="preview || readOnly"
-              :disabled="formData.isSubmitting"
+              :disabled="preview || formData.isSubmitting"
               :rules="[
                 rules.requiredMultipleCheckboxes,
                 rules.minAnswerNumber,
@@ -45,7 +45,7 @@
         :required="required"
         :rules="[rules.requiredSingleCheckbox]"
         :readonly="preview || readOnly"
-        :disabled="formData.isSubmitting"
+        :disabled="preview || formData.isSubmitting"
         :label="name + (required ? ' *' : '')"
         class="content-item__checkbox"
         @click="onCheckboxChange"
