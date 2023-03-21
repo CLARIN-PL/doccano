@@ -33,22 +33,6 @@
         <v-divider />
         <v-card-text class="title highlight" style="white-space: pre-wrap" v-text="example.text" />
       </v-card>
-      <v-card>
-        <v-card-text>
-          <ul>
-            <li v-for="(dimension, dimensionIdx) in dimensions" :key="`dimension-${dimensionIdx}`">
-              <component
-                :is="dimension.component"
-                v-model="dimension.value"
-                :question="dimension.question"
-                :extra-question="dimension.extraQuestion"
-                :settings="dimension.settings"
-                :read-only="dimension.readOnly"
-              />
-            </li>
-          </ul>
-        </v-card-text>
-      </v-card>
     </template>
     <template #sidebar>
       <annotation-progress :progress="progress" />
@@ -81,8 +65,7 @@ export default {
     LayoutText,
     ListMetadata,
     ToolbarLaptop,
-    ToolbarMobile,
-    TextfieldModal
+    ToolbarMobile
   },
   layout: 'workspace',
 

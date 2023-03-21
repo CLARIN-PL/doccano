@@ -25,7 +25,6 @@ export class ProjectApplicationService {
       const response = await this.repository.create(project)
       return new ProjectDTO(response)
     } catch (e: any) {
-      console.log(e)
       throw new Error(e.response.data.detail)
     }
   }
