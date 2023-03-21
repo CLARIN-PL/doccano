@@ -146,7 +146,7 @@ export default Vue.extend({
           v: string // @ts-ignore
         ) => {
           const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż,().! -]+$/
-          return pattern.test(v) || this.$i18n.t('annotation.warningInvalidChar')
+          return v ? pattern.test(v) : true || this.$i18n.t('annotation.warningInvalidChar')
         },
         maxMargin: () =>
           base.formData.sliderMax - base.formData.sliderMin <= base.maxMargin ||

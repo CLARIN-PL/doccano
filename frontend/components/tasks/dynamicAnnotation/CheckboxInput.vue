@@ -221,39 +221,41 @@ export default Vue.extend({
       return isValidated
     },
     onCheckboxClick() {
-      const isValidated = this.validateCheckbox()
-      let tempValue: any = this.config.isMultipleAnswers
-        ? _.cloneDeep(this.formData.checkedOptions)
-        : this.formData.isChecked
+      if (!this.preview) {
+        const isValidated = this.validateCheckbox()
+        let tempValue: any = this.config.isMultipleAnswers
+          ? _.cloneDeep(this.formData.checkedOptions)
+          : this.formData.isChecked
 
-      if (!isValidated) {
-        if (this.config.isMultipleAnswers) {
-          tempValue = _.cloneDeep(this.formData.checkedOptions).splice(
-            0,
-            this.formData.checkedOptions.length - 1
-          )
-          this.formData.checkedOptions = _.cloneDeep(tempValue)
-        } else {
-          this.formData.isChecked = !!tempValue
+        if (!isValidated) {
+          if (this.config.isMultipleAnswers) {
+            tempValue = _.cloneDeep(this.formData.checkedOptions).splice(
+              0,
+              this.formData.checkedOptions.length - 1
+            )
+            this.formData.checkedOptions = _.cloneDeep(tempValue)
+          } else {
+            this.formData.isChecked = !!tempValue
+          }
+        } else if (this.config.isMultipleAnswers && isValidated) {
+          this.formData.errorMessage = ''
+          const value = this.formData.checkedOptions.join('_')
+          if (!this.item.questionId) {
+            this.$emit('add:label', { formDataKey: this.formDataKey, value })
+          } else if (this.item.questionId && this.formData.checkedOptions.length) {
+            this.$emit('update:label', { formDataKey: this.formDataKey, value })
+          } else if (this.item.questionId && !this.formData.checkedOptions.length) {
+            this.$emit('delete:label', { formDataKey: this.formDataKey, value })
+          }
+          this.$emit('input', this.formData.checkedOptions)
+        } else if (!this.config.isMultipleAnswers && isValidated) {
+          if (this.item.questionId) {
+            this.$emit('delete:label', { formDataKey: this.formDataKey })
+          } else {
+            this.$emit('add:label', { formDataKey: this.formDataKey, value: this.name })
+          }
+          this.$emit('input', this.formData.isChecked)
         }
-      } else if (this.config.isMultipleAnswers && isValidated) {
-        this.formData.errorMessage = ''
-        const value = this.formData.checkedOptions.join('_')
-        if (!this.item.questionId) {
-          this.$emit('add:label', { formDataKey: this.formDataKey, value })
-        } else if (this.item.questionId && this.formData.checkedOptions.length) {
-          this.$emit('update:label', { formDataKey: this.formDataKey, value })
-        } else if (this.item.questionId && !this.formData.checkedOptions.length) {
-          this.$emit('delete:label', { formDataKey: this.formDataKey, value })
-        }
-        this.$emit('input', this.formData.checkedOptions)
-      } else if (!this.config.isMultipleAnswers && isValidated) {
-        if (this.item.questionId) {
-          this.$emit('delete:label', { formDataKey: this.formDataKey })
-        } else {
-          this.$emit('add:label', { formDataKey: this.formDataKey, value: this.name })
-        }
-        this.$emit('input', this.formData.isChecked)
       }
     }
   }
