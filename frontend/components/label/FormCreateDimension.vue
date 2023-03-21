@@ -99,6 +99,8 @@
               :is="getDimensionDetailPreviewComponent(formData.dimensionType)"
               :name="formData.dimensionName"
               :items="assignedDimensions"
+              :use-value="true"
+              :value="formData.dimensionType === 'slider' ? 0 : false"
               :playground="true"
               :config="formData[formData.dimensionType]"
               :required="formData.required"
