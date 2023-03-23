@@ -253,7 +253,21 @@ export default Vue.extend({
     async setAssignedDimensions() {
       const base = this as any
       await base.$services.dimension.list(base.projectId).then((response: any) => {
-        base.assignedDimensions = response.items
+        base.assignedDimensions = response.items.map((item: any) => {
+          const groupMap: any = {
+            DIM_OTH: 'Others',
+            DIM_OF: 'Offensive',
+            DIM_HUM: 'Humor',
+            DIM_EMO: 'Emotions'
+          }
+          if (item.metadata && item.metadata.length) {
+            const { codename } = item.metadata[0]
+            const groupMapKey: string =
+              Object.keys(groupMap).find((key) => codename.includes(key)) || ''
+            item.group = groupMap[groupMapKey] || 'Dynamic'
+          }
+          return item
+        })
       })
     },
     async setDimensionList() {
@@ -261,7 +275,7 @@ export default Vue.extend({
       await base.$services.dimension.listAllDimensions().then((response: any) => {
         base.allDimensions = response.items
       })
-      base.setAssignedDimensions()
+      await base.setAssignedDimensions()
     },
     getDimensionDetailPreviewComponent() {
       const base = this as any
@@ -428,6 +442,7 @@ export default Vue.extend({
       } else {
         base.addExistingDimension(false)
       }
+      base.setDimensionList()
     },
     isUsedName(text: string): boolean {
       const base = this as any
