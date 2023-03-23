@@ -29,7 +29,7 @@
               :max="sliderMax"
               :tick-labels="tickLabels"
               :step="sliderStep"
-              @change="onSliderChange"
+              @input="onSliderChange"
             />
 
             <span class="slider-text --end">
@@ -72,10 +72,6 @@ export default Vue.extend({
     formDataKey: {
       type: String,
       default: ''
-    },
-    value: {
-      type: [Number, String],
-      default: 0
     },
     item: {
       type: Object,
@@ -218,7 +214,9 @@ export default Vue.extend({
       }
     },
     item() {
-      this.setFormData()
+      if (!this.formData.isSubmitting) {
+        this.setFormData()
+      }
     },
     config: {
       deep: true,
@@ -240,7 +238,7 @@ export default Vue.extend({
       const { tempValue } = this.formData
       this.formData = {
         ...this.formData,
-        ...{ ...this.item, value: this.value, tempValue }
+        ...{ ...this.item, tempValue }
       }
       if (this.formData.value === -1) {
         this.formData.isClicked = true
@@ -275,6 +273,9 @@ export default Vue.extend({
     },
     onSliderChange(val: number) {
       this.formData.isClicked = true
+      this.formData.isSubmitting = true
+      this.formData.value = val
+      this.formData.tempValue = val
       this.$emit('update:scale', { formDataKey: this.formDataKey, val })
     }
   }

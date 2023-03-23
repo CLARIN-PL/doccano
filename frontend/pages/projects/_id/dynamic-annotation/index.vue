@@ -230,7 +230,7 @@ export default {
   },
 
   async fetch() {
-    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+    // this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
     await this.setProjectData()
     await this.setDoc()
     await this.setHasCheckedPreviousDoc()
@@ -347,6 +347,13 @@ export default {
                 _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, false)
                 _.set(this.formData.dimensions, `${formDataKey}.isChecked`, true)
                 _.set(this.formData.dimensions, `${formDataKey}.key`, formKey + 1)
+              } else if (!textLabel && dim.type === 'checkbox') {
+                _.set(this.formData.dimensions, `${formDataKey}.questionId`, '')
+                _.set(this.formData.dimensions, `${formDataKey}.value`, '')
+                _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
+                _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, false)
+                _.set(this.formData.dimensions, `${formDataKey}.isChecked`, false)
+                _.set(this.formData.dimensions, `${formDataKey}.key`, 0)
               }
             })
             this.$forceUpdate()
@@ -513,7 +520,6 @@ export default {
           if (item.type === 'slider') {
             const scale = this.scaleTypes.find((scaleType) => scaleType.text === item.name)
             item.questionId = scale ? scale.id : null
-            item.value = 0
           } else if (item.type === 'checkbox') {
             const { isMultipleAnswers } = item.metadata[0]
             const textLabel = this.textLabels.find((textLabel) => textLabel.text === item.name)
@@ -573,6 +579,7 @@ export default {
       if (dimensionData && dimensionData.questionId && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isClicked`, true)
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
+        this.$forceUpdate()
         await this.$services.affectiveScale.create(
           this.projectId,
           this.doc.id,
@@ -588,7 +595,7 @@ export default {
       const dimensionData = _.get(base.formData.dimensions, formDataKey)
       if (dimensionData && dimensionData.questionId && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
-
+        this.$forceUpdate()
         await this.$services.affectiveTextlabel.delete(
           this.projectId,
           this.doc.id,
@@ -605,7 +612,7 @@ export default {
 
       if (dimensionData && dimensionData.questionId && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
-
+        this.$forceUpdate()
         await this.$services.affectiveTextlabel.changeText(
           this.projectId,
           this.doc.id,
@@ -623,6 +630,7 @@ export default {
 
       if (dimensionData && dimensionData.name && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
+        this.$forceUpdate()
         await this.$services.affectiveTextlabel.create(
           this.projectId,
           this.doc.id,
