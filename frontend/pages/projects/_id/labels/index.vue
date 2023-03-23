@@ -215,7 +215,7 @@ export default Vue.extend({
       }
       if (items) {
         this.items = _.cloneDeep(items)
-        this.isDimensionsTab && this.setCurrentDimensions(items)
+        this.isDimensionsTab && this.setCurrentDimensions(this.projectId)
       }
       this.$nextTick(() => {
         if (this.isDimensionsTab) {

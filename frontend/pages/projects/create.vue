@@ -93,7 +93,7 @@ export default Vue.extend({
       })
       delete editedItem.affectiveProjectMode
 
-      if (this.editedItem.projectType === 'DynamicAnnotation') {
+      if (editedItem.projectType === 'DynamicAnnotation') {
         editedItem.dimension = editedItem.dimension.map((dim: number) => {
           return {
             dimension: [dim]

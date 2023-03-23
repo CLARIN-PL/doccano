@@ -28,7 +28,7 @@ export default {
   dimensionType: 'Type de dimension',
   min : 'Min',
   max : 'Max',
-  pas: 'Pas',
+  step: 'Pas',
   minValDescription: "Description de la valeur minimale",
   maxValDescription: "Description de la valeur maximale",
   withCheckbox: "Avec case à cocher",

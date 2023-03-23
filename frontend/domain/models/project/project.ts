@@ -181,10 +181,7 @@ export class ProjectWriteItem {
       is_single_ann_view: this.is_single_ann_view,
       is_combination_mode: this.is_combination_mode,
       dimension: this.dimension,
-    }
-
-    if(result.project_type !== "DynamicAnnotation") {
-      result.tags = this.tags? this.tags.map((tag) => ({ text: tag })) : []
+      tags: this.tags? this.tags.map((tag) => ({ text: tag })) : []
     }
 
     return result

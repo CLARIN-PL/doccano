@@ -8,7 +8,7 @@ export class DimensionDTO {
   [key: string]: any
 
   @Expose({ name: 'dimension_metadata' })
-  metadata: any[] 
+  metadata: any
 
   constructor(item: DimensionItem) {
     this.id = item.id
