@@ -204,6 +204,7 @@ def populate_dimension_metadata(apps, schema_editor):
         "is_multiple_answers": 1,
         "min_answer_number": 0,
         "max_answer_number": 1,
+        "original_question": "Ze względu na co obraża",
         "options": 'Płeć; Narodowość; Przekonania religijne; Rasę, kolor skóry, wygląd; Wiek; Czyn, działanie; Orientację seksualną; Poglądy polityczne, partie; Inne, np. grupy społeczne, zawodowe'
     }
 
@@ -211,6 +212,7 @@ def populate_dimension_metadata(apps, schema_editor):
         "is_multiple_answers": 1,
         "min_answer_number": 0,
         "max_answer_number": 1,
+        "original_question": "W jaki sposób?",
         "options": "Mowa nienawiści; Odczłowieczenie; Nawoływanie do przemocy; Nawoływanie do ludobójstwa; Niesprawiedliwe uogólnianie, stereotypy; Lekceważenie; Upokorzenie; Inne"
     }
 
@@ -218,6 +220,7 @@ def populate_dimension_metadata(apps, schema_editor):
         "is_multiple_answers": 1,
         "min_answer_number": 0,
         "max_answer_number": 1,
+        "original_question": "Autor śmieje się z",
         "options": 'Płeć; Narodowość; Przekonania religijne; Rasę, kolor skóry, wygląd; Wiek; Czyn, działanie; Orientację seksualną; Poglądy polityczne, partie; Inne, np. grupy społeczne, zawodowe'
     }
 
@@ -225,6 +228,7 @@ def populate_dimension_metadata(apps, schema_editor):
         "is_multiple_answers": 1,
         "min_answer_number": 0,
         "max_answer_number": 1,
+        "original_question": "Charakter humoru, śmieszy ze względu na",
         "options": "Czarny humor; Ironię; Sarkazm; Dwuznaczność; Grę słów; Seksualność; Humor fekalny (o kupie :-) ); Brzmienie słów; Wyolbrzymienie; Niecenzuralne słowa; Kontrast; Ma charakter dowcipu, kawału, żartu; Absurd; Humor sytuacyjny; Humor patetyczny"
     }
     emo_meta_configs = [meta_config_positive, meta_config_negative, meta_config_radosc, meta_config_zachwyt, meta_config_inspiruje, meta_config_spokoi, meta_config_zaskoczenie, meta_config_wspol, meta_config_strach, meta_config_smutek, meta_config_wstret, meta_config_zlosc]
