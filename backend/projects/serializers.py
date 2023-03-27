@@ -217,6 +217,8 @@ class DynamicAnnotationProjectSerializer(ProjectSerializer):
         for dimension_data in dimensions_data:
             dimension = dimension_data['dimension'][0]
             project_dimension = ProjectDimension.objects.create(project=project, dimension=dimension)
+            if dimension.id > 69 and dimension.type == "slider":
+                ScaleType.objects.create(text=dimension.name, project=project)
         tags.save(project=project)
         return project
 
