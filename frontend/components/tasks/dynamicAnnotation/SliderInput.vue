@@ -29,7 +29,8 @@
               :max="sliderMax"
               :tick-labels="tickLabels"
               :step="sliderStep"
-              @click="onSliderChange"
+              @input="onSliderInput"
+              @click="onSliderClick"
             />
 
             <span class="slider-text --end">
@@ -269,19 +270,21 @@ export default Vue.extend({
           this.formData.isSubmitting = true
           this.formData.isClicked = true
           this.checkbox.tempValue = true
-          this.$emit('update:scale', { formDataKey: this.formDataKey, val: -1 })
+          this.$emit('update:scale', { formDataKey: this.formDataKey, value: -1 })
         } else {
           this.formData.isSubmitting = true
           this.formData.isClicked = true
-          this.$emit('update:scale', { formDataKey: this.formDataKey, val: this.formData.value })
+          this.$emit('update:scale', { formDataKey: this.formDataKey, value: this.formData.value })
         }
       }
     },
-    onSliderChange() {
+    onSliderInput() {
+      this.formData.isClicked = true
+    },
+    onSliderClick() {
       if (!this.formData.isSubmitting) {
         this.formData.isSubmitting = true
-        this.formData.isClicked = true
-        this.$emit('update:scale', { formDataKey: this.formDataKey, val: this.formData.value })
+        this.$emit('update:scale', { formDataKey: this.formDataKey, value: this.formData.value })
       }
     }
   }

@@ -187,6 +187,14 @@ export default Vue.extend({
         config = { ...config, ...objectKeysSnakeToCamel(item.metadata[0]) }
         if (item.metadata[0].config) {
           config.config = objectKeysSnakeToCamel(item.metadata[0].config)
+          if (config.config.options) {
+            config.config.options = config.config.options.split('; ').map((opt) => {
+              return {
+                label: opt,
+                value: opt
+              }
+            })
+          }
         }
       }
       return config.config

@@ -132,7 +132,7 @@ export default Vue.extend({
         nameStringOnly: (
           v: string // @ts-ignore
         ) => {
-          const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
+          const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, ]+$/
           return pattern.test(v) || this.$i18n.t('annotation.warningInvalidChar')
         },
         required: (v: string) =>

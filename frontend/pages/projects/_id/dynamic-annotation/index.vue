@@ -123,31 +123,35 @@
                         :key="`dimension-group_${idx}`"
                         class="dimension-group-list__item"
                       >
-                        <ol class="dimension-list">
+                        <ul class="dimension-list">
                           <li
                             v-for="(dim, dimIdx) in formData.dimensions[key]"
                             :key="`dimension-group--${key}_${dimIdx}`"
                           >
-                            <component
-                              :is="getDimComponent(dim)"
-                              :ref="`dimension_[${key}][${dimIdx}]`"
-                              :key="dim.key"
-                              :value="dim.value"
-                              :name="dim.name"
-                              :form-data-key="`[${key}][${dimIdx}]`"
-                              :item="dim"
-                              :items="dimensionTypes"
-                              :config="getDimConfig(dim)"
-                              :required="dim.metadata[0].required"
-                              :read-only="!canEdit || dim.isSubmitting || dim.metadata[0].readonly"
-                              class="dimension-list__item"
-                              @update:scale="onDynamicComponentUpdateScale"
-                              @add:label="onDynamicComponentAddLabel"
-                              @update:label="onDynamicComponentUpdateLabel"
-                              @delete:label="onDynamicComponentRemoveLabel"
-                            />
+                            <div v-if="!dim.isHidden">
+                              <component
+                                :is="getDimComponent(dim)"
+                                :ref="`dimension_[${key}][${dimIdx}]`"
+                                :key="dim.key"
+                                :value="dim.value"
+                                :name="dim.name"
+                                :form-data-key="`[${key}][${dimIdx}]`"
+                                :item="dim"
+                                :items="dimensionTypes"
+                                :config="getDimConfig(dim)"
+                                :required="dim.metadata[0].required"
+                                :read-only="
+                                  !canEdit || dim.isSubmitting || dim.metadata[0].readonly
+                                "
+                                class="dimension-list__item"
+                                @update:scale="onDynamicComponentUpdateScale"
+                                @add:label="onDynamicComponentAddLabel"
+                                @update:label="onDynamicComponentUpdateLabel"
+                                @delete:label="onDynamicComponentRemoveLabel"
+                              />
+                            </div>
                           </li>
-                        </ol>
+                        </ul>
                       </li>
                     </ul>
                   </v-form>
@@ -207,6 +211,7 @@ export default {
       scaleTypes: [],
       dimensionTypes: [],
       formData: {
+        originalDimensions: [],
         dimensions: {}
       },
       project: {},
@@ -331,7 +336,16 @@ export default {
               const formDataKey = `[${key}][${index}]`
               const formData = _.get(this.formData.dimensions, `${formDataKey}`)
               const formKey = _.get(this.formData.dimensions, `${formDataKey}.key`) || 0
-              if (textLabel && dim.type === 'checkbox') {
+              if (dim.type === 'checkbox' && dim.isMock) {
+                const value = val
+                  .filter((v) => (v.text ? v.text.includes(dim.originalQuestion) : false))
+                  .map((v) => v.text)
+                _.set(this.formData.dimensions, `${formDataKey}.value`, value)
+                _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, false)
+                _.set(this.formData.dimensions, `${formDataKey}.isChecked`, true)
+                _.set(this.formData.dimensions, `${formDataKey}.key`, formKey + 1)
+                _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
+              } else if (textLabel && dim.type === 'checkbox') {
                 const config = this.getDimConfig(formData)
                 _.set(this.formData.dimensions, `${formDataKey}.questionId`, textLabel.id)
                 let multipleAnswers =
@@ -356,6 +370,7 @@ export default {
                 _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
               }
             })
+
             this.$forceUpdate()
           })
         } else {
@@ -504,8 +519,9 @@ export default {
         dimensions = response.items
       }
       this.dimensionTypes = _.uniqBy(dimensions, 'name')
+      const mocks = []
       this.$nextTick(() => {
-        const dimensions = this.dimensionTypes.map((item) => {
+        dimensions = this.dimensionTypes.map((item) => {
           const groupMap = {
             DIM_OTH: 'Others',
             DIM_OF: 'Offensive',
@@ -513,9 +529,32 @@ export default {
             DIM_EMO: 'Emotions'
           }
           if (item.metadata && item.metadata.length) {
-            const { codename } = item.metadata[0]
+            const { codename, config } = item.metadata[0]
             const groupMapKey = Object.keys(groupMap).find((key) => codename.includes(key))
             item.group = groupMap[groupMapKey] || 'Dynamic'
+            if (config) {
+              const { original_question, options } = config
+              if (options) {
+                const mock = _.cloneDeep(item)
+                const opts = options.split('; ')
+                item.isHidden = !!original_question
+
+                mock.isMock = true
+                mock.originalQuestion = original_question
+                mock.metadata[0].config.originalOptions = options
+                mock.metadata[0].config.options = opts.map((opt) => {
+                  const dimName = `${original_question} - ${opt}`
+                  const dim = dimensions.find((dim) => dim.name.includes(dimName))
+                  return {
+                    label: opt,
+                    value: dim ? dim.name : opt
+                  }
+                })
+                if (item.name.includes(opts[0])) {
+                  mocks.push(mock)
+                }
+              }
+            }
           }
           if (item.type === 'slider') {
             const scale = this.scaleTypes.find((scaleType) => scaleType.text === item.name)
@@ -529,6 +568,8 @@ export default {
 
           return item
         })
+        dimensions = [...dimensions, ...mocks]
+        this.formData.originalDimensions = _.cloneDeep(dimensions)
         this.formData.dimensions = _.groupBy(dimensions, 'group')
       })
     },
@@ -573,51 +614,51 @@ export default {
         this.scales = await this.$services.affectiveScale.list(this.projectId, docId)
       }
     },
-    async onDynamicComponentUpdateScale({ formDataKey, val }) {
+    async onDynamicComponentUpdateScale({ formDataKey, value }) {
       const base = this
       const dimensionData = _.get(base.formData.dimensions, formDataKey)
+      console.log(dimensionData)
       if (dimensionData && dimensionData.questionId && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         this.$forceUpdate()
         await this.$services.affectiveScale
-          .create(this.projectId, this.doc.id, dimensionData.questionId, val)
+          .create(this.projectId, this.doc.id, dimensionData.questionId, value)
           .then(() => {
             this.list(this.doc.id)
           })
       }
     },
-    async onDynamicComponentRemoveLabel({ formDataKey }) {
+    async onDynamicComponentRemoveLabel({ formDataKey, name, questionId }) {
       const base = this
-      const dimensionData = _.get(base.formData.dimensions, formDataKey)
-      if (dimensionData && dimensionData.questionId && !dimensionData.isSubmitting) {
+      const dimensionData = base.formData.originalDimensions.find((dim) => dim.name === name)
+      if (dimensionData && questionId && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         this.$forceUpdate()
         await this.$services.affectiveTextlabel
-          .delete(this.projectId, this.doc.id, dimensionData.questionId)
+          .delete(this.projectId, this.doc.id, questionId)
           .then(() => {
             this.list(this.doc.id)
           })
       }
     },
-    async onDynamicComponentUpdateLabel({ formDataKey, value }) {
+    async onDynamicComponentUpdateLabel({ formDataKey, name, questionId, value }) {
       const base = this
-      const dimensionData = _.get(base.formData.dimensions, formDataKey)
-
-      if (dimensionData && dimensionData.questionId && !dimensionData.isSubmitting) {
+      const dimensionData = base.formData.originalDimensions.find((dim) => dim.name === name)
+      if (dimensionData && questionId && !dimensionData.isSubmitting && value) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         this.$forceUpdate()
         await this.$services.affectiveTextlabel
-          .changeText(this.projectId, this.doc.id, dimensionData.questionId, value)
+          .changeText(this.projectId, this.doc.id, questionId, value)
           .then(() => {
             this.list(this.doc.id)
           })
       }
     },
-    async onDynamicComponentAddLabel({ formDataKey, value }) {
+    async onDynamicComponentAddLabel({ formDataKey, name, value }) {
       const base = this
-      const dimensionData = _.get(base.formData.dimensions, formDataKey)
+      const dimensionData = base.formData.originalDimensions.find((dim) => dim.name === name)
 
-      if (dimensionData && dimensionData.name && !dimensionData.isSubmitting) {
+      if (dimensionData && dimensionData.name && !dimensionData.isSubmitting && value) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         this.$forceUpdate()
         await this.$services.affectiveTextlabel

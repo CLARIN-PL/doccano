@@ -2,8 +2,8 @@
   <div class="checkbox-input" :class="{ '--preview': preview, '--readonly': readOnly }">
     <div v-if="config.isMultipleAnswers" class="questions-item">
       <div class="questions-item__text">
-        <h4 v-if="name">
-          {{ capitalize(name) }}
+        <h4 v-if="item.originalQuestion || name">
+          {{ capitalize(item.originalQuestion) || capitalize(name) }}
           <span v-if="required" class="red--text">*</span>
         </h4>
         <span v-if="formData.errorMessage" class="d-block red--text">
@@ -29,8 +29,9 @@
               ]"
               multiple
               hide-details
-              :value="playground ? option.value : option"
-              :label="playground ? option.text : option"
+              :input-value="formData.checkedOptions"
+              :value="option['value']"
+              :label="option['label']"
               class="content-item__checkbox"
               @click="onCheckboxClick"
             />
@@ -97,6 +98,10 @@ export default Vue.extend({
           isChecked: false
         }
       }
+    },
+    items: {
+      type: Array,
+      default: () => []
     },
     readOnly: {
       type: Boolean,
@@ -186,15 +191,12 @@ export default Vue.extend({
     },
     parseConfigOptions(val: string) {
       let options = []
-      if (val.includes(';')) {
+      if (typeof val === 'string' && val.includes(';')) {
         options = val.split(';').map((v) => v.trim())
       } else if (Array.isArray(val)) {
-        if (val.length && typeof val[0] === 'object' && !this.playground) {
-          options = val.map((v) => v.text || v.name)
-        } else {
-          options = val
-        }
+        options = val
       }
+      options = options.filter((opt) => !!opt)
       return options
     },
     validateCheckbox() {
@@ -222,7 +224,10 @@ export default Vue.extend({
       }
       return isValidated
     },
-    onCheckboxClick() {
+    onCheckboxClick($event) {
+      const lastClickedElement = [...$event.target.parentElement.children]
+      const lastClickedElementInput = lastClickedElement.find((item) => item.tagName === 'INPUT')
+      const lastAddedElement = lastClickedElementInput ? lastClickedElementInput.defaultValue : ''
       if (!this.preview) {
         const isValidated = this.validateCheckbox()
         let tempValue: any = this.config.isMultipleAnswers
@@ -241,13 +246,44 @@ export default Vue.extend({
           }
         } else if (this.config.isMultipleAnswers && isValidated) {
           this.formData.errorMessage = ''
-          const value = this.formData.checkedOptions.join('_')
-          if (!this.item.questionId) {
-            this.$emit('add:label', { formDataKey: this.formDataKey, value })
-          } else if (this.item.questionId && this.formData.checkedOptions.length) {
-            this.$emit('update:label', { formDataKey: this.formDataKey, value })
-          } else if (this.item.questionId && !this.formData.checkedOptions.length) {
-            this.$emit('delete:label', { formDataKey: this.formDataKey, value })
+          const dimensionName = lastAddedElement.includes('-')
+            ? lastAddedElement
+            : `${this.item.originalQuestion} - ${lastAddedElement}`
+          console.log(dimensionName, lastAddedElement)
+          const dimension = this.items.find((dim) => dim.name.includes(dimensionName))
+          const isAdding = this.formData.checkedOptions.includes(lastAddedElement)
+          if (isAdding && !dimension.questionId) {
+            this.$emit('add:label', {
+              formDataKey: this.formDataKey,
+              name: dimension.name,
+              value: lastAddedElement
+            })
+          } else if (dimension && dimension.questionId && this.formData.checkedOptions.length) {
+            if (isAdding) {
+              this.$emit('update:label', {
+                formDataKey: this.formDataKey,
+                questionId: dimension.questionId,
+                name: dimension.name,
+                value: lastAddedElement
+              })
+            } else {
+              this.$emit('delete:label', {
+                formDataKey: this.formDataKey,
+                questionId: dimension.questionId,
+                name: dimension.name
+              })
+            }
+          } else if (
+            !isAdding &&
+            dimension &&
+            dimension.questionId &&
+            !this.formData.checkedOptions.length
+          ) {
+            this.$emit('delete:label', {
+              formDataKey: this.formDataKey,
+              questionId: dimension.questionId,
+              name: dimension.name
+            })
           }
           this.$emit('input', this.formData.checkedOptions)
         } else if (!this.config.isMultipleAnswers && isValidated) {
