@@ -104,8 +104,10 @@ export default {
   data() {
     return {
       mdiSend,
+      selectAll: false,
       dimensions: [],
       dimensionOptions: [],
+      excludedDimensions: ['DIM_OTH10', 'DIM_OTH11'],
       groupedDimensionOptions: {},
       showDialog: false,
       dialogErrorMessage: ''
@@ -146,12 +148,19 @@ export default {
   methods: {
     async setDimensionList() {
       await this.$services.dimension.listAllDimensions().then((response) => {
-        const dimensions = response.items
+        let dimensions = response.items
         if (this.assignedDimensions.length) {
-          this.dimensions = _.differenceBy(dimensions, this.assignedDimensions, 'name')
-        } else {
-          this.dimensions = dimensions
+          dimensions = _.differenceBy(dimensions, this.assignedDimensions, 'name')
         }
+        dimensions = dimensions.filter((dim) => {
+          let isExcluded = false
+          if (dim.metadata && dim.metadata.length) {
+            const { codename } = dim.metadata[0]
+            isExcluded = this.excludedDimensions.includes(codename)
+          }
+          return !isExcluded
+        })
+        this.dimensions = _.cloneDeep(dimensions)
       })
     },
     setDimensionOptions() {

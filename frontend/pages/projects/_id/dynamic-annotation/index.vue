@@ -110,11 +110,7 @@
           <v-row class="mt-3 content__article">
             <v-col class="content-article__container">
               <v-divider />
-              <v-card
-                v-if="isScaleImported"
-                ref="dimensionCard"
-                class="pa-4 dimension-card --sticky"
-              >
+              <v-card ref="dimensionCard" class="pa-4 dimension-card --sticky">
                 <v-card-text>
                   <v-form ref="dimensionForm">
                     <ul class="dimension-group-list">
@@ -123,35 +119,30 @@
                         :key="`dimension-group_${idx}`"
                         class="dimension-group-list__item"
                       >
-                        <ul class="dimension-list">
+                        <ol class="dimension-list">
                           <li
-                            v-for="(dim, dimIdx) in formData.dimensions[key]"
+                            v-for="(dim, dimIdx) in getFilteredDimensions(formData.dimensions[key])"
                             :key="`dimension-group--${key}_${dimIdx}`"
                           >
-                            <div v-if="!dim.isHidden">
-                              <component
-                                :is="getDimComponent(dim)"
-                                :ref="`dimension_[${key}][${dimIdx}]`"
-                                :key="dim.key"
-                                :value="dim.value"
-                                :name="dim.name"
-                                :form-data-key="`[${key}][${dimIdx}]`"
-                                :item="dim"
-                                :items="dimensionTypes"
-                                :config="getDimConfig(dim)"
-                                :required="dim.metadata[0].required"
-                                :read-only="
-                                  !canEdit || dim.isSubmitting || dim.metadata[0].readonly
-                                "
-                                class="dimension-list__item"
-                                @update:scale="onDynamicComponentUpdateScale"
-                                @add:label="onDynamicComponentAddLabel"
-                                @update:label="onDynamicComponentUpdateLabel"
-                                @delete:label="onDynamicComponentRemoveLabel"
-                              />
-                            </div>
+                            <component
+                              :is="getDimComponent(dim)"
+                              :ref="`dimension_[${key}][${dimIdx}]`"
+                              :key="dim.key"
+                              :value="dim.value"
+                              :name="dim.name"
+                              :form-data-key="dim.formDataKey"
+                              :item="dim"
+                              :items="originalDimensions"
+                              :config="getDimConfig(dim)"
+                              :required="dim.metadata[0].required"
+                              :read-only="!canEdit || dim.isSubmitting || dim.metadata[0].readonly"
+                              class="dimension-list__item"
+                              @update:scale="onDynamicComponentUpdateScale"
+                              @add:label="onDynamicComponentAddLabel"
+                              @delete:label="onDynamicComponentRemoveLabel"
+                            />
                           </li>
-                        </ul>
+                        </ol>
                       </li>
                     </ul>
                   </v-form>
@@ -211,7 +202,6 @@ export default {
       scaleTypes: [],
       dimensionTypes: [],
       formData: {
-        originalDimensions: [],
         dimensions: {}
       },
       project: {},
@@ -221,7 +211,6 @@ export default {
       isProjectAdmin: false,
       articleTotal: 1,
       articleIndex: 1,
-      isScaleImported: true,
       currentArticleId: '',
       currentWholeArticle: [],
       showRestingMessage: false,
@@ -293,6 +282,16 @@ export default {
     },
     showAutoLabeling() {
       return !this.isDynamicAnnotation
+    },
+    originalDimensions() {
+      let dimensions = []
+      Object.keys(this.formData.dimensions).forEach((key) => {
+        dimensions = [...dimensions, ...this.formData.dimensions[key]]
+      })
+      return dimensions
+    },
+    isSubmitting() {
+      return this.originalDimensions.filter((dim) => dim.isSubmitting).length > 0
     }
   },
 
@@ -432,6 +431,9 @@ export default {
       'initQuestionnaire',
       'getQuestionnaire'
     ]),
+    getFilteredDimensions(dimensions) {
+      return dimensions.filter((dim) => !dim.isHidden)
+    },
     resetFormData() {
       Object.keys(this.formData.dimensions).forEach((key) => {
         this.formData.dimensions[key] = this.formData.dimensions[key].map((dim) => {
@@ -535,11 +537,12 @@ export default {
             if (config) {
               const { original_question, options } = config
               if (options) {
-                const mock = _.cloneDeep(item)
-                const opts = options.split('; ')
                 item.isHidden = !!original_question
 
+                const mock = _.cloneDeep(item)
+                const opts = options.split('; ')
                 mock.isMock = true
+                mock.isHidden = false
                 mock.originalQuestion = original_question
                 mock.metadata[0].config.originalOptions = options
                 mock.metadata[0].config.options = opts.map((opt) => {
@@ -561,16 +564,21 @@ export default {
             item.questionId = scale ? scale.id : null
           } else if (item.type === 'checkbox') {
             const { isMultipleAnswers } = item.metadata[0]
-            const textLabel = this.textLabels.find((textLabel) => textLabel.text === item.name)
-            item.questionId = textLabel ? textLabel.id : null
             item.value = isMultipleAnswers ? [] : false
           }
 
           return item
         })
         dimensions = [...dimensions, ...mocks]
-        this.formData.originalDimensions = _.cloneDeep(dimensions)
-        this.formData.dimensions = _.groupBy(dimensions, 'group')
+        const groupedDimensions = _.groupBy(dimensions, 'group')
+        Object.keys(groupedDimensions).forEach((key) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          groupedDimensions[key].forEach((dim, dimIdx) => {
+            const formDataKey = `[${key}][${dimIdx}]`
+            _.set(groupedDimensions, `${formDataKey}.formDataKey`, formDataKey)
+          })
+        })
+        this.formData.dimensions = _.cloneDeep(groupedDimensions)
       })
     },
     async setProjectData() {
@@ -617,7 +625,6 @@ export default {
     async onDynamicComponentUpdateScale({ formDataKey, value }) {
       const base = this
       const dimensionData = _.get(base.formData.dimensions, formDataKey)
-      console.log(dimensionData)
       if (dimensionData && dimensionData.questionId && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         this.$forceUpdate()
@@ -630,7 +637,7 @@ export default {
     },
     async onDynamicComponentRemoveLabel({ formDataKey, name, questionId }) {
       const base = this
-      const dimensionData = base.formData.originalDimensions.find((dim) => dim.name === name)
+      const dimensionData = base.originalDimensions.find((dim) => dim.name === name)
       if (dimensionData && questionId && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         this.$forceUpdate()
@@ -641,23 +648,9 @@ export default {
           })
       }
     },
-    async onDynamicComponentUpdateLabel({ formDataKey, name, questionId, value }) {
-      const base = this
-      const dimensionData = base.formData.originalDimensions.find((dim) => dim.name === name)
-      if (dimensionData && questionId && !dimensionData.isSubmitting && value) {
-        _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
-        this.$forceUpdate()
-        await this.$services.affectiveTextlabel
-          .changeText(this.projectId, this.doc.id, questionId, value)
-          .then(() => {
-            this.list(this.doc.id)
-          })
-      }
-    },
     async onDynamicComponentAddLabel({ formDataKey, name, value }) {
       const base = this
-      const dimensionData = base.formData.originalDimensions.find((dim) => dim.name === name)
-
+      const dimensionData = base.originalDimensions.find((dim) => dim.name === name)
       if (dimensionData && dimensionData.name && !dimensionData.isSubmitting && value) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         this.$forceUpdate()
