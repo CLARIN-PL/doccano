@@ -24,8 +24,8 @@
             <v-checkbox
               v-model="formData.checkedOptions"
               :required="required"
-              :readonly="preview || readOnly"
-              :disabled="preview || formData.isSubmitting"
+              :readonly="readOnly || preview"
+              :disabled="readOnly || preview || formData.isSubmitting"
               :rules="[
                 rules.requiredMultipleCheckboxes,
                 rules.minAnswerNumber,
@@ -48,8 +48,8 @@
         v-model="formData.isChecked"
         :required="required"
         :rules="[rules.requiredSingleCheckbox]"
-        :readonly="preview || readOnly"
-        :disabled="preview || formData.isSubmitting"
+        :readonly="readOnly || preview"
+        :disabled="readOnly || preview || formData.isSubmitting"
         :label="name + (required ? ' *' : '')"
         class="content-item__checkbox"
         @click.once="onCheckboxClick"
@@ -248,7 +248,7 @@ export default Vue.extend({
       const lastAddedElement = lastClickedElementInput ? lastClickedElementInput.defaultValue : ''
       const isAdding = this.formData.checkedOptions.includes(lastAddedElement)
 
-      if (!this.preview) {
+      if (!this.preview && !this.readOnly) {
         let isValidated = false
         let tempValue: any = this.config.isMultipleAnswers
           ? _.cloneDeep(this.formData.checkedOptions)
@@ -272,6 +272,7 @@ export default Vue.extend({
           }
         } else {
           this.formData.isChecked = !!tempValue
+          isValidated = true
         }
 
         if (this.config.isMultipleAnswers && isValidated) {

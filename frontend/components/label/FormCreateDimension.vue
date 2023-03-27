@@ -483,7 +483,11 @@ export default Vue.extend({
     },
     isUsedName(text: string): boolean {
       const base = this as any
-      return base.assignedDimensions.filter((item: any) => item.name === text).length > 0
+      return (
+        base.assignedDimensions.filter(
+          (item: any) => item.name.toLowerCase() === text.toLowerCase()
+        ).length > 0
+      )
     }
   }
 })

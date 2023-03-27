@@ -172,7 +172,10 @@ export default Vue.extend({
 
   methods: {
     isUsedName(text: string): boolean {
-      return this.formData.options.filter((opt: any) => opt.text === text).length > 1
+      return (
+        this.formData.options.filter((opt: any) => opt.text.toLowerCase() === text.toLowerCase())
+          .length > 1
+      )
     },
     getOptionErrorMessages(option: any) {
       const messages = []

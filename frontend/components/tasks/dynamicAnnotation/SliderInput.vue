@@ -156,7 +156,6 @@ export default Vue.extend({
       if (
         !Number.isNaN(Number(this.config.sliderMin)) &&
         this.config.sliderMin >= this.minValue &&
-        this.config.sliderMax - this.config.sliderMin <= this.maxMargin &&
         this.config.sliderMin <= this.config.sliderMax &&
         Number.isInteger(Number(this.config.sliderMin))
       ) {
@@ -169,7 +168,7 @@ export default Vue.extend({
       if (
         !Number.isNaN(Number(this.config.sliderMax)) &&
         this.config.sliderMax > this.minMaxValue &&
-        this.config.sliderMax - this.config.sliderMin <= this.maxMargin &&
+        this.config.sliderMax / this.sliderStep <= this.maxMargin &&
         this.config.sliderMax >= this.config.sliderMin &&
         Number.isInteger(Number(this.config.sliderMax))
       ) {
@@ -265,7 +264,7 @@ export default Vue.extend({
     },
     onCheckboxInput() {
       const val = this.formData.isCheckboxChecked
-      if (!this.formData.isSubmitting) {
+      if (!this.readOnly && !this.formData.isSubmitting) {
         if (val) {
           this.formData.tempValue = this.formData.value
           this.formData.value = -1
@@ -293,7 +292,7 @@ export default Vue.extend({
   }
 })
 </script>
-<style lang="scss" scoped>
+<style lang="scss" >
 .slider-input {
   overflow: hidden;
 

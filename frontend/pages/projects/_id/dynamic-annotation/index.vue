@@ -523,7 +523,7 @@ export default {
       this.dimensionTypes = _.uniqBy(dimensions, 'name')
       const mocks = []
       this.$nextTick(() => {
-        dimensions = this.dimensionTypes.map((item) => {
+        let mappedDimensions = this.dimensionTypes.map((item) => {
           const groupMap = {
             DIM_OTH: 'Others',
             DIM_OF: 'Offensive',
@@ -565,14 +565,17 @@ export default {
             const scale = this.scaleTypes.find((scaleType) => scaleType.text === item.name)
             item.questionId = scale ? scale.id : null
           } else if (item.type === 'checkbox') {
-            const { isMultipleAnswers } = item.metadata[0]
-            item.value = isMultipleAnswers ? [] : false
+            const { config, codename } = item.metadata[0]
+            item.value = config.is_multiple_answers ? [] : false
+            item.isHidden =
+              item.isHidden ||
+              !!dimensions.find((dim) => dim.metadata[0].config.checkbox_codename === codename)
           }
 
           return item
         })
-        dimensions = [...dimensions, ...mocks]
-        const groupedDimensions = _.groupBy(dimensions, 'group')
+        mappedDimensions = [...mappedDimensions, ...mocks]
+        const groupedDimensions = _.groupBy(mappedDimensions, 'group')
         Object.keys(groupedDimensions).forEach((key) => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           groupedDimensions[key].forEach((dim, dimIdx) => {

@@ -149,7 +149,7 @@ export default Vue.extend({
           return v ? pattern.test(v) : true || this.$i18n.t('annotation.warningInvalidChar')
         },
         maxMargin: () =>
-          base.formData.sliderMax - base.formData.sliderMin <= base.maxMargin ||
+          base.formData.sliderMax / base.formData.sliderStep <= base.maxMargin ||
           this.$t('rules.diffMustBeLesserOrEqualTo', { value: base.maxMargin }),
         number: (v: string) => !Number.isNaN(Number(v)) || this.$i18n.t('rules.mustBeNumber'),
         integer: (v: string) => Number.isInteger(Number(v)) || this.$i18n.t('rules.mustBeInteger'),
@@ -181,6 +181,7 @@ export default Vue.extend({
     formData: {
       deep: true,
       handler(val) {
+        this.$refs.sliderForm.validate()
         this.$emit('update:slider', val)
       }
     },
@@ -196,7 +197,9 @@ export default Vue.extend({
   methods: {
     setCheckboxOptions() {
       this.checkboxOptions = this.items
-        .filter((item: any) => item.type === 'checkbox' && !item.metadata[0].isMultipleAnswers)
+        .filter(
+          (item: any) => item.type === 'checkbox' && !item.metadata[0].config.is_multiple_answers
+        )
         .map((item: any) => {
           return {
             value: item.metadata[0].codename,
