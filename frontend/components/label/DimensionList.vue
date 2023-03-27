@@ -182,14 +182,14 @@ export default Vue.extend({
       return result
     },
     getItemConfig(item: DimensionDTO) {
-      let config = { config: {} }
+      let config: any = { config: {} }
       if (item.metadata && item.metadata[0]) {
         config = { ...config, ...objectKeysSnakeToCamel(item.metadata[0]) }
         if (item.metadata[0].config) {
           config.config = objectKeysSnakeToCamel(item.metadata[0].config)
           if (config.config.options) {
             if (typeof config.config.options === 'string' && config.config.options.includes('; ')) {
-              config.config.options = config.config.options.split('; ').map((opt) => {
+              config.config.options = config.config.options.split('; ').map((opt: string) => {
                 return {
                   label: opt,
                   value: opt
@@ -197,7 +197,7 @@ export default Vue.extend({
               })
             } else if (Array.isArray(config.config.options)) {
               if (typeof config.config.options[0] === 'string') {
-                config.config.options = config.config.options.map((opt) => {
+                config.config.options = config.config.options.map((opt: string) => {
                   return {
                     label: opt,
                     value: opt

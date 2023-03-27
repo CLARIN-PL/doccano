@@ -195,7 +195,7 @@ export default Vue.extend({
       }
     },
     parseConfigOptions(val: string) {
-      let options = []
+      let options: any[] = []
       if (typeof val === 'string' && val.includes(';')) {
         options = val.split(';').map((v) => v.trim())
       } else if (Array.isArray(val)) {
@@ -231,8 +231,9 @@ export default Vue.extend({
     },
     showValidatorErrorMessages() {
       setTimeout(() => {
-        const ref = this.$refs.checkboxInput
+        const ref: any = this.$refs.checkboxInput
         if (ref) {
+          // @ts-ignore
           const messages = Array.from(ref.querySelectorAll('.v-messages'))
             .map((item: any) => item.innerText)
             .filter((m) => m.length > 0)
@@ -280,7 +281,8 @@ export default Vue.extend({
           const dimensionName = lastAddedElement.includes('-')
             ? lastAddedElement
             : `${this.item.originalQuestion} - ${lastAddedElement}`
-          const dimension = this.items.find((dim) => dim.name.includes(dimensionName))
+          const dimension: any =
+            this.items.find((dim: any) => dim.name.includes(dimensionName)) || {}
           if (isAdding && !dimension.questionId) {
             this.$emit('add:label', {
               formDataKey: this.formDataKey,

@@ -170,7 +170,7 @@ export default Vue.extend({
       valid: false,
       loading: false,
       assignedDimensions: [] as any[],
-      excludedDimensions: ['DIM_OTH10', 'DIM_OTH11'],
+      excludedDimensions: ['DIM_OTH10', 'DIM_OTH11'] as string[],
       allDimensions: [] as any[],
       isDimensionDetailFormValid: false,
       dimensionTypeOptions: [
@@ -221,7 +221,7 @@ export default Vue.extend({
           let isExcluded = false
           if (dim.metadata && dim.metadata.length) {
             const { codename } = dim.metadata[0]
-            isExcluded = this.excludedDimensions.includes(codename)
+            isExcluded = base.excludedDimensions.includes(codename)
           }
           return !isExcluded
         }
@@ -447,7 +447,7 @@ export default Vue.extend({
       if (base.formData.isCreatingNewDimension) {
         const requests = base.getCreateDimensionFormRequests()
         // hacky, v-form validation doesnt work with multiple nested elements
-        requests.forEach((request) => {
+        requests.forEach((request: any) => {
           if (request.type === 'slider') {
             const additionalCheck = request.dimension_meta_data[0].config.with_checkbox
               ? !!request.dimension_meta_data[0].config.checkbox_codename

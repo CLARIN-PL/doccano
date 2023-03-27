@@ -127,7 +127,7 @@ export default Vue.extend({
     },
     // @ts-ignore
     async onSubmitCreateMultipleDimensions({ requests, redirect }) {
-      const promises = requests.map((request) =>
+      const promises = requests.map((request: any) =>
         this.$services.dimension.create(
           this.projectId,
           request.name,

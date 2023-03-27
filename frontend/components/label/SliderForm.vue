@@ -181,7 +181,8 @@ export default Vue.extend({
     formData: {
       deep: true,
       handler(val) {
-        this.$refs.sliderForm.validate()
+        // @ts-ignore
+        this.$refs.sliderForm && this.$refs.sliderForm.validate()
         this.$emit('update:slider', val)
       }
     },
