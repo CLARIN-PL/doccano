@@ -6,6 +6,11 @@ export default _.debounce(async function ({ app, store, route, redirect }) {
   } catch (e) {
     redirect('/projects')
   }
+  try {
+    await store.dispatch('projects/setCurrentDimensions', route.params.id)
+  } catch (e) {
+    redirect('/projects')
+  }
   const isProjectAdmin = await app.$services.member.isProjectAdmin(route.params.id)
   const projectRoot = app.localePath('/projects/' + route.params.id)
   const path = route.fullPath.replace(/\/$/g, '')

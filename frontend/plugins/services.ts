@@ -50,6 +50,8 @@ import { QuestionnaireApplicationService}  from "~/services/application/question
 import { APIQuestionnaireRepository } from '~/repositories/questionnaire/apiQuestionnaireRepository'
 import { StatisticsApplicationService } from '~/services/application/statistics/statisticsApplicationService'
 import { APIStatisticsRepository } from '~/repositories/statistics/apiStatistics'
+import { DimensionApplicationService } from '~/services/application/dimension/dimensionApplicationServices'
+import { APIDimensionRepository } from '~/repositories/dimension/apiDimensionRepository'
 
 export interface Services {
   categoryType: LabelApplicationService
@@ -80,6 +82,7 @@ export interface Services {
   affectiveScale: AffectiveScaleApplicationService
   questionnaire: QuestionnaireApplicationService
   statistics: StatisticsApplicationService
+  dimension: DimensionApplicationService
 }
 
 declare module 'vue/types/vue' {
@@ -114,6 +117,7 @@ const plugin: Plugin = (_, inject) => {
   const affectiveScaleRepository = new APIAffectiveScaleRepository()
   const questionnaireRepository = new APIQuestionnaireRepository()
   const statisticsRepository = new APIStatisticsRepository()
+  const dimensionRepository = new APIDimensionRepository()
 
   const categoryType = new LabelApplicationService(new APILabelRepository('category-type'))
   const spanType = new LabelApplicationService(new APILabelRepository('span-type'))
@@ -146,6 +150,7 @@ const plugin: Plugin = (_, inject) => {
   const affectiveScale = new AffectiveScaleApplicationService(affectiveScaleRepository)
   const questionnaire = new QuestionnaireApplicationService(questionnaireRepository)
   const statistics = new StatisticsApplicationService(statisticsRepository)
+  const dimension = new DimensionApplicationService(dimensionRepository)
 
   const services: Services = {
     categoryType,
@@ -175,7 +180,8 @@ const plugin: Plugin = (_, inject) => {
     affectiveTextlabel,
     affectiveScale,
     questionnaire,
-    statistics
+    statistics,
+    dimension
   }
   inject('services', services)
 }

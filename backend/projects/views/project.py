@@ -4,7 +4,7 @@ from rest_framework import filters, generics, status
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
-from projects.models import Project
+from projects.models import Project, ProjectDimension, DynamicDimension, DimensionMetaData
 from projects.permissions import IsProjectAdmin, IsProjectStaffAndReadOnly
 from projects.serializers import ProjectPolymorphicSerializer
 
@@ -70,4 +70,25 @@ class ProjectProgressDetail(generics.RetrieveAPIView):
             data = {"project_id": project.id, "total": total, "remaining": total - complete, "complete": complete}
             all_project_data.append(data)
         final_data = {"count": len(all_project_data), "results": all_project_data}
+        return Response(data=final_data, status=status.HTTP_200_OK)
+
+
+class ProjectDimensionDetail(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated & (IsProjectAdmin | IsProjectStaffAndReadOnly)]
+
+    def get(self, request, *args, **kwargs):
+        final_data = []
+        project_dims = ProjectDimension.objects.filter(project=self.kwargs["project_id"])
+        for project_dim in project_dims:
+            dim = DynamicDimension.objects.get(pk=project_dim.dimension.id)
+            dim_metadata_raws = DimensionMetaData.objects.filter(dimension=project_dim.dimension.id)
+            dim_metadata = []
+            for dim_metadata_raw in dim_metadata_raws:
+                if "with_checkbox" in dim_metadata_raw.config.keys():
+                    dim_metadata_raw.config['with_checkbox'] = bool(dim_metadata_raw.config['with_checkbox'])
+                if "is_multiple_answers" in dim_metadata_raw.config.keys():
+                    dim_metadata_raw.config['is_multiple_answers'] = bool(dim_metadata_raw.config['is_multiple_answers'])
+                dim_metadata.append({"codename": dim_metadata_raw.codename, "config": dim_metadata_raw.config, "required": dim_metadata_raw.required, "readonly": dim_metadata_raw.readonly})
+            data = {"id": dim.id, "name": dim.name, "type": dim.type, "dimension_meta_data": dim_metadata}
+            final_data.append(data)
         return Response(data=final_data, status=status.HTTP_200_OK)
