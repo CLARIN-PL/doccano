@@ -130,7 +130,7 @@
                           >
                             <component
                               :is="getDimComponent(dim)"
-                              :ref="`dimension_${key}_${dimIdx}`"
+                              :ref="`dimension_[${key}][${dimIdx}]`"
                               :key="dim.key"
                               :value="dim.value"
                               :name="dim.name"
@@ -308,9 +308,9 @@ export default {
                 _.set(this.formData.dimensions, `${formDataKey}.isClicked`, true)
                 _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, isDisabled)
                 _.set(this.formData.dimensions, `${formDataKey}.isCheckboxChecked`, isDisabled)
-                _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
                 const formKey = _.get(this.formData.dimensions, `${formDataKey}.key`) || 0
                 _.set(this.formData.dimensions, `${formDataKey}.key`, formKey + 1)
+                _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
               }
               this.$forceUpdate()
             })
@@ -343,17 +343,17 @@ export default {
                   : [multipleAnswers]
                 const answer = config.isMultipleAnswers ? multipleAnswers : !!textLabel.text
                 _.set(this.formData.dimensions, `${formDataKey}.value`, answer)
-                _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
                 _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, false)
                 _.set(this.formData.dimensions, `${formDataKey}.isChecked`, true)
                 _.set(this.formData.dimensions, `${formDataKey}.key`, formKey + 1)
+                _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
               } else if (!textLabel && dim.type === 'checkbox') {
                 _.set(this.formData.dimensions, `${formDataKey}.questionId`, '')
                 _.set(this.formData.dimensions, `${formDataKey}.value`, '')
-                _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
                 _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, false)
                 _.set(this.formData.dimensions, `${formDataKey}.isChecked`, false)
                 _.set(this.formData.dimensions, `${formDataKey}.key`, 0)
+                _.set(this.formData.dimensions, `${formDataKey}.isSubmitting`, false)
               }
             })
             this.$forceUpdate()
@@ -423,17 +423,17 @@ export default {
           if (dim.type === 'checkbox' && !this.textLabels.length) {
             dim.questionId = ''
             dim.value = false
-            dim.isSubmitting = false
             dim.isDisabled = false
             dim.isChecked = false
             dim.key = (dim.key || 0) + 1
+            dim.isSubmitting = false
           } else if (dim.type === 'slider' && !this.scaleValues.length) {
             dim.value = 0
-            dim.isSubmitting = false
             dim.isDisabled = false
             dim.isClicked = false
             dim.isCheckboxChecked = false
             dim.key = (dim.key || 0) + 1
+            dim.isSubmitting = false
           }
           return dim
         })
@@ -573,37 +573,30 @@ export default {
         this.scales = await this.$services.affectiveScale.list(this.projectId, docId)
       }
     },
-    onDynamicComponentUpdateScale: _.debounce(async function ({ formDataKey, val }) {
+    async onDynamicComponentUpdateScale({ formDataKey, val }) {
       const base = this
       const dimensionData = _.get(base.formData.dimensions, formDataKey)
       if (dimensionData && dimensionData.questionId && !dimensionData.isSubmitting) {
-        _.set(base.formData.dimensions, `${formDataKey}.isClicked`, true)
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         this.$forceUpdate()
-        await this.$services.affectiveScale.create(
-          this.projectId,
-          this.doc.id,
-          dimensionData.questionId,
-          val
-        )
-        _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, false)
-        await this.list(this.doc.id)
+        await this.$services.affectiveScale
+          .create(this.projectId, this.doc.id, dimensionData.questionId, val)
+          .then(() => {
+            this.list(this.doc.id)
+          })
       }
-    }, 100),
+    },
     async onDynamicComponentRemoveLabel({ formDataKey }) {
       const base = this
       const dimensionData = _.get(base.formData.dimensions, formDataKey)
       if (dimensionData && dimensionData.questionId && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         this.$forceUpdate()
-        await this.$services.affectiveTextlabel.delete(
-          this.projectId,
-          this.doc.id,
-          dimensionData.questionId
-        )
-        _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, false)
-
-        await this.list(this.doc.id)
+        await this.$services.affectiveTextlabel
+          .delete(this.projectId, this.doc.id, dimensionData.questionId)
+          .then(() => {
+            this.list(this.doc.id)
+          })
       }
     },
     async onDynamicComponentUpdateLabel({ formDataKey, value }) {
@@ -613,15 +606,11 @@ export default {
       if (dimensionData && dimensionData.questionId && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         this.$forceUpdate()
-        await this.$services.affectiveTextlabel.changeText(
-          this.projectId,
-          this.doc.id,
-          dimensionData.questionId,
-          value
-        )
-        _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, false)
-
-        await this.list(this.doc.id)
+        await this.$services.affectiveTextlabel
+          .changeText(this.projectId, this.doc.id, dimensionData.questionId, value)
+          .then(() => {
+            this.list(this.doc.id)
+          })
       }
     },
     async onDynamicComponentAddLabel({ formDataKey, value }) {
@@ -631,15 +620,11 @@ export default {
       if (dimensionData && dimensionData.name && !dimensionData.isSubmitting) {
         _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, true)
         this.$forceUpdate()
-        await this.$services.affectiveTextlabel.create(
-          this.projectId,
-          this.doc.id,
-          value,
-          dimensionData.name
-        )
-        _.set(base.formData.dimensions, `${formDataKey}.isSubmitting`, false)
-
-        await this.list(this.doc.id)
+        await this.$services.affectiveTextlabel
+          .create(this.projectId, this.doc.id, value, dimensionData.name)
+          .then(() => {
+            this.list(this.doc.id)
+          })
       }
     },
     async clear() {

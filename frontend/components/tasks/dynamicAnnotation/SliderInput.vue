@@ -29,7 +29,7 @@
               :max="sliderMax"
               :tick-labels="tickLabels"
               :step="sliderStep"
-              @input="onSliderChange"
+              @click="onSliderChange"
             />
 
             <span class="slider-text --end">
@@ -125,7 +125,6 @@ export default Vue.extend({
       minStepValue: 0.1,
       formData: {
         value: 0,
-        tempValue: 0,
         isCheckboxChecked: false,
         isDisabled: false,
         isClicked: false,
@@ -213,8 +212,8 @@ export default Vue.extend({
         this.checkbox.key += 1
       }
     },
-    item() {
-      if (!this.formData.isSubmitting) {
+    item(val) {
+      if (!val.isSubmitting && !this.formData.isSubmitting) {
         this.setFormData()
       }
     },
@@ -235,15 +234,16 @@ export default Vue.extend({
   methods: {
     capitalize,
     setFormData() {
-      const { tempValue } = this.formData
       this.formData = {
         ...this.formData,
-        ...{ ...this.item, tempValue }
+        ...this.item
       }
-      if (this.formData.value === -1) {
-        this.formData.isClicked = true
-      }
-      this.checkbox.tempValue = this.formData.isCheckboxChecked
+      this.$nextTick(() => {
+        if (this.formData.value === -1) {
+          this.formData.isClicked = true
+        }
+        this.checkbox.tempValue = this.formData.isCheckboxChecked
+      })
     },
     setCheckboxData() {
       if (this.config.withCheckbox && this.items.length) {
@@ -263,20 +263,26 @@ export default Vue.extend({
     },
     onCheckboxInput() {
       const val = this.formData.isCheckboxChecked
-      if (val) {
-        this.formData.tempValue = this.formData.value
-        this.$emit('update:scale', { formDataKey: this.formDataKey, val: -1 })
-      } else {
-        this.formData.value = this.formData.tempValue
-        this.$emit('update:scale', { formDataKey: this.formDataKey, val: this.formData.value })
+      if (!this.formData.isSubmitting) {
+        if (val) {
+          this.formData.value = -1
+          this.formData.isSubmitting = true
+          this.formData.isClicked = true
+          this.checkbox.tempValue = true
+          this.$emit('update:scale', { formDataKey: this.formDataKey, val: -1 })
+        } else {
+          this.formData.isSubmitting = true
+          this.formData.isClicked = true
+          this.$emit('update:scale', { formDataKey: this.formDataKey, val: this.formData.value })
+        }
       }
     },
-    onSliderChange(val: number) {
-      this.formData.isClicked = true
-      this.formData.isSubmitting = true
-      this.formData.value = val
-      this.formData.tempValue = val
-      this.$emit('update:scale', { formDataKey: this.formDataKey, val })
+    onSliderChange() {
+      if (!this.formData.isSubmitting) {
+        this.formData.isSubmitting = true
+        this.formData.isClicked = true
+        this.$emit('update:scale', { formDataKey: this.formDataKey, val: this.formData.value })
+      }
     }
   }
 })

@@ -17,7 +17,7 @@
               <span>{{ item.text }}</span>
             </v-chip>
             <span v-if="index === 3" class="text-grey text-caption align-self-center">
-              (+{{ selected.length - 3 }} $t('overview.others'))
+              (+{{ selected.length - 3 + ' ' + $t('overview.others') }})
             </span>
           </template>
         </v-select>
@@ -34,6 +34,12 @@
           <small v-if="dialogErrorMessage" class="red--text"> *{{ dialogErrorMessage }} </small>
         </v-card-title>
         <v-card-text class="widget-dialog__text">
+          <v-checkbox
+            v-model="selectAll"
+            :label="$t('generic.all')"
+            :value="true"
+            @change="onSelectAllChange"
+          />
           <div
             v-for="(dimensionGroup, idx) in Object.keys(groupedDimensionOptions)"
             :key="`dimension-group_${idx}`"
@@ -171,6 +177,13 @@ export default {
       })
 
       this.groupedDimensionOptions = _.groupBy(this.dimensionOptions, 'group')
+    },
+    onSelectAllChange(val) {
+      if (val) {
+        this.selected = this.dimensionOptions.map((dim) => dim.value)
+      } else {
+        this.$emit('input', [])
+      }
     },
     onClearButtonClick() {
       this.$emit('input', [])

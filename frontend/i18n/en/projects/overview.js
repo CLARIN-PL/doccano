@@ -41,5 +41,6 @@ export default {
   dimensions: 'Dimensions',
   selected: 'selected',
   clear: 'Clear',
-  close: 'Close'
+  close: 'Close',
+  others: "Others"
 }

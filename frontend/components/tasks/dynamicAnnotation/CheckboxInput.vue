@@ -149,8 +149,10 @@ export default Vue.extend({
   watch: {
     item: {
       deep: true,
-      handler() {
-        this.setFormData()
+      handler(val) {
+        if (!val.isSubmitting) {
+          this.setFormData()
+        }
       }
     }
   },

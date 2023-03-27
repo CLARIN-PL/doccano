@@ -41,5 +41,6 @@ export default {
   dimensions: 'Wymiary',
   selected: "wybrany",
   clear: 'Wyczyść',
-  close: 'Zamknij'
+  close: 'Zamknij',
+  others: 'inni'
 }

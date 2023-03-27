@@ -32,5 +32,6 @@ export default {
   dimensions: '方面',
   selected: '选择',
   clear: '清除',
-  close:'关闭'
+  close:'关闭',
+  others: '其余'
 }

@@ -41,5 +41,6 @@ export default {
   dimensions: 'Maße',
   selected: 'ausgewählt',
   clear: 'klar',
-  close: 'Schließen'
+  close: 'Schließen',
+  others: "andere"
 }
