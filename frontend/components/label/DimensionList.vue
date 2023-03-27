@@ -188,12 +188,23 @@ export default Vue.extend({
         if (item.metadata[0].config) {
           config.config = objectKeysSnakeToCamel(item.metadata[0].config)
           if (config.config.options) {
-            config.config.options = config.config.options.split('; ').map((opt) => {
-              return {
-                label: opt,
-                value: opt
+            if (typeof config.config.options === 'string' && config.config.options.includes('; ')) {
+              config.config.options = config.config.options.split('; ').map((opt) => {
+                return {
+                  label: opt,
+                  value: opt
+                }
+              })
+            } else if (Array.isArray(config.config.options)) {
+              if (typeof config.config.options[0] === 'string') {
+                config.config.options = config.config.options.map((opt) => {
+                  return {
+                    label: opt,
+                    value: opt
+                  }
+                })
               }
-            })
+            }
           }
         }
       }

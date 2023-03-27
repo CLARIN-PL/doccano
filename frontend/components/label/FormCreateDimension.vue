@@ -170,6 +170,7 @@ export default Vue.extend({
       valid: false,
       loading: false,
       assignedDimensions: [] as any[],
+      excludedDimensions: ['DIM_OTH10', 'DIM_OTH11'],
       allDimensions: [] as any[],
       isDimensionDetailFormValid: false,
       dimensionTypeOptions: [
@@ -215,7 +216,17 @@ export default Vue.extend({
     },
     hasAddedAllPredefinedDimensions(): boolean {
       const base: any = this
-      return _.differenceBy(base.allDimensions, base.assignedDimensions, 'name').length === 0
+      const dimensions = _.differenceBy(base.allDimensions, base.assignedDimensions, 'name').filter(
+        (dim: any) => {
+          let isExcluded = false
+          if (dim.metadata && dim.metadata.length) {
+            const { codename } = dim.metadata[0]
+            isExcluded = this.excludedDimensions.includes(codename)
+          }
+          return !isExcluded
+        }
+      )
+      return dimensions.length === 0
     },
     rules() {
       const base: any = this
@@ -224,7 +235,7 @@ export default Vue.extend({
         nameStringOnly: (
           v: string // @ts-ignore
         ) => {
-          const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, -]+$/
+          const pattern = /^[A-Za-z0-9ĄĆĘŁŃÓŚŹŻąćęłńóśźż, ]+$/
           return pattern.test(v) || base.$i18n.t('annotation.warningInvalidChar')
         },
         maxLength100: (
@@ -324,9 +335,10 @@ export default Vue.extend({
         }
       }
     },
-    getCreateDimensionFormRequest(): any {
+    getCreateDimensionFormRequests(): any {
       const base = this as any
       const dynamicGroups = base.assignedDimensions.filter((item: any) => item.group === 'Dynamic')
+      const requests = []
       const request = {
         name: base.formData.dimensionName,
         type: base.formData.dimensionType,
@@ -353,25 +365,51 @@ export default Vue.extend({
           request.dimension_meta_data[0].config.checkbox_codename =
             base.formData.slider.checkboxCodename
         }
+        requests.push(request)
       } else if (base.formData.dimensionType === 'checkbox') {
-        request.dimension_meta_data[0].config = {
-          is_multiple_answers: Number(base.formData.checkbox.isMultipleAnswers),
-          min_answer_number: base.formData.checkbox.minAnswerNumber,
-          max_answer_number: base.formData.checkbox.maxAnswerNumber,
-          options: base.formData.checkbox.options.map((opt: any) => {
-            return opt.text
+        if (base.formData.checkbox.isMultipleAnswers) {
+          request.dimension_meta_data[0].config = {
+            is_multiple_answers: Number(base.formData.checkbox.isMultipleAnswers),
+            min_answer_number: base.formData.checkbox.minAnswerNumber,
+            max_answer_number: base.formData.checkbox.maxAnswerNumber,
+            options: base.formData.checkbox.options
+              .map((opt: any) => {
+                return opt.text
+              })
+              .join('; '),
+            original_question: base.formData.dimensionName
+          }
+          base.formData.checkbox.options.forEach((opt: any, idx: number) => {
+            const optionRequest = _.cloneDeep(request)
+            optionRequest.name = `${request.name} - ${opt.text}`
+            optionRequest.dimension_meta_data[0].codename = `DYM_DYN_${
+              dynamicGroups.length + idx + 1
+            }`
+            requests.push(optionRequest)
           })
+        } else {
+          request.dimension_meta_data[0].config = {
+            is_multiple_answers: Number(base.formData.checkbox.isMultipleAnswers),
+            min_answer_number: base.formData.checkbox.minAnswerNumber,
+            max_answer_number: base.formData.checkbox.maxAnswerNumber,
+            options: base.formData.checkbox.options
+              .map((opt: any) => {
+                return opt.text
+              })
+              .join('; ')
+          }
+          requests.push(request)
         }
       }
-      return request
+      return requests
     },
     async createDimension(redirect = true) {
       const base = this as any
       const valid = await base.validateForm()
       if (valid) {
-        const request = base.getCreateDimensionFormRequest()
+        const requests = base.getCreateDimensionFormRequests()
         base.loading = true
-        base.$emit('submit:create', { request, redirect })
+        base.$emit('submit:create-multiple', { requests, redirect })
         base.resetForm()
         base.loading = false
       } else {
@@ -388,7 +426,6 @@ export default Vue.extend({
         base.resetForm()
         base.loading = false
       } else {
-        console.error('Failed to add dimension')
         base.loading = false
       }
     },
@@ -408,26 +445,26 @@ export default Vue.extend({
         valid = await refForm.validate()
       }
       if (base.formData.isCreatingNewDimension) {
-        const request = base.getCreateDimensionFormRequest()
+        const requests = base.getCreateDimensionFormRequests()
         // hacky, v-form validation doesnt work with multiple nested elements
-        if (request.type === 'slider') {
-          const additionalCheck = request.dimension_meta_data[0].config.with_checkbox
-            ? !!request.dimension_meta_data[0].config.checkbox_codename
-            : true
-          valid = valid && additionalCheck
-        } else if (request.type === 'checkbox') {
-          const additionalCheck = request.dimension_meta_data[0].config.is_multiple_answers
-            ? request.dimension_meta_data[0].config.min_answer_number <=
-                request.dimension_meta_data[0].config.max_answer_number &&
-              request.dimension_meta_data[0].config.min_answer_number <=
-                request.dimension_meta_data[0].config.options.length &&
-              request.dimension_meta_data[0].config.max_answer_number <=
-                request.dimension_meta_data[0].config.options.length &&
-              request.dimension_meta_data[0].config.options.filter((opt: any) => !!opt).length &&
-              !request.dimension_meta_data[0].config.options.find((opt: any) => !opt)
-            : true
-          valid = valid && additionalCheck
-        }
+        requests.forEach((request) => {
+          if (request.type === 'slider') {
+            const additionalCheck = request.dimension_meta_data[0].config.with_checkbox
+              ? !!request.dimension_meta_data[0].config.checkbox_codename
+              : true
+            valid = valid && additionalCheck
+          } else if (request.type === 'checkbox') {
+            const additionalCheck = request.dimension_meta_data[0].config.is_multiple_answers
+              ? request.dimension_meta_data[0].config.min_answer_number <=
+                  request.dimension_meta_data[0].config.max_answer_number &&
+                request.dimension_meta_data[0].config.min_answer_number <=
+                  request.dimension_meta_data[0].config.options.length &&
+                request.dimension_meta_data[0].config.max_answer_number <=
+                  request.dimension_meta_data[0].config.options.length
+              : true
+            valid = valid && additionalCheck
+          }
+        })
       }
       return valid
     },

@@ -3,7 +3,7 @@
     <form-create-dimension
       ref="formCreateDimension"
       :items="dimensionItems"
-      @submit:create="onSubmitCreateDimension"
+      @submit:create-multiple="onSubmitCreateMultipleDimensions"
       @submit:add="onSubmitAddDimension"
     />
   </div>
@@ -126,16 +126,20 @@ export default Vue.extend({
       }
     },
     // @ts-ignore
-    async onSubmitCreateDimension({ request, redirect }) {
-      await this.$services.dimension.create(
-        this.projectId,
-        request.name,
-        request.type,
-        request.dimension_meta_data
+    async onSubmitCreateMultipleDimensions({ requests, redirect }) {
+      const promises = requests.map((request) =>
+        this.$services.dimension.create(
+          this.projectId,
+          request.name,
+          request.type,
+          request.dimension_meta_data
+        )
       )
-      if (redirect) {
-        this.$router.push(this.localePath(`/projects/${this.projectId}/labels`))
-      }
+      await Promise.all(promises).then(() => {
+        if (redirect) {
+          this.$router.push(this.localePath(`/projects/${this.projectId}/labels`))
+        }
+      })
     },
     // @ts-ignore
     async onSubmitAddDimension({ request, redirect }) {

@@ -1,5 +1,9 @@
 <template>
-  <div class="checkbox-input" :class="{ '--preview': preview, '--readonly': readOnly }">
+  <div
+    ref="checkboxInput"
+    class="checkbox-input"
+    :class="{ '--preview': preview, '--readonly': readOnly }"
+  >
     <div v-if="config.isMultipleAnswers" class="questions-item">
       <div class="questions-item__text">
         <h4 v-if="item.originalQuestion || name">
@@ -15,7 +19,7 @@
           <li
             v-for="(option, idx) in parseConfigOptions(config.options)"
             :key="`checkbox_${name}_${idx}`"
-            class="content__item"
+            class="content__item --multiple"
           >
             <v-checkbox
               v-model="formData.checkedOptions"
@@ -28,7 +32,6 @@
                 rules.maxAnswerNumber
               ]"
               multiple
-              hide-details
               :input-value="formData.checkedOptions"
               :value="option['value']"
               :label="option['label']"
@@ -122,6 +125,7 @@ export default Vue.extend({
   },
   data() {
     return {
+      errorMessages: [],
       formData: {
         isDisabled: false,
         isChecked: false,
@@ -134,8 +138,11 @@ export default Vue.extend({
   computed: {
     rules() {
       return {
+        requiredSingleCheckbox: () =>
+          (this.required ? this.formData.isChecked : true) || this.$t('rules.required'),
         requiredMultipleCheckboxes: () =>
-          this.required ? !!this.formData.checkedOptions.length : true || this.$t('rules.required'),
+          (this.required ? this.formData.checkedOptions.length > 0 : true) ||
+          this.$t('rules.required'),
         minAnswerNumber: () =>
           this.formData.checkedOptions.length >= this.config.minAnswerNumber ||
           this.$t('rules.pleaseChooseAtLeast', {
@@ -145,9 +152,7 @@ export default Vue.extend({
           this.formData.checkedOptions.length <= this.config.maxAnswerNumber ||
           this.$t('rules.youCanOnlyChooseUpTo', {
             value: this.config.maxAnswerNumber
-          }),
-        requiredSingleCheckbox: () =>
-          this.required ? this.formData.isChecked : true || this.$t('rules.required')
+          })
       }
     }
   },
@@ -224,39 +229,77 @@ export default Vue.extend({
       }
       return isValidated
     },
-    onCheckboxClick($event) {
+    showValidatorErrorMessages() {
+      setTimeout(() => {
+        const ref = this.$refs.checkboxInput
+        if (ref) {
+          const messages = Array.from(ref.querySelectorAll('.v-messages'))
+            .map((item: any) => item.innerText)
+            .filter((m) => m.length > 0)
+          if (messages.length) {
+            this.formData.errorMessage = messages[0]
+          }
+        }
+      }, 100)
+    },
+    onCheckboxClick($event: any) {
       const lastClickedElement = [...$event.target.parentElement.children]
       const lastClickedElementInput = lastClickedElement.find((item) => item.tagName === 'INPUT')
       const lastAddedElement = lastClickedElementInput ? lastClickedElementInput.defaultValue : ''
+      const isAdding = this.formData.checkedOptions.includes(lastAddedElement)
+
       if (!this.preview) {
-        const isValidated = this.validateCheckbox()
+        let isValidated = false
         let tempValue: any = this.config.isMultipleAnswers
           ? _.cloneDeep(this.formData.checkedOptions)
           : this.formData.isChecked
 
-        if (!isValidated) {
-          if (this.config.isMultipleAnswers) {
-            tempValue = _.cloneDeep(this.formData.checkedOptions).splice(
-              0,
-              this.formData.checkedOptions.length - 1
-            )
-            this.formData.checkedOptions = _.cloneDeep(tempValue)
+        if (this.config.isMultipleAnswers) {
+          if (isAdding) {
+            if (this.formData.checkedOptions.length > this.config.maxAnswerNumber) {
+              tempValue = _.cloneDeep(this.formData.checkedOptions).splice(
+                0,
+                this.formData.checkedOptions.length - 1
+              )
+              this.formData.checkedOptions = _.cloneDeep(tempValue)
+              isValidated = false
+            } else {
+              isValidated = true
+            }
+            this.$forceUpdate()
           } else {
-            this.formData.isChecked = !!tempValue
+            isValidated = true
           }
-        } else if (this.config.isMultipleAnswers && isValidated) {
+        } else {
+          this.formData.isChecked = !!tempValue
+        }
+
+        if (this.config.isMultipleAnswers && isValidated) {
           this.formData.errorMessage = ''
           const dimensionName = lastAddedElement.includes('-')
             ? lastAddedElement
             : `${this.item.originalQuestion} - ${lastAddedElement}`
           const dimension = this.items.find((dim) => dim.name.includes(dimensionName))
-          const isAdding = this.formData.checkedOptions.includes(lastAddedElement)
           if (isAdding && !dimension.questionId) {
             this.$emit('add:label', {
               formDataKey: this.formDataKey,
               name: dimension.name,
               value: lastAddedElement
             })
+          } else if (dimension && dimension.questionId && this.formData.checkedOptions.length) {
+            if (isAdding) {
+              this.$emit('add:label', {
+                formDataKey: this.formDataKey,
+                name: dimension.name,
+                value: lastAddedElement
+              })
+            } else {
+              this.$emit('delete:label', {
+                formDataKey: this.formDataKey,
+                questionId: dimension.questionId,
+                name: dimension.name
+              })
+            }
           } else if (
             !isAdding &&
             dimension &&
@@ -270,9 +313,9 @@ export default Vue.extend({
             })
           }
           this.$emit('input', this.formData.checkedOptions)
-        } else if (!this.config.isMultipleAnswers) {
-          const isAdding = this.formData.isChecked
-          if (!isAdding && this.item.questionId) {
+        } else if (!this.config.isMultipleAnswers && isValidated) {
+          const isChecked = this.formData.isChecked
+          if (!isChecked && this.item.questionId) {
             this.$emit('delete:label', {
               formDataKey: this.formDataKey,
               questionId: this.item.questionId,
@@ -292,7 +335,7 @@ export default Vue.extend({
   }
 })
 </script>
-<style lang="scss" scoped>
+<style lang="scss" >
 .checkbox-input {
   &.--preview {
     zoom: 0.8;
@@ -302,31 +345,17 @@ export default Vue.extend({
   }
 
   &.--readonly {
-    opacity: 0.7;
+    opacity: 0.8;
+  }
+
+  .--multiple {
+    .v-messages {
+      display: none;
+    }
   }
 }
+
 .questions-item {
-  &__slider {
-    display: flex;
-
-    .v-slider__tick-label {
-      font-size: 0.8rem;
-    }
-
-    .slider-text {
-      color: gray;
-      margin-top: 5px;
-
-      &.--start {
-        margin-right: 10px;
-      }
-
-      &.--end {
-        margin-left: 10px;
-      }
-    }
-  }
-
   &__text {
     margin-bottom: 10px;
   }
@@ -343,7 +372,7 @@ export default Vue.extend({
   &__item {
     .content-item__checkbox {
       .v-label {
-        font-size: 0.8rem;
+        font-size: 1rem;
       }
 
       .v-input__slot {

@@ -126,6 +126,7 @@ export default Vue.extend({
       minStepValue: 0.1,
       formData: {
         value: 0,
+        tempValue: 0,
         isCheckboxChecked: false,
         isDisabled: false,
         isClicked: false,
@@ -266,12 +267,14 @@ export default Vue.extend({
       const val = this.formData.isCheckboxChecked
       if (!this.formData.isSubmitting) {
         if (val) {
+          this.formData.tempValue = this.formData.value
           this.formData.value = -1
           this.formData.isSubmitting = true
           this.formData.isClicked = true
           this.checkbox.tempValue = true
           this.$emit('update:scale', { formDataKey: this.formDataKey, value: -1 })
         } else {
+          this.formData.value = this.formData.tempValue
           this.formData.isSubmitting = true
           this.formData.isClicked = true
           this.$emit('update:scale', { formDataKey: this.formDataKey, value: this.formData.value })

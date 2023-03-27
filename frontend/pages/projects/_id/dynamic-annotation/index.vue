@@ -337,7 +337,7 @@ export default {
               const formKey = _.get(this.formData.dimensions, `${formDataKey}.key`) || 0
               if (dim.type === 'checkbox' && dim.isMock) {
                 const value = val
-                  .filter((v) => (v.text ? v.text.includes(dim.originalQuestion) : false))
+                  .filter((v) => (v.text ? v.text.includes(`${dim.originalQuestion} - `) : false))
                   .map((v) => v.text)
                 _.set(this.formData.dimensions, `${formDataKey}.value`, value)
                 _.set(this.formData.dimensions, `${formDataKey}.isDisabled`, false)
@@ -540,7 +540,7 @@ export default {
                 item.isHidden = !!original_question
 
                 const mock = _.cloneDeep(item)
-                const opts = options.split('; ')
+                const opts = typeof options === 'string' ? options.split('; ') : options
                 mock.isMock = true
                 mock.isHidden = false
                 mock.originalQuestion = original_question
@@ -553,7 +553,9 @@ export default {
                     value: dim ? dim.name : opt
                   }
                 })
-                if (item.name.includes(opts[0])) {
+
+                const firstOptDimName = `${original_question} - ${opts[0]}`
+                if (item.name === firstOptDimName) {
                   mocks.push(mock)
                 }
               }
@@ -703,8 +705,21 @@ export default {
         this.hasClickedConfirmButton = false
         this.scrollToTop()
       } else {
+        this.showErrors()
         this.scrollToFaultyQuestion()
       }
+    },
+    showErrors() {
+      this.originalDimensions.forEach((origDim) => {
+        const ref = `dimension_${origDim.formDataKey}`
+        if (
+          this.$refs[ref] &&
+          this.$refs[ref][0] &&
+          this.$refs[ref][0].showValidatorErrorMessages
+        ) {
+          this.$refs[ref][0].showValidatorErrorMessages()
+        }
+      })
     },
     onConfirmationAlertClose() {
       this.hasClickedConfirmButton = false
