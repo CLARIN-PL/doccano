@@ -292,7 +292,7 @@ export default Vue.extend({
   }
 })
 </script>
-<style lang="scss" >
+<style lang="scss" scoped>
 .slider-input {
   overflow: hidden;
 
