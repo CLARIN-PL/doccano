@@ -24,7 +24,6 @@
                   <v-text-field
                     v-model.trim="formData.dimensionName"
                     :counter="100"
-                    :disabled="loading"
                     :label="$t('labels.dimensionName')"
                     :rules="[
                       rules.required,
@@ -40,7 +39,6 @@
                 <v-col cols="12" sm="6" class="pt-0">
                   <v-checkbox
                     v-model="formData.required"
-                    :disabled="loading"
                     :label="$t('rules.required')"
                     color="primary"
                     required
@@ -51,7 +49,6 @@
                 <v-col cols="12" sm="6" class="pt-0">
                   <v-checkbox
                     v-model="formData.readOnly"
-                    :disabled="loading"
                     class="dimension-form__checkbox"
                     :label="$t('rules.readOnly')"
                     color="primary"
@@ -62,7 +59,6 @@
                 <v-col cols="12" sm="12">
                   <v-select
                     v-model="formData.dimensionType"
-                    :disabled="loading"
                     :items="dimensionTypeOptions"
                     :rules="[rules.required]"
                     :label="$t('labels.dimensionType')"
@@ -129,13 +125,7 @@
             >
               {{ $t('labels.saveAndAddAnother') }}
             </v-btn>
-            <v-btn
-              color="primary"
-              :loading="loading"
-              :disabled="loading"
-              outlined
-              @click="onClickClearButton"
-            >
+            <v-btn color="primary" :disabled="loading" outlined @click="onClickClearButton">
               {{ $t('overview.clear') }}
             </v-btn>
           </slot>
@@ -151,6 +141,7 @@ import _ from 'lodash'
 import { mdiReload } from '@mdi/js'
 import SliderForm from './SliderForm.vue'
 import CheckboxForm from './CheckboxForm.vue'
+import { addGroupToDimensionList } from '~/utils/dynamicDimensions.js'
 
 import CheckboxInput from '~/components/tasks/dynamicAnnotation/CheckboxInput.vue'
 import SliderInput from '~/components/tasks/dynamicAnnotation/SliderInput.vue'
@@ -264,27 +255,13 @@ export default Vue.extend({
     async setAssignedDimensions() {
       const base = this as any
       await base.$services.dimension.list(base.projectId).then((response: any) => {
-        base.assignedDimensions = response.items.map((item: any) => {
-          const groupMap: any = {
-            DIM_OTH: 'Others',
-            DIM_OF: 'Offensive',
-            DIM_HUM: 'Humor',
-            DIM_EMO: 'Emotions'
-          }
-          if (item.metadata && item.metadata.length) {
-            const { codename } = item.metadata[0]
-            const groupMapKey: string =
-              Object.keys(groupMap).find((key) => codename.includes(key)) || ''
-            item.group = groupMap[groupMapKey] || 'Dynamic'
-          }
-          return item
-        })
+        base.assignedDimensions = addGroupToDimensionList(response.items)
       })
     },
     async setDimensionList() {
       const base = this as any
       await base.$services.dimension.listAllDimensions().then((response: any) => {
-        base.allDimensions = response.items
+        base.allDimensions = addGroupToDimensionList(response.items)
       })
       await base.setAssignedDimensions()
     },
@@ -335,79 +312,82 @@ export default Vue.extend({
         }
       }
     },
-    getCreateDimensionFormRequests(): any {
+    async getCreateDimensionFormRequests() {
       const base = this as any
-      const dynamicGroups = base.allDimensions.filter((item: any) => item.group === 'Dynamic')
       const requests = []
-      const request = {
-        name: base.formData.dimensionName,
-        type: base.formData.dimensionType,
-        dimension_meta_data: [
-          {
-            codename: `DIM_DYN_${dynamicGroups.length + 1}`,
-            config: {},
-            required: Number(base.formData.required),
-            readonly: Number(base.formData.readOnly)
-          }
-        ]
-      }
-      if (base.formData.dimensionType === 'slider') {
-        request.dimension_meta_data[0].config = {
-          slider_min: base.formData.slider.sliderMin,
-          slider_max: base.formData.slider.sliderMax,
-          slider_step: base.formData.slider.sliderStep,
-          with_checkbox: Number(base.formData.slider.withCheckbox),
-          minVal_description: base.formData.slider.minValDescription,
-          maxVal_description: base.formData.slider.maxValDescription
+      await base.setDimensionList()
+      const dynamicGroups = base.allDimensions.filter((item: any) => item.group === 'Dynamic')
+      base.$nextTick(() => {
+        const request = {
+          name: base.formData.dimensionName,
+          type: base.formData.dimensionType,
+          dimension_meta_data: [
+            {
+              codename: `DIM_DYN_${dynamicGroups.length + 1}`,
+              config: {},
+              required: Number(base.formData.required),
+              readonly: Number(base.formData.readOnly)
+            }
+          ]
         }
-        if (base.formData.slider.withCheckbox) {
-          // @ts-ignore
-          request.dimension_meta_data[0].config.checkbox_codename =
-            base.formData.slider.checkboxCodename
-        }
-        requests.push(request)
-      } else if (base.formData.dimensionType === 'checkbox') {
-        if (base.formData.checkbox.isMultipleAnswers) {
+        if (base.formData.dimensionType === 'slider') {
           request.dimension_meta_data[0].config = {
-            is_multiple_answers: Number(base.formData.checkbox.isMultipleAnswers),
-            min_answer_number: base.formData.checkbox.minAnswerNumber,
-            max_answer_number: base.formData.checkbox.maxAnswerNumber,
-            options: base.formData.checkbox.options
-              .map((opt: any) => {
-                return opt.text
-              })
-              .join('; '),
-            original_question: base.formData.dimensionName
+            slider_min: base.formData.slider.sliderMin,
+            slider_max: base.formData.slider.sliderMax,
+            slider_step: base.formData.slider.sliderStep,
+            with_checkbox: Number(base.formData.slider.withCheckbox),
+            minVal_description: base.formData.slider.minValDescription,
+            maxVal_description: base.formData.slider.maxValDescription
           }
-          base.formData.checkbox.options.forEach((opt: any, idx: number) => {
-            const optionRequest = _.cloneDeep(request)
-            optionRequest.name = `${request.name} - ${opt.text}`
-            optionRequest.dimension_meta_data[0].codename = `DYM_DYN_${
-              dynamicGroups.length + idx + 1
-            }`
-            requests.push(optionRequest)
-          })
-        } else {
-          request.dimension_meta_data[0].config = {
-            is_multiple_answers: Number(base.formData.checkbox.isMultipleAnswers),
-            min_answer_number: base.formData.checkbox.minAnswerNumber,
-            max_answer_number: base.formData.checkbox.maxAnswerNumber,
-            options: base.formData.checkbox.options
-              .map((opt: any) => {
-                return opt.text
-              })
-              .join('; ')
+          if (base.formData.slider.withCheckbox) {
+            // @ts-ignore
+            request.dimension_meta_data[0].config.checkbox_codename =
+              base.formData.slider.checkboxCodename
           }
           requests.push(request)
+        } else if (base.formData.dimensionType === 'checkbox') {
+          if (base.formData.checkbox.isMultipleAnswers) {
+            request.dimension_meta_data[0].config = {
+              is_multiple_answers: Number(base.formData.checkbox.isMultipleAnswers),
+              min_answer_number: base.formData.checkbox.minAnswerNumber,
+              max_answer_number: base.formData.checkbox.maxAnswerNumber,
+              options: base.formData.checkbox.options
+                .map((opt: any) => {
+                  return opt.text
+                })
+                .join('; '),
+              original_question: base.formData.dimensionName
+            }
+            base.formData.checkbox.options.forEach((opt: any, idx: number) => {
+              const optionRequest = _.cloneDeep(request)
+              optionRequest.name = `${request.name} - ${opt.text}`
+              optionRequest.dimension_meta_data[0].codename = `DYM_DYN_${
+                dynamicGroups.length + idx + 1
+              }`
+              requests.push(optionRequest)
+            })
+          } else {
+            request.dimension_meta_data[0].config = {
+              is_multiple_answers: Number(base.formData.checkbox.isMultipleAnswers),
+              min_answer_number: base.formData.checkbox.minAnswerNumber,
+              max_answer_number: base.formData.checkbox.maxAnswerNumber,
+              options: base.formData.checkbox.options
+                .map((opt: any) => {
+                  return opt.text
+                })
+                .join('; ')
+            }
+            requests.push(request)
+          }
         }
-      }
+      })
       return requests
     },
     async createDimension(redirect = true) {
       const base = this as any
       const valid = await base.validateForm()
       if (valid) {
-        const requests = base.getCreateDimensionFormRequests()
+        const requests = await base.getCreateDimensionFormRequests()
         base.loading = true
         base.$emit('submit:create-multiple', { requests, redirect })
         base.resetForm()
@@ -445,7 +425,7 @@ export default Vue.extend({
         valid = await refForm.validate()
       }
       if (base.formData.isCreatingNewDimension) {
-        const requests = base.getCreateDimensionFormRequests()
+        const requests = await base.getCreateDimensionFormRequests()
         // hacky, v-form validation doesnt work with multiple nested elements
         requests.forEach((request: any) => {
           if (request.type === 'slider') {
@@ -472,20 +452,23 @@ export default Vue.extend({
       // @ts-ignore
       this.resetForm()
     },
-    onClickSaveAndAddButton() {
+    async onClickSaveAndAddButton() {
       const base = this as any
       if (base.formData.isCreatingNewDimension) {
         base.createDimension(false)
+        await base.setDimensionList()
       } else {
         base.addExistingDimension(false)
+        await base.setDimensionList()
       }
-      base.setDimensionList()
     },
     isUsedName(text: string): boolean {
       const base = this as any
       return (
         base.assignedDimensions.filter(
-          (item: any) => item.name.toLowerCase() === text.toLowerCase()
+          (item: any) =>
+            item.name.toLowerCase() === text.toLowerCase() ||
+            item.name.split(' - ')[0].toLowerCase() === text.toLowerCase()
         ).length > 0
       )
     }

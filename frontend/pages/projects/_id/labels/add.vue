@@ -31,6 +31,7 @@ import { DimensionListDTO, DimensionDTO } from '~/services/application/dimension
 import { ProjectDTO } from '~/services/application/project/projectData'
 import FormCreate from '~/components/label/FormCreate.vue'
 import FormCreateDimension from '~/components/label/FormCreateDimension.vue'
+import { addGroupToDimensionList } from '~/utils/dynamicDimensions'
 
 export default Vue.extend({
   components: {
@@ -105,21 +106,7 @@ export default Vue.extend({
     async setItems() {
       if (this.type === 'dimension') {
         await this.$services.dimension.list(this.projectId).then((response: DimensionListDTO) => {
-          this.dimensionItems = response.items.map((item: DimensionDTO) => {
-            const groupMap: any = {
-              DIM_OTH: 'Others',
-              DIM_OF: 'Offensive',
-              DIM_HUM: 'Humor',
-              DIM_EMO: 'Emotions'
-            }
-            if (item.metadata && item.metadata.length) {
-              const { codename } = item.metadata[0]
-              const groupMapKey: any =
-                Object.keys(groupMap).find((key) => codename.includes(key)) || ''
-              item.group = groupMap[groupMapKey] || 'Dynamic'
-            }
-            return item
-          })
+          this.dimensionItems = addGroupToDimensionList(response.items)
         })
       } else {
         this.items = await this.service.list(this.projectId)
@@ -143,12 +130,16 @@ export default Vue.extend({
     },
     // @ts-ignore
     async onSubmitAddDimension({ request, redirect }) {
-      await this.$services.dimension.assignDimensions(this.projectId, request.dimension)
-      if (redirect) {
-        this.$router.push(this.localePath(`/projects/${this.projectId}/labels`))
-      } else {
-        this.$refs.formCreateDimension && this.$refs.formCreateDimension.resetForm()
-      }
+      await this.$services.dimension
+        .assignDimensions(this.projectId, request.dimension)
+        .then(() => {
+          if (redirect) {
+            this.$router.push(this.localePath(`/projects/${this.projectId}/labels`))
+          } else {
+            this.$refs.formCreateDimension && this.$refs.formCreateDimension.resetForm()
+            this.$refs.formCreateDimension && this.$refs.formCreateDimension.setDimensionList()
+          }
+        })
     },
     async save() {
       await this.service.create(this.projectId, this.editedItem)

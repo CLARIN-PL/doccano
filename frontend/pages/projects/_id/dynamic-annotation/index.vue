@@ -171,6 +171,7 @@ import ToolbarMobile from '@/components/tasks/toolbar/ToolbarMobile'
 import AnnotationProgress from '@/components/tasks/sidebar/AnnotationProgress.vue'
 import RestingPeriodModal from '@/components/utils/RestingPeriodModal.vue'
 import { objectKeysSnakeToCamel } from '~/utils/stringHelpers'
+import { addGroupToDimensionList } from '~/utils/dynamicDimensions.js'
 import SliderInput from '~/components/tasks/dynamicAnnotation/SliderInput.vue'
 import CheckboxInput from '~/components/tasks/dynamicAnnotation/CheckboxInput.vue'
 
@@ -525,16 +526,8 @@ export default {
       const mockQuestions = []
       this.$nextTick(() => {
         let mappedDimensions = this.dimensionTypes.map((item) => {
-          const groupMap = {
-            DIM_OTH: 'Others',
-            DIM_OF: 'Offensive',
-            DIM_HUM: 'Humor',
-            DIM_EMO: 'Emotions'
-          }
           if (item.metadata && item.metadata.length) {
-            const { codename, config } = item.metadata[0]
-            const groupMapKey = Object.keys(groupMap).find((key) => codename.includes(key))
-            item.group = groupMap[groupMapKey] || 'Dynamic'
+            const { config } = item.metadata[0]
             if (config) {
               const { original_question, options } = config
               if (options) {
@@ -582,6 +575,7 @@ export default {
           return item
         })
         mappedDimensions = [...mappedDimensions, ...mocks]
+        mappedDimensions = addGroupToDimensionList(mappedDimensions)
         const groupedDimensions = _.groupBy(mappedDimensions, 'group')
         Object.keys(groupedDimensions).forEach((key) => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars

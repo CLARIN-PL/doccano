@@ -62,9 +62,9 @@ import FormDelete from '@/components/label/FormDelete.vue'
 import LabelList from '@/components/label/LabelList.vue'
 import DimensionList from '@/components/label/DimensionList.vue'
 import { DimensionDTO } from '~/services/application/dimension/dimensionData'
-
 import { LabelDTO } from '~/services/application/label/labelData'
 import { ProjectDTO } from '~/services/application/project/projectData'
+import { addGroupToDimensionList } from '~/utils/dynamicDimensions'
 
 export default Vue.extend({
   components: {
@@ -219,23 +219,11 @@ export default Vue.extend({
       }
       this.$nextTick(() => {
         if (this.isDimensionsTab) {
-          this.dimensionItems = items.map((item: any) => {
-            const groupMap: any = {
-              DIM_OTH: 'Others',
-              DIM_OF: 'Offensive',
-              DIM_HUM: 'Humor',
-              DIM_EMO: 'Emotions'
+          this.dimensionItems = addGroupToDimensionList(items).map((dim) => {
+            if (dim.type === 'checkbox') {
+              dim.value = false
             }
-            if (item.metadata && item.metadata.length) {
-              const { codename } = item.metadata[0]
-              const groupMapKey: string =
-                Object.keys(groupMap).find((key) => codename.includes(key)) || ''
-              item.group = groupMap[groupMapKey] || 'Dynamic'
-            }
-            if (item.type === 'checkbox') {
-              item.value = false
-            }
-            return item
+            return dim
           })
         }
       })

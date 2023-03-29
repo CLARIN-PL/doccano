@@ -76,6 +76,7 @@
 
 <script>
 import { mdiSend } from '@mdi/js'
+import { addGroupToDimensionList } from '~/utils/dynamicDimensions.js'
 
 export default {
   props: {
@@ -164,27 +165,14 @@ export default {
       })
     },
     setDimensionOptions() {
-      this.dimensionOptions = this.dimensions.map((item) => {
-        const groupMap = {
-          DIM_OTH: 'Others',
-          DIM_OF: 'Offensive',
-          DIM_HUM: 'Humor',
-          DIM_EMO: 'Emotions'
-        }
-        if (item.metadata && item.metadata.length) {
-          const { codename } = item.metadata[0]
-          const groupMapKey = Object.keys(groupMap).find((key) => codename.includes(key))
-          item.group = groupMap[groupMapKey] || 'Dynamic'
-        }
-
+      const dimensionOptions = this.dimensions.map((item) => {
         return {
           value: item.id,
           text: item.name,
-          type: item.type,
-          group: item.group
+          type: item.type
         }
       })
-
+      this.dimensionOptions = addGroupToDimensionList(dimensionOptions)
       this.groupedDimensionOptions = _.groupBy(this.dimensionOptions, 'group')
     },
     onSelectAllChange(val) {
