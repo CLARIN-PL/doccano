@@ -203,7 +203,7 @@ def populate_dimension_metadata(apps, schema_editor):
     meta_checkbox_mc_values_1 = {
         "is_multiple_answers": 1,
         "min_answer_number": 0,
-        "max_answer_number": 1,
+        "max_answer_number": 9,
         "original_question": "Ze względu na co obraża",
         "options": 'Płeć; Narodowość; Przekonania religijne; Rasę, kolor skóry, wygląd; Wiek; Czyn, działanie; Orientację seksualną; Poglądy polityczne, partie; Inne, np. grupy społeczne, zawodowe'
     }
@@ -211,7 +211,7 @@ def populate_dimension_metadata(apps, schema_editor):
     meta_checkbox_mc_values_2 = {
         "is_multiple_answers": 1,
         "min_answer_number": 0,
-        "max_answer_number": 1,
+        "max_answer_number": 8,
         "original_question": "W jaki sposób?",
         "options": "Mowa nienawiści; Odczłowieczenie; Nawoływanie do przemocy; Nawoływanie do ludobójstwa; Niesprawiedliwe uogólnianie, stereotypy; Lekceważenie; Upokorzenie; Inne"
     }
@@ -219,7 +219,7 @@ def populate_dimension_metadata(apps, schema_editor):
     meta_checkbox_mc_values_3 = {
         "is_multiple_answers": 1,
         "min_answer_number": 0,
-        "max_answer_number": 1,
+        "max_answer_number": 9,
         "original_question": "Autor śmieje się z",
         "options": 'Płeć; Narodowość; Przekonania religijne; Rasę, kolor skóry, wygląd; Wiek; Czyn, działanie; Orientację seksualną; Poglądy polityczne, partie; Inne, np. grupy społeczne, zawodowe'
     }
@@ -227,7 +227,7 @@ def populate_dimension_metadata(apps, schema_editor):
     meta_checkbox_mc_values_4 = {
         "is_multiple_answers": 1,
         "min_answer_number": 0,
-        "max_answer_number": 1,
+        "max_answer_number": 15,
         "original_question": "Charakter humoru, śmieszy ze względu na",
         "options": "Czarny humor; Ironię; Sarkazm; Dwuznaczność; Grę słów; Seksualność; Humor fekalny (o kupie :-) ); Brzmienie słów; Wyolbrzymienie; Niecenzuralne słowa; Kontrast; Ma charakter dowcipu, kawału, żartu; Absurd; Humor sytuacyjny; Humor patetyczny"
     }
