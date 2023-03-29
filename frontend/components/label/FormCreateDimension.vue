@@ -337,7 +337,7 @@ export default Vue.extend({
     },
     getCreateDimensionFormRequests(): any {
       const base = this as any
-      const dynamicGroups = base.assignedDimensions.filter((item: any) => item.group === 'Dynamic')
+      const dynamicGroups = base.allDimensions.filter((item: any) => item.group === 'Dynamic')
       const requests = []
       const request = {
         name: base.formData.dimensionName,
