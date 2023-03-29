@@ -522,6 +522,7 @@ export default {
       }
       this.dimensionTypes = _.uniqBy(dimensions, 'name')
       const mocks = []
+      const mockQuestions = []
       this.$nextTick(() => {
         let mappedDimensions = this.dimensionTypes.map((item) => {
           const groupMap = {
@@ -545,18 +546,24 @@ export default {
                 mock.isHidden = false
                 mock.originalQuestion = original_question
                 mock.metadata[0].config.originalOptions = options
-                mock.metadata[0].config.options = opts.map((opt) => {
-                  const dimName = `${original_question} - ${opt}`
-                  const dim = dimensions.find((dim) => dim.name.includes(dimName))
-                  return {
-                    label: opt,
-                    value: dim ? dim.name : opt
-                  }
-                })
+                mock.metadata[0].config.options = opts
+                  .map((opt) => {
+                    const dimName = `${original_question} - ${opt}`
+                    const dim = dimensions.find((dim) => dim.name.includes(dimName))
+                    return {
+                      label: opt,
+                      value: dim ? dim.name : opt
+                    }
+                  })
+                  .filter((opt) => {
+                    const dimName = `${original_question} - ${opt}`
+                    const isAssigned = !!dimensions.find((dim) => dim.name.includes(dimName))
+                    return !isAssigned
+                  })
 
-                const firstOptDimName = `${original_question} - ${opts[0]}`
-                if (item.name === firstOptDimName) {
+                if (!mockQuestions.includes(mock.originalQuestion)) {
                   mocks.push(mock)
+                  mockQuestions.push(mock.originalQuestion)
                 }
               }
             }
