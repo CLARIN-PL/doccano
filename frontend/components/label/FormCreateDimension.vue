@@ -314,7 +314,7 @@ export default Vue.extend({
     },
     async getCreateDimensionFormRequests() {
       const base = this as any
-      const requests = []
+      const requests = [] as any[]
       await base.setDimensionList()
       const dynamicGroups = base.allDimensions.filter((item: any) => item.group === 'Dynamic')
       base.$nextTick(() => {

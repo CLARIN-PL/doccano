@@ -208,7 +208,7 @@ export default Vue.extend({
     ...mapActions('projects', ['setCurrentDimensions']),
     async list() {
       this.isLoading = true
-      let items = this.isDimensionsTab ? this.currentDimensions : []
+      let items: any[] = this.isDimensionsTab ? this.currentDimensions : []
       if (!items.length) {
         const response = await this.service.list(this.projectId)
         items = response.items ? response.items : response
@@ -219,7 +219,9 @@ export default Vue.extend({
       }
       this.$nextTick(() => {
         if (this.isDimensionsTab) {
-          this.dimensionItems = addGroupToDimensionList(items).map((dim) => {
+          // @ts-ignore
+          const dimensions: any[] = addGroupToDimensionList(items)
+          this.dimensionItems = dimensions.map((dim: any) => {
             if (dim.type === 'checkbox') {
               dim.value = false
             }

@@ -1,6 +1,6 @@
 export function addGroupToDimensionList(dimensions) {
     if (!Array.isArray(dimensions)) {
-        return false
+        return []
     }
     return dimensions.map((item) => {
         const groupMap = {
