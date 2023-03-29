@@ -106,6 +106,7 @@ export default Vue.extend({
     async setItems() {
       if (this.type === 'dimension') {
         await this.$services.dimension.list(this.projectId).then((response: DimensionListDTO) => {
+          // @ts-ignore
           this.dimensionItems = addGroupToDimensionList(response.items)
         })
       } else {

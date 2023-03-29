@@ -177,6 +177,7 @@ export default Vue.extend({
       } else {
         this.setFormDataFromItem()
       }
+      this.formData.isSubmitting = this.item.isSubmitting
     },
     setFormDataFromValue() {
       if (this.config.isMultipleAnswers) {
@@ -276,13 +277,15 @@ export default Vue.extend({
           isValidated = true
         }
 
-        if (this.config.isMultipleAnswers && isValidated) {
+        if (this.config.isMultipleAnswers && isValidated && !this.formData.isSubmitting) {
+          this.formData.isSubmitting = true
           this.formData.errorMessage = ''
           const dimensionName = lastAddedElement.includes('-')
             ? lastAddedElement
             : `${this.item.originalQuestion} - ${lastAddedElement}`
           const dimension: any =
             this.items.find((dim: any) => dim.name.includes(dimensionName)) || {}
+
           if (isAdding && !dimension.questionId) {
             this.$emit('add:label', {
               formDataKey: this.formDataKey,
@@ -316,7 +319,8 @@ export default Vue.extend({
             })
           }
           this.$emit('input', this.formData.checkedOptions)
-        } else if (!this.config.isMultipleAnswers && isValidated) {
+        } else if (!this.config.isMultipleAnswers && isValidated && !this.formData.isSubmitting) {
+          this.formData.isSubmitting = true
           const isChecked = this.formData.isChecked
           if (!isChecked && this.item.questionId) {
             this.$emit('delete:label', {
