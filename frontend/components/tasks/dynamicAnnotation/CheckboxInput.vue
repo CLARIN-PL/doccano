@@ -36,7 +36,7 @@
               :value="option['value']"
               :label="option['label']"
               class="content-item__checkbox"
-              @click.once="onCheckboxClick"
+              @click="onCheckboxClick"
             />
           </li>
           <p></p>
@@ -52,7 +52,7 @@
         :disabled="readOnly || preview || formData.isSubmitting"
         :label="name + (required ? ' *' : '')"
         class="content-item__checkbox"
-        @click.once="onCheckboxClick"
+        @click="onCheckboxClick"
       />
     </div>
   </div>
@@ -246,7 +246,13 @@ export default Vue.extend({
     },
     onCheckboxClick($event: any) {
       const lastClickedElement = [...$event.target.parentElement.children]
-      const lastClickedElementInput = lastClickedElement.find((item) => item.tagName === 'INPUT')
+      let lastClickedElementInput = lastClickedElement.find((item) => item.tagName === 'INPUT')
+      if (!lastClickedElementInput && lastClickedElement.length) {
+        const lastClickedElementInputs = lastClickedElement[0].querySelectorAll('input')
+        if (lastClickedElementInputs.length) {
+          lastClickedElementInput = lastClickedElementInputs[0]
+        }
+      }
       const lastAddedElement = lastClickedElementInput ? lastClickedElementInput.defaultValue : ''
       const isAdding = this.formData.checkedOptions.includes(lastAddedElement)
 
