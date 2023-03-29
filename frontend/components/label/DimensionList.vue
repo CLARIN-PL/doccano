@@ -183,6 +183,7 @@ export default Vue.extend({
     },
     getItemConfig(item: DimensionDTO) {
       let config: any = { config: {} }
+      const base = this
       if (item.metadata && item.metadata[0]) {
         config = { ...config, ...objectKeysSnakeToCamel(item.metadata[0]) }
         if (item.metadata[0].config) {
@@ -205,6 +206,12 @@ export default Vue.extend({
                 })
               }
             }
+            config.config.options = config.config.options.filter((opt: any) => {
+              const { original_question } = item.metadata[0].config
+              const dimName = `${original_question} - ${opt.label}`
+              const isAssigned = !!base.items.find((dim: any) => dim.name.includes(dimName))
+              return isAssigned
+            })
           }
         }
       }

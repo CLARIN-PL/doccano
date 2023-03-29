@@ -556,9 +556,9 @@ export default {
                     }
                   })
                   .filter((opt) => {
-                    const dimName = `${original_question} - ${opt}`
+                    const dimName = `${original_question} - ${opt.label}`
                     const isAssigned = !!dimensions.find((dim) => dim.name.includes(dimName))
-                    return !isAssigned
+                    return isAssigned
                   })
 
                 if (!mockQuestions.includes(mock.originalQuestion)) {
