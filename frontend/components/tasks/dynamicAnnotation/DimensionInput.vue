@@ -169,7 +169,8 @@ export default {
         return {
           value: item.id,
           text: item.name,
-          type: item.type
+          type: item.type,
+          metadata: item.metadata
         }
       })
       this.dimensionOptions = addGroupToDimensionList(dimensionOptions)

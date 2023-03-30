@@ -72,7 +72,7 @@
                     v-model="isDimensionDetailFormValid"
                     :loading="loading"
                     :required="formData.required"
-                    :items="assignedDimensions"
+                    :items="allDimensions"
                     v-bind.sync="formData"
                   />
                 </v-col>
@@ -94,7 +94,7 @@
             <component
               :is="getDimensionDetailPreviewComponent(formData.dimensionType)"
               :name="formData.dimensionName"
-              :items="assignedDimensions"
+              :items="allDimensions"
               :use-value="true"
               :value="formData.dimensionType === 'slider' ? 0 : false"
               :playground="true"
@@ -465,10 +465,10 @@ export default Vue.extend({
     isUsedName(text: string): boolean {
       const base = this as any
       return (
-        base.assignedDimensions.filter(
-          (item: any) =>
-            item.name.toLowerCase() === text.toLowerCase() ||
-            item.name.split(' - ')[0].toLowerCase() === text.toLowerCase()
+        base.allDimensions.filter((item: any) =>
+          item.name.toLowerCase() === text.toLowerCase() || item.name.includes(' - ')
+            ? item.name.split(' - ')[0].toLowerCase() === text.toLowerCase()
+            : false
         ).length > 0
       )
     }
