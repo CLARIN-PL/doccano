@@ -353,14 +353,14 @@ export default Vue.extend({
               max_answer_number: base.formData.checkbox.maxAnswerNumber,
               options: base.formData.checkbox.options
                 .map((opt: any) => {
-                  return opt.text
+                  return opt.label
                 })
                 .join('; '),
               original_question: base.formData.dimensionName
             }
             base.formData.checkbox.options.forEach((opt: any, idx: number) => {
               const optionRequest = _.cloneDeep(request)
-              optionRequest.name = `${request.name} - ${opt.text}`
+              optionRequest.name = `${request.name} - ${opt.label}`
               optionRequest.dimension_meta_data[0].codename = `DYM_DYN_${
                 dynamicGroups.length + idx + 1
               }`
@@ -371,11 +371,7 @@ export default Vue.extend({
               is_multiple_answers: Number(base.formData.checkbox.isMultipleAnswers),
               min_answer_number: base.formData.checkbox.minAnswerNumber,
               max_answer_number: base.formData.checkbox.maxAnswerNumber,
-              options: base.formData.checkbox.options
-                .map((opt: any) => {
-                  return opt.text
-                })
-                .join('; ')
+              options: ''
             }
             requests.push(request)
           }

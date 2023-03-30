@@ -54,7 +54,7 @@
           <v-row v-for="(option, idx) in formData.options" :key="`option_${idx}`">
             <v-col cols="9" sm="9" class="pt-0">
               <v-text-field
-                v-model.trim="formData.options[idx].text"
+                v-model.trim="formData.options[idx].label"
                 :disabled="loading"
                 :label="$t('labels.checkboxOption')"
                 :rules="[rules.required, rules.nameDuplicated, rules.nameStringOnly]"
@@ -114,7 +114,7 @@ export default Vue.extend({
         maxAnswerNumber: 1,
         options: [
           {
-            text: '',
+            label: '',
             value: 0
           }
         ]
@@ -173,14 +173,14 @@ export default Vue.extend({
   methods: {
     isUsedName(text: string): boolean {
       return (
-        this.formData.options.filter((opt: any) => opt.text.toLowerCase() === text.toLowerCase())
+        this.formData.options.filter((opt: any) => opt.label.toLowerCase() === text.toLowerCase())
           .length > 1
       )
     },
     getOptionErrorMessages(option: any) {
       const messages = []
       if (this.formData.isMultipleAnswers) {
-        const hasEmptyText = option.text === ''
+        const hasEmptyText = option.label === ''
         hasEmptyText && messages.push(this.$t('rules.required'))
       }
       return messages
@@ -199,7 +199,7 @@ export default Vue.extend({
       }
     },
     onClickAddButton() {
-      this.formData.options.push({ value: this.formData.options.length + 1, text: '' })
+      this.formData.options.push({ value: this.formData.options.length + 1, label: '' })
       if (this.$refs.checkboxForm) {
         // @ts-ignore
         this.$refs.checkboxForm.validate()
