@@ -62,13 +62,14 @@ export default Vue.extend({
 
   methods: {
     async setDimensionList() {
-      await this.$services.dimension.listAllDimensions().then((response) => {
+      const base = this
+      // @ts-ignore
+      await base.$services.dimension.listAllDimensions().then((response: any) => {
         this.dimensions = response.items
       })
     },
     async create() {
       const projectItem = this.getProjectItem()
-      console.log(projectItem)
       const project = await this.$services.project.create(projectItem)
       const projectTypesWithAutoUploadScaleTypes = ['AffectiveAnnotation', 'DynamicAnnotation']
       if (projectTypesWithAutoUploadScaleTypes.includes(project.projectType)) {
@@ -116,7 +117,7 @@ export default Vue.extend({
       return editedItem
     },
     getAdditionalDimensions(dimensions: number[]) {
-      const adtDimensions = []
+      const adtDimensions: any[] = []
       const dimensionsWithAdtDimensions = this.dimensions.filter((dim: any) => {
         if (dim && dim.metadata.length) {
           const { config } = dim.metadata[0]
@@ -129,7 +130,7 @@ export default Vue.extend({
         return dim.hasChildren
       })
       dimensions.forEach((dim: any) => {
-        const adtDimension = dimensionsWithAdtDimensions.find((adt) => adt.id === dim)
+        const adtDimension: any = dimensionsWithAdtDimensions.find((adt: any) => adt.id === dim)
         if (adtDimension) {
           const adtDimensionDTO = this.dimensions.find(
             (dim: any) => dim.metadata[0].codename === adtDimension.checkbox_codename
