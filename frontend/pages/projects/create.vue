@@ -56,9 +56,19 @@ export default Vue.extend({
     }
   },
 
+  async created() {
+    await this.setDimensionList()
+  },
+
   methods: {
+    async setDimensionList() {
+      await this.$services.dimension.listAllDimensions().then((response) => {
+        this.dimensions = response.items
+      })
+    },
     async create() {
       const projectItem = this.getProjectItem()
+      console.log(projectItem)
       const project = await this.$services.project.create(projectItem)
       const projectTypesWithAutoUploadScaleTypes = ['AffectiveAnnotation', 'DynamicAnnotation']
       if (projectTypesWithAutoUploadScaleTypes.includes(project.projectType)) {
@@ -94,6 +104,8 @@ export default Vue.extend({
       delete editedItem.affectiveProjectMode
 
       if (editedItem.projectType === 'DynamicAnnotation') {
+        const adtDimensions = this.getAdditionalDimensions(editedItem.dimension)
+        editedItem.dimension = editedItem.dimension.concat(adtDimensions)
         editedItem.dimension = editedItem.dimension.map((dim: number) => {
           return {
             dimension: [dim]
@@ -102,6 +114,32 @@ export default Vue.extend({
         editedItem.isCombinationMode = true
       }
       return editedItem
+    },
+    getAdditionalDimensions(dimensions: number[]) {
+      const adtDimensions = []
+      const dimensionsWithAdtDimensions = this.dimensions.filter((dim: any) => {
+        if (dim && dim.metadata.length) {
+          const { config } = dim.metadata[0]
+          if (config) {
+            const { checkbox_codename } = config
+            dim.hasChildren = !!checkbox_codename
+            dim.checkbox_codename = checkbox_codename
+          }
+        }
+        return dim.hasChildren
+      })
+      dimensions.forEach((dim: any) => {
+        const adtDimension = dimensionsWithAdtDimensions.find((adt) => adt.id === dim)
+        if (adtDimension) {
+          const adtDimensionDTO = this.dimensions.find(
+            (dim: any) => dim.metadata[0].codename === adtDimension.checkbox_codename
+          )
+          if (adtDimensionDTO) {
+            adtDimensions.push(adtDimensionDTO.id)
+          }
+        }
+      })
+      return adtDimensions
     },
     async getBlobScaleData(project: ProjectDTO): Promise<Blob[]> {
       let fdata = [] as Blob[]

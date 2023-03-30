@@ -239,7 +239,7 @@ export default {
   computed: {
     ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId']),
     ...mapGetters('config', ['isRTL']),
-    ...mapGetters('projects', ['currentDimensions']),
+    ...mapGetters('projects', ['currentDimensions', 'allDimensions']),
     ...mapGetters('user', ['getAnnotation']),
     scaleValues() {
       return this.scales.map((scale) => {

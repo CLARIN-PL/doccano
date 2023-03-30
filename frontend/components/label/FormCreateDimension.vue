@@ -161,7 +161,7 @@ export default Vue.extend({
       valid: false,
       loading: false,
       assignedDimensions: [] as any[],
-      excludedDimensions: ['DIM_OTH10', 'DIM_OTH11'] as string[],
+      excludedDimensions: [] as string[],
       allDimensions: [] as any[],
       isDimensionDetailFormValid: false,
       dimensionTypeOptions: [

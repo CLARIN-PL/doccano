@@ -3,5 +3,7 @@ export default async function ({ store, route }) {
   const isEmpty = Object.keys(project).length === 0 && project.constructor === Object
   if (isEmpty) {
     await store.dispatch('projects/setCurrentProject', route.params.id)
+    await store.dispatch('projects/setCurrentDimensions', route.params.id)
+    await store.dispatch('projects/setAllDimensions')
   }
 }

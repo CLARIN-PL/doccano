@@ -108,7 +108,7 @@ export default {
       selectAll: false,
       dimensions: [],
       dimensionOptions: [],
-      excludedDimensions: ['DIM_OTH10', 'DIM_OTH11'],
+      excludedDimensions: [],
       groupedDimensionOptions: {},
       showDialog: false,
       dialogErrorMessage: ''

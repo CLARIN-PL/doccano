@@ -57,6 +57,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import { mapGetters } from 'vuex'
 import CheckboxInput from './CheckboxInput.vue'
 import { capitalize } from '~/utils/stringHelpers'
 import { roundWithMaxPrecision } from '~/utils/numberHelpers'
@@ -143,6 +144,7 @@ export default Vue.extend({
     }
   },
   computed: {
+    ...mapGetters('projects', ['allDimensions']),
     rules() {
       const base = this
       const rules = []
@@ -247,9 +249,9 @@ export default Vue.extend({
       })
     },
     setCheckboxData() {
-      if (this.config.withCheckbox && this.items.length) {
+      if (this.config.withCheckbox && this.allDimensions.length) {
         const checkbox: any =
-          this.items.find(
+          this.allDimensions.find(
             (item: any) => item.metadata[0].codename === this.config.checkboxCodename
           ) || {}
         if (checkbox.metadata && checkbox.metadata[0]) {

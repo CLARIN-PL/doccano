@@ -4,6 +4,8 @@ export default _.debounce(async function ({ app, store, route, redirect }) {
   try {
     await store.dispatch('projects/setCurrentProject', route.params.id)
     await store.dispatch('projects/setCurrentDimensions', route.params.id)
+    await store.dispatch('projects/setAllDimensions')
+
   } catch (e) {
     redirect('/projects')
   }
