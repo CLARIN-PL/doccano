@@ -107,6 +107,7 @@ export default Vue.extend({
       if (editedItem.projectType === 'DynamicAnnotation') {
         const adtDimensions = this.getAdditionalDimensions(editedItem.dimension)
         editedItem.dimension = editedItem.dimension.concat(adtDimensions)
+        editedItem.dimension = _.uniq(editedItem.dimension)
         editedItem.dimension = editedItem.dimension.map((dim: number) => {
           return {
             dimension: [dim]
