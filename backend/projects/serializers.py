@@ -206,7 +206,7 @@ class DynamicAnnotationProjectSerializer(ProjectSerializer):
 
     class Meta(ProjectSerializer.Meta):
         model = DynamicAnnotationProject
-        fields = ProjectSerializer.Meta.fields + ["allow_overlapping", "grapheme_mode", "use_relation", "is_summary_mode", "is_emotions_mode", "is_offensive_mode", "is_humor_mode", "is_others_mode", "is_single_ann_view", "is_combination_mode", "dimension"]
+        fields = ProjectSerializer.Meta.fields + ["allow_overlapping", "grapheme_mode", "use_relation", "is_summary_mode", "is_emotions_mode", "is_offensive_mode", "is_humor_mode", "is_others_mode", "is_single_ann_view", "is_combination_mode", "package_data_type", "dimension"]
 
     def create(self, validated_data):
         tags = TagSerializer(data=validated_data.pop("tags", []), many=True)

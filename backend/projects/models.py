@@ -243,6 +243,7 @@ class DynamicAnnotationProject(Project):
     is_others_mode = models.BooleanField(default=False)
     is_single_ann_view = models.BooleanField(default=True)
     is_combination_mode = models.BooleanField(default=False)
+    package_data_type = models.BooleanField(default=False)
         
 
     @property
