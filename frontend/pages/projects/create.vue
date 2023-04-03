@@ -7,6 +7,7 @@ import Vue from 'vue'
 import _ from 'lodash'
 import FormCreate from '~/components/project/FormCreate.vue'
 import { ProjectDTO, ProjectWriteDTO } from '~/services/application/project/projectData'
+import { DimensionDTO } from '~/services/application/dimension/dimensionData'
 
 export default Vue.extend({
   components: {
@@ -19,6 +20,7 @@ export default Vue.extend({
 
   data() {
     return {
+      dimensions: [] as DimensionDTO[],
       editedItem: {
         name: '',
         description: '',
@@ -32,7 +34,8 @@ export default Vue.extend({
         affectiveProjectMode: 'isSummaryMode',
         isSingleAnnView: false,
         isCombinationMode: false,
-        tags: [] as string[]
+        tags: [] as string[],
+        dimension: [] as any[]
       } as ProjectWriteDTO,
       defaultItem: {
         name: '',
@@ -47,16 +50,29 @@ export default Vue.extend({
         affectiveProjectMode: 'isSummaryMode',
         isSingleAnnView: false,
         isCombinationMode: false,
-        tags: [] as string[]
+        tags: [] as string[],
+        dimension: [] as any[]
       } as ProjectWriteDTO
     }
   },
 
+  async created() {
+    await this.setDimensionList()
+  },
+
   methods: {
+    async setDimensionList() {
+      const base = this
+      // @ts-ignore
+      await base.$services.dimension.listAllDimensions().then((response: any) => {
+        this.dimensions = response.items
+      })
+    },
     async create() {
       const projectItem = this.getProjectItem()
       const project = await this.$services.project.create(projectItem)
-      if (project.projectType === 'AffectiveAnnotation') {
+      const projectTypesWithAutoUploadScaleTypes = ['AffectiveAnnotation', 'DynamicAnnotation']
+      if (projectTypesWithAutoUploadScaleTypes.includes(project.projectType)) {
         if (!project.isSummaryMode) {
           await this.uploadScaleTypeFile(project)
         }
@@ -68,8 +84,12 @@ export default Vue.extend({
     },
     getProjectItem(): ProjectWriteDTO {
       const editedItem: any = _.cloneDeep(this.editedItem)
-      if (this.editedItem.affectiveProjectMode) {
-        editedItem[this.editedItem.affectiveProjectMode] = true
+      if (editedItem.projectType !== 'AffectiveAnnotation') {
+        editedItem.affectiveProjectMode = ''
+      }
+
+      if (editedItem.affectiveProjectMode) {
+        editedItem[editedItem.affectiveProjectMode] = true
       }
       const affectiveProjectModes = [
         'isHumorMode',
@@ -80,10 +100,48 @@ export default Vue.extend({
       ]
       affectiveProjectModes.forEach((key: string) => {
         const mode = editedItem[key] || false
-        editedItem[key] = this.editedItem.isCombinationMode ? false : mode
+        editedItem[key] = editedItem.isCombinationMode ? false : mode
       })
       delete editedItem.affectiveProjectMode
+
+      if (editedItem.projectType === 'DynamicAnnotation') {
+        const adtDimensions = this.getAdditionalDimensions(editedItem.dimension)
+        editedItem.dimension = editedItem.dimension.concat(adtDimensions)
+        editedItem.dimension = _.uniq(editedItem.dimension)
+        editedItem.dimension = editedItem.dimension.map((dim: number) => {
+          return {
+            dimension: [dim]
+          }
+        })
+        editedItem.isCombinationMode = true
+      }
       return editedItem
+    },
+    getAdditionalDimensions(dimensions: number[]) {
+      const adtDimensions: any[] = []
+      const dimensionsWithAdtDimensions = this.dimensions.filter((dim: any) => {
+        if (dim && dim.metadata.length) {
+          const { config } = dim.metadata[0]
+          if (config) {
+            const { checkbox_codename } = config
+            dim.hasChildren = !!checkbox_codename
+            dim.checkbox_codename = checkbox_codename
+          }
+        }
+        return dim.hasChildren
+      })
+      dimensions.forEach((dim: any) => {
+        const adtDimension: any = dimensionsWithAdtDimensions.find((adt: any) => adt.id === dim)
+        if (adtDimension) {
+          const adtDimensionDTO = this.dimensions.find(
+            (dim: any) => dim.metadata[0].codename === adtDimension.checkbox_codename
+          )
+          if (adtDimensionDTO) {
+            adtDimensions.push(adtDimensionDTO.id)
+          }
+        }
+      })
+      return adtDimensions
     },
     async getBlobScaleData(project: ProjectDTO): Promise<Blob[]> {
       let fdata = [] as Blob[]
@@ -128,7 +186,7 @@ export default Vue.extend({
           const projectId = project.id.toString()
           await this.$services.scaleType.upload(projectId, file)
         } catch (e) {
-          console.log(e.message)
+          console.error(e.message)
         }
       })
     }

@@ -24,5 +24,7 @@ export default {
     message2: 'Sie können mit dem Kommentieren fortfahren:',
     message3: 'Bitte aktualisieren Sie diese Seite, wenn die Ruhezeit abgelaufen ist.'
   },
-  goToTop: "Gehen Sie zurück nach oben"
+  goToTop: "Gehen Sie zurück nach oben",
+  group: "Gruppe",
+  preview: "Vorschau"
 }

@@ -59,6 +59,11 @@
           hide-selected
           @input="updateValue('tags', $event)"
         />
+        <v-row v-if="isDynamicAnnotationProject">
+          <v-col col="12">
+            <dimension-input v-model="dimensionsModalData" :required="false" />
+          </v-col>
+        </v-row>
         <v-row>
           <v-col col="7">
             <v-checkbox
@@ -81,7 +86,7 @@
               contain
             />
             <v-checkbox
-              v-if="(isSequenceLabelingProject && projectType != 'AffectiveAnnotation')"
+              v-if="isSequenceLabelingAndUseRelation"
               :value="useRelation"
               :label="$t('overview.useRelation')"
               @change="updateValue('useRelation', $event === true)"
@@ -93,16 +98,21 @@
             >
               <template #label>
                 <div>
-                  {{ $t('overview.count')}}
+                  {{ $t('overview.count') }}
                   <v-tooltip bottom>
                     <template #activator="{ on }">
-                      <a target="_blank" href="https://unicode.org/reports/tr29/" @click.stop v-on="on">
-                        {{ $t('overview.graphemeClusters')}}
+                      <a
+                        target="_blank"
+                        href="https://unicode.org/reports/tr29/"
+                        @click.stop
+                        v-on="on"
+                      >
+                        {{ $t('overview.graphemeClusters') }}
                       </a>
                     </template>
-                    {{ $t('overview.emojiDescription')}}
+                    {{ $t('overview.emojiDescription') }}
                   </v-tooltip>
-                    {{ $t('overview.asOneCharacter')}}
+                  {{ $t('overview.asOneCharacter') }}
                 </div>
               </template>
             </v-checkbox>
@@ -119,7 +129,7 @@
           </v-col>
           <v-col v-if="isAffectiveAnnotationProject" col="5">
             <p class="font-weight-bold mb-0">Mode options</p>
-            <v-radio-group 
+            <v-radio-group
               :value="isCombinationMode ? '' : affectiveProjectMode"
               @change="updateValue('affectiveProjectMode', $event)"
             >
@@ -171,8 +181,12 @@
 import Vue from 'vue'
 import { mdiCheckBold } from '@mdi/js'
 import { projectNameRules, descriptionRules, projectTypeRules } from '@/rules/index'
+import DimensionInput from '~/components/tasks/dynamicAnnotation/DimensionInput.vue'
 
 export default Vue.extend({
+  components: {
+    DimensionInput
+  },
   props: {
     name: {
       type: String,
@@ -231,6 +245,10 @@ export default Vue.extend({
     tags: {
       type: Array,
       default: () => []
+    },
+    dimension: {
+      type: Array,
+      default: () => []
     }
   },
 
@@ -241,11 +259,21 @@ export default Vue.extend({
       projectTypeRules,
       descriptionRules,
       mdiCheckBold,
-      selected: 0,
+      selected: 0
     }
   },
 
   computed: {
+    dimensionsModalData: {
+      get() {
+        // @ts-ignore
+        return this.dimension
+      },
+      set(val) {
+        // @ts-ignore
+        this.$emit('update:dimension', val)
+      }
+    },
     affectiveViewOptions() {
       return [
         {
@@ -255,7 +283,7 @@ export default Vue.extend({
         {
           label: this.$t('overview.singleTextViewMode'),
           value: true
-        },
+        }
       ]
     },
     affectiveAnnotationOptions() {
@@ -279,10 +307,10 @@ export default Vue.extend({
         {
           label: this.$t('overview.enableOthers'),
           value: 'isOthersMode'
-        },
+        }
       ]
     },
-    projectTypes() {
+    projectTypes(): string[] {
       return [
         'DocumentClassification',
         'SequenceLabeling',
@@ -291,7 +319,8 @@ export default Vue.extend({
         'ImageClassification',
         'Speech2text',
         'ArticleAnnotation',
-        'AffectiveAnnotation'
+        'AffectiveAnnotation',
+        'DynamicAnnotation'
       ]
     },
     images() {
@@ -303,19 +332,36 @@ export default Vue.extend({
         'image_classification.png',
         'speech_to_text.png',
         'article_annotation.png',
-        'affective_annotation.png'
+        'affective_annotation.png',
+        'dynamic-annotation.png'
       ]
     },
     hasSingleLabelOption() {
-      const singleLabelProjects = ['DocumentClassification', 'ImageClassification', 'ArticleAnnotation', 'AffectiveAnnotation']
+      const singleLabelProjects = [
+        'DocumentClassification',
+        'ImageClassification',
+        'ArticleAnnotation',
+        'AffectiveAnnotation'
+      ]
       return singleLabelProjects.includes(this.projectType)
     },
+    isSequenceLabelingAndUseRelation() {
+      const sequenceLabelingProjects = ['SequenceLabeling', 'ArticleAnnotation']
+      return sequenceLabelingProjects.includes(this.projectType)
+    },
     isSequenceLabelingProject() {
-      const sequenceLabelingProjects = ['SequenceLabeling', 'ArticleAnnotation', 'AffectiveAnnotation']
+      const sequenceLabelingProjects = [
+        'SequenceLabeling',
+        'ArticleAnnotation',
+        'AffectiveAnnotation'
+      ]
       return sequenceLabelingProjects.includes(this.projectType)
     },
     isAffectiveAnnotationProject() {
       return this.projectType === 'AffectiveAnnotation'
+    },
+    isDynamicAnnotationProject() {
+      return this.projectType === 'DynamicAnnotation'
     }
   },
 
@@ -324,6 +370,7 @@ export default Vue.extend({
       this.$emit(`update:${key}`, value)
     },
     translateTypeName(type: string, types: string[]): string {
+      // @ts-ignore
       const index = this.projectTypes.indexOf(type)
       return types[index]
     }

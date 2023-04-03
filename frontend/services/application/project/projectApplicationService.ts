@@ -45,7 +45,7 @@ export class ProjectApplicationService {
   }
 
   private toWriteModel(item: ProjectWriteDTO): ProjectWriteItem {
-    return new ProjectWriteItem(
+    const model =  new ProjectWriteItem(
       item.id,
       item.name,
       item.description,
@@ -64,7 +64,9 @@ export class ProjectApplicationService {
       item.isOthersMode,
       item.isSingleAnnView,
       item.isCombinationMode,
+      item.dimension,
       item.tags,
     )
+    return model 
   }
 }

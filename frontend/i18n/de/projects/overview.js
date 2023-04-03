@@ -19,7 +19,8 @@ export default {
     'Bildklassifikation',
     'Sprache zu Text',
     'Artikelanmerkung',
-    'Affektive Anmerkung'
+    'Affektive Anmerkung',
+    'Dynamische Anmerkung'
   ],
   tags: 'Stichworte',
   allowSingleLabel: 'Einzelne Beschriftung zulassen',
@@ -36,5 +37,10 @@ export default {
   enableOthers: 'Ermöglicht dem Benutzer die Messung anderer Parameter',
   articleViewMode: 'Anmerkung als Teil eines Artikels anzeigen',
   singleTextViewMode: 'Anmerkung als einzelnen Text anzeigen',
-  combinationMode: 'Alle Anmerkungsmodi kombinieren'
+  combinationMode: 'Alle Anmerkungsmodi kombinieren',
+  dimensions: 'Maße',
+  selected: 'ausgewählt',
+  clear: 'klar',
+  close: 'Schließen',
+  others: "andere"
 }

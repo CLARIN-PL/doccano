@@ -10,6 +10,7 @@ export type ProjectType =
   | 'Speech2text'
   | 'ArticleAnnotation'
   | 'AffectiveAnnotation'
+  | 'DynamicAnnotation'
 
 export class ProjectReadItem {
   id: number
@@ -18,6 +19,7 @@ export class ProjectReadItem {
   guideline: string
   users: number[]
   tags: Object[]
+  dimension: any[]
 
   @Expose({ name: 'project_type' })
   projectType: ProjectType
@@ -91,7 +93,9 @@ export class ProjectReadItem {
       ImageClassification: 'image-classification',
       Speech2text: 'speech-to-text',
       ArticleAnnotation: 'article-annotation',
-      AffectiveAnnotation: 'affective-annotation'
+      AffectiveAnnotation: 'affective-annotation',
+      DynamicAnnotation: 'dynamic-annotation'
+
     }
     const url = `/projects/${this.id}/${mapping[this.projectType]}`
     return url
@@ -135,7 +139,8 @@ export class ProjectWriteItem {
     public is_others_mode: boolean,
     public is_single_ann_view: boolean,
     public is_combination_mode: boolean,
-    public tags: string[]
+    public dimension: any[],
+    public tags?: string[],
   ) {}
 
   get resourceType(): string {
@@ -147,13 +152,15 @@ export class ProjectWriteItem {
       ImageClassification: 'ImageClassificationProject',
       Speech2text: 'Speech2textProject',
       ArticleAnnotation: 'ArticleAnnotationProject',
-      AffectiveAnnotation: 'AffectiveAnnotationProject'
+      AffectiveAnnotation: 'AffectiveAnnotationProject',
+      DynamicAnnotation: 'DynamicAnnotationProject'
+
     }
     return mapping[this.project_type]
   }
 
   toObject(): Object {
-    return {
+    const result : any =  {
       id: this.id,
       name: this.name,
       description: this.description,
@@ -165,7 +172,6 @@ export class ProjectWriteItem {
       allow_overlapping: this.allow_overlapping,
       grapheme_mode: this.grapheme_mode,
       use_relation: this.use_relation,
-      tags: this.tags.map((tag) => ({ text: tag })),
       resourcetype: this.resourceType,
       is_humor_mode: this.is_humor_mode,
       is_emotions_mode: this.is_emotions_mode,
@@ -173,7 +179,11 @@ export class ProjectWriteItem {
       is_offensive_mode: this.is_offensive_mode,
       is_others_mode: this.is_others_mode,
       is_single_ann_view: this.is_single_ann_view,
-      is_combination_mode: this.is_combination_mode
+      is_combination_mode: this.is_combination_mode,
+      dimension: this.dimension,
+      tags: this.tags? this.tags.map((tag) => ({ text: tag })) : []
     }
+
+    return result
   }
 }

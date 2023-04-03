@@ -1,5 +1,7 @@
 export const state = () => ({
-  current: {}
+  current: {},
+  currentDimensions: {},
+  allDimensions: []
 })
 
 export const getters = {
@@ -15,12 +17,24 @@ export const getters = {
   },
   getLink(state) {
     return state.current.pageLink
+  },
+  currentDimensions(state) {
+    return state.currentDimensions
+  },
+  allDimensions(state) {
+    return state.allDimensions
   }
 }
 
 export const mutations = {
   setCurrent(state, payload) {
     state.current = payload
+  },
+  setCurrentDimensions(state, payload) {
+    state.currentDimensions = payload
+  },
+  setAllDimensions(state, payload) {
+    state.allDimensions = payload
   }
 }
 
@@ -33,4 +47,20 @@ export const actions = {
       throw new Error(error)
     }
   },
+  async setCurrentDimensions({ commit }, projectId) {
+    try {
+      const response = await this.$services.dimension.list(projectId)
+      commit('setCurrentDimensions', response)
+    } catch (error) {
+      throw new Error(error)
+    }
+  },
+  async setAllDimensions({ commit }) {
+    try {
+      const response = await this.$services.dimension.listAllDimensions()
+      commit('setAllDimensions', response.items)
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
 }

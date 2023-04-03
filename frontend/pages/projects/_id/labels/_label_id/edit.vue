@@ -53,6 +53,11 @@ export default Vue.extend({
       return this.$route.params.label_id
     },
 
+    labelType(): string {
+      const type = this.$route.query.type
+      return type
+    },
+
     service(): any {
       const type = this.$route.query.type
       if (type === 'category') {
@@ -67,12 +72,15 @@ export default Vue.extend({
     }
   },
 
-  async created() {
-    this.items = await this.service.list(this.projectId)
-    this.editedItem = await this.service.findById(this.projectId, this.labelId)
+  created() {
+    this.setEditedItem()
   },
 
   methods: {
+    async setEditedItem() {
+      this.items = await this.service.list(this.projectId)
+      this.editedItem = await this.service.findById(this.projectId, this.labelId)
+    },
     async save() {
       await this.service.update(this.projectId, this.editedItem)
       this.$router.push(this.localePath(`/projects/${this.projectId}/labels`))

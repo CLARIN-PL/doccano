@@ -203,14 +203,22 @@ export default Vue.extend({
       return this.isProjectAdmin ? this.hasItems : this.hasItems && this.hasUnannotatedItem
     },
     showTableAnnButton(): boolean {
-      return this.isArticleTask && this.isProjectAdmin && !this.isAffectiveAnnotation
+      return (
+        this.isArticleTask &&
+        this.isProjectAdmin &&
+        !this.isAffectiveAnnotation &&
+        !this.isDynamicAnnotation
+      )
     },
     isArticleTask(): boolean {
-      const articleTasks = ['ArticleAnnotation', 'AffectiveAnnotation']
+      const articleTasks = ['ArticleAnnotation', 'AffectiveAnnotation', 'DynamicAnnotation']
       return articleTasks.includes(this.project.projectType)
     },
     isAffectiveAnnotation(): boolean {
       return this.project.projectType === 'AffectiveAnnotation'
+    },
+    isDynamicAnnotation(): boolean {
+      return this.project.projectType === 'DynamicAnnotation'
     },
     isImageTask(): boolean {
       return this.project.projectType === 'ImageClassification'
@@ -251,14 +259,18 @@ export default Vue.extend({
   methods: {
     ...mapActions('user', ['setAnnotation']),
     async toLabeling() {
-      const itemToAnnotate: undefined | ExampleDTO = this.hasUnannotatedItem
-        ? this.item.items.find((item: any) => !item.isConfirmed)
-        : this.item.items[0]
-      const index = itemToAnnotate ? this.item.items.indexOf(itemToAnnotate) : 0
-      const page = (index + 1).toString()
-      await this.startAnnotation(() => {
-        this.movePage({ page })
-      })
+      try {
+        const itemToAnnotate: undefined | ExampleDTO = this.hasUnannotatedItem
+          ? this.item.items.find((item: any) => !item.isConfirmed)
+          : this.item.items[0]
+        const index = itemToAnnotate ? this.item.items.indexOf(itemToAnnotate) : 0
+        const page = (index + 1).toString()
+        await this.startAnnotation(() => {
+          this.movePage({ page })
+        })
+      } catch (e) {
+        console.error(e)
+      }
     },
     startAnnotation(callback: Function) {
       const item = this.hasUnannotatedItem

@@ -1,7 +1,15 @@
 <template>
-  <form-create v-slot="slotProps" v-bind.sync="editedItem" :items="items">
+  <div v-if="type === 'dimension'">
+    <form-create-dimension
+      ref="formCreateDimension"
+      :items="dimensionItems"
+      @submit:create-multiple="onSubmitCreateMultipleDimensions"
+      @submit:add="onSubmitAddDimension"
+    />
+  </div>
+  <form-create v-else v-slot="slotProps" v-bind.sync="editedItem" :items="items">
     <v-btn :disabled="!slotProps.valid" color="primary" class="text-capitalize" @click="save">
-      Save
+      {{ $t('labels.save') }}
     </v-btn>
 
     <v-btn
@@ -11,7 +19,7 @@
       outlined
       @click="saveAndAnother"
     >
-      Save and add another
+      {{ $t('labels.saveAndAddAnother') }}
     </v-btn>
   </form-create>
 </template>
@@ -19,18 +27,22 @@
 <script lang="ts">
 import Vue from 'vue'
 import { LabelDTO } from '~/services/application/label/labelData'
+import { DimensionListDTO, DimensionDTO } from '~/services/application/dimension/dimensionData'
 import { ProjectDTO } from '~/services/application/project/projectData'
 import FormCreate from '~/components/label/FormCreate.vue'
+import FormCreateDimension from '~/components/label/FormCreateDimension.vue'
+import { addGroupToDimensionList } from '~/utils/dynamicDimensions'
 
 export default Vue.extend({
   components: {
-    FormCreate
+    FormCreate,
+    FormCreateDimension
   },
 
   layout: 'project',
 
   validate({ params, query, app }) {
-    if (!['category', 'span', 'scale', 'relation'].includes(query.type as string)) {
+    if (!['category', 'span', 'scale', 'relation', 'dimension'].includes(query.type as string)) {
       return false
     }
     if (/^\d+$/.test(params.id)) {
@@ -57,13 +69,19 @@ export default Vue.extend({
         backgroundColor: '#73D8FF',
         textColor: '#ffffff'
       } as LabelDTO,
-      items: [] as LabelDTO[]
+      items: [] as LabelDTO[],
+      dimensionItems: [] as DimensionDTO[]
     }
   },
 
   computed: {
     projectId(): string {
       return this.$route.params.id
+    },
+
+    type(): string {
+      const type = this.$route.query.type
+      return type
     },
 
     service(): any {
@@ -80,11 +98,50 @@ export default Vue.extend({
     }
   },
 
-  async created() {
-    this.items = await this.service.list(this.projectId)
+  created() {
+    this.setItems()
   },
 
   methods: {
+    async setItems() {
+      if (this.type === 'dimension') {
+        await this.$services.dimension.list(this.projectId).then((response: DimensionListDTO) => {
+          // @ts-ignore
+          this.dimensionItems = addGroupToDimensionList(response.items)
+        })
+      } else {
+        this.items = await this.service.list(this.projectId)
+      }
+    },
+    // @ts-ignore
+    async onSubmitCreateMultipleDimensions({ requests, redirect }) {
+      const promises = requests.map((request: any) =>
+        this.$services.dimension.create(
+          this.projectId,
+          request.name,
+          request.type,
+          request.dimension_meta_data
+        )
+      )
+      await Promise.all(promises).then(() => {
+        if (redirect) {
+          this.$router.push(this.localePath(`/projects/${this.projectId}/labels`))
+        }
+      })
+    },
+    // @ts-ignore
+    async onSubmitAddDimension({ request, redirect }) {
+      await this.$services.dimension
+        .assignDimensions(this.projectId, request.dimension)
+        .then(() => {
+          if (redirect) {
+            this.$router.push(this.localePath(`/projects/${this.projectId}/labels`))
+          } else {
+            this.$refs.formCreateDimension && this.$refs.formCreateDimension.resetForm()
+            this.$refs.formCreateDimension && this.$refs.formCreateDimension.setDimensionList()
+          }
+        })
+    },
     async save() {
       await this.service.create(this.projectId, this.editedItem)
       this.$router.push(this.localePath(`/projects/${this.projectId}/labels`))

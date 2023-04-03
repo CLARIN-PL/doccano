@@ -29,7 +29,7 @@
     <template #[`item.backgroundColor`]="props">
       <v-chip
         :color="props.item.backgroundColor"
-        :text-color="$contrastColor(props.item.backgroundColor)"
+        :text-color="$contrastColor(props.item.backgroundColor || '')"
       >
         {{ props.item.backgroundColor }}
       </v-chip>

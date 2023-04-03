@@ -19,7 +19,8 @@ export default {
     'Image Classification',
     'Speech to Text',
     'Article Annotation',
-    'Affective Annotation'
+    'Affective Annotation',
+    'Dynamic Annotation'
   ],
   tags: 'Tags',
   allowSingleLabel: 'Allow single label',
@@ -36,5 +37,10 @@ export default {
   enableOthers: 'Enable user to measure other parameters',
   articleViewMode: 'View annotation as part of an article',
   singleTextViewMode: 'View annotation as a single text',
-  combinationMode: 'Combine all annotation modes'
+  combinationMode: 'Combine all annotation modes',
+  dimensions: 'Dimensions',
+  selected: 'selected',
+  clear: 'Clear',
+  close: 'Close',
+  others: "Others"
 }

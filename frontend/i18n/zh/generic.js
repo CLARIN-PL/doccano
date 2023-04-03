@@ -24,5 +24,7 @@ export default {
     message2: '您可以在此日期继续注释:',
     message3: '请在休息时间结束后刷新此页面.'
   },
-  goToTop: "返回顶部"
+  goToTop: "返回顶部",
+  group: '组',
+  preview: "预览"
 }

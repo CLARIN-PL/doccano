@@ -20,7 +20,8 @@ export class APIProjectRepository implements ProjectRepository {
 
   async create(item: ProjectWriteItem): Promise<ProjectReadItem> {
     const url = `/projects`
-    const response = await this.request.post(url, item.toObject())
+    const request = item.toObject? item.toObject() : item
+    const response = await this.request.post(url, request)
     return plainToInstance(ProjectReadItem, response.data)
   }
 

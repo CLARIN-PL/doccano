@@ -17,7 +17,8 @@ export default {
     "Classification d'images",
     'De la parole au texte',
     "Annotations d'articles",
-    'Annotation affective'
+    'Annotation affective',
+    'Annotation dynamique'
   ],
   tags: "Balises",
   allowSingleLabel: "Autoriser une seule étiquette",
@@ -34,5 +35,10 @@ export default {
   enableOthers: "Permet à l'utilisateur de mesurer d'autres paramètres",
   articleViewMode: "Afficher l'annotation dans le cadre d'un article",
   singleTextViewMode: "Afficher l'annotation comme un seul texte",
-  combinationMode: "Combiner tous les modes d'annotation"
+  combinationMode: "Combiner tous les modes d'annotation",
+  dimensions: 'Dimensions',
+  selected: 'sélectionné',
+  clear: 'Effacer',
+  close: 'Fermer',
+  others: "autres"
 }

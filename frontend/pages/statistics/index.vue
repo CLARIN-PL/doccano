@@ -220,7 +220,7 @@ export default Vue.extend({
       user: null,
       username: '',
       rules: {
-        userRequired: (v: UserDTO) => (!!v && !!v.username) || 'Required'
+        userRequired: (v: UserDTO) => (!!v && !!v.username) || this.$t('rules.required')
       },
       weeklyAggregatedStats: {
         totalAnnotationsCount: 0,

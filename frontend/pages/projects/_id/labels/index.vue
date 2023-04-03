@@ -10,6 +10,10 @@
         <v-tab class="text-capitalize">Span</v-tab>
         <v-tab v-if="project.useRelation" class="text-capitalize">Relation</v-tab>
       </template>
+      <template v-else-if="isDynamicAnnotation">
+        <v-tab class="text-capitalize">{{ $t('labels.scale') }}</v-tab>
+        <v-tab class="text-capitalize">{{ $t('labels.dimensions') }}</v-tab>
+      </template>
       <template v-else-if="isAffectiveAnnotation">
         <v-tab class="text-capitalize">Category</v-tab>
         <v-tab class="text-capitalize">Span</v-tab>
@@ -28,6 +32,7 @@
         @download="download"
       />
       <v-btn
+        v-if="!isDimensionsTab"
         class="text-capitalize ms-2"
         :disabled="!canDelete"
         outlined
@@ -39,23 +44,34 @@
         <form-delete :selected="selected" @cancel="dialogDelete = false" @remove="remove" />
       </v-dialog>
     </v-card-title>
-    <label-list v-model="selected" :items="items" :is-loading="isLoading" @edit="editItem" />
+    <div v-if="isDynamicAnnotation && tab == 1">
+      <dimension-list v-model="selected" :items="dimensionItems" :is-loading="isLoading" />
+    </div>
+    <div v-else>
+      <label-list v-model="selected" :items="items" :is-loading="isLoading" @edit="editItem" />
+    </div>
   </v-card>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import _ from 'lodash'
+import { mapGetters, mapActions } from 'vuex'
 import ActionMenu from '@/components/label/ActionMenu.vue'
 import FormDelete from '@/components/label/FormDelete.vue'
 import LabelList from '@/components/label/LabelList.vue'
+import DimensionList from '@/components/label/DimensionList.vue'
+import { DimensionDTO } from '~/services/application/dimension/dimensionData'
 import { LabelDTO } from '~/services/application/label/labelData'
 import { ProjectDTO } from '~/services/application/project/projectData'
+import { addGroupToDimensionList } from '~/utils/dynamicDimensions'
 
 export default Vue.extend({
   components: {
     ActionMenu,
     FormDelete,
-    LabelList
+    LabelList,
+    DimensionList
   },
   layout: 'project',
 
@@ -72,14 +88,20 @@ export default Vue.extend({
     return {
       dialogDelete: false,
       items: [] as LabelDTO[],
+      dimensionItems: [] as DimensionDTO[],
       selected: [] as LabelDTO[],
       isLoading: false,
+      isLoadingAddPage: false,
       tab: 0,
       project: {} as ProjectDTO
     }
   },
 
   computed: {
+    ...mapGetters('projects', ['currentDimensions']),
+    isDimensionsTab(): boolean {
+      return this.isDynamicAnnotation && this.tab === 1
+    },
     canDelete(): boolean {
       return this.selected.length > 0
     },
@@ -90,9 +112,11 @@ export default Vue.extend({
 
     hasMultiType(): boolean {
       if ('projectType' in this.project) {
-        return (this.isIntentDetectionAndSlotFilling ||
+        return (
+          this.isIntentDetectionAndSlotFilling ||
           this.isArticleAnnotation ||
           this.isAffectiveAnnotation ||
+          this.isDynamicAnnotation ||
           !!this.project.useRelation
         )
       } else {
@@ -112,6 +136,10 @@ export default Vue.extend({
       return this.project.projectType === 'AffectiveAnnotation'
     },
 
+    isDynamicAnnotation(): boolean {
+      return this.project.projectType === 'DynamicAnnotation'
+    },
+
     labelType(): string {
       if (this.hasMultiType) {
         if (this.isIntentDetectionAndSlotFilling) {
@@ -120,6 +148,8 @@ export default Vue.extend({
           return ['category', 'span', 'relation'][this.tab!]
         } else if (this.isAffectiveAnnotation) {
           return ['category', 'span', 'scale', 'relation'][this.tab!]
+        } else if (this.isDynamicAnnotation) {
+          return ['scale', 'dimension'][this.tab!]
         } else {
           return ['span', 'relation'][this.tab!]
         }
@@ -150,6 +180,8 @@ export default Vue.extend({
             this.$services.scaleType,
             this.$services.relationType
           ][this.tab!]
+        } else if (this.isDynamicAnnotation) {
+          return [this.$services.scaleType, this.$services.dimension][this.tab!]
         } else {
           return [this.$services.spanType, this.$services.relationType][this.tab!]
         }
@@ -173,9 +205,30 @@ export default Vue.extend({
   },
 
   methods: {
+    ...mapActions('projects', ['setCurrentDimensions']),
     async list() {
       this.isLoading = true
-      this.items = await this.service.list(this.projectId)
+      let items: any[] = this.isDimensionsTab ? this.currentDimensions : []
+      if (!items.length) {
+        const response = await this.service.list(this.projectId)
+        items = response.items ? response.items : response
+      }
+      if (items) {
+        this.items = _.cloneDeep(items)
+        this.isDimensionsTab && this.setCurrentDimensions(this.projectId)
+      }
+      this.$nextTick(() => {
+        if (this.isDimensionsTab) {
+          // @ts-ignore
+          const dimensions: any[] = addGroupToDimensionList(items)
+          this.dimensionItems = dimensions.map((dim: any) => {
+            if (dim.type === 'checkbox') {
+              dim.value = false
+            }
+            return dim
+          })
+        }
+      })
       this.isLoading = false
     },
 
@@ -191,7 +244,7 @@ export default Vue.extend({
     },
 
     editItem(item: LabelDTO) {
-      this.$router.push(this.localePath(`labels/${item.id}/edit?type=${this.labelType}`))
+      this.$router.push(`labels/${item.id}/edit?type=${this.labelType}`)
     }
   }
 })

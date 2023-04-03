@@ -1,5 +1,19 @@
 export default {
   required: 'Required',
+  readOnly: 'Read only',
+  checkboxCodenameRequired: 'Checkbox codename is required',
+  mustBeBiggerOrEqualTo: 'Must be bigger or equal to {value}',
+  mustBeLesserOrEqualTo: 'Must be lesser or equal to {value}',
+  diffMustBeLesserOrEqualTo: 'Difference must be lesser or equal to {value}',
+  lengthMustBeLesserOrEqualTo: 'Length must be lesser or equal to {value}',
+  mustBeWithinDifferenceOfMaxAndMin: "Must be within difference of max and min",
+  mustBeNumber: "Must be number",
+  mustBeInteger: "Must be integer",
+  mustBeLesserThanMax: "Must be lesser than max",
+  mustBeLesserOrEqualThanMax: "Must be lesser or equal than max",
+  mustBeBiggerOrEqualThanMin: "Must be bigger or equal than min",
+  pleaseChooseAtLeast: "Please choose at least {value} options",
+  youCanOnlyChooseUpTo: "You can only choose up to {value} options",
   inputTextRules: {
     numericOnly: 'Please use only numeric (0-9) characters'
   },

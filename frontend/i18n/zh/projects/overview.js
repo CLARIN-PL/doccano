@@ -12,7 +12,7 @@ export default {
   deleteProjectMessage: '你确定要删除这些项目吗？',
   search: '搜索',
   projectTypes: ['文本分类', '序列标注', '序列到序列', '意图检测和槽填充', '图像分类', '文字转语音', 
-  '文章注释', '情感注释'],
+  '文章注释', '情感注释', '动态标注'],
   tags: '标签', 
   allowSingleLabel: '允许单一标签', 
   allowOverlapping: '允许重叠的实体', 
@@ -28,5 +28,10 @@ export default {
   enableOthers: '使用户能够测量其他参数', 
   articleViewMode: '查看注释作为文章的一部分',
   singleTextViewMode: '查看注释为单个文本',
-  combinationMode: '结合所有注释模式'
+  combinationMode: '结合所有注释模式',
+  dimensions: '方面',
+  selected: '选择',
+  clear: '清除',
+  close:'关闭',
+  others: '其余'
 }

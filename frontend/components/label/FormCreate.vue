@@ -116,7 +116,7 @@ export default Vue.extend({
       selectedColorIndex: 0,
       valid: false,
       rules: {
-        required: (v: string) => !!v || 'Required',
+        required: (v: string) => !!v || this.$t('rules.required'),
         counter: (
           v: string // @ts-ignore
         ) => (v && v.length <= 100) || this.$t('rules.labelNameRules').labelLessThan100Chars,
