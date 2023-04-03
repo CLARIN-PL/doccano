@@ -24,6 +24,7 @@ export default {
   labelTypes: 'Label Types',
   relation: 'Relation',
   span: 'Span',
+  warningOnly1Answer: "Please enter only 1 answer",
   warningFrom2To10Words: "Please enter 2-10 words",
   warningRequired: "Required",
   warningInvalidChar: "Invalid character",

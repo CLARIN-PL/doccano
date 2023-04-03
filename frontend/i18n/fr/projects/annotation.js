@@ -23,6 +23,7 @@ export default {
   labelTypes: "Types d'étiquettes",
   relation: 'Relation',
   span: 'étendue',
+  warningOnly1Answer: "Veuillez n'entrer qu'une seule réponse.",
   warningFrom2To10Words: "Veuillez entrer 2 à 10 mots.",
   warningRequired: "Obligatoire.",
   warningInvalidChar: "Caractère non valide.",

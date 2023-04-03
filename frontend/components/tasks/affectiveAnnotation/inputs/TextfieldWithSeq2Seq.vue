@@ -2,10 +2,14 @@
   <v-container class="widget">
     <v-row v-if="question" class="widget__question">
       {{ question }}
+      <span v-if="required" class="red--text"> * </span>
+      <span class="red--text" :class="(error) ? 'd-block' : 'd-none'">{{ $t('annotation.warningRequired') }}</span>
     </v-row>
-    <v-row class="widget__answer"  justify="center" align="center">
+    <v-row class="widget__answer" justify="center" align="center">
       <v-col v-if="categoryLabel" :cols="(withCheckbox)?3:4" class="widget__category">
         {{ categoryLabel }}
+        <span v-if="required" class="red--text"> * </span>
+        <span class="red--text" :class="(error) ? 'd-block' : 'd-none'">{{ $t('annotation.warningRequired') }}</span>
       </v-col>
       <v-col
         :cols="colsTextfield"
@@ -25,6 +29,7 @@
       <v-col v-if="withCheckbox" cols="3" class="widget__checkbox">
         <v-checkbox
           v-model="checkboxValue"
+          :error="error"
           :readonly="readOnly"
           :label="checkboxLabel"
         />
@@ -67,6 +72,14 @@ export default {
   },
 
   props: {
+    required: {
+      type: Boolean,
+      default: true
+    },
+    error: {
+      type: Boolean,
+      default: true
+    },
     text: {
       type: String,
       default: ""

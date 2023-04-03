@@ -24,6 +24,7 @@ export default {
   labelTypes: 'Typy etykiet',
   relation: 'Relacja',
   span: 'Rozpiętość',
+  warningOnly1Answer: "Proszę wpisać tylko 1 odpowiedź.",
   warningFrom2To10Words: "Proszę wpisać 2-10 słów.",
   warningRequired: "Wymagany.",
   warningInvalidChar: "Nieprawidłowy znak.",

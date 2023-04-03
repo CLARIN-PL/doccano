@@ -1,6 +1,6 @@
 <template>
     <v-container class="humor-input widget" 
-        :class="{'--has-error': !value && showErrors, '--bordered': showBorders }">
+        :class="{'--has-error': hasErrors, '--bordered': showBorders }">
         <v-row >
             <v-col v-if="scaleTypes.length && hasProperScaleTypes">
                 <h3 class="widget__title">{{ $t('annotation.humor.question')}}</h3>
@@ -10,6 +10,13 @@
                         <p class="questions-item__text">
                         <h4>
                             {{ $t('annotation.humor.subquestion1')}}
+                            <span class="red--text"> * </span>
+                            <span
+                                class="red--text"
+                                :class="(showErrors && !formData.subquestion1.isClicked) ? 'd-block' : 'd-none'"
+                            >
+                                {{ $t('annotation.warningRequired') }}
+                            </span>
                         </h4>
                         <div class="questions-item__slider">
                             <span class="slider-text --start">
@@ -43,6 +50,13 @@
                         <p class="questions-item__text">
                         <h4>
                             {{ $t('annotation.humor.subquestion2')}}
+                            <span class="red--text"> * </span>
+                            <span
+                                class="red--text"
+                                :class="(showErrors && !formData.subquestion2.isClicked) ? 'd-block' : 'd-none'"
+                            >
+                                {{ $t('annotation.warningRequired') }}
+                            </span>
                         </h4>
                         <div class="questions-item__slider">
                             <span class="slider-text --start">
@@ -75,21 +89,33 @@
                     <li class="widget-questions__item questions-item"
                         :class="{'--visible': hasFilledTopQuestions}">
                         <p class="questions-item__text">
-                            <h4>
+                            <h4 :class="{'red--text': !hasValidSubquestion3 && !hasValidSubquestion4}">
                                 {{ $t('annotation.humor.subquestion3.question')}}
                             </h4>
+                            <span
+                                class="red--text"
+                                :class="!hasValidSubquestion3 && !hasValidSubquestion4 ? 'd-block' : 'd-none'"
+                            >
+                                {{ $t('annotation.warningRequired') }}
+                            </span>
                             <ul class="subquestions">
                                 <li v-for="(substatement, idx) in formData.subquestion3"  
                                     :key="`substatement3_${idx}`"
                                     class="subquestions__item" >
                                     <v-checkbox 
-                                        v-model="substatement.isChecked" 
+                                        v-model="substatement.isChecked"
+                                        :error="(substatement.isChecked && !substatement.answer)"
                                         :readonly="readOnly"
                                         :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
                                         :label="$t(`annotation.humor.subquestion3.substatement${(idx+1)}`)"
                                         class="subquestions-item__checkbox"
                                         @change="onLabelChange(substatement, `subquestion3`, idx)" />
-
+                                    <span
+                                        class="red--text"
+                                        :class="(substatement.isChecked && !substatement.answer) ? 'd-block' : 'd-none'"
+                                    >
+                                        {{ $t('annotation.warningRequired') }}
+                                    </span>
                                     <textfield-modal
                                         v-if="substatement.isChecked"
                                         v-model="substatement.answer"
@@ -111,7 +137,7 @@
                     <li class="widget-questions__item questions-item" 
                         :class="{'--visible': hasFilledTopQuestions}">
                         <p class="questions-item__text">
-                            <h4>
+                            <h4 :class="{'red--text': !hasValidSubquestion3 && !hasValidSubquestion4}">
                                 {{ $t('annotation.humor.subquestion4.question')}}
                             </h4>
                                 <ul class="subquestions">
@@ -279,6 +305,34 @@ export default Vue.extend({
     },
     hasFilledTopQuestions(): boolean {
       return !!this.formData.subquestion1.value || !!this.formData.subquestion2.value
+    },
+    hasValidSubquestion3(): boolean {
+      if (this.showErrors && this.hasFilledTopQuestions) {
+        const answersSubquestion3 = this.formData.subquestion3.filter((item:any) => item.isChecked && !!item.answer)
+        return answersSubquestion3.length > 0
+      }
+      return true
+    },
+    hasValidSubquestion4(): boolean {
+      if (this.showErrors && this.hasFilledTopQuestions) {
+        const answersSubquestion4 = this.formData.subquestion4.filter((item:any) => item.isChecked)
+        return answersSubquestion4.length > 0
+      }
+      return true
+    },
+    hasErrors(): boolean {
+      if (this.showErrors) {
+        if (!this.value) {
+          return true
+        }
+        if (!this.formData.subquestion1.isClicked || !this.formData.subquestion2.isClicked) {
+          return true
+        }
+        if (!this.hasValidSubquestion3 && !this.hasValidSubquestion4) {
+          return true
+        }
+      }
+      return false
     }
   },
   watch: {

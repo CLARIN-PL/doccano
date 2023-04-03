@@ -3,10 +3,13 @@
     <v-row class="widget-row" justify="center" align="top">
       <v-col :cols="(withCheckbox) ? 3 : 4" class="widget-row__category">
         {{ categoryLabel }}
+        <span v-if="required" class="red--text"> * </span>
+        <span class="red--text" :class="(error) ? 'd-block' : 'd-none'">{{ $t('annotation.warningRequired') }}</span>
       </v-col>
       <v-col :cols="(withCheckbox) ? 6 : 8" class="widget-row__slider">
         <v-slider
           :value="value"
+          :error="error"
           :readonly="readOnly"
           :disabled="!enableSlider"
           :min="sliderMinVal"
@@ -32,6 +35,7 @@
       <v-col v-if="withCheckbox" cols="3" class="widget-row__checkbox">
         <v-checkbox
           v-model="checkboxValue"
+          :error="error"
           :readonly="readOnly"
           :label="checkboxLabel"
           @click="markClicked"
@@ -46,6 +50,14 @@ import { mdiCheck } from '@mdi/js'
 
 export default {
   props: {
+    required: {
+      type: Boolean,
+      default: true
+    },
+    error: {
+      type: Boolean,
+      default: true
+    },
     categoryLabel: {
       type: String,
       default: ""
@@ -172,6 +184,10 @@ export default {
         white-space: nowrap;
         overflow-x: visible;
       }
+    }
+
+    .v-input.error--text .v-messages {
+      color: red !important;
     }
   }
 
