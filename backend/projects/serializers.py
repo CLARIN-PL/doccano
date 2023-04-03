@@ -12,9 +12,14 @@ from .models import (
     Tag,
     TextClassificationProject,
     ArticleAnnotationProject,
-    AffectiveAnnotationProject
+    AffectiveAnnotationProject,
+    DynamicAnnotationProject,
+    ProjectDimension,
+    DynamicDimension,
+    DimensionMetaData,
 )
 
+from label_types.models import ScaleType
 
 class MemberSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
@@ -44,6 +49,67 @@ class TagSerializer(serializers.ModelSerializer):
             "text",
         )
         read_only_fields = ("id", "project")
+
+
+class ProjectDimensionSerializer(serializers.ModelSerializer):
+    dimension = serializers.PrimaryKeyRelatedField(
+        queryset=DynamicDimension.objects.all(), many=True)
+    project = serializers.SerializerMethodField()
+
+    def get_project(self, instance):
+        return (self.context['view'].kwargs.get('project_id'))
+
+    class Meta:
+        model = ProjectDimension
+        fields = (
+            "id",
+            "project",
+            "dimension",
+        )
+        read_only_fields = ("id", "project")
+
+
+class DimensionMetaDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DimensionMetaData
+        fields = (
+            "id",
+            "dimension",
+            "codename",
+            "config",
+            "required",
+            "readonly",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = ("id", "dimension", "created_at", "updated_at")
+      
+
+class DynamicDimensionSerializer(serializers.ModelSerializer):
+    dimension_meta_data = DimensionMetaDataSerializer(required=True, many=True)
+    
+    class Meta:
+        model = DynamicDimension
+        fields = (
+            "id",
+            "name",
+            "type",
+            "dimension_meta_data",
+            "created_at",
+            "updated_at",
+        )
+        read_only_fields = ("id", "created_at", "updated_at")
+
+    def create(self, validated_data):
+        dimension_meta_data = validated_data.pop("dimension_meta_data")
+        dimension = self.Meta.model.objects.create(**validated_data)
+        metadata = DimensionMetaData.objects.create(dimension=dimension, **dimension_meta_data[0])
+        project_id = self.context['view'].kwargs.get('project_id')
+        current_project = Project.objects.get(id=project_id)
+        ProjectDimension.objects.create(project=current_project, dimension=dimension)
+        if dimension.type == "slider":
+            ScaleType.objects.create(text=dimension.name, project=current_project)
+        return dimension
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -132,6 +198,29 @@ class AffectiveAnnotationProjectSerializer(ProjectSerializer):
     class Meta(ProjectSerializer.Meta):
         model = AffectiveAnnotationProject
         fields = ProjectSerializer.Meta.fields + ["allow_overlapping", "grapheme_mode", "use_relation", "is_summary_mode", "is_emotions_mode", "is_offensive_mode", "is_humor_mode", "is_others_mode", "is_single_ann_view", "is_combination_mode"]
+
+
+class DynamicAnnotationProjectSerializer(ProjectSerializer):
+    dimension = ProjectDimensionSerializer(many=True, required=False)
+    tags = TagSerializer(many=True, required=False)
+
+    class Meta(ProjectSerializer.Meta):
+        model = DynamicAnnotationProject
+        fields = ProjectSerializer.Meta.fields + ["allow_overlapping", "grapheme_mode", "use_relation", "is_summary_mode", "is_emotions_mode", "is_offensive_mode", "is_humor_mode", "is_others_mode", "is_single_ann_view", "is_combination_mode", "package_data_type", "dimension"]
+
+    def create(self, validated_data):
+        tags = TagSerializer(data=validated_data.pop("tags", []), many=True)
+        tags.is_valid()
+        
+        dimensions_data = validated_data.pop('dimension')
+        project = self.Meta.model.objects.create(**validated_data)
+        for dimension_data in dimensions_data:
+            dimension = dimension_data['dimension'][0]
+            project_dimension = ProjectDimension.objects.create(project=project, dimension=dimension)
+            if dimension.id > 69 and dimension.type == "slider":
+                ScaleType.objects.create(text=dimension.name, project=project)
+        tags.save(project=project)
+        return project
 
 
 class ProjectPolymorphicSerializer(PolymorphicSerializer):
