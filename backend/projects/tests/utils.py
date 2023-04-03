@@ -94,6 +94,18 @@ def make_tag(project):
     return mommy.make("Tag", project=project)
 
 
+def make_dimension(name: str = "test_dynamic_dimension", type: str = "checkbox"):
+    return mommy.make("DynamicDimension", name=name, type=type)
+
+
+def make_dimension_meta_data(dimension, codename: str = "test_dimension_meta_data", config: dict = {}, required: bool = True, readonly: bool = False):
+    return mommy.make("DimensionMetaData", dimension=dimension, codename=codename, config=config, required=required, readonly=readonly)
+
+
+def make_project_dimension(project, dimension):
+    return mommy.make("ProjectDimension", project=project, dimension=dimension)
+
+
 def prepare_project(task: str = "Any", collaborative_annotation=False, **kwargs):
     return make_project(
         task=task,

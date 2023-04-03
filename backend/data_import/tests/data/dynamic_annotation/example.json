@@ -1,0 +1,41 @@
+[
+    {
+        "text": "Stół z powyłamywanymi nogami",
+        "scale": [[1, "happy"], [4, "sadness"], [2, "negative"]],
+        "label": ["I dont know"],
+        "meta": {
+            "article_title": "10 Craziest Polish Tongue Twisters",
+            "publish_datetime": "2022-08-01 13:59:59",
+            "crawled_datetime": "2022-09-05 08:12:45"
+        },
+        "article_id": "8eabas8s5pveszg917vm1357",
+        "order": 5,
+        "type": "subheader"
+    },
+    {
+        "text": "W Szczebrzeszynie chrząszcz brzmi w trzcinie.",
+        "scale": [[1, "sorrow"], [3, "sadness"], [2, "positive"]],
+        "label": ["happy"],
+        "meta": {
+            "article_title": "10 Craziest Polish Tongue Twisters",
+            "publish_datetime": "2022-08-01 13:59:59",
+            "crawled_datetime": "2022-09-05 08:12:45"
+        },
+        "article_id": "8eabas8s5pveszg917vm1357",
+        "order": 10,
+        "type": "subheader"
+    },
+    {
+        "text": "Nowa generacja biosensora pozwoli na bieżąco analizować próbki potu",
+        "scale": [[1, "sorrow"], [5, "sadness"], [2, "positive"]],
+        "label": [["happy", "Jakimi słowami opisałbyś ten tekst (tagi, słowa kluczowe)"], ["funny", "Jakie wrażenia/emocje/odczucia wzbudza w Tobie ten tekst?"]],
+        "meta": {
+            "article_title": "10 Craziest Polish Tongue Twisters",
+            "publish_datetime": "2022-08-01 13:59:59",
+            "crawled_datetime": "2022-09-05 08:12:45"
+        },
+        "article_id": "8eabas8s5pveszg917vm1357",
+        "order": 19,
+        "type": "subheader"
+    }
+]

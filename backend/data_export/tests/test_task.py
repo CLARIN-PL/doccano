@@ -16,6 +16,7 @@ from projects.models import (
     SPEECH2TEXT,
     ARTICLE_ANNOTATION,
     AFFECTIVE_ANNOTATION,
+    DYNAMIC_ANNOTATION,
 )
 from projects.tests.utils import prepare_project
 
@@ -974,6 +975,301 @@ class TestExportAffectiveAnnotationOtherMode(TestExport):
     """
     def prepare_data(self, collaborative=False):
         self.project = prepare_project(AFFECTIVE_ANNOTATION, collaborative_annotation=collaborative, is_others_mode=True)
+        self.example1 = mommy.make("ExportedExample", project=self.project.item, text="confirmed", order=1)
+        self.example2 = mommy.make("ExportedExample", project=self.project.item, text="unconfirmed", order=2)
+
+        self.scale1 = mommy.make("ExportedScale", example=self.example1, user=self.project.admin, scale=1)
+        self.scale2 = mommy.make("ExportedScale", example=self.example1, user=self.project.annotator, scale=2)
+        self.label1 = mommy.make("ExportedTextQuestion", example=self.example1, user=self.project.admin, question="How do you feel?")
+        self.label2 = mommy.make("ExportedTextQuestion", example=self.example1, user=self.project.annotator, question="How do you feel?")
+        mommy.make("ExampleState", example=self.example1, confirmed_by=self.project.admin)
+        self.data1 = self.data_to_text(self.example1)
+        self.data2 = self.data_to_text(self.example2)
+
+    def test_unconfirmed_and_non_collaborative(self):
+        self.prepare_data()
+        datasets = self.export_dataset()
+        expected_dataset = {
+            self.project.admin.username: [
+                {
+                    **self.data1,
+                    "article_id": "", 
+                    "order": 1, 
+                    "type": "",
+                    "scale": [list(self.scale1.to_tuple())],
+                    "label": [list(self.label1.to_tuple())],
+                },
+                {**self.data2, "article_id": "", "order": 2, "type": "", "scale": [], "label": []},
+            ],
+            self.project.annotator.username: [
+                {
+                    **self.data1,
+                    "article_id": "", 
+                    "order": 1, 
+                    "type": "",
+                    "scale": [list(self.scale2.to_tuple())],
+                    "label": [list(self.label2.to_tuple())],
+                },
+                {**self.data2, "article_id": "", "order": 2, "type": "", "scale": [], "label": []},
+            ],
+            self.project.approver.username: [
+                {**self.data1, "article_id": "", "order": 1, "type": "", "scale": [], "label": []},
+                {**self.data2, "article_id": "", "order": 2, "type": "", "scale": [], "label": []},
+            ],
+        }
+        for username, dataset in expected_dataset.items():
+            self.assertEqual(dataset, datasets[username])
+
+    def test_unconfirmed_and_collaborative(self):
+        self.prepare_data(collaborative=True)
+        dataset = self.export_dataset()
+        expected_dataset = [
+            {
+                **self.data1,
+                "article_id": "", 
+                "order": 1, 
+                "type": "",
+                "scale": [list(self.scale1.to_tuple()), list(self.scale2.to_tuple())],
+                "label": [list(self.label1.to_tuple()), list(self.label2.to_tuple())],
+            },
+            {**self.data2, "article_id": "", "order": 2, "type": "", "scale": [], "label": []},
+        ]
+        self.assertEqual(dataset, expected_dataset)
+
+    def test_confirmed_and_non_collaborative(self):
+        self.prepare_data()
+        datasets = self.export_dataset(confirmed_only=True)
+        expected_datasets = {
+            self.project.admin.username: [
+                {
+                    **self.data1,
+                    "article_id": "", 
+                    "order": 1, 
+                    "type": "",
+                    "scale": [list(self.scale1.to_tuple())],
+                    "label": [list(self.label1.to_tuple())],
+                },
+            ],
+            self.project.annotator.username: [],
+            self.project.approver.username: [],
+        }
+        for username, dataset in datasets.items():
+            self.assertEqual(dataset, expected_datasets[username])
+
+    def test_confirmed_and_collaborative(self):
+        self.prepare_data(collaborative=True)
+        dataset = self.export_dataset(confirmed_only=True)
+        expected_dataset = [
+            {
+                **self.data1,
+                "article_id": "", 
+                "order": 1, 
+                "type": "",
+                "scale": [list(self.scale1.to_tuple()), list(self.scale2.to_tuple())],
+                "label": [list(self.label1.to_tuple()), list(self.label2.to_tuple())],
+            }
+        ]
+        self.assertEqual(dataset, expected_dataset)
+
+
+class TestExportDynamicAnnotationEmotionMode(TestExport):
+    """
+    With Emotions Annotation Mode - we export the scale only since there is no textfield question
+    """
+    def prepare_data(self, collaborative=False):
+        self.project = prepare_project(DYNAMIC_ANNOTATION, collaborative_annotation=collaborative, is_emotions_mode=True)
+        self.example1 = mommy.make("ExportedExample", project=self.project.item, text="confirmed", order=1)
+        self.example2 = mommy.make("ExportedExample", project=self.project.item, text="unconfirmed", order=2)
+
+        self.scale1 = mommy.make("ExportedScale", example=self.example1, user=self.project.admin, scale=1)
+        self.scale2 = mommy.make("ExportedScale", example=self.example1, user=self.project.annotator, scale=5)
+        mommy.make("ExampleState", example=self.example1, confirmed_by=self.project.admin)
+        self.data1 = self.data_to_text(self.example1)
+        self.data2 = self.data_to_text(self.example2)
+
+    def test_unconfirmed_and_non_collaborative(self):
+        self.prepare_data()
+        datasets = self.export_dataset()
+        expected_dataset = {
+            self.project.admin.username: [
+                {
+                    **self.data1,
+                    "article_id": "", 
+                    "order": 1, 
+                    "type": "",
+                    "scale": [list(self.scale1.to_tuple())],
+                },
+                {**self.data2, "article_id": "", "order": 2, "type": "", "scale": []},
+            ],
+            self.project.annotator.username: [
+                {
+                    **self.data1,
+                    "article_id": "", 
+                    "order": 1, 
+                    "type": "",
+                    "scale": [list(self.scale2.to_tuple())],
+                },
+                {**self.data2, "article_id": "", "order": 2, "type": "", "scale": []},
+            ],
+            self.project.approver.username: [
+                {**self.data1, "article_id": "", "order": 1, "type": "", "scale": []},
+                {**self.data2, "article_id": "", "order": 2, "type": "", "scale": []},
+            ],
+        }
+        for username, dataset in expected_dataset.items():
+            self.assertEqual(dataset, datasets[username])
+
+    def test_unconfirmed_and_collaborative(self):
+        self.prepare_data(collaborative=True)
+        dataset = self.export_dataset()
+        expected_dataset = [
+            {
+                **self.data1,
+                "article_id": "", 
+                "order": 1, 
+                "type": "",
+                "scale": [list(self.scale1.to_tuple()), list(self.scale2.to_tuple())],
+            },
+            {**self.data2, "article_id": "", "order": 2, "type": "", "scale": []},
+        ]
+        self.assertEqual(dataset, expected_dataset)
+
+    def test_confirmed_and_non_collaborative(self):
+        self.prepare_data()
+        datasets = self.export_dataset(confirmed_only=True)
+        expected_datasets = {
+            self.project.admin.username: [
+                {
+                    **self.data1,
+                    "article_id": "", 
+                    "order": 1, 
+                    "type": "",
+                    "scale": [list(self.scale1.to_tuple())],
+                },
+            ],
+            self.project.annotator.username: [],
+            self.project.approver.username: [],
+        }
+        for username, dataset in datasets.items():
+            self.assertEqual(dataset, expected_datasets[username])
+
+    def test_confirmed_and_collaborative(self):
+        self.prepare_data(collaborative=True)
+        dataset = self.export_dataset(confirmed_only=True)
+        expected_dataset = [
+            {
+                **self.data1,
+                "article_id": "", 
+                "order": 1, 
+                "type": "",
+                "scale": [list(self.scale1.to_tuple()), list(self.scale2.to_tuple())],
+            }
+        ]
+        self.assertEqual(dataset, expected_dataset)
+
+
+class TestExportDynamicAnnotationSummaryMode(TestExport):
+    """
+    With Summary Annotation Mode - we export the TextLabel only since there is no scaled question
+    """
+    def prepare_data(self, collaborative=False):
+        self.project = prepare_project(DYNAMIC_ANNOTATION, collaborative_annotation=collaborative, is_summary_mode=True)
+        self.example1 = mommy.make("ExportedExample", project=self.project.item, text="confirmed", order=1)
+        self.example2 = mommy.make("ExportedExample", project=self.project.item, text="unconfirmed", order=2)
+
+        self.label1 = mommy.make("ExportedTextQuestion", example=self.example1, user=self.project.admin, question="How do you feel?")
+        self.label2 = mommy.make("ExportedTextQuestion", example=self.example1, user=self.project.annotator, question="How do you feel?")
+        mommy.make("ExampleState", example=self.example1, confirmed_by=self.project.admin)
+        self.data1 = self.data_to_text(self.example1)
+        self.data2 = self.data_to_text(self.example2)
+
+    def test_unconfirmed_and_non_collaborative(self):
+        self.prepare_data()
+        datasets = self.export_dataset()
+        expected_dataset = {
+            self.project.admin.username: [
+                {
+                    **self.data1,
+                    "article_id": "", 
+                    "order": 1, 
+                    "type": "",
+                    "label": [list(self.label1.to_tuple())],
+                },
+                {**self.data2, "article_id": "", "order": 2, "type": "", "label": []},
+            ],
+            self.project.annotator.username: [
+                {
+                    **self.data1,
+                    "article_id": "", 
+                    "order": 1, 
+                    "type": "",
+                    "label": [list(self.label2.to_tuple())],
+                },
+                {**self.data2, "article_id": "", "order": 2, "type": "", "label": []},
+            ],
+            self.project.approver.username: [
+                {**self.data1, "article_id": "", "order": 1, "type": "", "label": []},
+                {**self.data2, "article_id": "", "order": 2, "type": "", "label": []},
+            ],
+        }
+        for username, dataset in expected_dataset.items():
+            self.assertEqual(dataset, datasets[username])
+
+    def test_unconfirmed_and_collaborative(self):
+        self.prepare_data(collaborative=True)
+        dataset = self.export_dataset()
+        expected_dataset = [
+            {
+                **self.data1,
+                "article_id": "", 
+                "order": 1, 
+                "type": "",
+                "label": [list(self.label1.to_tuple()), list(self.label2.to_tuple())],
+            },
+            {**self.data2, "article_id": "", "order": 2, "type": "", "label": []},
+        ]
+        self.assertEqual(dataset, expected_dataset)
+
+    def test_confirmed_and_non_collaborative(self):
+        self.prepare_data()
+        datasets = self.export_dataset(confirmed_only=True)
+        expected_datasets = {
+            self.project.admin.username: [
+                {
+                    **self.data1,
+                    "article_id": "", 
+                    "order": 1, 
+                    "type": "",
+                    "label": [list(self.label1.to_tuple())],
+                },
+            ],
+            self.project.annotator.username: [],
+            self.project.approver.username: [],
+        }
+        for username, dataset in datasets.items():
+            self.assertEqual(dataset, expected_datasets[username])
+
+    def test_confirmed_and_collaborative(self):
+        self.prepare_data(collaborative=True)
+        dataset = self.export_dataset(confirmed_only=True)
+        expected_dataset = [
+            {
+                **self.data1,
+                "article_id": "", 
+                "order": 1, 
+                "type": "",
+                "label": [list(self.label1.to_tuple()), list(self.label2.to_tuple())],
+            }
+        ]
+        self.assertEqual(dataset, expected_dataset)
+
+
+class TestExportDynamicAnnotationOtherMode(TestExport):
+    """
+    Test the others annotation modes (Othes, Humor, Offensiveness) - which export both TextLabel and ScaleLabel
+    """
+    def prepare_data(self, collaborative=False):
+        self.project = prepare_project(DYNAMIC_ANNOTATION, collaborative_annotation=collaborative, is_others_mode=True)
         self.example1 = mommy.make("ExportedExample", project=self.project.item, text="confirmed", order=1)
         self.example2 = mommy.make("ExportedExample", project=self.project.item, text="unconfirmed", order=2)
 
