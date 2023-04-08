@@ -23,7 +23,7 @@
               "
               :track-color="!formData.isCheckboxChecked && formData.isClicked ? '' : 'grey'"
               ticks="always"
-              :disabled="!!formData.isCheckboxChecked"
+              :disabled="disabled || !!formData.isCheckboxChecked"
               :readonly="!!formData.isCheckboxChecked || preview || readOnly"
               :min="sliderMin"
               :max="sliderMax"
@@ -106,15 +106,19 @@ export default Vue.extend({
       type: Boolean,
       default: false
     },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    transparent: {
+      type: Boolean,
+      default: false
+    },
     required: {
       type: Boolean,
       default: false
     },
     preview: {
-      type: Boolean,
-      default: false
-    },
-    transparent: {
       type: Boolean,
       default: false
     },
