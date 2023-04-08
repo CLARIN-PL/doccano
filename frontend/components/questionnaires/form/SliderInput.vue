@@ -17,7 +17,7 @@
           :min="config.min"
           :max="config.max"
           :readonly="readOnly || isSubmitting"
-          :disabled="readOnly"
+          :disabled="disabled"
           :tick-labels="config.showTickLabels ? tickLabels : []"
           step="1"
           @change="onSliderValueChange"
@@ -47,6 +47,10 @@ export default Vue.extend({
       }
     },
     readOnly: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
       type: Boolean,
       default: false
     },

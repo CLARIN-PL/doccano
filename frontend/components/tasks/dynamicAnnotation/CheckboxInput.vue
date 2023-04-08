@@ -2,7 +2,12 @@
   <div
     ref="checkboxInput"
     class="checkbox-input"
-    :class="{ '--preview': preview, '--readonly': readOnly }"
+    :class="{
+      '--preview': preview,
+      '--readonly': readOnly,
+      '--disabled': disabled,
+      '--transparent': transparent
+    }"
   >
     <div v-if="config.isMultipleAnswers" class="questions-item">
       <div class="questions-item__text">
@@ -25,7 +30,7 @@
               v-model="formData.checkedOptions"
               :required="required"
               :readonly="readOnly || preview"
-              :disabled="readOnly || preview || formData.isSubmitting"
+              :disabled="disabled || formData.isSubmitting"
               :rules="[
                 rules.requiredMultipleCheckboxes,
                 rules.minAnswerNumber,
@@ -49,7 +54,7 @@
         :required="required"
         :rules="[rules.requiredSingleCheckbox]"
         :readonly="readOnly || preview"
-        :disabled="readOnly || preview || formData.isSubmitting"
+        :disabled="disabled || formData.isSubmitting"
         :label="name + (required ? ' *' : '')"
         class="content-item__checkbox"
         @click="onCheckboxClick"
@@ -107,6 +112,14 @@ export default Vue.extend({
       default: () => []
     },
     readOnly: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    transparent: {
       type: Boolean,
       default: false
     },
@@ -358,7 +371,11 @@ export default Vue.extend({
   }
 
   &.--readonly {
-    opacity: 0.8;
+    opacity: 0.85;
+  }
+
+  &.--transparent {
+    opacity: 0.3;
   }
 
   .--multiple {
@@ -366,30 +383,30 @@ export default Vue.extend({
       display: none;
     }
   }
-}
 
-.questions-item {
-  &__text {
-    margin-bottom: 10px;
+  .questions-item {
+    &__text {
+      margin-bottom: 10px;
+    }
+
+    .v-input--selection-controls {
+      margin-top: 0 !important;
+    }
   }
 
-  .v-input--selection-controls {
-    margin-top: 0 !important;
-  }
-}
+  .content {
+    list-style-type: none;
+    padding: 0;
 
-.content {
-  list-style-type: none;
-  padding: 0;
+    &__item {
+      .content-item__checkbox {
+        .v-label {
+          font-size: 1rem;
+        }
 
-  &__item {
-    .content-item__checkbox {
-      .v-label {
-        font-size: 1rem;
-      }
-
-      .v-input__slot {
-        margin: 0;
+        .v-input__slot {
+          margin: 0;
+        }
       }
     }
   }

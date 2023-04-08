@@ -114,6 +114,10 @@ export default Vue.extend({
       type: Boolean,
       default: false
     },
+    transparent: {
+      type: Boolean,
+      default: false
+    },
     playground: {
       type: Boolean,
       default: false
@@ -308,45 +312,46 @@ export default Vue.extend({
   &.--readonly {
     opacity: 0.85;
   }
-}
-.questions-item {
-  &__slider {
-    display: flex;
-    flex-wrap: wrap;
 
-    > * {
-      flex-basis: 100%;
-    }
-
-    .slider__slider {
+  .questions-item {
+    &__slider {
       display: flex;
-      padding-top: 10px;
+      flex-wrap: wrap;
 
-      > .slider-text {
-        max-width: 15%;
-        font-size: 0.75rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        word-break: break-word;
+      > * {
+        flex-basis: 100%;
+      }
+
+      .slider__slider {
+        display: flex;
+        padding-top: 10px;
+
+        > .slider-text {
+          max-width: 15%;
+          font-size: 0.75rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          word-break: break-word;
+        }
       }
     }
   }
-}
 
-.slider-text {
-  color: gray;
-  margin-top: 5px;
+  .slider-text {
+    color: gray;
+    margin-top: 5px;
 
-  &.--start {
-    margin-right: 10px;
+    &.--start {
+      margin-right: 10px;
+    }
+
+    &.--end {
+      margin-left: 10px;
+    }
   }
 
-  &.--end {
-    margin-left: 10px;
+  .v-slider__tick .v-slider__tick-label {
+    font-size: 0.75rem !important;
   }
-}
-
-.v-slider__tick .v-slider__tick-label {
-  font-size: 0.75rem !important;
 }
 </style>
