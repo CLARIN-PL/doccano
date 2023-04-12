@@ -30,7 +30,7 @@
               :tick-labels="tickLabels"
               :step="sliderStep"
               @input="onSliderInput"
-              @click="onSliderClick"
+              @change="onSliderChange"
             />
 
             <span class="slider-text --end">
@@ -293,7 +293,7 @@ export default Vue.extend({
     onSliderInput() {
       this.formData.isClicked = true
     },
-    onSliderClick() {
+    onSliderChange() {
       if (!this.formData.isSubmitting) {
         this.formData.isSubmitting = true
         this.$emit('update:scale', { formDataKey: this.formDataKey, value: this.formData.value })
