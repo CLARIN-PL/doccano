@@ -48,7 +48,7 @@ export class ExampleApplicationService {
 
   public async fetchArticleIds(projectId: string, count: string): Promise<Array<string>> {
     try {
-      const item = await this.repository.articleIds(projectId, count)
+      const item = await this.repository.fetchArticleIds(projectId, count)
       return item
     } catch (e: any) {
       throw new Error(e.response.data.detail)
