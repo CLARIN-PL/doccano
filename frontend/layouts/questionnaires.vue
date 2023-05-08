@@ -21,6 +21,6 @@ export default {
   components: {
     TheHeader
   },
-  middleware: ['check-auth', 'auth', 'check-questionnaire']
+  middleware: ['check-questionnaire']
 }
 </script>

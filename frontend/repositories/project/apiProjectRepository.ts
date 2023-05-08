@@ -14,7 +14,7 @@ export class APIProjectRepository implements ProjectRepository {
 
   async findById(id: string): Promise<ProjectReadItem> {
     const url = `/projects/${id}`
-    const response = await this.request.get(url)
+    const response = id ? await this.request.get(url) : { data: {}}
     return plainToInstance(ProjectReadItem, response.data)
   }
 

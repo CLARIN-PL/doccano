@@ -15,7 +15,7 @@
       <v-list-item
         v-for="(item, i) in filteredItems"
         :key="i"
-        @click="$router.push(localePath(`/projects/${$route.params.id}/${item.link}`))"
+        @click.once="$router.push(localePath(`/projects/${$route.params.id}/${item.link}`))"
       >
         <v-list-item-action>
           <v-icon>

@@ -18,7 +18,7 @@ export default function ({ store, route, redirect, app }) {
         } 
         else if(!isStaff && toShow.length && isOnQuestionnairePage) {
             if(isWorkingNow && (isOnMainQuestionnairePage || !route.path.includes(key))) { 
-                redirect(`/${locale}/questionnaires/${key}`)
+                return redirect(`/${locale}/questionnaires/${key}`)
             }
         }
     } else if(hasValidToShow && !toShow.length && isOnQuestionnairePage)  {

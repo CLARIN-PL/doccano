@@ -32,9 +32,13 @@
       />
     </template>
     <template #[`item.name`]="{ item }">
-      <nuxt-link v-if="enableProjectLink(item.id)" :to="localePath(`/projects/${item.id}`)">
+      <span
+        v-if="enableProjectLink(item.id)"
+        class="item-link"
+        @click.once="$router.push(localePath(`/projects/${item.id}`))"
+      >
         <span>{{ item.name }}</span>
-      </nuxt-link>
+      </span>
       <span v-else>{{ item.name }}</span>
     </template>
     <template #[`item.updatedAt`]="{ item }">
@@ -157,3 +161,10 @@ export default Vue.extend({
   }
 })
 </script>
+<style lang="scss" scoped>
+.item-link {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+</style>

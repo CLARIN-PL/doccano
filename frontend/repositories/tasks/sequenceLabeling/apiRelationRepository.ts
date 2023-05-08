@@ -6,9 +6,13 @@ export class ApiRelationRepository implements RelationRepository {
   constructor(private readonly request = ApiService) {}
 
   async list(projectId: string, exampleId: number): Promise<RelationItem[]> {
-    const url = `/projects/${projectId}/examples/${exampleId}/relations`
-    const response = await this.request.get(url)
-    return response.data.map((relation: any) => RelationItem.valueOf(relation))
+    let result = Promise.resolve([])
+    if (String(projectId) !== "undefined") {
+      const url = `/projects/${projectId}/examples/${exampleId}/relations`
+      const response = await this.request.get(url)
+      result =  response.data.map((relation: any) => RelationItem.valueOf(relation))
+    }
+    return result
   }
 
   async create(projectId: string, exampleId: number, item: RelationItem): Promise<RelationItem> {
