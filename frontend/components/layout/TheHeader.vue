@@ -25,7 +25,7 @@
       v-if="isAuthenticated"
       text
       class="text-capitalize"
-      @click.once="$router.push(localePath('/projects'))"
+      @click="$router.push(localePath('/projects'))"
     >
       {{ $t('header.projects') }}
     </v-btn>
@@ -40,7 +40,7 @@
         <v-list-item
           v-for="(item, index) in items"
           :key="index"
-          @click.once="$router.push(localePath('/demo/' + item.link))"
+          @click="$router.push(localePath('/demo/' + item.link))"
         >
           <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
