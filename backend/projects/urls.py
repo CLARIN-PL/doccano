@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views.member import MemberDetail, MemberList, MyRole
-from .views.project import ProjectDetail, ProjectList, ProjectProgressDetail
+from .views.project import ProjectDetail, ProjectList, ProjectProgressDetail, ProjectDimensionDetail
 from .views.tag import TagDetail, TagList
 from .views.dimension import DimensionMetaDataList, DynamicDimensionList, GetAllDynamicDimensions, AddProjectDimension
 
@@ -18,4 +18,5 @@ urlpatterns = [
     path(route="projects/<int:project_id>/dimensions", view=DynamicDimensionList.as_view(), name="dynamic_dimension_list"),
     path(route="projects/dimensions", view=GetAllDynamicDimensions.as_view(), name="get_all_dynamic_dimensions"),
     path(route="projects/<int:project_id>/assign_dimensions", view=AddProjectDimension.as_view(), name="add_project_dimension"),
+    path(route="projects/<int:project_id>/dimension-detail", view=ProjectDimensionDetail.as_view(), name="project_dimension_detail"),
 ]

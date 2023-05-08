@@ -19,6 +19,7 @@ services:
       ALLOW_SIGNUP: "False"
       DEBUG: "False"
       DJANGO_SETTINGS_MODULE: "config.settings.production"
+      CSRF_TRUSTED_ORIGINS: "https://doccano.clarin-pl.eu,https://doccano.milkowski.ovh"
     depends_on:
       - postgres
     networks:
@@ -85,9 +86,29 @@ services:
 
 volumes:
   postgres_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /mnt/data/doccano/postgres_data
   static_volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /mnt/data/doccano/static_volume
   media:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /mnt/data/doccano/media
   tmp_file:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /mnt/data/doccano/tmp_file
 
 networks:
   network-backend:

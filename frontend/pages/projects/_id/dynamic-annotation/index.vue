@@ -847,6 +847,7 @@ export default {
         max-height: 150px;
         overflow-y: auto;
         opacity: 0.8;
+        color: black;
       }
 
       .btn-toggle {

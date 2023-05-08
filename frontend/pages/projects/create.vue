@@ -61,7 +61,6 @@ export default Vue.extend({
   methods: {
     async setDimensionList() {
       const base = this
-      // @ts-ignore
       await base.$services.dimension.listAllDimensions().then((response: any) => {
         this.dimensions = response.items
       })
