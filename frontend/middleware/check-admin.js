@@ -1,6 +1,4 @@
-import _ from 'lodash'
-
-export default _.debounce(async function ({ app, store, route, redirect }) {
+export default async function ({ app, store, route, redirect }) {
   try {
     await store.dispatch('projects/setCurrentProject', route.params.id)
     await store.dispatch('projects/setCurrentDimensions', route.params.id)
@@ -23,5 +21,6 @@ export default _.debounce(async function ({ app, store, route, redirect }) {
     return
   }
 
+
   return redirect(projectRoot)
-}, 1000)
+}

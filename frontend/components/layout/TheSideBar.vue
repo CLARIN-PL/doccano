@@ -15,7 +15,7 @@
       <v-list-item
         v-for="(item, i) in filteredItems"
         :key="i"
-        @click.once="$router.push(localePath(`/projects/${$route.params.id}/${item.link}`))"
+        @click="$router.push(localePath(`/projects/${$route.params.id}/${item.link}`))"
       >
         <v-list-item-action>
           <v-icon>
@@ -77,11 +77,11 @@ export default {
       return !hideAnnotationButtonProjectTypes.includes(this.project.projectType)
     },
     filteredItems() {
-      const items = [
+      return [
         {
           icon: mdiHome,
           text: this.$t('projectHome.home'),
-          link: '',
+          link: '/',
           isVisible: true
         },
         {
@@ -132,8 +132,7 @@ export default {
           link: 'settings',
           isVisible: this.isProjectAdmin
         }
-      ]
-      return items.filter((item) => item.isVisible)
+      ].filter((item) => item.isVisible)
     }
   },
 

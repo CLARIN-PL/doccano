@@ -11,7 +11,8 @@ export class ExampleApplicationService {
       const item = await this.repository.list(projectId, options)
       return new ExampleListDTO(item)
     } catch (e: any) {
-      throw new Error(e.response.data.detail)
+      console.error(e)
+      throw new Error(e.response)
     }
   }
 
