@@ -97,6 +97,7 @@ export class ExampleApplicationService {
       const item = await this.repository.listStates(projectId, exampleId)
       return new ExampleStateListDTO(item)
     } catch (e: any) {
+      console.log(e)
       throw new Error(e.response.data.detail)
     }
   }

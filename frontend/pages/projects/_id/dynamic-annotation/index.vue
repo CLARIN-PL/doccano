@@ -227,7 +227,7 @@ export default {
   },
 
   async fetch() {
-    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
+    this.isProjectAdmin = this.isStaff
     await this.setProjectData()
     await this.setDoc()
     await this.setHasCheckedPreviousDoc()
@@ -239,7 +239,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId']),
+    ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId', 'isStaff']),
     ...mapGetters('config', ['isRTL']),
     ...mapGetters('projects', ['currentDimensions', 'allDimensions']),
     ...mapGetters('user', ['getAnnotation']),
@@ -784,6 +784,7 @@ export default {
           lastAnnotationTime: moment().format(DATE_FORMAT)
         })
         this.hasClickedConfirmButton = false
+        this.$forceUpdate()
         this.scrollToTop()
       } else {
         this.showErrors()

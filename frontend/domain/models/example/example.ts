@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import { Expose, Type } from 'class-transformer'
+import { Expose } from 'class-transformer'
 
 export class ExampleMetaContent {
   article_title: string
@@ -18,10 +18,11 @@ export class ExampleItem {
   text: string
   scale: []
   label: []
-  meta: ExampleMetaItem
   itemId: string 
   type: string 
   order: number 
+  meta: ExampleMetaItem | any 
+  [key: string]: any
 
   @Expose({ name: 'article_id' })
   articleId: string 
@@ -40,6 +41,7 @@ export class ExampleItem {
 
   @Expose({ name: 'upload_name' })
   filename: string
+
 
   get url() {
     const l = this.fileUrl.indexOf('media/')
@@ -63,6 +65,7 @@ export class ExampleItem {
 export class ExampleStateItem {
   id: number
   example: number
+  [key: string]: any
   
   @Expose({ name: "confirmed_at"})
   confirmedAt: String
@@ -75,10 +78,7 @@ export class ExampleStateItemList {
   count: number
   next: string | null
   prev: string | null
-
-  @Type(() => ExampleStateItem)
-  @Expose({ name: 'results' })
-  items: ExampleStateItem[]
+  results: ExampleStateItem[]
 }
 
 
@@ -86,6 +86,5 @@ export class ExampleItemList {
   count: number
   next: string | null
   prev: string | null
-
   results: ExampleItem[]
 }

@@ -3,6 +3,7 @@ import { Expose } from 'class-transformer'
 export class UserItem {
   id: number
   username: string
+  [key: string]: any
 
   @Expose({ name: 'is_superuser' })
   isSuperuser: boolean

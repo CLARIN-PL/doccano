@@ -15,8 +15,8 @@ export class ExampleStateDTO {
   constructor(item: ExampleStateItem) {
     this.id = item.id
     this.example = item.example
-    this.confirmedAt = item.confirmedAt
-    this.confirmedBy = item.confirmedBy
+    this.confirmedAt = item.confirmedAt || item.confirmed_at
+    this.confirmedBy = item.confirmedBy || item.confirmed_by
   }
 }
 
@@ -40,14 +40,14 @@ export class ExampleDTO {
     this.id = item.id
     this.text = item.text
     this.meta = item.meta
-    this.annotationApprover = item.annotationApprover
-    this.commentCount = item.commentCount
-    this.isApproved = !!item.annotationApprover
-    this.fileUrl = item.fileUrl
-    this.filename = item.filename
+    this.annotationApprover = item.annotationApprover ||  item.annotation_approver
+    this.commentCount = item.commentCount || item.comment_count
+    this.isApproved = !!item.annotationApprover || !!item.annotation_approver
+    this.fileUrl = item.fileUrl || item.filename
+    this.filename = item.filename || item.upload_name
     this.url = item.url
-    this.isConfirmed = item.isConfirmed
-    this.articleId = item.articleId
+    this.isConfirmed = item.isConfirmed || item.is_confirmed
+    this.articleId = item.articleId || item.article_id
     this.type = item.type
     this.order = item.order
     this.itemId = item.itemId
@@ -65,6 +65,7 @@ export class ExampleArticleDTO {
   itemId: string 
   articleId: string
   isConfirmed: boolean
+  [key: string]: any
   
   @Expose({ name: 'publish_datetime' })
   publishDatetime: string 
@@ -80,7 +81,7 @@ export class ExampleStateListDTO {
     this.count = item.count
     this.next = item.next
     this.prev = item.prev
-    this.items = item.items.map((_ : any ) => new ExampleStateDTO(_))
+    this.items = item.results.map((_ : any ) => new ExampleStateDTO(_))
   }
 }
 

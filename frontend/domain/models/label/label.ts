@@ -3,6 +3,7 @@ import { Expose } from 'class-transformer'
 export class LabelItem {
   id: number
   text: string
+  [key: string]: any
 
   @Expose({ name: 'prefix_key' })
   prefixKey: string | null

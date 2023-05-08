@@ -20,6 +20,7 @@ export class ProjectReadItem {
   users: number[]
   tags: Object[]
   dimension: any[]
+  [key: string]: any
 
   @Expose({ name: 'project_type' })
   projectType: ProjectType
