@@ -18,10 +18,11 @@ export class ExampleItem {
   text: string
   scale: []
   label: []
-  meta: ExampleMetaItem
   itemId: string 
   type: string 
   order: number 
+  meta: ExampleMetaItem | any 
+  [key: string]: any
 
   @Expose({ name: 'article_id' })
   articleId: string 
@@ -40,6 +41,7 @@ export class ExampleItem {
 
   @Expose({ name: 'upload_name' })
   filename: string
+
 
   get url() {
     const l = this.fileUrl.indexOf('media/')
