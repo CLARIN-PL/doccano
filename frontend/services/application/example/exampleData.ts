@@ -15,8 +15,8 @@ export class ExampleStateDTO {
   constructor(item: ExampleStateItem) {
     this.id = item.id
     this.example = item.example
-    this.confirmedAt = item.confirmedAt
-    this.confirmedBy = item.confirmedBy
+    this.confirmedAt = item.confirmedAt || item.confirmed_at
+    this.confirmedBy = item.confirmedBy || item.confirmed_by
   }
 }
 

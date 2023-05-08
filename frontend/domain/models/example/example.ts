@@ -65,6 +65,7 @@ export class ExampleItem {
 export class ExampleStateItem {
   id: number
   example: number
+  [key: string]: any
   
   @Expose({ name: "confirmed_at"})
   confirmedAt: String

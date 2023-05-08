@@ -7,6 +7,7 @@ export class CommentItem {
   username: string
   example: number
   text: string
+  [key: string]: any
 
   @Expose({ name: 'created_at' })
   createdAt: string
@@ -22,7 +23,7 @@ export class CommentItem {
       username: this.username,
       document: this.example,
       text: this.text,
-      created_at: this.createdAt
+      created_at: this.createdAt || this.created_at
     }
   }
 }
