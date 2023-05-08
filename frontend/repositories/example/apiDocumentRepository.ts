@@ -10,12 +10,12 @@ export class APIExampleRepository implements ExampleRepository {
     projectId: string,
     { limit = '10', offset = '0', q = '', isChecked = '' }: SearchOption
   ): Promise<ExampleItemList> {
-    let result = Promise.resolve({count: 0, next: null, prev: null, items: []})
+    let result = Promise.resolve({count: 0, next: null, prev: null, results: []})
     if (String(projectId) !== "undefined") {
       const url = `/projects/${projectId}/examples?limit=${limit}&offset=${offset}&q=${q}&confirmed=${isChecked}`
       const response = await this.request.get(url)
       result =  response.data
-    }
+    } 
     return result
   }
 

@@ -33,7 +33,7 @@ export class ExampleDTO {
   isConfirmed: boolean
   articleId: string 
   type: string 
-  order: number
+  order: number | null 
   itemId: string 
 
   constructor(item: ExampleItem) {
@@ -74,13 +74,13 @@ export class ExampleStateListDTO {
   count: number
   next: string | null
   prev: string | null
-  items: ExampleStateDTO[]
+  items: ExampleStateDTO[] 
 
   constructor(item: ExampleStateItemList) {
     this.count = item.count
     this.next = item.next
     this.prev = item.prev
-    this.items = item.items.map((_) => new ExampleStateDTO(_))
+    this.items = item.items.map((_ : any ) => new ExampleStateDTO(_))
   }
 }
 
@@ -95,7 +95,7 @@ export class ExampleListDTO {
     this.count = item.count
     this.next = item.next
     this.prev = item.prev
-    this.items = item.items.map((_) => new ExampleDTO(_))
+    this.items = item.results.map((_: any) => new ExampleDTO(_))
   }
 }
 

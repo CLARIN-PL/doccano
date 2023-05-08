@@ -87,7 +87,5 @@ export class ExampleItemList {
   next: string | null
   prev: string | null
 
-  @Type(() => ExampleItem)
-  @Expose({ name: 'results' })
-  items: ExampleItem[]
+  results: ExampleItem[]
 }

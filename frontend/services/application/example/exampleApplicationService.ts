@@ -23,7 +23,7 @@ export class ExampleApplicationService {
   ): Promise<ExampleListDTO> {
     const offset = (parseInt(page, 10) - 1).toString()
     const options: SearchOption = {
-      limit: '1',
+    limit: '1',
       offset,
       q,
       isChecked

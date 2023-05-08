@@ -35,7 +35,7 @@
       <span
         v-if="enableProjectLink(item.id)"
         class="item-link"
-        @click.once="$router.push(localePath(`/projects/${item.id}`))"
+        @click="$router.push(localePath(`/projects/${item.id}`))"
       >
         <span>{{ item.name }}</span>
       </span>

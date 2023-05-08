@@ -7,7 +7,7 @@
     </the-header>
 
     <v-navigation-drawer v-model="drawerLeft" app clipped color="">
-      <the-side-bar :link="getLink" :is-project-admin="isProjectAdmin" :project="currentProject" />
+      <the-side-bar :link="getLink" :is-project-admin="isStaff" :project="currentProject" />
     </v-navigation-drawer>
 
     <v-main>
@@ -35,17 +35,13 @@ export default {
   middleware: ['check-admin', 'check-questionnaire'],
   data() {
     return {
-      drawerLeft: null,
-      isProjectAdmin: false
+      drawerLeft: null
     }
   },
 
   computed: {
+    ...mapGetters('auth', ['isStaff']),
     ...mapGetters('projects', ['getLink', 'currentProject'])
-  },
-
-  async created() {
-    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.$route.params.id)
   }
 }
 </script>
