@@ -15,7 +15,9 @@ export class APIExampleRepository implements ExampleRepository {
       const url = `/projects/${projectId}/examples?limit=${limit}&offset=${offset}&q=${q}&confirmed=${isChecked}`
       const response = await this.request.get(url)
       result =  response.data
-    }
+    } 
+    // @ts-ignore 
+    // hotfix: Somehow the TypeScript will not expose the `results` to `items` but still reads them as `items`
     return result
   }
 

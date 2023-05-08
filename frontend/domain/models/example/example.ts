@@ -87,6 +87,5 @@ export class ExampleItemList {
   next: string | null
   prev: string | null
 
-  @Expose({ name: 'results' })
   results: ExampleItem[]
 }
