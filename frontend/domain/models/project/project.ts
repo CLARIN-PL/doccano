@@ -114,6 +114,7 @@ export class ProjectItemList {
   count: number
   next: string | null
   prev: string | null
+  [key: string]: any
 
   @Type(() => ProjectReadItem)
   @Expose({ name: 'results' })

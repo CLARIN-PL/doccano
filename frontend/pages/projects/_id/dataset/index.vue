@@ -284,6 +284,8 @@ export default Vue.extend({
           }
           this.isLoadingStartState = false
         })
+      } else {
+        callback && callback()
       }
     },
     async loadData() {

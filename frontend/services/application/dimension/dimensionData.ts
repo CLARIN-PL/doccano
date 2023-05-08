@@ -14,7 +14,7 @@ export class DimensionDTO {
     this.id = item.id
     this.name = item.name
     this.type = item.type
-    this.metadata = item.metadata 
+    this.metadata = item.metadata || item.dimension_metadata
   }
 }
 

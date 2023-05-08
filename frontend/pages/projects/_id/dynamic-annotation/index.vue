@@ -227,7 +227,7 @@ export default {
   },
 
   async fetch() {
-    this.isProjectAdmin = this.isStaff
+    this.isProjectAdmin = await this.$services.member.isProjectAdmin(this.projectId)
     await this.setProjectData()
     await this.setDoc()
     await this.setHasCheckedPreviousDoc()

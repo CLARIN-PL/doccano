@@ -33,6 +33,7 @@ export class QuestionItem {
 export class AnswerReadItem {
   id: number
   question: number
+  [key: string]: any
   
   @Expose({ name: 'answer_text' })
   answerText: string
@@ -57,6 +58,7 @@ export class AnswerWriteItem {
 export class QuestionnaireTimeItem {
   id: number
   questionnaire: number
+  [key: string]: any
   
   @Expose({ name: 'finished_by' })
   finishedBy: number
@@ -69,6 +71,7 @@ export class QuestionnaireTypeItemList {
     count: number
     next: string | null
     previous: string | null
+    [key: string]: any
   
     @Type(() => QuestionnaireTypeItem)
     @Expose({ name: 'results' })
@@ -80,6 +83,7 @@ export class QuestionnaireTypeItemList {
     count: number
     next: string | null
     previous: string | null
+    [key: string]: any
   
     @Type(() => QuestionnaireTimeItem)
     @Expose({ name: 'results' })
@@ -91,6 +95,7 @@ export class QuestionItemList {
     count: number
     next: string | null
     previous: string | null
+    [key: string]: any
   
     @Type(() => QuestionItem)
     @Expose({ name: 'results' })
@@ -101,6 +106,7 @@ export class QuestionnaireItemList {
     count: number
     next: string | null
     previous: string | null
+    [key: string]: any
   
     @Type(() => QuestionnaireItem)
     @Expose({ name: 'results' })

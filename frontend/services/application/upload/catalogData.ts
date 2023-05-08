@@ -11,9 +11,9 @@ export class CatalogDTO {
   constructor(item: Catalog) {
     this.name = item.name
     this.example = item.example
-    this.acceptTypes = item.acceptTypes
+    this.acceptTypes = item.acceptTypes || item.accept_types
     this.properties = item.properties
-    this.displayName = item.displayName
-    this.taskId = item.taskId
+    this.displayName = item.displayName || item.display_name
+    this.taskId = item.taskId || item.task_id
   }
 }

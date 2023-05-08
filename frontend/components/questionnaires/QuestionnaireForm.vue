@@ -40,9 +40,8 @@
                                 v-if="segment.scales"
                                 class="segment-description-container text-caption"
                               >
-                                <p>
-                                  {{ segment.scales.description }}
-                                </p>
+                                <!-- eslint-disable-next-line vue/no-v-html -->
+                                <p v-html="segment.scales.description"></p>
                               </div>
 
                               <div v-if="segment.questions">
@@ -116,7 +115,7 @@
                   </v-card>
                 </v-col>
                 <v-col
-                  v-if="(questionnaire.segments[0].scales && questionnaire.segments[0].scales.values)"
+                  v-if="questionnaire.segments[0].scales && questionnaire.segments[0].scales.values"
                   cols="4"
                   class="sticky-col overflow-visible"
                 >
@@ -124,7 +123,8 @@
                     <v-card-text class="text-caption">
                       <ul class="hide-list-style">
                         <li
-                          v-for="(segmentScaleValue, segScalIdx) in questionnaire.segments[0].scales.values"
+                          v-for="(segmentScaleValue, segScalIdx) in questionnaire.segments[0].scales
+                            .values"
                           :key="`segmentScaleValue-${segScalIdx}`"
                         >
                           {{ segmentScaleValue.value }} - {{ segmentScaleValue.text }}
