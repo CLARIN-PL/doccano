@@ -12,6 +12,7 @@ export class QuestionnaireItem {
     name: string
     description: string
     language: string
+    [key: string]: any
     
     @Expose({ name: 'questionnaire_type' })
     questionnaireType: number
@@ -23,6 +24,7 @@ export class QuestionnaireItem {
 export class QuestionItem {
     id: number
     questionnaire: number
+    [key: string]: any
     
     @Expose({ name: 'question_text' })
     questionText: string

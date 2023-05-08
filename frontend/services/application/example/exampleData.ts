@@ -65,6 +65,7 @@ export class ExampleArticleDTO {
   itemId: string 
   articleId: string
   isConfirmed: boolean
+  [key: string]: any
   
   @Expose({ name: 'publish_datetime' })
   publishDatetime: string 
@@ -80,7 +81,7 @@ export class ExampleStateListDTO {
     this.count = item.count
     this.next = item.next
     this.prev = item.prev
-    this.items = item.items.map((_ : any ) => new ExampleStateDTO(_))
+    this.items = item.results.map((_ : any ) => new ExampleStateDTO(_))
   }
 }
 

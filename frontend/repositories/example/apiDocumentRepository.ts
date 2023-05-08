@@ -58,7 +58,7 @@ export class APIExampleRepository implements ExampleRepository {
   }
 
   async listStates(projectId: string, exampleId: number): Promise<ExampleStateItemList> {
-    let result = Promise.resolve({count: 0, next: null, prev: null, items: []})
+    let result = Promise.resolve({count: 0, next: null, prev: null, results: []})
     if (String(projectId) !== "undefined" && String(exampleId) !== "undefined") {
       const url = `/projects/${projectId}/examples/${exampleId}/states`
       const response = await this.request.get(url)

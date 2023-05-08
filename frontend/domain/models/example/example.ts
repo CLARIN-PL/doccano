@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import { Expose, Type } from 'class-transformer'
+import { Expose } from 'class-transformer'
 
 export class ExampleMetaContent {
   article_title: string
@@ -77,10 +77,7 @@ export class ExampleStateItemList {
   count: number
   next: string | null
   prev: string | null
-
-  @Type(() => ExampleStateItem)
-  @Expose({ name: 'results' })
-  items: ExampleStateItem[]
+  results: ExampleStateItem[]
 }
 
 
@@ -88,6 +85,5 @@ export class ExampleItemList {
   count: number
   next: string | null
   prev: string | null
-
   results: ExampleItem[]
 }
