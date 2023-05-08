@@ -81,7 +81,7 @@ export default {
         {
           icon: mdiHome,
           text: this.$t('projectHome.home'),
-          link: '/',
+          link: '',
           isVisible: true
         },
         {

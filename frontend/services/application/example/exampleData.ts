@@ -74,8 +74,6 @@ export class ExampleStateListDTO {
   count: number
   next: string | null
   prev: string | null
-
-  @Expose({ name: 'results' })
   items: ExampleStateDTO[] 
 
   constructor(item: ExampleStateItemList) {

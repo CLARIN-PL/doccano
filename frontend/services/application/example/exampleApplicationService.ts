@@ -11,8 +11,7 @@ export class ExampleApplicationService {
       const item = await this.repository.list(projectId, options)
       return new ExampleListDTO(item)
     } catch (e: any) {
-      console.error(e)
-      throw new Error(e.response)
+      throw new Error(e.response.data.detail)
     }
   }
 
@@ -24,7 +23,7 @@ export class ExampleApplicationService {
   ): Promise<ExampleListDTO> {
     const offset = (parseInt(page, 10) - 1).toString()
     const options: SearchOption = {
-      limit: '1',
+    limit: '1',
       offset,
       q,
       isChecked
