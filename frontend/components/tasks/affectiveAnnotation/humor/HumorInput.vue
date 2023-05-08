@@ -88,6 +88,7 @@
                                         :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
                                         :label="$t(`annotation.humor.subquestion3.substatement${(idx+1)}`)"
                                         class="subquestions-item__checkbox"
+                                        hide-details
                                         @change="onLabelChange(substatement, `subquestion3`, idx)" />
 
                                     <textfield-modal
@@ -125,6 +126,7 @@
                                             :disabled="!hasFilledTopQuestions || substatement.isSubmitting"
                                             :label="$t(`annotation.humor.subquestion4.substatement${(idx+1)}`)" 
                                             class="subquestions-item__checkbox"
+                                            hide-details
                                             @change="onLabelChange(substatement, `subquestion4`, idx)"
                                         />
                                     </p>
@@ -469,63 +471,64 @@ export default Vue.extend({
       border: 2px solid red;
     }
   }
-}
 
-.widget {
-  font-size: 0.8rem;
+  .widget {
+    font-size: 0.8rem;
 
-  &__title {
-    font-size: 1rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-
-  &__questions {
-    padding: none;
-  }
-}
-
-.questions-item {
-  opacity: 0.3;
-
-  &.--visible {
-    opacity: 1;
-  }
-
-  &__slider {
-    display: flex;
-
-    .v-slider__tick-label {
-      font-size: 0.8rem;
+    &__title {
+      font-size: 1rem;
+      font-weight: bold;
+      margin-bottom: 10px;
     }
 
-    .slider-text {
-      color: gray;
-      margin-top: 5px;
-
-      &.--start {
-        margin-right: 10px;
-      }
-
-      &.--end {
-        margin-left: 10px;
-      }
+    &__questions {
+      padding: none;
     }
   }
-}
 
-.subquestions {
-  list-style-type: none;
-  padding: 0;
+  .questions-item {
+    opacity: 0.3;
 
-  &__item {
-    .subquestions-item__checkbox {
-      .v-label {
+    &.--visible {
+      opacity: 1;
+    }
+
+    &__slider {
+      display: flex;
+
+      .v-slider__tick-label {
         font-size: 0.8rem;
       }
 
-      .v-input__slot {
-        margin: 0;
+      .slider-text {
+        color: gray;
+        margin-top: 5px;
+        font-size: 0.8rem;
+
+        &.--start {
+          margin-right: 10px;
+        }
+
+        &.--end {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+
+  .subquestions {
+    list-style-type: none;
+    padding: 0;
+
+    &__item {
+      .subquestions-item__checkbox {
+        .v-label {
+          font-size: 0.8rem;
+        }
+
+        .v-input__slot {
+          margin: 0;
+        }
       }
     }
   }

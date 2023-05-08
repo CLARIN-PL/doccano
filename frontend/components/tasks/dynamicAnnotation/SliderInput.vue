@@ -23,14 +23,14 @@
               "
               :track-color="!formData.isCheckboxChecked && formData.isClicked ? '' : 'grey'"
               ticks="always"
-              :disabled="!!formData.isCheckboxChecked"
+              :disabled="disabled || !!formData.isCheckboxChecked"
               :readonly="!!formData.isCheckboxChecked || preview || readOnly"
               :min="sliderMin"
               :max="sliderMax"
               :tick-labels="tickLabels"
               :step="sliderStep"
               @input="onSliderInput"
-              @click="onSliderClick"
+              @change="onSliderChange"
             />
 
             <span class="slider-text --end">
@@ -103,6 +103,14 @@ export default Vue.extend({
       default: () => []
     },
     readOnly: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    transparent: {
       type: Boolean,
       default: false
     },
@@ -285,7 +293,7 @@ export default Vue.extend({
     onSliderInput() {
       this.formData.isClicked = true
     },
-    onSliderClick() {
+    onSliderChange() {
       if (!this.formData.isSubmitting) {
         this.formData.isSubmitting = true
         this.$emit('update:scale', { formDataKey: this.formDataKey, value: this.formData.value })
@@ -308,45 +316,46 @@ export default Vue.extend({
   &.--readonly {
     opacity: 0.85;
   }
-}
-.questions-item {
-  &__slider {
-    display: flex;
-    flex-wrap: wrap;
 
-    > * {
-      flex-basis: 100%;
-    }
-
-    .slider__slider {
+  .questions-item {
+    &__slider {
       display: flex;
-      padding-top: 10px;
+      flex-wrap: wrap;
 
-      > .slider-text {
-        max-width: 15%;
-        font-size: 0.75rem;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        word-break: break-word;
+      > * {
+        flex-basis: 100%;
+      }
+
+      .slider__slider {
+        display: flex;
+        padding-top: 10px;
+
+        > .slider-text {
+          max-width: 15%;
+          font-size: 0.75rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          word-break: break-word;
+        }
       }
     }
   }
-}
 
-.slider-text {
-  color: gray;
-  margin-top: 5px;
+  .slider-text {
+    color: gray;
+    margin-top: 5px;
 
-  &.--start {
-    margin-right: 10px;
+    &.--start {
+      margin-right: 10px;
+    }
+
+    &.--end {
+      margin-left: 10px;
+    }
   }
 
-  &.--end {
-    margin-left: 10px;
+  .v-slider__tick .v-slider__tick-label {
+    font-size: 0.75rem !important;
   }
-}
-
-.v-slider__tick .v-slider__tick-label {
-  font-size: 0.75rem !important;
 }
 </style>

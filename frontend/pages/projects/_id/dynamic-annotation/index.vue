@@ -134,8 +134,10 @@
                               :item="dim"
                               :items="originalDimensions"
                               :config="getDimConfig(dim)"
-                              :required="dim.metadata[0].required"
-                              :read-only="!canEdit || dim.isSubmitting || dim.metadata[0].readonly"
+                              :required="getDimRequired(dim)"
+                              :read-only="getDimReadonly(dim)"
+                              :disabled="getDimDisabled(dim)"
+                              :transparent="getDimTransparent(dim)"
                               class="dimension-list__item"
                               @update:scale="onDynamicComponentUpdateScale"
                               @add:label="onDynamicComponentAddLabel"
@@ -432,6 +434,37 @@ export default {
       'initQuestionnaire',
       'getQuestionnaire'
     ]),
+
+    hasCheckedAtLeastOneOffensiveSliders() {
+      const offensiveCodename = 'DIM_OFF'
+      const dimensions = Object.values(this.formData.dimensions).flat(1)
+      const hasChecked = dimensions.find((dim) => {
+        let isClicked = false
+        if (dim.metadata && dim.metadata.length) {
+          const isOffensiveDim = dim.metadata[0].codename.includes(offensiveCodename)
+          if (isOffensiveDim) {
+            isClicked = dim.isClicked && dim.value > 0
+          }
+        }
+        return isClicked
+      })
+      return Boolean(hasChecked)
+    },
+    hasCheckedAtLeastOneHumorSliders() {
+      const humorCodename = 'DIM_HUM'
+      const dimensions = Object.values(this.formData.dimensions).flat(1)
+      const hasChecked = dimensions.find((dim) => {
+        let isClicked = false
+        if (dim.metadata && dim.metadata.length) {
+          const isHumorDim = dim.metadata[0].codename.includes(humorCodename)
+          if (isHumorDim) {
+            isClicked = dim.isClicked && dim.value > 0
+          }
+        }
+        return isClicked
+      })
+      return Boolean(hasChecked)
+    },
     getFilteredDimensions(dimensions) {
       return dimensions.filter((dim) => !dim.isHidden)
     },
@@ -463,6 +496,50 @@ export default {
       } else if (dimension.type === 'checkbox') {
         return CheckboxInput
       }
+    },
+    getDimReadonly(dim) {
+      return !this.canEdit || dim.isSubmitting || dim.metadata[0].readonly
+    },
+    getDimDisabled(dim) {
+      let isDimDisabled = this.getDimReadonly(dim)
+      const { metadata } = dim
+      if (metadata && metadata.length) {
+        const { codename } = metadata[0]
+        if (codename && codename.includes('DIM_OFF') && dim.isMock) {
+          isDimDisabled = !this.hasCheckedAtLeastOneOffensiveSliders()
+        } else if (codename && codename.includes('DIM_HUM') && dim.isMock) {
+          isDimDisabled = !this.hasCheckedAtLeastOneHumorSliders()
+        }
+      }
+      return isDimDisabled
+    },
+    getDimTransparent(dim) {
+      let isDimTransparent = false
+      const { metadata } = dim
+      if (metadata && metadata.length) {
+        const { codename } = metadata[0]
+        if (codename && codename.includes('DIM_OFF') && dim.isMock) {
+          isDimTransparent = !this.hasCheckedAtLeastOneOffensiveSliders()
+        } else if (codename && codename.includes('DIM_HUM') && dim.isMock) {
+          isDimTransparent = !this.hasCheckedAtLeastOneHumorSliders()
+        }
+      }
+      return isDimTransparent
+    },
+    getDimRequired(dim) {
+      const { metadata } = dim
+      let isDimRequired = false
+      if (metadata && metadata.length) {
+        const { required, codename } = metadata[0]
+        if (codename && codename.includes('DIM_OFF') && dim.type === 'checkbox') {
+          isDimRequired = this.hasCheckedAtLeastOneOffensiveSliders()
+        } else if (codename && codename.includes('DIM_HUM') && dim.type === 'checkbox') {
+          isDimRequired = this.hasCheckedAtLeastOneHumorSliders()
+        } else {
+          isDimRequired = required
+        }
+      }
+      return isDimRequired
     },
     getDimConfig(item) {
       let config = { config: {} }
