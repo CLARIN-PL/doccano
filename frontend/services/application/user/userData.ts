@@ -8,6 +8,6 @@ export class UserDTO {
   constructor(item: UserItem) {
     this.id = item.id
     this.username = item.username
-    this.isStaff = item.isStaff
+    this.isStaff = item.isStaff || item.is_staff
   }
 }

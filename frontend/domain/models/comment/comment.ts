@@ -9,9 +9,6 @@ export class CommentItem {
   text: string
   [key: string]: any
 
-  @Expose({ name: 'created_at' })
-  createdAt: string
-
   by(userId: number) {
     return this.user === userId
   }
@@ -23,7 +20,7 @@ export class CommentItem {
       username: this.username,
       document: this.example,
       text: this.text,
-      created_at: this.createdAt || this.created_at
+      created_at: this.created_at 
     }
   }
 }
@@ -32,6 +29,7 @@ export class CommentItemList {
   count: number
   next: string | null
   prev: string | null
+  [key: string]: any
 
   @Type(() => CommentItem)
   @Expose({ name: 'results' })

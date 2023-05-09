@@ -29,8 +29,8 @@ export class QuestionnaireDTO {
     this.name = item.name
     this.description = item.description
     this.language = item.language
-    this.questionnaireType = item.questionnaireType
-    this.timeOfDay = item.timeOfDay
+    this.questionnaireType = item.questionnaireType || item.questionnaire_type
+    this.timeOfDay = item.timeOfDay || item.time_of_day
   }
 }
 
@@ -41,7 +41,7 @@ export class QuestionDTO {
   
     constructor(item: QuestionItem) {
       this.id = item.id
-      this.questionText = item.questionText
+      this.questionText = item.questionText || item.question_text
       this.questionnaire = item.questionnaire
     }
 }
@@ -54,7 +54,7 @@ export class AnswerReadDTO {
     constructor(item: AnswerReadItem) {
       this.id = item.id
       this.question = item.question
-      this.answerText = item.answerText
+      this.answerText = item.answerText || item.answer_text
     }
 }
 
@@ -67,8 +67,8 @@ export class QuestionnaireTimeItemDTO {
   constructor(item: QuestionnaireTimeItem) {
     this.id = item.id
     this.questionnaire = item.questionnaire
-    this.finishedBy = item.finishedBy
-    this.finishedAt = item.finishedAt
+    this.finishedBy = item.finishedBy || item.finished_by
+    this.finishedAt = item.finishedAt || item.finished_at
   }
 }
   
@@ -90,6 +90,7 @@ export class QuestionnaireTypeListDTO {
       this.count = item.count
       this.next = item.next
       this.previous = item.previous
+      item.items = item.items || item.results || []
       this.items = item.items.map((_) => new QuestionnaireTypeDTO(_))
     }
   }
@@ -104,6 +105,7 @@ export class QuestionnaireTypeListDTO {
       this.count = item.count
       this.next = item.next
       this.previous = item.previous
+      item.items = item.items || item.results || []
       this.items = item.items.map((_) => new QuestionnaireTimeItemDTO(_))
     }
   }
@@ -118,6 +120,7 @@ export class QuestionnaireListDTO {
     this.count = item.count
     this.next = item.next
     this.previous = item.previous
+    item.items = item.items || item.results || []
     this.items = item.items.map((_) => new QuestionnaireDTO(_))
   }
 }
@@ -132,6 +135,7 @@ export class QuestionListDTO {
     this.count = item.count
     this.next = item.next
     this.previous = item.previous
+    item.items = item.items || item.results || []
     this.items = item.items.map((_) => new QuestionDTO(_))
   }
 }

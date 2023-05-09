@@ -1,6 +1,8 @@
 import 'reflect-metadata'
 
 export class DimensionItem {
+  [key: string]: any
+
   constructor(
     public id: number,
     public name: string,
@@ -13,7 +15,7 @@ export class DimensionItem {
       id: this.id,
       name: this.name,
       type: this.type,
-      metadata: this.metadata
+      metadata: this.metadata || this.dimension_metadata
     }
   }
 }

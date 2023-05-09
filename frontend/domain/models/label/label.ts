@@ -1,30 +1,16 @@
-import { Expose } from 'class-transformer'
-
 export class LabelItem {
   id: number
   text: string
   [key: string]: any
 
-  @Expose({ name: 'prefix_key' })
-  prefixKey: string | null
-
-  @Expose({ name: 'suffix_key' })
-  suffixKey: string | null
-
-  @Expose({ name: 'background_color' })
-  backgroundColor: string
-
-  @Expose({ name: 'text_color' })
-  textColor: string = '#ffffff'
-
   toObject() {
     return {
       id: this.id,
       text: this.text,
-      prefix_key: this.prefixKey,
-      suffix_key: this.suffixKey,
-      background_color: this.backgroundColor,
-      text_color: this.textColor
+      prefix_key: this.prefix_key,
+      suffix_key: this.suffix_key,
+      background_color: this.background_color,
+      text_color: this.text_color
     }
   }
 }
