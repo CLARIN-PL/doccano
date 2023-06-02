@@ -237,7 +237,7 @@ export default Vue.extend({
 
         this.checkLoginDataValidity(lastLoginTime)
         this.setLoginData(loginTime)
-        this.filterDailyQuestionnaireEveryday(currentDiffDay)
+        this.setFilledQuestionnaire(currentDiffDay)
       } catch (error) {
         console.error(error)
       }
@@ -266,7 +266,7 @@ export default Vue.extend({
         this.setLogin({ isFirstLogin: false, lastLoginTime: loginTime })
       }
     },
-    filterDailyQuestionnaireEveryday(currentDiffDay: number) {
+    setFilledQuestionnaire(currentDiffDay: number) {
       if (currentDiffDay > 0) {
         const { filled } = this.getQuestionnaire
         const dailyQuestionnaireId = '4'
@@ -303,20 +303,23 @@ export default Vue.extend({
               if (this.isLoaded) {
                 await this.setUserData()
                 this.$nextTick(async () => {
-                  const questionnaireStates = await this.$services.questionnaire.listFinishedQuestionnaires({
-                    questionnaireTypeId: 1,
-                    limit: 1
-                  })
+                  const questionnaireStates =
+                    await this.$services.questionnaire.listFinishedQuestionnaires({
+                      questionnaireTypeId: 1,
+                      limit: 1
+                    })
                   let firstQuestionnaireEverDate = null
                   if (questionnaireStates && questionnaireStates.items.length > 0) {
                     const firstQuestionnaireEver = questionnaireStates.items[0].finishedAt
-                    firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format('DD-MM-YYYY')
+                    firstQuestionnaireEverDate = moment(String(firstQuestionnaireEver)).format(
+                      'DD-MM-YYYY'
+                    )
                   }
                   await this.initQuestionnaire(firstQuestionnaireEverDate)
                 })
                 this.$router.push(this.localePath('/projects'))
               }
-            }, 100)
+            }, 200)
           })
         }, 100)
       } catch {
