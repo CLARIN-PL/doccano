@@ -1,3 +1,9 @@
+/* 
+    Each questionnaire has a unique id which corresponds to the utils/questionnaires.js and the backend
+
+
+*/
+
 export const qTypes = [
     {
         id: "2.1",
@@ -5,8 +11,9 @@ export const qTypes = [
         questionnaires: [
             {
                 name: "SWLS-A",
-                typeId: "2.2",
                 language: "pl",
+                id: 4,
+                typeId: "2.1",
                 type: "dobrostan: satysfakcja z życia",
                 segments: [
                     {
@@ -85,8 +92,9 @@ export const qTypes = [
             },
             {
                 name: "SPANE",
+                typeId: "2.1",
+                id: 5,
                 language: "pl",
-                typeId: "2.2",
                 type: "dobrostan: afekt",
                 segments: [
                     {
@@ -206,8 +214,9 @@ export const qTypes = [
             },
             {
                 name: "Skala Prosperowania",
+                typeId: "2.1",
+                id: 6,
                 language: "pl",
-                typeId: "2.2",
                 type: "dobrostan: skala prosperowania",
                 segments: [
                     {
@@ -306,105 +315,10 @@ export const qTypes = [
                 ]
             },
             {
-                name: "Kwestionariusz Zdrowia Pacjenta PHQ-9 (PHQ-9)",
-                language: "pl",
-                typeId: "2.2",
-                type: "depresja",
-                segments: [
-                    {
-                        scales: {
-                            description: "Patient Health Questionnaire, jest przeznaczony do przesiewowego wykrywania depresji, wykorzystywany jest we wstępnej diagnozie. Jak często w ciągu ostatnich 2 tygodni dokuczały panu/pani następujące problemy?",
-                            values: [
-                                {
-                                    value: 0,
-                                    text: "wcale nie dokuczały"
-                                },
-                                {
-                                    value: 1,
-                                    text: "kilka dni"
-                                },
-                                {
-                                    value: 2,
-                                    text: "więcej niż połowę dni"
-                                },
-                                {
-                                    value: 3,
-                                    text: "niemal codziennie"
-                                },
-                            ]
-                        },
-                        questions: [
-                            {
-                                type: "slider",
-                                text: "Niewielkie zainteresowanie lub odczuwanie przyjemności z wykonywania czynności.",
-                                min: 0,
-                                max: 3,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Uczucie smutku, przygnębienia lub beznadziejności.",
-                                min: 0,
-                                max: 3,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Kłopoty z zaśnięciem lub przerywany sen, albo zbyt długi sen.",
-                                min: 0,
-                                max: 3,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Uczucie zmęczenia lub brak energii.",
-                                min: 0,
-                                max: 3,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Brak apetytu lub przejadanie się.",
-                                min: 0,
-                                max: 3,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Poczucie niezadowolenia z siebie — lub uczucie, że jest się do niczego, albo że zawiódł/zawiodła Pan/Pani siebie lub rodzinę.",
-                                min: 0,
-                                max: 3,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Problemy ze skupieniem się na przykład przy czytaniu gazety lub oglądaniu telewizji.",
-                                min: 0,
-                                max: 3,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Poruszanie się lub mówienie tak wolno, że inni mogliby to zauważyć? Albo wręcz przeciwnie — niemożność usiedzenia w miejscu lub podenerwowanie powodujące ruchliwość znacznie większą niż zwykle.",
-                                min: 0,
-                                max: 3,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Myśli, że lepiej byłoby umrzeć, albo chęć zrobienia sobie jakiejś krzywdy.",
-                                min: 0,
-                                max: 3,
-                                value: -1
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
                 name: "Kwestionariusz PSS",
+                typeId: "2.1",
+                id: 8,
                 language: "pl",
-                typeId: "2.2",
                 type: "stres",
                 segments: [
                     {
@@ -509,193 +423,10 @@ export const qTypes = [
                 ]
             },
             {
-                name: "Physical Health Questionnaire",
-                language: "pl",
-                typeId: "2.2",
-                type: "zdrowie",
-                segments: [
-                    {
-                        scales: {
-                            description: "Poniższe punkty dotyczą tego, jak się Pan(i) czuł(a) fizycznie w ciągu ostatnich 4 tygodni. W ciągu ostatnich 4 tygodni...",
-                            values: [
-                                {
-                                    value: 1,
-                                    text: "Wcale"
-                                },
-                                {
-                                    value: 2,
-                                    text: "Rzadko"
-                                },
-                                {
-                                    value: 3,
-                                    text: "Raz na jakiś czas"
-                                },
-                                {
-                                    value: 4,
-                                    text: "Czasami"
-                                },
-                                {
-                                    value: 5,
-                                    text: "Dość często"
-                                },
-                                {
-                                    value: 6,
-                                    text: "Często"
-                                },
-                                {
-                                    value: 7,
-                                    text: "Cały czas"
-                                }
-                            ]
-                        },
-                        questions: [
-                            {
-                                type: "slider",
-                                text: "Jak często miałeś/aś trudności z zasypianiem w nocy?",
-                                min: 1,
-                                max: 7,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Jak często budziłeś/aś się w nocy?",
-                                min: 1,
-                                max: 7,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Jak często miałeś/aś koszmary senne lub niepokojące sny?",
-                                min: 1,
-                                max: 7,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Jak często Twój sen był spokojny i niezakłócony?",
-                                min: 1,
-                                max: 7,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Jak często miałeś/aś bóle głowy?",
-                                min: 1,
-                                max: 7,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Jak często bolała Cię głowa, gdy wywierano się na Ciebie dużą presję, aby załatwić sprawy?",
-                                min: 1,
-                                max: 7,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Jak często bolała Cię głowa, gdy byłeś/aś sfrustrowany/a, ponieważ sprawy nie ułożyły się tak, jak powinny, lub gdy byłeś/aś na kogoś zirytowany/a?",
-                                min: 1,
-                                max: 7,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Jak często cierpiałeś/aś z powodu rozstroju żołądka (niestrawności)?",
-                                min: 1,
-                                max: 7,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Jak często musiałeś/aś uważać na to, co jesz, aby uniknąć rozstroju żołądka?",
-                                min: 1,
-                                max: 7,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Jak często miałeś/aś mdłości lub inne problemy żołądkowe?",
-                                min: 1,
-                                max: 7,
-                                value: -1
-                            },
-                            {
-                                type: "slider",
-                                text: "Jak często miałeś/aś zaparcia lub cierpiałeś na biegunkę?",
-                                min: 1,
-                                max: 7,
-                                value: -1
-                            },
-                            {
-                                type: "radio",
-                                text: "Ile razy miałeś/aś drobne przeziębienie (np. takie które sprawiło, że czułeś/aś się niekomfortowo, ale nie zatrzymało Cię ono w łóżku ani nie spowodowało, że opuściłeś/aś pracę)?",
-                                options: [
-                                    {
-                                        text: "0 razy"
-                                    },
-                                    {
-                                        text: "1-2 razy"
-                                    },
-                                    {
-                                        text: "3 razy"
-                                    },
-                                    {
-                                        text: "4 razy"
-                                    },
-                                    {
-                                        text: "5 razy"
-                                    },
-                                    {
-                                        text: "6 razy"
-                                    },
-                                    {
-                                        text: "7 razy"
-                                    }
-                                ]
-                            },
-                            {
-                                type: "radio",
-                                text: "Ile razy miałeś/aś infekcje dróg oddechowych, poważniejsze niż drobne przeziębienie (np. takie które 'rozłożyły' cię na łopatki - zapalenie oskrzeli, zapalenie zatok itp.)?",
-                                options: [
-                                    {
-                                        text: "0 razy"
-                                    },
-                                    {
-                                        text: "1-2 razy"
-                                    },
-                                    {
-                                        text: "3 razy"
-                                    },
-                                    {
-                                        text: "4 razy"
-                                    },
-                                    {
-                                        text: "5 razy"
-                                    },
-                                    {
-                                        text: "6 razy"
-                                    },
-                                    {
-                                        text: "7 razy"
-                                    }
-                                ]
-                            },
-                            {
-                                type: "slider",
-                                text: "Jak długo na ogół trwało przeziębienie lub grypa, które przechodziłeś/aś (dni)?",
-                                alternateText: "Jak długo na ogół trwało przeziębienie lub grypa, które przechodziłeś/aś?",
-                                min: 1,
-                                max: 7,
-                                value: -1
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
                 name: "List of RESS-EMA Items",
+                typeId: "2.1",
+                id: 10,
                 language: "pl",
-                typeId: "2.2",
                 type: "regulacja emocji",
                 segments: [
                     {
@@ -840,7 +571,8 @@ export const qTypes = [
             {
                 name: "PAQ",
                 language: "pl",
-                typeId: "2.2",
+                id: 11,
+                typeId: "2.1",
                 type: "alexytymia",
                 segments: [
                     {
@@ -933,6 +665,7 @@ export const qTypes = [
             {
                 name: "SWLS-A",
                 typeId: "2.2",
+                id: 4,
                 language: "pl",
                 type: "dobrostan: satysfakcja z życia",
                 segments: [
@@ -1014,6 +747,7 @@ export const qTypes = [
                 name: "SPANE",
                 language: "pl",
                 typeId: "2.2",
+                id: 5,
                 type: "dobrostan: afekt",
                 segments: [
                     {
@@ -1135,6 +869,7 @@ export const qTypes = [
                 name: "Skala Prosperowania",
                 language: "pl",
                 typeId: "2.2",
+                id: 6,
                 type: "dobrostan: skala prosperowania",
                 segments: [
                     {
@@ -1236,6 +971,7 @@ export const qTypes = [
                 name: "Kwestionariusz Zdrowia Pacjenta PHQ-9 (PHQ-9)",
                 language: "pl",
                 typeId: "2.2",
+                id: 7,
                 type: "depresja",
                 segments: [
                     {
@@ -1332,6 +1068,7 @@ export const qTypes = [
                 name: "Kwestionariusz PSS",
                 language: "pl",
                 typeId: "2.2",
+                id: 8,
                 type: "stres",
                 segments: [
                     {
@@ -1439,6 +1176,7 @@ export const qTypes = [
                 name: "Physical Health Questionnaire",
                 language: "pl",
                 typeId: "2.2",
+                id: 9,
                 type: "zdrowie",
                 segments: [
                     {
@@ -1622,6 +1360,7 @@ export const qTypes = [
             {
                 name: "List of RESS-EMA Items",
                 language: "pl",
+                id: 10,
                 typeId: "2.2",
                 type: "regulacja emocji",
                 segments: [
@@ -1768,6 +1507,7 @@ export const qTypes = [
                 name: "PAQ",
                 language: "pl",
                 typeId: "2.2",
+                id: 11,
                 type: "alexytymia",
                 segments: [
                     {

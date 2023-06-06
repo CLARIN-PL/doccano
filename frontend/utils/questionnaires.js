@@ -30,6 +30,12 @@ const DATE_FORMAT = "DD-MM-YYYY HH:mm:ss"
 const DATE_ONLY_FORMAT = "DD-MM-YYYY"
 const SERVER_DATE_FORMAT = "YYYY-MM-DDTHH:mm:ss"
 
+/*
+    Each questionnaire type has a list of questionnaire ids that corresponds to it. 
+    The questionnaires for each type are listed in frontend/pages/questionnaires/{key}/questionnaires.js
+    For example, the questionnaires for type 1.1 are listed in frontend/pages/questionnaires/przed_badaniem/questionnaires.js
+*/
+
 export const qCategories = [
     {
         id: "1",

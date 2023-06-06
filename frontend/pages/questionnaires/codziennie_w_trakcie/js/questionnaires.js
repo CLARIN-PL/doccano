@@ -6,6 +6,7 @@ export const qTypes = [
             {
                 name: "Sen (rano)",
                 language: "pl",
+                id: 13,
                 typeId: "4.1",
                 segments: [
                     {
@@ -63,6 +64,7 @@ export const qTypes = [
             {
                 name: "Stres (rano)",
                 language: "pl",
+                id: 14,
                 typeId: "4.1",
                 segments: [
                     {
@@ -119,6 +121,7 @@ export const qTypes = [
             {
                 name: "Stres (wieczorem)",
                 language: "pl",
+                id: 15,
                 typeId: "4.2",
                 segments: [
                     {
@@ -169,6 +172,7 @@ export const qTypes = [
             {
                 name: "Zdrowie (wieczorem)",
                 language: "pl",
+                id: 16,
                 typeId: "4.2",
                 segments: [
                     {
@@ -217,6 +221,7 @@ export const qTypes = [
             {
                 name: "Emocje (w przerwie)",
                 language: "pl",
+                id: 17,
                 typeId: "4.3",
                 segments: [
                     {
