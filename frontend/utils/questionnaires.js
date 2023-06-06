@@ -53,7 +53,7 @@ export const qCategories = [
                 id: "2.1",
                 name: "Przed i po badaniu (przed badaniem)",
                 count: 8,
-                questionnaires: [4, 5, 6, 7, 8, 9, 10, 11]
+                questionnaires: [4, 5, 6, 8, 10, 11]
             },
             {
                 id: "2.2",
