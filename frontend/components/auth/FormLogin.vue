@@ -92,14 +92,11 @@ export default Vue.extend({
         const limit = 100
         const atRestQuestionnaireId = '4.3'
         const textBatchCount = 20
-        const researchTimeInMonths = 3
         const serverDateFormat = 'YYYY-MM-DDThh:mm:ss'
         const dateFormat = 'DD-MM-YYYY'
-        const savedDateFormat = 'DD-MM-YYYY hh:mm:ss'
         let todayAtRestQuestionnairesIds: any[] = []
         const todayDate = moment().format(dateFormat)
         const qTypes = _.flatMap(qCategories, 'types')
-        const { hasAnnotatedToday } = this.getAnnotation
         const questionnairePromises = ids.map((id) => {
           return this.$services.questionnaire.listQuestionnairesByTypeId({
             qTypeId: id,
@@ -138,10 +135,22 @@ export default Vue.extend({
         }
 
         const stateTypes: any[] = [...new Set(_.flatMap(this.questionnaireStates, 'questionnaire'))]
-        const finishedCategories: any[] = qTypes
+        const finishedQTypes: any[] = qTypes
           .map((qType) => {
             qType.filledTypes = _.intersection(qType.questionnaires, stateTypes)
-            qType.filledTypesUnique = [...new Set(_.intersection(stateTypes, qType.questionnaires))]
+            qType.filledTypesUnique = [...new Set(_.intersection(qType.questionnaires, stateTypes))]
+            qType.filledTypesOnlyDouble = qType.filledTypesUnique.every((fType) => {
+              return qType.filledTypes.filter((fType2) => fType === fType2).length > 1
+            })
+            qType.filledTypesOnlyOnce = _.difference(
+              qType.filledTypesUnique,
+              qType.filledTypesOnlyDouble
+            )
+            qType.filledTypesToday = _.intersection(
+              qType.questionnaires,
+              _.flatMap(todayFilledQuestionnaires, 'questionnaire')
+            )
+
             const hasFinishedAllTypes = qType.filledTypes.length === qType.questionnaires.length
 
             const qStates = this.questionnaireStates
@@ -162,12 +171,8 @@ export default Vue.extend({
             }
 
             qType.hasFinishedToday = !!todayQStates.length
-            qType.hasFinishedAllTypesToday = !!todayQStates.length && hasFinishedAllTypes
-
-            const monthDiff = Math.abs(
-              moment(new Date()).diff(moment(qType.finishedAt, dateFormat), 'months')
-            )
-            const hasPassedResearchTime = monthDiff >= researchTimeInMonths
+            qType.hasFinishedAllTypesToday =
+              !!todayQStates.length && qType.filledTypesToday.length >= qType.questionnaires.length
 
             qType.filledId = [qType.id]
             if (qType.id === '1.1') {
@@ -178,40 +183,23 @@ export default Vue.extend({
               qType.hasFinishedAllTypes =
                 hasFinishedAllTypes && qType.filledTypes.length === qType.questionnaires.length * 2
             } else if (qType.id === '3.1') {
-              const weekDiff = Math.abs(
-                moment(new Date()).diff(moment(qType.finishedAt, savedDateFormat), 'weeks')
-              )
-              const hasPassedOneWeek = weekDiff >= 1
-              qType.hasFinishedAllTypes = hasFinishedAllTypes && hasPassedOneWeek
+              qType.hasFinishedAllTypes = hasFinishedAllTypes
             } else if (qType.id === '3.2') {
               qType.hasFinishedAllTypes =
-                hasFinishedAllTypes &&
-                hasPassedResearchTime &&
-                qType.filledTypes.length === qType.questionnaires.length * 2
+                hasFinishedAllTypes && qType.filledTypes.length === qType.questionnaires.length * 2
             } else if (qType.id === '4.1') {
-              qType.hasFinishedAllTypes = hasFinishedAllTypes && todayQStates.length
+              qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
             } else if (qType.id === '4.2') {
-              const currentHour = new Date().getHours()
-              const isEvening = currentHour >= 17 && currentHour < 23
-              qType.hasFinishedAllTypes = hasFinishedAllTypes && isEvening && hasAnnotatedToday
+              qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
             } else if (qType.id === '4.3') {
-              const firstTodayAtRestQuestionnaire = todayAtRestQuestionnairesIds.length
-                ? todayAtRestQuestionnairesIds[0]
-                : {}
               qType.filledId = todayAtRestQuestionnairesIds.length
                 ? _.flatMap(todayAtRestQuestionnairesIds, 'restId')
                 : [qType.id]
-              qType.hasFinishedAllTypes =
-                hasFinishedAllTypes && firstTodayAtRestQuestionnaire.finishedAtDate
-              todayAtRestQuestionnairesIds.splice(0, 1)
+              qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
             } else if (qType.id === '5.1') {
-              qType.hasFinishedAllTypes = hasFinishedAllTypes && hasPassedResearchTime
+              qType.hasFinishedAllTypes = hasFinishedAllTypes
             } else if (qType.id === '6.1') {
-              const weekDiff = Math.abs(
-                moment(new Date()).diff(moment(qType.finishedAt, dateFormat), 'weeks')
-              )
-              const hasPassedTwoWeeks = weekDiff >= 2
-              qType.hasFinishedAllTypes = hasFinishedAllTypes && hasPassedTwoWeeks
+              qType.hasFinishedAllTypes = hasFinishedAllTypes
             }
 
             return qType
@@ -221,7 +209,7 @@ export default Vue.extend({
           })
 
         await this.setQuestionnaire({
-          filled: [..._.flatMap(finishedCategories, 'filledId')],
+          filled: [..._.flatMap(finishedQTypes, 'filledId')],
           toShow: []
         })
         this.$nextTick(() => {
@@ -296,17 +284,21 @@ export default Vue.extend({
           password: this.password
         })
         await this.initUserData()
-        this.$nextTick(async () => {
-          this.isLoaded && (await this.loadQuestionnaires())
-          this.$forceUpdate()
-          if (this.isLoaded) {
-            await this.setUserData()
-            this.$nextTick(async () => {
-              await this.initQuestionnaire()
-            })
-            this.$router.push(this.localePath('/projects'))
-          }
-        })
+        setTimeout(() => {
+          this.$nextTick(async () => {
+            this.isLoaded && (await this.loadQuestionnaires())
+            this.$forceUpdate()
+            setTimeout(async () => {
+              if (this.isLoaded) {
+                await this.setUserData()
+                this.$nextTick(async () => {
+                  await this.initQuestionnaire()
+                })
+                this.$router.push(this.localePath('/projects'))
+              }
+            }, 100)
+          })
+        }, 100)
       } catch {
         this.showError = true
       }

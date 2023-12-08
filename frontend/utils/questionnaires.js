@@ -176,6 +176,12 @@ export function setQuestionnaireIds(qTypes, questionnaires=[], questions=[], que
                             que.isFinishedToday = que.isFinished
                         }
                     }
+                    if(state && que.typeId === "2.2") {
+                        que.isFinished = states.length > 1
+                    }
+                    if(state && que.typeId === "3.2") {
+                        que.isFinished = states.length > 1
+                    }
                 }
                 que.segments = que.segments.map((segment)=> {
                     segment.questions = segment.questions.map((question)=> {
@@ -331,8 +337,9 @@ export function getQuestionnairesToShow() {
                 const { firstAnnotationTime } = getters['user/getAnnotation']
                 const firstLoginTimeAtZero = moment(firstLoginTime, DATE_FORMAT).format("DD-MM-YYYY")+" 00:00:00"
                 const { hasAnnotatedToday, textCountToday } = getters['user/getAnnotation']
+                const defaultTime = firstAnnotationTime || firstLoginTimeAtZero
                 const monthDiff = Math.abs(moment(todayTime).diff(
-                    moment(firstLoginTimeAtZero, DATE_FORMAT), 'months'
+                    moment(defaultTime, DATE_FORMAT), 'months'
                 ))
                 const hasPassedResearchTime = monthDiff >= RESEARCH_TIME_IN_MONTHS
                 let isShowing = false
@@ -346,9 +353,8 @@ export function getQuestionnairesToShow() {
                 } else if(questionnaireType.id === "2.2") {
                     isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "3.1") {
-                    const time = firstAnnotationTime ?? firstLoginTimeAtZero
                     const weekDiff = Math.abs(moment(todayTime)
-                                    .diff(moment(time, DATE_FORMAT), 'weeks'))
+                                    .diff(moment(defaultTime, DATE_FORMAT), 'weeks'))
                     const hasPassedOneWeek = weekDiff >= 1
                     isShowing = !isFilled && hasPassedOneWeek
                 } else if(questionnaireType.id === "3.2") {
@@ -368,9 +374,8 @@ export function getQuestionnairesToShow() {
                 } else if(questionnaireType.id === "5.1") {
                     isShowing = !isFilled && hasPassedResearchTime
                 } else if(questionnaireType.id === "6.1") {
-                    const time = firstAnnotationTime ?? firstLoginTimeAtZero
                     const weekDiff = Math.abs(moment(todayTime)
-                                    .diff(moment(time, DATE_FORMAT), 'weeks'))
+                                    .diff(moment(defaultTime, DATE_FORMAT), 'weeks'))
                     const hasPassedTwoWeeks = weekDiff >= 2
                     isShowing = !isFilled && hasPassedTwoWeeks
                 }
