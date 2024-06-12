@@ -6,6 +6,7 @@ export const qTypes = [
             {
                 name: "Kwestionariusz IPIP-BFM-20",
                 language: "pl",
+                id: 1,
                 typeId: "1.1",
                 type: "osobowość",
                 description: "Przeczytaj uważnie poniższe zdania, opisujące różne zachowania, uczucia i myśli ludzi. Zastanów się nad każdym z nich – w jakim stopniu opisuje ono również Ciebie takiego/taką, jakim/jaką zwykle jesteś? Ludzie są bardzo różni, więc nie ma tu dobrych ani złych odpowiedzi. Za każdym razem po prostu szczerze odpowiedz na pytanie, w jakim stopniu dane stwierdzenie opisuje Ciebie.",
@@ -184,6 +185,7 @@ export const qTypes = [
             {
                 name: "Demografia",
                 type: "demografia",
+                id: 2,
                 typeId: "1.1",
                 language: "pl",
                 segments: [
@@ -530,6 +532,7 @@ export const qTypes = [
             {
                 type: "humor",
                 name: "Humor Styles Questionnaire",
+                id: 3,
                 typeId: "1.1",
                 language: "pl",
                 segments: [

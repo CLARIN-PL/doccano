@@ -7,6 +7,7 @@ export const qTypes = [
                 name: "Ankieta na koniec badania",
                 language: "pl",
                 typeId: "5.1",
+                id: 18,
                 segments: [
                     {
                         questions: [

@@ -1,3 +1,9 @@
+/* 
+    Each questionnaire has a unique id which corresponds to the utils/questionnaires.js and the backend
+
+
+*/
+
 export const qTypes = [
     {
         id: "2.1",
@@ -6,6 +12,7 @@ export const qTypes = [
             {
                 name: "SWLS-A",
                 language: "pl",
+                id: 4,
                 typeId: "2.1",
                 type: "dobrostan: satysfakcja z życia",
                 segments: [
@@ -86,6 +93,7 @@ export const qTypes = [
             {
                 name: "SPANE",
                 typeId: "2.1",
+                id: 5,
                 language: "pl",
                 type: "dobrostan: afekt",
                 segments: [
@@ -207,6 +215,7 @@ export const qTypes = [
             {
                 name: "Skala Prosperowania",
                 typeId: "2.1",
+                id: 6,
                 language: "pl",
                 type: "dobrostan: skala prosperowania",
                 segments: [
@@ -308,6 +317,7 @@ export const qTypes = [
             {
                 name: "Kwestionariusz PSS",
                 typeId: "2.1",
+                id: 8,
                 language: "pl",
                 type: "stres",
                 segments: [
@@ -415,6 +425,7 @@ export const qTypes = [
             {
                 name: "List of RESS-EMA Items",
                 typeId: "2.1",
+                id: 10,
                 language: "pl",
                 type: "regulacja emocji",
                 segments: [
@@ -560,6 +571,7 @@ export const qTypes = [
             {
                 name: "PAQ",
                 language: "pl",
+                id: 11,
                 typeId: "2.1",
                 type: "alexytymia",
                 segments: [
@@ -653,6 +665,7 @@ export const qTypes = [
             {
                 name: "SWLS-A",
                 typeId: "2.2",
+                id: 4,
                 language: "pl",
                 type: "dobrostan: satysfakcja z życia",
                 segments: [
@@ -734,6 +747,7 @@ export const qTypes = [
                 name: "SPANE",
                 language: "pl",
                 typeId: "2.2",
+                id: 5,
                 type: "dobrostan: afekt",
                 segments: [
                     {
@@ -855,6 +869,7 @@ export const qTypes = [
                 name: "Skala Prosperowania",
                 language: "pl",
                 typeId: "2.2",
+                id: 6,
                 type: "dobrostan: skala prosperowania",
                 segments: [
                     {
@@ -956,6 +971,7 @@ export const qTypes = [
                 name: "Kwestionariusz Zdrowia Pacjenta PHQ-9 (PHQ-9)",
                 language: "pl",
                 typeId: "2.2",
+                id: 7,
                 type: "depresja",
                 segments: [
                     {
@@ -1052,6 +1068,7 @@ export const qTypes = [
                 name: "Kwestionariusz PSS",
                 language: "pl",
                 typeId: "2.2",
+                id: 8,
                 type: "stres",
                 segments: [
                     {
@@ -1159,6 +1176,7 @@ export const qTypes = [
                 name: "Physical Health Questionnaire",
                 language: "pl",
                 typeId: "2.2",
+                id: 9,
                 type: "zdrowie",
                 segments: [
                     {
@@ -1342,6 +1360,7 @@ export const qTypes = [
             {
                 name: "List of RESS-EMA Items",
                 language: "pl",
+                id: 10,
                 typeId: "2.2",
                 type: "regulacja emocji",
                 segments: [
@@ -1488,6 +1507,7 @@ export const qTypes = [
                 name: "PAQ",
                 language: "pl",
                 typeId: "2.2",
+                id: 11,
                 type: "alexytymia",
                 segments: [
                     {
