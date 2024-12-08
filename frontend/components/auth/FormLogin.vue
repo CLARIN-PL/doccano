@@ -133,13 +133,19 @@ export default Vue.extend({
             'finishedAt'
           ).reverse()
         }
-
-        const stateTypes: any[] = [...new Set(_.flatMap(this.questionnaireStates, 'questionnaire'))]
+        const stateTypes: any[] = _.flatMap(this.questionnaireStates, 'questionnaire')
+        const uniqueStateTypes: any[] = [
+          ...new Set(_.flatMap(this.questionnaireStates, 'questionnaire'))
+        ]
         const finishedQTypes: any[] = qTypes
           .map((qType) => {
-            qType.filledTypes = _.intersection(qType.questionnaires, stateTypes)
-            qType.filledTypesUnique = [...new Set(_.intersection(qType.questionnaires, stateTypes))]
-            qType.filledTypesOnlyDouble = qType.filledTypesUnique.every((fType) => {
+            qType.filledTypes = stateTypes.filter((stateType) =>
+              qType.questionnaires.includes(stateType)
+            )
+            qType.filledTypesUnique = [
+              ...new Set(_.intersection(qType.questionnaires, uniqueStateTypes))
+            ]
+            qType.filledTypesOnlyDouble = qType.filledTypesUnique.filter((fType) => {
               return qType.filledTypes.filter((fType2) => fType === fType2).length > 1
             })
             qType.filledTypesOnlyOnce = _.difference(
@@ -151,7 +157,8 @@ export default Vue.extend({
               _.flatMap(todayFilledQuestionnaires, 'questionnaire')
             )
 
-            const hasFinishedAllTypes = qType.filledTypes.length === qType.questionnaires.length
+            const hasFinishedAllTypes =
+              qType.filledTypesUnique.length === qType.questionnaires.length
 
             const qStates = this.questionnaireStates
               .filter((state) => qType.questionnaires.includes(state.questionnaire))
@@ -180,13 +187,16 @@ export default Vue.extend({
             } else if (qType.id === '2.1') {
               qType.hasFinishedAllTypes = hasFinishedAllTypes
             } else if (qType.id === '2.2') {
+              console.log(qType.filledTypesOnlyDouble)
               qType.hasFinishedAllTypes =
-                hasFinishedAllTypes && qType.filledTypes.length === qType.questionnaires.length * 2
+                hasFinishedAllTypes &&
+                qType.filledTypesOnlyDouble.length * 2 >= qType.questionnaires.length * 2
             } else if (qType.id === '3.1') {
               qType.hasFinishedAllTypes = hasFinishedAllTypes
             } else if (qType.id === '3.2') {
               qType.hasFinishedAllTypes =
-                hasFinishedAllTypes && qType.filledTypes.length === qType.questionnaires.length * 2
+                hasFinishedAllTypes &&
+                qType.filledTypesOnlyDouble.length * 2 >= qType.questionnaires.length * 2
             } else if (qType.id === '4.1') {
               qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
             } else if (qType.id === '4.2') {
