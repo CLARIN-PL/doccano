@@ -156,9 +156,7 @@ export default Vue.extend({
               qType.questionnaires,
               _.flatMap(todayFilledQuestionnaires, 'questionnaire')
             )
-
-            const hasFinishedAllTypes =
-              qType.filledTypesUnique.length === qType.questionnaires.length
+            qType.filledId = [qType.id]
 
             const qStates = this.questionnaireStates
               .filter((state) => qType.questionnaires.includes(state.questionnaire))
@@ -178,24 +176,18 @@ export default Vue.extend({
             }
 
             qType.hasFinishedToday = !!todayQStates.length
+            qType.hasFinishedAllTypes =
+              qType.filledTypesUnique.length === qType.questionnaires.length
             qType.hasFinishedAllTypesToday =
               !!todayQStates.length && qType.filledTypesToday.length >= qType.questionnaires.length
 
-            qType.filledId = [qType.id]
-            if (qType.id === '1.1') {
-              qType.hasFinishedAllTypes = hasFinishedAllTypes
-            } else if (qType.id === '2.1') {
-              qType.hasFinishedAllTypes = hasFinishedAllTypes
-            } else if (qType.id === '2.2') {
-              console.log(qType.filledTypesOnlyDouble)
+            if (qType.id === '2.2') {
               qType.hasFinishedAllTypes =
-                hasFinishedAllTypes &&
+                qType.hasFinishedAllTypes &&
                 qType.filledTypesOnlyDouble.length * 2 >= qType.questionnaires.length * 2
-            } else if (qType.id === '3.1') {
-              qType.hasFinishedAllTypes = hasFinishedAllTypes
             } else if (qType.id === '3.2') {
               qType.hasFinishedAllTypes =
-                hasFinishedAllTypes &&
+                qType.hasFinishedAllTypes &&
                 qType.filledTypesOnlyDouble.length * 2 >= qType.questionnaires.length * 2
             } else if (qType.id === '4.1') {
               qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
@@ -206,10 +198,6 @@ export default Vue.extend({
                 ? _.flatMap(todayAtRestQuestionnairesIds, 'restId')
                 : [qType.id]
               qType.hasFinishedAllTypes = qType.hasFinishedAllTypesToday
-            } else if (qType.id === '5.1') {
-              qType.hasFinishedAllTypes = hasFinishedAllTypes
-            } else if (qType.id === '6.1') {
-              qType.hasFinishedAllTypes = hasFinishedAllTypes
             }
 
             return qType
