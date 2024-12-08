@@ -85,11 +85,34 @@ export default Vue.extend({
       'setQuestionnaire',
       'addHistory'
     ]),
+    async setQuestionnaireData() {
+      const ids = _.flatMap(qCategories, 'id')
+      const limit = 100
+      const serverDateFormat = 'YYYY-MM-DDThh:mm:ss'
+      const dateFormat = 'DD-MM-YYYY'
+      const questionnairePromises = ids.map((id) => {
+        return this.$services.questionnaire.listQuestionnairesByTypeId({
+          qTypeId: id,
+          limit
+        })
+      })
+      const states = await this.$services.questionnaire.listFinishedQuestionnaires({
+        limit
+      })
+
+      const questionnaireResponses: any[] = await Promise.all(questionnairePromises)
+      this.questionnaires = _.cloneDeep(_.flatMap(questionnaireResponses, 'items'))
+      const questionnaireStates: any[] = _.sortBy(states.items, 'finishedAt').map((state: any) => {
+        state.finishedAtDate = state.finishedAt
+          ? moment(String(state.finishedAt), serverDateFormat).format(dateFormat)
+          : ''
+        return state
+      })
+      this.questionnaireStates = _.cloneDeep(questionnaireStates)
+    },
     async loadQuestionnaires() {
       this.isLoaded = false
       try {
-        const ids = _.flatMap(qCategories, 'id')
-        const limit = 100
         const atRestQuestionnaireId = '4.3'
         const textBatchCount = 20
         const serverDateFormat = 'YYYY-MM-DDThh:mm:ss'
@@ -97,25 +120,8 @@ export default Vue.extend({
         let todayAtRestQuestionnairesIds: any[] = []
         const todayDate = moment().format(dateFormat)
         const qTypes = _.flatMap(qCategories, 'types')
-        const questionnairePromises = ids.map((id) => {
-          return this.$services.questionnaire.listQuestionnairesByTypeId({
-            qTypeId: id,
-            limit
-          })
-        })
-        const states = await this.$services.questionnaire.listFinishedQuestionnaires({
-          limit
-        })
 
-        const questionnaireResponses: any[] = await Promise.all(questionnairePromises)
-        this.questionnaires = _.cloneDeep(_.flatMap(questionnaireResponses, 'items'))
-        const questionnaireStates: any[] = _.sortBy(states.items, 'finishedAt').map((state) => {
-          state.finishedAtDate = state.finishedAt
-            ? moment(state.finishedAt, serverDateFormat).format(dateFormat)
-            : ''
-          return state
-        })
-        this.questionnaireStates = _.cloneDeep(questionnaireStates)
+        await this.setQuestionnaireData()
 
         const groupedStatesByFinishedAtDate = _.groupBy(this.questionnaireStates, 'finishedAtDate')
         const todayFilledQuestionnaires = groupedStatesByFinishedAtDate[todayDate]
@@ -124,7 +130,7 @@ export default Vue.extend({
           const atRestQuestionnaires = todayFilledQuestionnaires.filter((q) =>
             atRestQType.questionnaires.includes(q.questionnaire)
           )
-          todayAtRestQuestionnairesIds = atRestQuestionnaires.map((q, index) => {
+          todayAtRestQuestionnairesIds = atRestQuestionnaires.map((q: any, index) => {
             q.restId = `${atRestQuestionnaireId}_${(index + 1) * textBatchCount}`
             return q
           })
@@ -145,8 +151,8 @@ export default Vue.extend({
             qType.filledTypesUnique = [
               ...new Set(_.intersection(qType.questionnaires, uniqueStateTypes))
             ]
-            qType.filledTypesOnlyDouble = qType.filledTypesUnique.filter((fType) => {
-              return qType.filledTypes.filter((fType2) => fType === fType2).length > 1
+            qType.filledTypesOnlyDouble = qType.filledTypesUnique.filter((fType: String) => {
+              return qType.filledTypes.filter((fType2: String) => fType === fType2).length > 1
             })
             qType.filledTypesOnlyOnce = _.difference(
               qType.filledTypesUnique,
@@ -164,7 +170,7 @@ export default Vue.extend({
             const todayQStates = this.questionnaireStates.filter(
               (state) =>
                 qType.questionnaires.includes(state.questionnaire) &&
-                moment(state.finishedAt, serverDateFormat).format(dateFormat) === todayDate
+                moment(String(state.finishedAt), serverDateFormat).format(dateFormat) === todayDate
             )
 
             if (qStates.length) {
@@ -229,41 +235,48 @@ export default Vue.extend({
           : 0
         currentDiffDay = currentDiffDay === 0 ? todayDay - lastLoginDay : currentDiffDay
 
-        if (lastLoginTime && !hasValidLoginTime(new Date())) {
-          this.setAnnotation({
-            textCountToday: 0,
-            hasAnnotatedToday: false
-          })
-          this.setQuestionnaire({
-            toShow: [],
-            inProgress: [],
-            filled: []
-          })
-        }
-
-        if (!this.getLogin.firstLoginTime) {
-          this.setLogin({
-            firstLoginTime: loginTime,
-            isFirstLogin: true,
-            lastLoginTime: loginTime
-          })
-        } else {
-          this.setLogin({ isFirstLogin: false, lastLoginTime: loginTime })
-        }
-
-        if (currentDiffDay > 0) {
-          const { filled } = this.getQuestionnaire
-          const dailyQuestionnaireId = '4'
-          this.setAnnotation({
-            textCountToday: 0,
-            hasAnnotatedToday: false
-          })
-          this.setQuestionnaire({
-            filled: filled.filter((fill: any) => !fill.startsWith(dailyQuestionnaireId))
-          })
-        }
+        this.checkLoginDataValidity(lastLoginTime)
+        this.setLoginData(loginTime)
+        this.filterDailyQuestionnaireEveryday(currentDiffDay)
       } catch (error) {
         console.error(error)
+      }
+    },
+    checkLoginDataValidity(lastLoginTime: String) {
+      if (lastLoginTime && !hasValidLoginTime(new Date())) {
+        this.setAnnotation({
+          textCountToday: 0,
+          hasAnnotatedToday: false
+        })
+        this.setQuestionnaire({
+          toShow: [],
+          inProgress: [],
+          filled: []
+        })
+      }
+    },
+    setLoginData(loginTime: String) {
+      if (!this.getLogin.firstLoginTime) {
+        this.setLogin({
+          firstLoginTime: loginTime,
+          isFirstLogin: true,
+          lastLoginTime: loginTime
+        })
+      } else {
+        this.setLogin({ isFirstLogin: false, lastLoginTime: loginTime })
+      }
+    },
+    filterDailyQuestionnaireEveryday(currentDiffDay: number) {
+      if (currentDiffDay > 0) {
+        const { filled } = this.getQuestionnaire
+        const dailyQuestionnaireId = '4'
+        this.setAnnotation({
+          textCountToday: 0,
+          hasAnnotatedToday: false
+        })
+        this.setQuestionnaire({
+          filled: filled.filter((fill: any) => !fill.startsWith(dailyQuestionnaireId))
+        })
       }
     },
     async initUserData() {
